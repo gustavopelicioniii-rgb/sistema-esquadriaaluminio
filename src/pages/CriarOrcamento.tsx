@@ -30,6 +30,9 @@ const CriarOrcamento = () => {
   const [largura, setLargura] = useState(150);
   const [altura, setAltura] = useState(120);
   const [quantidade, setQuantidade] = useState(1);
+  const [colorId, setColorId] = useState("natural");
+
+  const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
   const calculo = useMemo(() => {
     const produto = tiposProduto.find((t) => t.value === tipo);
