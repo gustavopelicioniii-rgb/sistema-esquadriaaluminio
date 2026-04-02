@@ -234,6 +234,7 @@ export default function CalculoEsquadrias() {
                 maxWidth={320}
                 maxHeight={260}
               />
+              </div>
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
