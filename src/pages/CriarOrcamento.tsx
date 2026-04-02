@@ -125,7 +125,7 @@ const CriarOrcamento = () => {
                   maxHeight={260}
                 />
               </div>
-              <ColorSelector selectedColorId={colorId} onSelectColor={setColorId} />
+              <ColorSelector selectedColorId={colorId} onColorChange={setColorId} />
             </CardContent>
           </Card>
 
