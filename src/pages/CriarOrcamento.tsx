@@ -8,14 +8,19 @@ import { formatCurrency } from "@/data/mockData";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { FramePreview, ColorSelector } from "@/components/frame-preview";
 
 const tiposProduto = [
-  { value: "janela_correr", label: "Janela de Correr", precoM2: 850 },
-  { value: "janela_maximar", label: "Janela Maxim-Ar", precoM2: 920 },
-  { value: "janela_pivotante", label: "Janela Pivotante", precoM2: 1100 },
-  { value: "porta_abrir", label: "Porta de Abrir", precoM2: 950 },
-  { value: "porta_correr", label: "Porta de Correr", precoM2: 1050 },
-  { value: "fachada_vidro", label: "Fachada em Vidro", precoM2: 1400 },
+  { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "janela_correr_4f", label: "Janela de Correr 4F", precoM2: 880, category: "janela_correr", subcategory: "4_folhas", numFolhas: 4 },
+  { value: "janela_maximar_1f", label: "Janela Maxim-Ar 1F", precoM2: 920, category: "janela_maximar", subcategory: "1_folha", numFolhas: 1 },
+  { value: "janela_maximar_2f", label: "Janela Maxim-Ar 2F", precoM2: 950, category: "janela_maximar", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_giro_1f", label: "Porta de Giro 1F", precoM2: 950, category: "porta_giro", subcategory: "1_folha", numFolhas: 1 },
+  { value: "porta_giro_2f", label: "Porta de Giro 2F", precoM2: 1000, category: "porta_giro", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_correr_2f", label: "Porta de Correr 2F", precoM2: 1050, category: "porta_correr", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_correr_4f", label: "Porta de Correr 4F", precoM2: 1100, category: "porta_correr", subcategory: "4_folhas", numFolhas: 4 },
+  { value: "janela_veneziana", label: "Janela c/ Veneziana 2F", precoM2: 1200, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, veneziana: true },
+  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4 },
 ];
 
 const CriarOrcamento = () => {
@@ -25,6 +30,9 @@ const CriarOrcamento = () => {
   const [largura, setLargura] = useState(150);
   const [altura, setAltura] = useState(120);
   const [quantidade, setQuantidade] = useState(1);
+  const [colorId, setColorId] = useState("natural");
+
+  const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
   const calculo = useMemo(() => {
     const produto = tiposProduto.find((t) => t.value === tipo);
@@ -42,11 +50,6 @@ const CriarOrcamento = () => {
     navigate("/orcamentos");
   };
 
-  // SVG preview scaling
-  const maxDim = 220;
-  const scale = Math.min(maxDim / largura, maxDim / altura, 1);
-  const svgW = largura * scale;
-  const svgH = altura * scale;
 
   return (
     <div className="space-y-6">
@@ -106,25 +109,23 @@ const CriarOrcamento = () => {
         <div className="space-y-4">
           <Card className="shadow-sm border-border/50">
             <CardHeader className="pb-4">
-              <CardTitle className="text-base">Visualização 2D</CardTitle>
+              <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center justify-center min-h-[260px]">
-              <svg width={svgW + 60} height={svgH + 60} viewBox={`0 0 ${svgW + 60} ${svgH + 60}`}>
-                <rect x={30} y={15} width={svgW} height={svgH} fill="hsl(217, 91%, 53%, 0.08)" stroke="hsl(217, 91%, 53%)" strokeWidth={2} rx={2} />
-                {/* Frame lines */}
-                <rect x={34} y={19} width={svgW - 8} height={svgH - 8} fill="none" stroke="hsl(217, 91%, 53%, 0.4)" strokeWidth={1} rx={1} />
-                {/* Center divider for windows */}
-                {tipo.includes("correr") && (
-                  <line x1={30 + svgW / 2} y1={15} x2={30 + svgW / 2} y2={15 + svgH} stroke="hsl(217, 91%, 53%, 0.6)" strokeWidth={1.5} />
-                )}
-                {/* Dimension labels */}
-                <text x={30 + svgW / 2} y={svgH + 40} textAnchor="middle" fontSize={11} fill="hsl(var(--muted-foreground))">
-                  {largura} cm
-                </text>
-                <text x={12} y={15 + svgH / 2} textAnchor="middle" fontSize={11} fill="hsl(var(--muted-foreground))" transform={`rotate(-90, 12, ${15 + svgH / 2})`}>
-                  {altura} cm
-                </text>
-              </svg>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-center min-h-[260px]">
+                <FramePreview
+                  width_mm={largura * 10}
+                  height_mm={altura * 10}
+                  category={produtoSelecionado?.category ?? "janela_correr"}
+                  subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
+                  num_folhas={produtoSelecionado?.numFolhas ?? 2}
+                  has_veneziana={produtoSelecionado?.veneziana}
+                  colorId={colorId}
+                  maxWidth={320}
+                  maxHeight={260}
+                />
+              </div>
+              <ColorSelector selectedColorId={colorId} onColorChange={setColorId} />
             </CardContent>
           </Card>
 
