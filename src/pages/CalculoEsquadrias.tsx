@@ -15,11 +15,12 @@ import { optimizeBars } from "@/lib/bar-optimizer";
 import {
   typologies,
   productLines,
+  manufacturers,
   getCutRulesForTypology,
   getGlassRulesForTypology,
   getComponentsForTypology,
   getTypologyById,
-} from "@/data/calculationData";
+} from "@/data/catalog";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 
 export default function CalculoEsquadrias() {
