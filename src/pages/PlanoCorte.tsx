@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { Plus, Search, Scissors, Layers, Wrench, Play, FileDown, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { generatePdfFromElement } from "@/utils/pdfGenerator";
 
 type Categoria = "perfis" | "vidros" | "ferragens";
 
@@ -78,7 +79,15 @@ const PlanoCorte = () => {
           <p className="text-muted-foreground text-sm">Otimize seus materiais</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={async () => {
+              toast({ title: "Gerando PDF...", description: "Aguarde um momento." });
+              await generatePdfFromElement("plano-corte-content", "plano-de-corte.pdf");
+              toast({ title: "PDF gerado!", description: "Plano de corte exportado com sucesso." });
+            }}
+          >
             <FileDown className="h-4 w-4" /> Exportar PDF
           </Button>
           <Button className="gap-2">
@@ -123,7 +132,7 @@ const PlanoCorte = () => {
         </div>
 
         {/* Main */}
-        <div className="flex-1 space-y-6">
+        <div id="plano-corte-content" className="flex-1 space-y-6">
           <div className="flex items-center justify-between">
             <div className="relative max-w-md flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
