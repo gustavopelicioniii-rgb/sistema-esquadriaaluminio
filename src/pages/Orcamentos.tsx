@@ -177,7 +177,7 @@ const Orcamentos = () => {
             <DialogDescription>Detalhes do orçamento para {selectedOrcamento?.cliente}</DialogDescription>
           </DialogHeader>
           {selectedOrcamento && (
-            <div className="space-y-4">
+            <div id="orcamento-pdf-content" className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Cliente</p>
