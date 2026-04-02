@@ -1,6 +1,3 @@
-// Service layer prepared for future API integration
-// Currently uses mock data
-
 import {
   dashboardStats,
   receitaMensal,
@@ -42,7 +39,7 @@ export const api = {
     },
     create: async (data: Partial<Orcamento>): Promise<Orcamento> => {
       await delay(200);
-      return { id: `ORC-${Date.now()}`, ...data } as Orcamento;
+      return { id: `#${Date.now()}`, ...data } as Orcamento;
     },
   },
   producao: {

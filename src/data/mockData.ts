@@ -1,18 +1,36 @@
 // ============ DASHBOARD ============
 export const dashboardStats = {
-  faturamentoMes: 187500,
-  orcamentosAprovados: 34,
-  taxaConversao: 68,
-  producaoAndamento: 12,
+  vendas: 84250.21,
+  obrasEntregues: 47,
+  orcamentosRealizados: 5987.21,
+  producaoAndamento: 8,
+  ticketMedio: 3663.04,
+  vendasCount: 23,
+  orcamentosCount: 142,
+  markupAtual: 2.29231,
+  despFixas: 3988,
+  despVariaveis: 3988,
+  fatMedio: 3988,
+  notasFiscais: 3098.21,
+  nfProdutos: 33,
+  nfServicos: 33,
+  nfTotal: 66,
+  estoqueTotal: 847,
+};
+
+export const producaoDetalhe = {
+  corte: 3,
+  montagem: 2,
+  instalacao: 3,
 };
 
 export const receitaMensal = [
-  { mes: "Jan", valor: 125000 },
-  { mes: "Fev", valor: 142000 },
-  { mes: "Mar", valor: 138000 },
-  { mes: "Abr", valor: 155000 },
-  { mes: "Mai", valor: 167000 },
-  { mes: "Jun", valor: 187500 },
+  { mes: "Jan", valor: 65000 },
+  { mes: "Fev", valor: 72000 },
+  { mes: "Mar", valor: 58000 },
+  { mes: "Abr", valor: 85000 },
+  { mes: "Mai", valor: 92000 },
+  { mes: "Jun", valor: 84250 },
 ];
 
 export const statusPedidos = [
@@ -48,8 +66,9 @@ export const crmLeads: CrmLead[] = [
 export interface Orcamento {
   id: string;
   cliente: string;
+  produto: string;
   valor: number;
-  status: "pendente" | "aprovado" | "recusado" | "em_analise";
+  status: "pendente" | "aprovado" | "recusado";
   data: string;
   itens: OrcamentoItem[];
 }
@@ -64,130 +83,227 @@ export interface OrcamentoItem {
 
 export const orcamentos: Orcamento[] = [
   {
-    id: "ORC-001",
-    cliente: "João Silva",
-    valor: 15000,
+    id: "#1042",
+    cliente: "Vidraçaria Norte SP",
+    produto: "Janela Maxim-Ar 2F",
+    valor: 2450,
     status: "aprovado",
-    data: "2024-03-15",
+    data: "2023-06-12",
     itens: [
-      { tipo: "Janela de Correr", largura: 150, altura: 120, quantidade: 4, valorUnitario: 2500 },
-      { tipo: "Porta de Abrir", largura: 90, altura: 210, quantidade: 2, valorUnitario: 2500 },
+      { tipo: "Janela Maxim-Ar 2F", largura: 150, altura: 120, quantidade: 2, valorUnitario: 1225 },
     ],
   },
   {
-    id: "ORC-002",
-    cliente: "Maria Santos",
-    valor: 28000,
+    id: "#1043",
+    cliente: "Construtora Silva Ltda",
+    produto: "Fachada Estrutural",
+    valor: 45000,
     status: "pendente",
-    data: "2024-03-18",
+    data: "2023-06-14",
     itens: [
-      { tipo: "Janela Maxim-Ar", largura: 80, altura: 60, quantidade: 6, valorUnitario: 1800 },
-      { tipo: "Porta de Correr", largura: 200, altura: 220, quantidade: 2, valorUnitario: 8600 },
+      { tipo: "Fachada Estrutural", largura: 600, altura: 300, quantidade: 1, valorUnitario: 45000 },
     ],
   },
   {
-    id: "ORC-003",
-    cliente: "Carlos Oliveira",
-    valor: 42000,
-    status: "em_analise",
-    data: "2024-03-20",
-    itens: [
-      { tipo: "Fachada em Vidro", largura: 600, altura: 300, quantidade: 1, valorUnitario: 42000 },
-    ],
-  },
-  {
-    id: "ORC-004",
-    cliente: "Ana Costa",
-    valor: 18500,
-    status: "aprovado",
-    data: "2024-03-22",
-    itens: [
-      { tipo: "Janela de Correr", largura: 200, altura: 150, quantidade: 3, valorUnitario: 3500 },
-      { tipo: "Janela Pivotante", largura: 100, altura: 120, quantidade: 2, valorUnitario: 3750 },
-    ],
-  },
-  {
-    id: "ORC-005",
-    cliente: "Pedro Souza",
-    valor: 55000,
+    id: "#1044",
+    cliente: "Arquitetura Moderna",
+    produto: "Porta de Correr 3F",
+    valor: 8300,
     status: "recusado",
-    data: "2024-03-25",
+    data: "2023-06-15",
     itens: [
-      { tipo: "Muro Cortina", largura: 800, altura: 400, quantidade: 1, valorUnitario: 55000 },
+      { tipo: "Porta de Correr 3F", largura: 300, altura: 220, quantidade: 1, valorUnitario: 8300 },
+    ],
+  },
+  {
+    id: "#1045",
+    cliente: "Obras & Cia",
+    produto: "Janela de Correr",
+    valor: 1200,
+    status: "pendente",
+    data: "2023-06-18",
+    itens: [
+      { tipo: "Janela de Correr", largura: 150, altura: 120, quantidade: 1, valorUnitario: 1200 },
+    ],
+  },
+  {
+    id: "#1046",
+    cliente: "Residência Costa",
+    produto: "Porta de Abrir",
+    valor: 950,
+    status: "aprovado",
+    data: "2023-06-20",
+    itens: [
+      { tipo: "Porta de Abrir", largura: 90, altura: 210, quantidade: 1, valorUnitario: 950 },
     ],
   },
 ];
 
-// ============ PRODUÇÃO ============
+// ============ PRODUÇÃO / SERVIÇOS ============
 export type StatusProducao = "aguardando" | "corte" | "montagem" | "instalacao" | "finalizado";
 
 export interface OrdemProducao {
   id: string;
+  pedidoNum: number;
   cliente: string;
-  produto: string;
-  status: StatusProducao;
-  prazo: string;
+  endereco: string;
+  telefone: string;
+  vendedor: string;
+  previsao: string;
+  valor: number;
+  status: "atrasado" | "em_andamento" | "concluido";
+  diasRestantes: number;
+  etapa?: string;
+  etapaData?: string;
+  anotacao?: string;
 }
 
 export const ordensProducao: OrdemProducao[] = [
-  { id: "OP-001", cliente: "João Silva", produto: "Janela de Correr 150x120", status: "montagem", prazo: "2024-04-05" },
-  { id: "OP-002", cliente: "João Silva", produto: "Porta de Abrir 90x210", status: "corte", prazo: "2024-04-08" },
-  { id: "OP-003", cliente: "Ana Costa", produto: "Janela de Correr 200x150", status: "aguardando", prazo: "2024-04-12" },
-  { id: "OP-004", cliente: "Ana Costa", produto: "Janela Pivotante 100x120", status: "aguardando", prazo: "2024-04-15" },
-  { id: "OP-005", cliente: "Roberto Almeida", produto: "Fachada Pele de Vidro", status: "instalacao", prazo: "2024-04-02" },
-  { id: "OP-006", cliente: "Fernanda Rocha", produto: "Porta de Correr 200x220", status: "finalizado", prazo: "2024-03-28" },
-  { id: "OP-007", cliente: "Carlos Oliveira", produto: "Fachada em Vidro 600x300", status: "corte", prazo: "2024-04-20" },
+  {
+    id: "OP-001",
+    pedidoNum: 3,
+    cliente: "Igor Soares de Souza",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 9602-2000",
+    vendedor: "Igor Soares de Souza",
+    previsao: "2022-06-06",
+    valor: 2440.94,
+    status: "em_andamento",
+    diasRestantes: -62,
+    etapa: "Conferência",
+    etapaData: "07/08/2022 15:12",
+    anotacao: "teste",
+  },
+  {
+    id: "OP-002",
+    pedidoNum: 4,
+    cliente: "Igor Soares de Souza",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 9602-2000",
+    vendedor: "Igor Soares de Souza",
+    previsao: "2022-06-06",
+    valor: 1232.50,
+    status: "atrasado",
+    diasRestantes: -62,
+    etapa: "Fechado",
+  },
+  {
+    id: "OP-003",
+    pedidoNum: 1,
+    cliente: "Empresa Modelo Ltda",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 97473-9209",
+    vendedor: "Igor Soares de Souza",
+    previsao: "2022-08-12",
+    valor: 14089.00,
+    status: "em_andamento",
+    diasRestantes: 5,
+    etapa: "Fechado",
+  },
+  {
+    id: "OP-004",
+    pedidoNum: 8,
+    cliente: "Igor Soares de Souza",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 9602-2000",
+    vendedor: "Igor Soares de Souza",
+    previsao: "2022-08-13",
+    valor: 3087.31,
+    status: "em_andamento",
+    diasRestantes: 6,
+  },
+  {
+    id: "OP-005",
+    pedidoNum: 2,
+    cliente: "Igor Soares de Souza",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 9602-2000",
+    vendedor: "Igor Soares de Souza",
+    previsao: "2022-08-15",
+    valor: 17495.60,
+    status: "em_andamento",
+    diasRestantes: 8,
+  },
+  {
+    id: "OP-006",
+    pedidoNum: 6,
+    cliente: "Empresa Modelo Ltda",
+    endereco: "Rua Teste, 1234, Caieiras, Serpa, 07716-053",
+    telefone: "(11) 9602-2000",
+    vendedor: "Empresa Modelo",
+    previsao: "2022-08-19",
+    valor: 274.70,
+    status: "concluido",
+    diasRestantes: 12,
+  },
 ];
 
 // ============ PLANO DE CORTE ============
 export interface PlanoCorte {
   id: string;
   perfil: string;
+  comprimento: string;
+  qtdBarras: number;
+  eficiencia: number;
+  categoria: "perfis" | "vidros" | "ferragens";
+  cortes: { comprimento: number; cor: string }[];
   comprimentoBarra: number;
-  cortes: { comprimento: number; quantidade: number }[];
-  aproveitamento: number;
 }
 
 export const planosCorte: PlanoCorte[] = [
   {
     id: "PC-001",
-    perfil: "Montante 40x25",
+    perfil: "Perfil U 45mm",
+    comprimento: "3.60m",
+    qtdBarras: 12,
+    eficiencia: 92,
+    categoria: "perfis",
     comprimentoBarra: 6000,
     cortes: [
-      { comprimento: 1200, quantidade: 4 },
-      { comprimento: 600, quantidade: 2 },
+      { comprimento: 1800, cor: "hsl(142, 71%, 45%)" },
+      { comprimento: 1800, cor: "hsl(142, 71%, 45%)" },
+      { comprimento: 1500, cor: "hsl(280, 67%, 55%)" },
     ],
-    aproveitamento: 93,
   },
   {
     id: "PC-002",
-    perfil: "Trilho Superior 50x30",
+    perfil: "Marco Reto 35mm",
+    comprimento: "6.00m",
+    qtdBarras: 8,
+    eficiencia: 88,
+    categoria: "perfis",
     comprimentoBarra: 6000,
     cortes: [
-      { comprimento: 1500, quantidade: 2 },
-      { comprimento: 2000, quantidade: 1 },
+      { comprimento: 2700, cor: "hsl(217, 91%, 53%)" },
+      { comprimento: 2580, cor: "hsl(38, 92%, 50%)" },
     ],
-    aproveitamento: 83,
   },
   {
     id: "PC-003",
-    perfil: "Contramarco 75x35",
+    perfil: "Contramarco 20mm",
+    comprimento: "4.50m",
+    qtdBarras: 15,
+    eficiencia: 95,
+    categoria: "perfis",
     comprimentoBarra: 6000,
     cortes: [
-      { comprimento: 2100, quantidade: 2 },
-      { comprimento: 900, quantidade: 2 },
+      { comprimento: 2250, cor: "hsl(217, 91%, 53%)" },
+      { comprimento: 2250, cor: "hsl(217, 91%, 53%)" },
+      { comprimento: 1200, cor: "hsl(142, 71%, 45%)" },
     ],
-    aproveitamento: 100,
   },
   {
     id: "PC-004",
-    perfil: "Folha de Porta 60x28",
+    perfil: "Folha Móvel 60mm",
+    comprimento: "2.80m",
+    qtdBarras: 6,
+    eficiencia: 85,
+    categoria: "perfis",
     comprimentoBarra: 6000,
     cortes: [
-      { comprimento: 2100, quantidade: 2 },
-      { comprimento: 800, quantidade: 1 },
+      { comprimento: 2800, cor: "hsl(38, 92%, 50%)" },
+      { comprimento: 2300, cor: "hsl(38, 92%, 50%)" },
     ],
-    aproveitamento: 83,
   },
 ];
 
@@ -217,25 +333,32 @@ export const itensEstoque: ItemEstoque[] = [
 // ============ FINANCEIRO ============
 export interface ContaFinanceira {
   id: string;
+  cliente: string;
   descricao: string;
   valor: number;
-  data: string;
-  status: "pago" | "pendente" | "atrasado";
+  vencimento: string;
+  status: "pago" | "pendente" | "vencido";
   tipo: "receber" | "pagar";
 }
 
 export const contasFinanceiras: ContaFinanceira[] = [
-  { id: "FIN-001", descricao: "João Silva - ORC-001", valor: 15000, data: "2024-04-05", status: "pago", tipo: "receber" },
-  { id: "FIN-002", descricao: "Ana Costa - ORC-004", valor: 18500, data: "2024-04-10", status: "pendente", tipo: "receber" },
-  { id: "FIN-003", descricao: "Roberto Almeida - ORC-007", valor: 67000, data: "2024-03-28", status: "pago", tipo: "receber" },
-  { id: "FIN-004", descricao: "Fernanda Rocha - ORC-008", valor: 21000, data: "2024-04-15", status: "pendente", tipo: "receber" },
-  { id: "FIN-005", descricao: "Carlos Oliveira - ORC-003", valor: 42000, data: "2024-03-20", status: "atrasado", tipo: "receber" },
-  { id: "FIN-006", descricao: "Fornecedor Alumínio SA", valor: 28000, data: "2024-04-01", status: "pago", tipo: "pagar" },
-  { id: "FIN-007", descricao: "Vidraçaria Premium", valor: 15500, data: "2024-04-08", status: "pendente", tipo: "pagar" },
-  { id: "FIN-008", descricao: "Aluguel Galpão", valor: 8500, data: "2024-04-05", status: "pago", tipo: "pagar" },
-  { id: "FIN-009", descricao: "Folha de Pagamento", valor: 45000, data: "2024-04-05", status: "pago", tipo: "pagar" },
-  { id: "FIN-010", descricao: "Energia Elétrica", valor: 3200, data: "2024-04-12", status: "pendente", tipo: "pagar" },
+  { id: "REC-101", cliente: "Construtora Silva Ltda", descricao: "Sinal Fachada", valor: 15000, vencimento: "2023-06-25", status: "pendente", tipo: "receber" },
+  { id: "REC-102", cliente: "Vidraçaria Norte SP", descricao: "Parcela 2/3 Janelas", valor: 1225, vencimento: "2023-06-20", status: "pago", tipo: "receber" },
+  { id: "REC-103", cliente: "Arquitetura Moderna", descricao: "Saldo Final", valor: 3200, vencimento: "2023-06-15", status: "vencido", tipo: "receber" },
+  { id: "REC-104", cliente: "Obras & Cia", descricao: "Entrada Janelas", valor: 600, vencimento: "2023-07-01", status: "pendente", tipo: "receber" },
+  { id: "REC-105", cliente: "Residência Costa", descricao: "Pagamento Integral", valor: 950, vencimento: "2023-06-22", status: "pago", tipo: "receber" },
+  { id: "PAG-201", cliente: "Fornecedor Alumínio SA", descricao: "Perfis Alumínio", valor: 8500, vencimento: "2023-06-28", status: "pendente", tipo: "pagar" },
+  { id: "PAG-202", cliente: "Vidros Premium", descricao: "Vidros Temperados", valor: 4200, vencimento: "2023-06-18", status: "pago", tipo: "pagar" },
+  { id: "PAG-203", cliente: "Ferragens Import", descricao: "Fechaduras e Roldanas", valor: 2800, vencimento: "2023-06-30", status: "pendente", tipo: "pagar" },
+  { id: "PAG-204", cliente: "Aluguel Galpão", descricao: "Aluguel Mensal", valor: 3250, vencimento: "2023-06-05", status: "pago", tipo: "pagar" },
 ];
+
+export const financeiroResumo = {
+  aReceber: 45300,
+  aPagar: 18750,
+  saldoProjetado: 26550,
+  inadimplencia: 3200,
+};
 
 // ============ HELPERS ============
 export const formatCurrency = (value: number) =>
@@ -243,30 +366,3 @@ export const formatCurrency = (value: number) =>
 
 export const formatDate = (dateStr: string) =>
   new Intl.DateTimeFormat("pt-BR").format(new Date(dateStr));
-
-export const statusColors: Record<string, string> = {
-  aprovado: "bg-success text-success-foreground",
-  pendente: "bg-warning text-warning-foreground",
-  recusado: "bg-destructive text-destructive-foreground",
-  em_analise: "bg-primary text-primary-foreground",
-  pago: "bg-success text-success-foreground",
-  atrasado: "bg-destructive text-destructive-foreground",
-};
-
-export const statusLabels: Record<string, string> = {
-  aprovado: "Aprovado",
-  pendente: "Pendente",
-  recusado: "Recusado",
-  em_analise: "Em Análise",
-  pago: "Pago",
-  atrasado: "Atrasado",
-  aguardando: "Aguardando",
-  corte: "Corte",
-  montagem: "Montagem",
-  instalacao: "Instalação",
-  finalizado: "Finalizado",
-  novo: "Novo",
-  em_orcamento: "Em Orçamento",
-  negociacao: "Negociação",
-  fechado: "Fechado",
-};
