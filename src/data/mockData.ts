@@ -153,7 +153,7 @@ export interface OrdemProducao {
   valor: number;
   status: "atrasado" | "em_andamento" | "concluido";
   diasRestantes: number;
-  etapa: string;
+  etapa?: string;
   etapaData?: string;
   anotacao?: string;
 }
