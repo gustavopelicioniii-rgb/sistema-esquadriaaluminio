@@ -9,10 +9,11 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus, Eye, Copy, Send, Trash2, Search, FileDown } from "lucide-react";
+import { Plus, Eye, Copy, Send, Trash2, Search, FileDown, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { generatePdfFromElement } from "@/utils/pdfGenerator";
 
 type FilterStatus = "todos" | "pendente" | "aprovado" | "recusado";
 
@@ -215,6 +216,19 @@ const Orcamentos = () => {
                 <span className="font-semibold">Valor Total</span>
                 <span className="text-xl font-bold text-primary">{formatCurrency(selectedOrcamento.valor)}</span>
               </div>
+              <Button
+                className="w-full gap-2 mt-2"
+                onClick={async () => {
+                  toast({ title: "Gerando PDF...", description: "Aguarde um momento." });
+                  await generatePdfFromElement(
+                    `orcamento-pdf-content`,
+                    `orcamento-${selectedOrcamento.id}.pdf`
+                  );
+                  toast({ title: "PDF gerado!", description: `Orçamento ${selectedOrcamento.id} exportado.` });
+                }}
+              >
+                <FileDown className="h-4 w-4" /> Exportar PDF
+              </Button>
             </div>
           )}
         </DialogContent>
