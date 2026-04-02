@@ -40,7 +40,7 @@ const Dashboard = () => {
       {/* Top stats row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Vendas */}
-        <Card className="bg-[hsl(222,84%,5%)] text-white border-0 shadow-lg">
+        <Card className="bg-foreground text-background border-0 shadow-lg">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-semibold uppercase tracking-wider opacity-80">VENDAS</span>
