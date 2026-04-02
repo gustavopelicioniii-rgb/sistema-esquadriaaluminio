@@ -50,11 +50,6 @@ const CriarOrcamento = () => {
     navigate("/orcamentos");
   };
 
-  // SVG preview scaling
-  const maxDim = 220;
-  const scale = Math.min(maxDim / largura, maxDim / altura, 1);
-  const svgW = largura * scale;
-  const svgH = altura * scale;
 
   return (
     <div className="space-y-6">
