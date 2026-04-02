@@ -208,6 +208,45 @@ export default function CalculoEsquadrias() {
         </CardContent>
       </Card>
 
+      {/* Preview + Color Selector */}
+      {selectedTypology && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Eye className="h-4 w-4 text-primary" />
+              Pré-visualização
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <FramePreview
+                width_mm={parseFloat(width) || 1200}
+                height_mm={parseFloat(height) || 1200}
+                category={filteredTypologies.find(t => t.id === selectedTypology)?.category ?? "janela"}
+                subcategory={filteredTypologies.find(t => t.id === selectedTypology)?.subcategory ?? "correr"}
+                num_folhas={filteredTypologies.find(t => t.id === selectedTypology)?.num_folhas ?? 2}
+                has_veneziana={filteredTypologies.find(t => t.id === selectedTypology)?.has_veneziana}
+                has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
+                notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
+                colorId={selectedColor}
+                maxWidth={320}
+                maxHeight={260}
+              />
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
+                  <ColorSelector selectedColorId={selectedColor} onColorChange={setSelectedColor} />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {filteredTypologies.find(t => t.id === selectedTypology)?.name}
+                  {width && height ? ` — ${width} × ${height} mm` : ""}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Results */}
       {result && (
         <>
