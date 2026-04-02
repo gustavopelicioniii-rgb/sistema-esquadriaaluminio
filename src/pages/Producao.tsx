@@ -1,74 +1,186 @@
-import { ordensProducao, type StatusProducao } from "@/data/mockData";
-import { StatusBadge } from "@/components/StatusBadge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { formatDate } from "@/data/mockData";
+import { useState } from "react";
+import { ordensProducao, formatCurrency, type OrdemProducao } from "@/data/mockData";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import {
+  Plus, Search, MapPin, Phone, User, Calendar,
+  RefreshCcw, CreditCard, FileText, Printer, GitBranch,
+} from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
-const steps: { key: StatusProducao; label: string }[] = [
-  { key: "aguardando", label: "Aguardando" },
-  { key: "corte", label: "Corte" },
-  { key: "montagem", label: "Montagem" },
-  { key: "instalacao", label: "Instalação" },
-  { key: "finalizado", label: "Finalizado" },
+type FilterKey = "todos" | "atrasado" | "em_andamento" | "concluido";
+
+const filters: { key: FilterKey; label: string }[] = [
+  { key: "todos", label: "Todos" },
+  { key: "atrasado", label: "Atrasados" },
+  { key: "em_andamento", label: "Em andamento" },
+  { key: "concluido", label: "Concluídos" },
 ];
 
-function ProgressSteps({ status }: { status: StatusProducao }) {
-  const currentIdx = steps.findIndex((s) => s.key === status);
-  return (
-    <div className="flex items-center gap-1">
-      {steps.map((step, i) => (
-        <div key={step.key} className="flex items-center gap-1">
-          <div
-            className={`h-2.5 w-2.5 rounded-full transition-colors ${
-              i <= currentIdx
-                ? i === currentIdx
-                  ? "bg-primary ring-2 ring-primary/30"
-                  : "bg-primary"
-                : "bg-muted"
-            }`}
-            title={step.label}
-          />
-          {i < steps.length - 1 && (
-            <div className={`h-0.5 w-4 ${i < currentIdx ? "bg-primary" : "bg-muted"}`} />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const Producao = () => {
+  const [filter, setFilter] = useState<FilterKey>("todos");
+  const [search, setSearch] = useState("");
+
+  const filtered = ordensProducao.filter((op) => {
+    if (filter !== "todos" && op.status !== filter) return false;
+    if (search) {
+      const s = search.toLowerCase();
+      return op.cliente.toLowerCase().includes(s) || op.pedidoNum.toString().includes(s);
+    }
+    return true;
+  });
+
+  const getCounts = (key: FilterKey) =>
+    key === "todos" ? ordensProducao.length : ordensProducao.filter((o) => o.status === key).length;
+
+  const getDiasLabel = (op: OrdemProducao) => {
+    if (op.diasRestantes < 0) return { label: `Atrasado ${Math.abs(op.diasRestantes)} dias`, color: "bg-destructive text-destructive-foreground" };
+    return { label: `Faltam ${op.diasRestantes} dias`, color: "bg-primary/10 text-primary" };
+  };
+
+  const handleConcluir = (op: OrdemProducao) => {
+    toast({ title: "Pedido concluído", description: `Pedido ${op.pedidoNum} foi finalizado.` });
+  };
+
+  const handleCancelar = (op: OrdemProducao) => {
+    toast({ title: "Pedido cancelado", description: `Pedido ${op.pedidoNum} foi cancelado.`, variant: "destructive" });
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Produção</h1>
-        <p className="text-muted-foreground text-sm">Acompanhe as ordens de produção</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Serviços</h1>
+          <p className="text-muted-foreground text-sm">Pedidos e ordens de serviço</p>
+        </div>
+        <Button className="gap-2">
+          <Plus className="h-4 w-4" />
+          Novo Pedido
+        </Button>
       </div>
 
-      <div className="rounded-lg border bg-card shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Código</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Produto</TableHead>
-              <TableHead>Progresso</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Prazo</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {ordensProducao.map((op) => (
-              <TableRow key={op.id}>
-                <TableCell className="font-medium">{op.id}</TableCell>
-                <TableCell>{op.cliente}</TableCell>
-                <TableCell>{op.produto}</TableCell>
-                <TableCell><ProgressSteps status={op.status} /></TableCell>
-                <TableCell><StatusBadge status={op.status} /></TableCell>
-                <TableCell>{formatDate(op.prazo)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="flex gap-6">
+        {/* Sidebar */}
+        <div className="w-48 shrink-0 space-y-4">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">VISUALIZAR</p>
+            <div className="space-y-0.5">
+              {filters.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => setFilter(item.key)}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    filter === item.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  {item.label}
+                  <span className={cn(
+                    "flex h-5 min-w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                    filter === item.key ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"
+                  )}>
+                    {getCounts(item.key)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">AÇÕES</p>
+            <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
+              <Plus className="h-3.5 w-3.5" /> Novo pedido
+            </button>
+            <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline mt-1">
+              <GitBranch className="h-3.5 w-3.5" /> Configurar etapas
+            </button>
+            <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline mt-1">
+              <FileText className="h-3.5 w-3.5" /> Exportar PDF
+            </button>
+          </div>
+        </div>
+
+        {/* Main */}
+        <div className="flex-1 space-y-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Buscar pedido ou cliente..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((op) => {
+              const dias = getDiasLabel(op);
+              return (
+                <Card key={op.id} className="shadow-sm border-border/50">
+                  <CardContent className="p-5 space-y-3">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-base">PEDIDO {op.pedidoNum}</h3>
+                      <span className={cn("rounded-full px-2.5 py-0.5 text-[10px] font-bold", dias.color)}>
+                        {dias.label}
+                      </span>
+                    </div>
+
+                    {/* Client info */}
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1.5"><User className="h-3 w-3" />{op.cliente}</div>
+                      <div className="flex items-start gap-1.5"><MapPin className="h-3 w-3 mt-0.5 shrink-0" />{op.endereco}</div>
+                      <div className="flex items-center gap-1.5"><Phone className="h-3 w-3" />{op.telefone}</div>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground">
+                      <span>Vendedor: {op.vendedor}</span><br />
+                      <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Previsão: {op.previsao}</span>
+                    </div>
+
+                    <p className="text-xl font-bold">{formatCurrency(op.valor)}</p>
+
+                    {/* Etapa */}
+                    {op.etapa && (
+                      <div className="rounded bg-muted/50 px-3 py-2 text-xs">
+                        <span className="font-semibold uppercase text-muted-foreground">{op.etapa}</span>
+                        {op.etapaData && <p className="text-muted-foreground">Data: {op.etapaData}</p>}
+                        {op.anotacao && <p className="text-muted-foreground">Anotação: {op.anotacao}</p>}
+                      </div>
+                    )}
+
+                    {/* Action icons */}
+                    <div className="flex items-center justify-center gap-3 pt-1">
+                      {[
+                        { icon: RefreshCcw, label: "Reagendar" },
+                        { icon: CreditCard, label: "Pagamentos" },
+                        { icon: FileText, label: "Contrato" },
+                        { icon: Printer, label: "Impressões" },
+                        { icon: GitBranch, label: "Alterar etapa" },
+                      ].map(({ icon: Icon, label }) => (
+                        <button key={label} className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors" title={label}>
+                          <Icon className="h-4 w-4" />
+                          <span className="text-[9px]">{label}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-2 pt-1">
+                      <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => handleCancelar(op)}>
+                        Cancelar
+                      </Button>
+                      <Button size="sm" className="flex-1 text-xs" onClick={() => handleConcluir(op)}>
+                        Concluir pedido
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            {filtered.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                Nenhum pedido encontrado.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
