@@ -47,7 +47,7 @@ const Dashboard = () => {
               <button className="text-xs opacity-70 hover:opacity-100 flex items-center gap-1">Ver detalhes <ExternalLink className="h-3 w-3" /></button>
             </div>
             <p className="text-2xl font-bold">{formatCurrency(dashboardStats.vendas)}</p>
-            <span className="mt-1 inline-block rounded bg-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-400">↗ +12%</span>
+            <span className="mt-1 inline-block rounded bg-success/20 px-2 py-0.5 text-xs font-semibold text-success">↗ +12%</span>
             <div className="mt-3 flex gap-6 text-xs opacity-70">
               <div>
                 <span className="block">Ticket-médio</span>
