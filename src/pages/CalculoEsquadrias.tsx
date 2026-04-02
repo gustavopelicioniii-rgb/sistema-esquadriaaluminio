@@ -32,6 +32,7 @@ export default function CalculoEsquadrias() {
   const [quantity, setQuantity] = useState("1");
   const [result, setResult] = useState<CalculationOutput | null>(null);
   const [barResults, setBarResults] = useState<OptimizationResult[]>([]);
+  const [selectedColor, setSelectedColor] = useState("natural");
 
   const filteredTypologies = useMemo(
     () => typologies.filter(t => t.product_line_id === selectedLine && t.active),
