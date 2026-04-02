@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { calculateTypology } from "@/lib/calculation-engine";
+import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import {
   typologies,
@@ -219,6 +220,7 @@ export default function CalculoEsquadrias() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row items-center gap-6">
+              <div id="frame-preview-for-pdf">
               <FramePreview
                 width_mm={parseFloat(width) || 1200}
                 height_mm={parseFloat(height) || 1200}
@@ -232,6 +234,7 @@ export default function CalculoEsquadrias() {
                 maxWidth={320}
                 maxHeight={260}
               />
+              </div>
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
@@ -306,7 +309,11 @@ export default function CalculoEsquadrias() {
                   <CardTitle className="text-base">
                     {result.typology_name} — {result.input.width_mm} × {result.input.height_mm} mm
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="gap-2" onClick={() => toast.info("Exportação de PDF em breve!")}>
+                  <Button variant="outline" size="sm" className="gap-2" onClick={async () => {
+                    toast.info("Gerando PDF...");
+                    await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
+                    toast.success("PDF exportado com sucesso!");
+                  }}>
                     <FileDown className="h-4 w-4" />
                     Exportar
                   </Button>
