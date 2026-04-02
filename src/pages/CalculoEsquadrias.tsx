@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw } from "lucide-react";
+import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye } from "lucide-react";
+import { FramePreview, ColorSelector } from "@/components/frame-preview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
