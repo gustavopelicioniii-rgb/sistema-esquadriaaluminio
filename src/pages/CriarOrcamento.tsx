@@ -109,25 +109,23 @@ const CriarOrcamento = () => {
         <div className="space-y-4">
           <Card className="shadow-sm border-border/50">
             <CardHeader className="pb-4">
-              <CardTitle className="text-base">Visualização 2D</CardTitle>
+              <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center justify-center min-h-[260px]">
-              <svg width={svgW + 60} height={svgH + 60} viewBox={`0 0 ${svgW + 60} ${svgH + 60}`}>
-                <rect x={30} y={15} width={svgW} height={svgH} fill="hsl(217, 91%, 53%, 0.08)" stroke="hsl(217, 91%, 53%)" strokeWidth={2} rx={2} />
-                {/* Frame lines */}
-                <rect x={34} y={19} width={svgW - 8} height={svgH - 8} fill="none" stroke="hsl(217, 91%, 53%, 0.4)" strokeWidth={1} rx={1} />
-                {/* Center divider for windows */}
-                {tipo.includes("correr") && (
-                  <line x1={30 + svgW / 2} y1={15} x2={30 + svgW / 2} y2={15 + svgH} stroke="hsl(217, 91%, 53%, 0.6)" strokeWidth={1.5} />
-                )}
-                {/* Dimension labels */}
-                <text x={30 + svgW / 2} y={svgH + 40} textAnchor="middle" fontSize={11} fill="hsl(var(--muted-foreground))">
-                  {largura} cm
-                </text>
-                <text x={12} y={15 + svgH / 2} textAnchor="middle" fontSize={11} fill="hsl(var(--muted-foreground))" transform={`rotate(-90, 12, ${15 + svgH / 2})`}>
-                  {altura} cm
-                </text>
-              </svg>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-center min-h-[260px]">
+                <FramePreview
+                  width_mm={largura * 10}
+                  height_mm={altura * 10}
+                  category={produtoSelecionado?.category ?? "janela_correr"}
+                  subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
+                  num_folhas={produtoSelecionado?.numFolhas ?? 2}
+                  has_veneziana={produtoSelecionado?.veneziana}
+                  colorId={colorId}
+                  maxWidth={320}
+                  maxHeight={260}
+                />
+              </div>
+              <ColorSelector selectedColorId={colorId} onSelectColor={setColorId} />
             </CardContent>
           </Card>
 
