@@ -142,15 +142,34 @@ export default function CalculoEsquadrias() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div className="space-y-2">
+              <Label>Fabricante</Label>
+              <Select
+                value={productLines.find(l => l.id === selectedLine)?.manufacturer_id ?? ""}
+                onValueChange={(mfgId) => {
+                  const firstLine = productLines.find(l => l.manufacturer_id === mfgId);
+                  if (firstLine) { setSelectedLine(firstLine.id); setSelectedTypology(""); setResult(null); }
+                }}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {manufacturers.map(m => (
+                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label>Linha</Label>
               <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setSelectedTypology(""); setResult(null); }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {productLines.map(l => (
-                    <SelectItem key={l.id} value={l.id}>{l.name} ({l.bitola_mm}mm)</SelectItem>
-                  ))}
+                  {productLines
+                    .filter(l => l.manufacturer_id === (productLines.find(pl => pl.id === selectedLine)?.manufacturer_id))
+                    .map(l => (
+                      <SelectItem key={l.id} value={l.id}>{l.name} ({l.bitola_mm}mm)</SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
