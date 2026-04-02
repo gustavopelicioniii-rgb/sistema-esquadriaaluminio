@@ -309,7 +309,11 @@ export default function CalculoEsquadrias() {
                   <CardTitle className="text-base">
                     {result.typology_name} — {result.input.width_mm} × {result.input.height_mm} mm
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="gap-2" onClick={() => toast.info("Exportação de PDF em breve!")}>
+                  <Button variant="outline" size="sm" className="gap-2" onClick={async () => {
+                    toast.info("Gerando PDF...");
+                    await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
+                    toast.success("PDF exportado com sucesso!");
+                  }}>
                     <FileDown className="h-4 w-4" />
                     Exportar
                   </Button>
