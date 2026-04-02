@@ -13,6 +13,7 @@ import {
   MapPin,
   UserCog,
   UserCheck,
+  Calculator,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -31,6 +32,7 @@ const menuItems = [
   { title: "Início", url: "/", icon: Home },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
+  { title: "Cálculo Esquadrias", url: "/calculo-esquadrias", icon: Calculator },
   { title: "Serviços", url: "/producao", icon: Wrench },
   { title: "Relação materiais", url: "/relacao-materiais", icon: ClipboardList },
   { title: "Plano de corte", url: "/plano-corte", icon: Scissors },

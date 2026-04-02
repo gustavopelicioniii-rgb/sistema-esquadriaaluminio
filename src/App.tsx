@@ -23,6 +23,7 @@ import Mapa from "./pages/Mapa";
 import Administradores from "./pages/Administradores";
 import Funcionarios from "./pages/Funcionarios";
 import Configuracoes from "./pages/Configuracoes";
+import CalculoEsquadrias from "./pages/CalculoEsquadrias";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/administradores" element={<Administradores />} />
             <Route path="/funcionarios" element={<Funcionarios />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
+            <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
