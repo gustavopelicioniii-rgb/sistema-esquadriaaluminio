@@ -8,14 +8,19 @@ import { formatCurrency } from "@/data/mockData";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { FramePreview, ColorSelector } from "@/components/frame-preview";
 
 const tiposProduto = [
-  { value: "janela_correr", label: "Janela de Correr", precoM2: 850 },
-  { value: "janela_maximar", label: "Janela Maxim-Ar", precoM2: 920 },
-  { value: "janela_pivotante", label: "Janela Pivotante", precoM2: 1100 },
-  { value: "porta_abrir", label: "Porta de Abrir", precoM2: 950 },
-  { value: "porta_correr", label: "Porta de Correr", precoM2: 1050 },
-  { value: "fachada_vidro", label: "Fachada em Vidro", precoM2: 1400 },
+  { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "janela_correr_4f", label: "Janela de Correr 4F", precoM2: 880, category: "janela_correr", subcategory: "4_folhas", numFolhas: 4 },
+  { value: "janela_maximar_1f", label: "Janela Maxim-Ar 1F", precoM2: 920, category: "janela_maximar", subcategory: "1_folha", numFolhas: 1 },
+  { value: "janela_maximar_2f", label: "Janela Maxim-Ar 2F", precoM2: 950, category: "janela_maximar", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_giro_1f", label: "Porta de Giro 1F", precoM2: 950, category: "porta_giro", subcategory: "1_folha", numFolhas: 1 },
+  { value: "porta_giro_2f", label: "Porta de Giro 2F", precoM2: 1000, category: "porta_giro", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_correr_2f", label: "Porta de Correr 2F", precoM2: 1050, category: "porta_correr", subcategory: "2_folhas", numFolhas: 2 },
+  { value: "porta_correr_4f", label: "Porta de Correr 4F", precoM2: 1100, category: "porta_correr", subcategory: "4_folhas", numFolhas: 4 },
+  { value: "janela_veneziana", label: "Janela c/ Veneziana 2F", precoM2: 1200, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, veneziana: true },
+  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4 },
 ];
 
 const CriarOrcamento = () => {
