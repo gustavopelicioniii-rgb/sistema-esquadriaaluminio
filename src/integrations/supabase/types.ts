@@ -298,6 +298,47 @@ export type Database = {
           },
         ]
       }
+      pedido_checklists: {
+        Row: {
+          anotacao: string | null
+          checked: boolean
+          created_at: string
+          etapa: string
+          id: string
+          item_key: string
+          pedido_id: string
+          updated_at: string
+        }
+        Insert: {
+          anotacao?: string | null
+          checked?: boolean
+          created_at?: string
+          etapa: string
+          id?: string
+          item_key: string
+          pedido_id: string
+          updated_at?: string
+        }
+        Update: {
+          anotacao?: string | null
+          checked?: boolean
+          created_at?: string
+          etapa?: string
+          id?: string
+          item_key?: string
+          pedido_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_checklists_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pedido_etapas: {
         Row: {
           created_at: string

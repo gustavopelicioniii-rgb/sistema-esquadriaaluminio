@@ -16,6 +16,7 @@ import PagamentosDialog from "@/components/producao/PagamentosDialog";
 import ContratoDialog from "@/components/producao/ContratoDialog";
 import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
+import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
 import { ExportButtons } from "@/components/ExportButtons";
 
 export interface Pedido {
@@ -59,6 +60,7 @@ const Producao = () => {
   const [search, setSearch] = useState("");
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
+  const [detailPedido, setDetailPedido] = useState<Pedido | null>(null);
 
   const fetchPedidos = useCallback(async () => {
     const { data, error } = await supabase.from("pedidos").select("*").order("pedido_num", { ascending: true });
@@ -137,6 +139,14 @@ const Producao = () => {
     fetchPedidos();
   };
 
+  if (detailPedido) {
+    return (
+      <div className="space-y-6">
+        <OrdemServicoDetail pedido={detailPedido} onBack={() => setDetailPedido(null)} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -207,7 +217,7 @@ const Producao = () => {
                   <Card key={op.id} className="shadow-sm border-border/50">
                     <CardContent className="p-5 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-base">PEDIDO {op.pedido_num}</h3>
+                        <h3 className="font-bold text-base cursor-pointer hover:text-primary transition-colors" onClick={() => setDetailPedido(op)}>PEDIDO {op.pedido_num}</h3>
                         <span className={cn("rounded-full px-2.5 py-0.5 text-[10px] font-bold", dias.color)}>{dias.label}</span>
                       </div>
                       <div className="space-y-1 text-xs text-muted-foreground">
