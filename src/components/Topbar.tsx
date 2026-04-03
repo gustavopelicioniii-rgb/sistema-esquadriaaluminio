@@ -58,23 +58,38 @@ export function Topbar() {
 
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
         <Input
-          placeholder="Buscar clientes, orçamentos, produtos..."
+          placeholder="Buscar clientes, orçamentos, pedidos..."
           className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
           value={search}
           onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
           onFocus={() => setSearchOpen(true)}
           onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
         />
-        {searchOpen && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden">
-            {results.map((r, i) => (
-              <button key={i} className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex justify-between items-center"
-                onMouseDown={() => { navigate(r.url); setSearch(""); setSearchOpen(false); }}>
-                <span className="font-medium">{r.label}</span>
-                <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{r.type}</span>
-              </button>
-            ))}
+        {searchOpen && search.trim().length >= 2 && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden max-h-80 overflow-y-auto">
+            {results.length > 0 ? (
+              results.map((r) => (
+                <button
+                  key={`${r.type}-${r.id}`}
+                  className="w-full px-3 py-2.5 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
+                  onMouseDown={() => { navigate(r.url); setSearch(""); setSearchOpen(false); }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{r.label}</p>
+                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
+                  </div>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
+                    {r.type}
+                  </span>
+                </button>
+              ))
+            ) : !searchLoading ? (
+              <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                Nenhum resultado para "{search}"
+              </div>
+            ) : null}
           </div>
         )}
       </div>
