@@ -2,40 +2,102 @@ import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
   UserCog, UserCheck, Calculator, Receipt, Package, Upload,
+  ChevronDown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
+  SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible, CollapsibleContent, CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
-const menuItems = [
-  { title: "Início", url: "/", icon: Home },
-  { title: "Clientes", url: "/clientes", icon: Users },
-  { title: "Orçamentos", url: "/orcamentos", icon: FileText },
-  { title: "Cálculo Esquadrias", url: "/calculo-esquadrias", icon: Calculator },
-  { title: "Serviços", url: "/producao", icon: Wrench },
-  { title: "Relação materiais", url: "/relacao-materiais", icon: ClipboardList },
-  { title: "Plano de corte", url: "/plano-corte", icon: Scissors },
-  { title: "Projeto vidro", url: "/projeto-vidro", icon: Monitor },
-  { title: "Estoque", url: "/estoque", icon: Package },
-  { title: "Agenda", url: "/agenda", icon: CalendarDays },
-  { title: "Financeiro", url: "/financeiro", icon: DollarSign },
-  { title: "Produtos", url: "/produtos", icon: ShoppingBag },
-  { title: "Preço dos itens", url: "/preco-itens", icon: DollarSign },
-  { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
-  { title: "Mapa", url: "/mapa", icon: MapPin },
-  { title: "Administradores", url: "/administradores", icon: UserCog },
-  { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
-  { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
-  { title: "Importar CSV", url: "/importar-csv", icon: Upload },
+const menuGroups = [
+  {
+    label: null,
+    items: [
+      { title: "Início", url: "/", icon: Home },
+    ],
+  },
+  {
+    label: "Comercial",
+    items: [
+      { title: "Clientes", url: "/clientes", icon: Users },
+      { title: "Orçamentos", url: "/orcamentos", icon: FileText },
+      { title: "Serviços", url: "/producao", icon: Wrench },
+      { title: "Agenda", url: "/agenda", icon: CalendarDays },
+      { title: "Mapa", url: "/mapa", icon: MapPin },
+    ],
+  },
+  {
+    label: "Produção",
+    items: [
+      { title: "Cálculo Esquadrias", url: "/calculo-esquadrias", icon: Calculator },
+      { title: "Relação materiais", url: "/relacao-materiais", icon: ClipboardList },
+      { title: "Plano de corte", url: "/plano-corte", icon: Scissors },
+      { title: "Projeto vidro", url: "/projeto-vidro", icon: Monitor },
+    ],
+  },
+  {
+    label: "Catálogo",
+    items: [
+      { title: "Produtos", url: "/produtos", icon: ShoppingBag },
+      { title: "Preço dos itens", url: "/preco-itens", icon: DollarSign },
+      { title: "Estoque", url: "/estoque", icon: Package },
+    ],
+  },
+  {
+    label: "Financeiro",
+    items: [
+      { title: "Financeiro", url: "/financeiro", icon: DollarSign },
+      { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
+      { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "Administração",
+    items: [
+      { title: "Administradores", url: "/administradores", icon: UserCog },
+      { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
+      { title: "Importar CSV", url: "/importar-csv", icon: Upload },
+    ],
+  },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+
+  const isActive = (url: string) =>
+    location.pathname === url ||
+    (url !== "/" && location.pathname.startsWith(url));
+
+  const groupHasActive = (items: { url: string }[]) =>
+    items.some((i) => isActive(i.url));
+
+  const renderItems = (items: typeof menuGroups[0]["items"]) => (
+    <SidebarMenu>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild isActive={isActive(item.url)}>
+            <NavLink
+              to={item.url}
+              end={item.url === "/"}
+              className="hover:bg-sidebar-accent/50 transition-colors"
+              activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+            >
+              <item.icon className="h-4 w-4" />
+              {!collapsed && <span>{item.title}</span>}
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
 
   return (
     <Sidebar collapsible="icon" className="sidebar-glass border-r-0">
@@ -55,32 +117,39 @@ export function AppSidebar() {
         )}
       </div>
       <SidebarContent className="pt-2">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => {
-                const isActive =
-                  location.pathname === item.url ||
-                  (item.url !== "/" && location.pathname.startsWith(item.url));
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <NavLink
-                        to={item.url}
-                        end={item.url === "/"}
-                        className="hover:bg-sidebar-accent/50 transition-colors"
-                        activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {menuGroups.map((group, idx) => {
+          if (!group.label) {
+            return (
+              <SidebarGroup key={idx}>
+                <SidebarGroupContent>{renderItems(group.items)}</SidebarGroupContent>
+              </SidebarGroup>
+            );
+          }
+
+          if (collapsed) {
+            return (
+              <SidebarGroup key={idx}>
+                <SidebarGroupContent>{renderItems(group.items)}</SidebarGroupContent>
+              </SidebarGroup>
+            );
+          }
+
+          return (
+            <Collapsible key={idx} defaultOpen={groupHasActive(group.items)} className="group/collapsible">
+              <SidebarGroup>
+                <CollapsibleTrigger asChild>
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-sidebar-accent/30 transition-colors">
+                    {group.label}
+                    <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  </SidebarGroupLabel>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarGroupContent>{renderItems(group.items)}</SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
+          );
+        })}
       </SidebarContent>
     </Sidebar>
   );
