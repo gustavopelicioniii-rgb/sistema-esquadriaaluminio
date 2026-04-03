@@ -423,6 +423,20 @@ const CriarOrcamento = () => {
           </div>
         </div>
       </div>
+
+      {/* Material Detail Dialog */}
+      {produtoSelecionado && (
+        <MaterialDetailDialog
+          open={materialDialogOpen}
+          onOpenChange={setMaterialDialogOpen}
+          typologyId={produtoSelecionado.typologyId}
+          larguraCm={largura}
+          alturaCm={altura}
+          quantidade={quantidade}
+          colorName={getColorById(colorId).name}
+          colorHex={getColorById(colorId).hex}
+        />
+      )}
     </div>
   );
 };
