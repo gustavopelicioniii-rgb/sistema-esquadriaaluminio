@@ -182,6 +182,133 @@ export type Database = {
         }
         Relationships: []
       }
+      pagamentos: {
+        Row: {
+          created_at: string
+          data: string
+          forma: string
+          id: string
+          observacao: string | null
+          pedido_id: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          forma?: string
+          id?: string
+          observacao?: string | null
+          pedido_id: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          forma?: string
+          id?: string
+          observacao?: string | null
+          pedido_id?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedido_etapas: {
+        Row: {
+          created_at: string
+          etapa: string
+          id: string
+          observacao: string | null
+          pedido_id: string
+        }
+        Insert: {
+          created_at?: string
+          etapa: string
+          id?: string
+          observacao?: string | null
+          pedido_id: string
+        }
+        Update: {
+          created_at?: string
+          etapa?: string
+          id?: string
+          observacao?: string | null
+          pedido_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_etapas_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedidos: {
+        Row: {
+          anotacao: string | null
+          cliente: string
+          created_at: string
+          dias_restantes: number | null
+          endereco: string | null
+          etapa: string | null
+          etapa_data: string | null
+          id: string
+          pedido_num: number
+          previsao: string | null
+          status: string
+          telefone: string | null
+          updated_at: string
+          valor: number
+          vendedor: string | null
+        }
+        Insert: {
+          anotacao?: string | null
+          cliente: string
+          created_at?: string
+          dias_restantes?: number | null
+          endereco?: string | null
+          etapa?: string | null
+          etapa_data?: string | null
+          id?: string
+          pedido_num: number
+          previsao?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          valor?: number
+          vendedor?: string | null
+        }
+        Update: {
+          anotacao?: string | null
+          cliente?: string
+          created_at?: string
+          dias_restantes?: number | null
+          endereco?: string | null
+          etapa?: string | null
+          etapa_data?: string | null
+          id?: string
+          pedido_num?: number
+          previsao?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          valor?: number
+          vendedor?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
