@@ -94,9 +94,13 @@ const Producao = () => {
     fetchPedidos();
   };
 
-  const handleCancelar = async (op: Pedido) => {
-    await supabase.from("pedidos").delete().eq("id", op.id);
-    toast({ title: "Pedido cancelado", description: `Pedido ${op.pedido_num} foi removido.`, variant: "destructive" });
+  const [cancelConfirm, setCancelConfirm] = useState<Pedido | null>(null);
+
+  const handleCancelar = async () => {
+    if (!cancelConfirm) return;
+    await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
+    toast({ title: "Pedido cancelado", description: `Pedido ${cancelConfirm.pedido_num} foi removido.`, variant: "destructive" });
+    setCancelConfirm(null);
     fetchPedidos();
   };
 
