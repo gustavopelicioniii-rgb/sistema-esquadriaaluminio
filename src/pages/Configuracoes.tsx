@@ -1,34 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { supabase } from "@/integrations/supabase/client";
 
-const initialConfig = {
+const defaultConfig: Record<string, string> = {
   nome: "AlumPRO Esquadrias",
   cnpj: "12.345.678/0001-90",
   telefone: "(11) 3456-7890",
   email: "contato@alumpro.com",
-  margem: 35,
-  descontoMax: 15,
+  margem: "35",
+  descontoMax: "15",
 };
 
 const Configuracoes = () => {
   usePageTitle("Configurações");
-  const [config, setConfig] = useState(() => {
-    const saved = localStorage.getItem("alumpro-config");
-    return saved ? JSON.parse(saved) : initialConfig;
-  });
+  const [config, setConfig] = useState<Record<string, string>>(defaultConfig);
+  const [loading, setLoading] = useState(true);
 
-  const update = (field: string, value: string | number) =>
-    setConfig((prev: typeof config) => ({ ...prev, [field]: value }));
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase.from("configuracoes").select("chave, valor");
+      if (data && data.length > 0) {
+        const map: Record<string, string> = {};
+        data.forEach((r) => { map[r.chave] = r.valor; });
+        setConfig((prev) => ({ ...prev, ...map }));
+      }
+      setLoading(false);
+    };
+    fetch();
+  }, []);
 
-  const handleSave = () => {
-    localStorage.setItem("alumpro-config", JSON.stringify(config));
-    toast({ title: "Configurações salvas", description: "Suas alterações foram salvas com sucesso." });
+  const update = (key: string, value: string) => setConfig((prev) => ({ ...prev, [key]: value }));
+
+  const handleSave = async () => {
+    for (const [chave, valor] of Object.entries(config)) {
+      await supabase.from("configuracoes").upsert({ chave, valor }, { onConflict: "chave" });
+    }
+    toast({ title: "Configurações salvas", description: "Suas alterações foram salvas no banco de dados." });
   };
+
+  if (loading) return <div className="p-6 text-muted-foreground">Carregando...</div>;
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -55,8 +70,8 @@ const Configuracoes = () => {
         <CardHeader><CardTitle className="text-base">Margem Padrão</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2"><Label>Margem de Lucro (%)</Label><Input type="number" value={config.margem} onChange={(e) => update("margem", Number(e.target.value))} /></div>
-            <div className="space-y-2"><Label>Desconto Máximo (%)</Label><Input type="number" value={config.descontoMax} onChange={(e) => update("descontoMax", Number(e.target.value))} /></div>
+            <div className="space-y-2"><Label>Margem de Lucro (%)</Label><Input type="number" value={config.margem} onChange={(e) => update("margem", e.target.value)} /></div>
+            <div className="space-y-2"><Label>Desconto Máximo (%)</Label><Input type="number" value={config.descontoMax} onChange={(e) => update("descontoMax", e.target.value)} /></div>
           </div>
         </CardContent>
       </Card>

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { itensEstoque as initialData, type ItemEstoque } from "@/data/mockData";
+import { useState, useEffect, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,55 +9,84 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Pencil, ArrowDownUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { supabase } from "@/integrations/supabase/client";
 
 const categorias = ["Todos", "Perfis", "Vidros", "Acessórios", "Insumos", "Fixação"];
 
-const emptyForm = { produto: "", quantidade: 0, unidade: "pçs", minimo: 0, categoria: "Perfis" };
+type EstoqueItem = {
+  id: string;
+  codigo: string;
+  produto: string;
+  quantidade: number;
+  unidade: string;
+  minimo: number;
+  categoria: string;
+};
+
+const emptyForm = { codigo: "", produto: "", quantidade: 0, unidade: "pçs", minimo: 0, categoria: "Perfis" };
 
 const Estoque = () => {
   usePageTitle("Estoque");
-  const [itens, setItens] = useState<ItemEstoque[]>([...initialData]);
+  const [itens, setItens] = useState<EstoqueItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("Todos");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [movDialog, setMovDialog] = useState<{ item: ItemEstoque; tipo: "entrada" | "saida" } | null>(null);
+  const [movDialog, setMovDialog] = useState<{ item: EstoqueItem; tipo: "entrada" | "saida" } | null>(null);
   const [movQtd, setMovQtd] = useState(0);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
 
-  const filtered = itens.filter((item) => {
-    const matchSearch = !search || item.produto.toLowerCase().includes(search.toLowerCase()) || item.id.toLowerCase().includes(search.toLowerCase());
-    const matchCat = catFilter === "Todos" || item.categoria === catFilter;
-    return matchSearch && matchCat;
-  });
-
-  const openNew = () => { setForm(emptyForm); setEditingId(null); setDialogOpen(true); };
-  const openEdit = (item: ItemEstoque) => {
-    setForm({ produto: item.produto, quantidade: item.quantidade, unidade: item.unidade, minimo: item.minimo, categoria: item.categoria });
-    setEditingId(item.id); setDialogOpen(true);
+  const fetchItens = async () => {
+    const { data, error } = await supabase.from("estoque").select("*").order("codigo");
+    if (!error && data) setItens(data);
+    setLoading(false);
   };
 
-  const handleSave = () => {
+  useEffect(() => { fetchItens(); }, []);
+
+  const filtered = useMemo(() => itens.filter((item) => {
+    const matchSearch = !search || item.produto.toLowerCase().includes(search.toLowerCase()) || item.codigo.toLowerCase().includes(search.toLowerCase());
+    const matchCat = catFilter === "Todos" || item.categoria === catFilter;
+    return matchSearch && matchCat;
+  }), [itens, search, catFilter]);
+
+  const openNew = () => {
+    const nextCode = `EST-${String(itens.length + 1).padStart(3, "0")}`;
+    setForm({ ...emptyForm, codigo: nextCode });
+    setEditingId(null);
+    setDialogOpen(true);
+  };
+  const openEdit = (item: EstoqueItem) => {
+    setForm({ codigo: item.codigo, produto: item.produto, quantidade: item.quantidade, unidade: item.unidade, minimo: item.minimo, categoria: item.categoria });
+    setEditingId(item.id);
+    setDialogOpen(true);
+  };
+
+  const handleSave = async () => {
     if (!form.produto.trim()) { toast({ title: "Nome obrigatório", variant: "destructive" }); return; }
     if (editingId) {
-      setItens((prev) => prev.map((i) => i.id === editingId ? { ...i, ...form } : i));
+      const { error } = await supabase.from("estoque").update({ produto: form.produto, quantidade: form.quantidade, unidade: form.unidade, minimo: form.minimo, categoria: form.categoria }).eq("id", editingId);
+      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
       toast({ title: "Item atualizado" });
     } else {
-      setItens((prev) => [...prev, { id: `EST-${String(prev.length + 1).padStart(3, "0")}`, ...form }]);
+      const { error } = await supabase.from("estoque").insert({ codigo: form.codigo, produto: form.produto, quantidade: form.quantidade, unidade: form.unidade, minimo: form.minimo, categoria: form.categoria });
+      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
       toast({ title: "Item adicionado" });
     }
     setDialogOpen(false);
+    fetchItens();
   };
 
-  const handleMov = () => {
+  const handleMov = async () => {
     if (!movDialog || movQtd <= 0) return;
-    setItens((prev) => prev.map((i) => {
-      if (i.id !== movDialog.item.id) return i;
-      const newQtd = movDialog.tipo === "entrada" ? i.quantidade + movQtd : Math.max(0, i.quantidade - movQtd);
-      return { ...i, quantidade: newQtd };
-    }));
+    const newQtd = movDialog.tipo === "entrada" ? movDialog.item.quantidade + movQtd : Math.max(0, movDialog.item.quantidade - movQtd);
+    const { error } = await supabase.from("estoque").update({ quantidade: newQtd }).eq("id", movDialog.item.id);
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: `${movDialog.tipo === "entrada" ? "Entrada" : "Saída"} registrada: ${movQtd} ${movDialog.item.unidade}` });
-    setMovDialog(null); setMovQtd(0);
+    setMovDialog(null);
+    setMovQtd(0);
+    fetchItens();
   };
 
   return (
@@ -96,11 +124,13 @@ const Estoque = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((item) => {
+            {loading ? (
+              <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Carregando...</TableCell></TableRow>
+            ) : filtered.map((item) => {
               const baixo = item.quantidade <= item.minimo;
               return (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.id}</TableCell>
+                  <TableCell className="font-medium">{item.codigo}</TableCell>
                   <TableCell>{item.produto}</TableCell>
                   <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
                   <TableCell className={baixo ? "text-destructive font-bold" : "font-medium"}>{item.quantidade} {item.unidade}</TableCell>
@@ -122,12 +152,11 @@ const Estoque = () => {
                 </TableRow>
               );
             })}
-            {filtered.length === 0 && <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Nenhum item encontrado.</TableCell></TableRow>}
+            {!loading && filtered.length === 0 && <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Nenhum item encontrado.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>
 
-      {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>{editingId ? "Editar Item" : "Novo Item"}</DialogTitle></DialogHeader>
@@ -153,7 +182,6 @@ const Estoque = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Movement dialog */}
       <Dialog open={!!movDialog} onOpenChange={() => setMovDialog(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Movimentação - {movDialog?.item.produto}</DialogTitle></DialogHeader>
