@@ -150,6 +150,94 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
         </CardContent>
       </Card>
 
+      {/* Folgas Adjustment Panel */}
+      <Card>
+        <Collapsible open={folgasOpen} onOpenChange={setFolgasOpen}>
+          <CollapsibleTrigger asChild>
+            <button className="w-full flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-muted/30 transition-colors">
+              <div className="flex items-center gap-2">
+                <Settings2 className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold">Ajustar Folgas</span>
+                <Badge variant="secondary" className="text-[10px]">Manual</Badge>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${folgasOpen ? "rotate-180" : ""}`} />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0 pb-4 px-4 sm:px-6 space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Ajuste as folgas (descontos) de cada perfil e vidro. Valores em milímetros. Valores negativos = desconto, positivos = acréscimo.
+              </p>
+
+              {/* Cut rules folgas */}
+              {originalCutRules.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Perfis (Folga em mm)</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {originalCutRules.map(rule => (
+                      <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold truncate">{rule.profile_code}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{rule.piece_name}</p>
+                        </div>
+                        <Input
+                          type="number"
+                          className="w-20 h-8 text-xs text-center"
+                          value={cutFolgas[rule.id] ?? 0}
+                          onChange={e => updateCutFolga(rule.id, Number(e.target.value))}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Glass rules folgas */}
+              {originalGlassRules.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Vidros (Folga em mm)</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {originalGlassRules.map(rule => (
+                      <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold truncate">{rule.glass_name}</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="text-center">
+                            <p className="text-[9px] text-muted-foreground">Larg.</p>
+                            <Input
+                              type="number"
+                              className="w-16 h-8 text-xs text-center"
+                              value={glassFolgas[rule.id]?.w ?? 0}
+                              onChange={e => updateGlassFolga(rule.id, 'w', Number(e.target.value))}
+                            />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-[9px] text-muted-foreground">Alt.</p>
+                            <Input
+                              type="number"
+                              className="w-16 h-8 text-xs text-center"
+                              value={glassFolgas[rule.id]?.h ?? 0}
+                              onChange={e => updateGlassFolga(rule.id, 'h', Number(e.target.value))}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <Button variant="outline" size="sm" className="text-xs" onClick={resetFolgas}>
+                  Restaurar Padrão
+                </Button>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
       {result && (
         <>
           {/* Cuts Table */}
