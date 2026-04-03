@@ -41,6 +41,21 @@ export default function CalculoEsquadrias() {
     [selectedLine]
   );
 
+  const selectedTyp = useMemo(
+    () => filteredTypologies.find(t => t.id === selectedTypology),
+    [filteredTypologies, selectedTypology]
+  );
+
+  const widthLimits = useMemo(() => {
+    if (!selectedTyp) return { min: 400, max: 6000 };
+    return { min: selectedTyp.min_width_mm ?? 400, max: selectedTyp.max_width_mm ?? 6000 };
+  }, [selectedTyp]);
+
+  const heightLimits = useMemo(() => {
+    if (!selectedTyp) return { min: 300, max: 3500 };
+    return { min: selectedTyp.min_height_mm ?? 300, max: selectedTyp.max_height_mm ?? 3500 };
+  }, [selectedTyp]);
+
   const handleCalculate = () => {
     if (!selectedTypology || !width || !height) {
       toast.error("Preencha todos os campos obrigatórios");
