@@ -138,7 +138,12 @@ const CriarOrcamento = () => {
             <button className="flex items-center gap-1 text-xs text-primary font-medium mt-1 hover:underline">
               <Pencil className="h-3 w-3" /> Editar produto
             </button>
-          </div>
+            <button
+              onClick={() => setMaterialDialogOpen(true)}
+              className="flex items-center gap-1 text-xs text-primary font-medium mt-1 hover:underline"
+            >
+              <List className="h-3 w-3" /> Ver materiais
+            </button>
         </div>
 
         {/* Right panel - Scrollable form */}
