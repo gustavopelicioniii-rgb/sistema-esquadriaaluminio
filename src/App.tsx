@@ -24,6 +24,7 @@ import Administradores from "./pages/Administradores";
 import Funcionarios from "./pages/Funcionarios";
 import Configuracoes from "./pages/Configuracoes";
 import CalculoEsquadrias from "./pages/CalculoEsquadrias";
+import NotaFiscal from "./pages/NotaFiscal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/funcionarios" element={<Funcionarios />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
             <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
+            <Route path="/nota-fiscal" element={<NotaFiscal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
