@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Bell, Search, User, Sun, Moon } from "lucide-react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -11,6 +11,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const searchableItems = [
   { label: "Igor Soares de Souza", type: "Cliente", url: "/clientes" },
@@ -23,11 +25,11 @@ const searchableItems = [
   { label: "Fechadura Multiponto", type: "Estoque", url: "/estoque" },
 ];
 
-const notifications = [
-  { id: "1", msg: "Estoque baixo: Fechadura Multiponto (8 pçs)", time: "10 min", read: false },
-  { id: "2", msg: "Orçamento #1043 aguardando aprovação", time: "1h", read: false },
-  { id: "3", msg: "Instalação agendada para amanhã - Empresa Modelo", time: "3h", read: false },
-];
+const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
+  estoque: { icon: Package, color: "text-warning", route: "/estoque" },
+  pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
+  producao: { icon: Wrench, color: "text-primary", route: "/producao" },
+};
 
 export function Topbar() {
   const { theme, toggle } = useTheme();
@@ -35,6 +37,7 @@ export function Topbar() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   const results = useMemo(() => {
     if (!search.trim()) return [];
@@ -42,13 +45,18 @@ export function Topbar() {
     return searchableItems.filter((i) => i.label.toLowerCase().includes(s)).slice(0, 8);
   }, [search]);
 
-  const unread = notifications.filter((n) => !n.read).length;
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
+  };
+
+  const handleNotificationClick = (n: AppNotification) => {
+    markAsRead(n.id);
+    const config = typeConfig[n.type];
+    navigate(config.route);
   };
 
   return (
@@ -87,21 +95,57 @@ export function Topbar() {
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon" className="relative h-9 w-9">
               <Bell className="h-4 w-4" />
-              {unread > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">{unread}</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-80 p-0">
-            <div className="px-4 py-3 border-b font-semibold text-sm">Notificações</div>
-            <div className="max-h-72 overflow-y-auto">
-              {notifications.map((n) => (
-                <div key={n.id} className={`px-4 py-3 border-b last:border-0 text-sm ${n.read ? "opacity-60" : ""}`}>
-                  <p className="text-foreground">{n.msg}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{n.time} atrás</p>
-                </div>
-              ))}
+          <PopoverContent align="end" className="w-96 p-0">
+            <div className="px-4 py-3 border-b flex items-center justify-between">
+              <span className="font-semibold text-sm">Notificações</span>
+              {unreadCount > 0 && (
+                <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={markAllAsRead}>
+                  <CheckCheck className="h-3 w-3" /> Marcar todas lidas
+                </Button>
+              )}
             </div>
+            <ScrollArea className="max-h-80">
+              {notifications.length === 0 ? (
+                <div className="py-10 text-center text-sm text-muted-foreground">
+                  Nenhuma notificação
+                </div>
+              ) : (
+                notifications.map((n) => {
+                  const config = typeConfig[n.type];
+                  const Icon = config.icon;
+                  return (
+                    <button
+                      key={n.id}
+                      onClick={() => handleNotificationClick(n)}
+                      className={`w-full text-left px-4 py-3 border-b last:border-0 flex gap-3 items-start hover:bg-accent/50 transition-colors ${
+                        n.read ? "opacity-50" : ""
+                      }`}
+                    >
+                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full bg-muted flex items-center justify-center ${config.color}`}>
+                        <Icon className="h-3.5 w-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">{n.msg}</p>
+                        {n.detail && (
+                          <p className="text-xs text-muted-foreground mt-0.5">{n.detail}</p>
+                        )}
+                        <p className="text-[11px] text-muted-foreground mt-1">{n.time} atrás</p>
+                      </div>
+                      {!n.read && (
+                        <div className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                      )}
+                    </button>
+                  );
+                })
+              )}
+            </ScrollArea>
           </PopoverContent>
         </Popover>
 
