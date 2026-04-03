@@ -1,32 +1,13 @@
 import {
-  Home,
-  Users,
-  FileText,
-  Wrench,
-  ClipboardList,
-  Scissors,
-  Monitor,
-  CalendarDays,
-  ShoppingBag,
-  DollarSign,
-  BarChart3,
-  MapPin,
-  UserCog,
-  UserCheck,
-  Calculator,
-  Receipt,
+  Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
+  CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
+  UserCog, UserCheck, Calculator, Receipt, Package,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
+  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
 
 const menuItems = [
@@ -38,7 +19,9 @@ const menuItems = [
   { title: "Relação materiais", url: "/relacao-materiais", icon: ClipboardList },
   { title: "Plano de corte", url: "/plano-corte", icon: Scissors },
   { title: "Projeto vidro", url: "/projeto-vidro", icon: Monitor },
+  { title: "Estoque", url: "/estoque", icon: Package },
   { title: "Agenda", url: "/agenda", icon: CalendarDays },
+  { title: "Financeiro", url: "/financeiro", icon: DollarSign },
   { title: "Produtos", url: "/produtos", icon: ShoppingBag },
   { title: "Preço dos itens", url: "/preco-itens", icon: DollarSign },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
@@ -56,19 +39,16 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r-0">
       <div className="flex h-16 items-center gap-3 px-4 border-b border-sidebar-border">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary">
-          <Home className="h-4 w-4 text-sidebar-primary-foreground" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
+          <span className="text-sidebar-primary-foreground font-extrabold text-sm">AP</span>
         </div>
         {!collapsed && (
           <div className="flex flex-col leading-tight">
-            <span className="text-xs font-bold text-sidebar-foreground tracking-tight">
-              Início
-            </span>
-            <span className="text-lg font-extrabold text-sidebar-foreground leading-none">
-              1.90
+            <span className="text-base font-extrabold text-sidebar-foreground tracking-tight">
+              AlumPRO
             </span>
             <span className="text-[10px] text-sidebar-muted font-medium">
-              Financeiro
+              Gestão de Esquadrias
             </span>
           </div>
         )}

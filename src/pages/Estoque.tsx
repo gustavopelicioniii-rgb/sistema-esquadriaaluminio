@@ -1,16 +1,88 @@
-import { itensEstoque } from "@/data/mockData";
+import { useState } from "react";
+import { itensEstoque as initialData, type ItemEstoque } from "@/data/mockData";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Search, Pencil, ArrowDownUp } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { usePageTitle } from "@/hooks/use-page-title";
+
+const categorias = ["Todos", "Perfis", "Vidros", "Acessórios", "Insumos", "Fixação"];
+
+const emptyForm = { produto: "", quantidade: 0, unidade: "pçs", minimo: 0, categoria: "Perfis" };
 
 const Estoque = () => {
+  usePageTitle("Estoque");
+  const [itens, setItens] = useState<ItemEstoque[]>([...initialData]);
+  const [search, setSearch] = useState("");
+  const [catFilter, setCatFilter] = useState("Todos");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [movDialog, setMovDialog] = useState<{ item: ItemEstoque; tipo: "entrada" | "saida" } | null>(null);
+  const [movQtd, setMovQtd] = useState(0);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyForm);
+
+  const filtered = itens.filter((item) => {
+    const matchSearch = !search || item.produto.toLowerCase().includes(search.toLowerCase()) || item.id.toLowerCase().includes(search.toLowerCase());
+    const matchCat = catFilter === "Todos" || item.categoria === catFilter;
+    return matchSearch && matchCat;
+  });
+
+  const openNew = () => { setForm(emptyForm); setEditingId(null); setDialogOpen(true); };
+  const openEdit = (item: ItemEstoque) => {
+    setForm({ produto: item.produto, quantidade: item.quantidade, unidade: item.unidade, minimo: item.minimo, categoria: item.categoria });
+    setEditingId(item.id); setDialogOpen(true);
+  };
+
+  const handleSave = () => {
+    if (!form.produto.trim()) { toast({ title: "Nome obrigatório", variant: "destructive" }); return; }
+    if (editingId) {
+      setItens((prev) => prev.map((i) => i.id === editingId ? { ...i, ...form } : i));
+      toast({ title: "Item atualizado" });
+    } else {
+      setItens((prev) => [...prev, { id: `EST-${String(prev.length + 1).padStart(3, "0")}`, ...form }]);
+      toast({ title: "Item adicionado" });
+    }
+    setDialogOpen(false);
+  };
+
+  const handleMov = () => {
+    if (!movDialog || movQtd <= 0) return;
+    setItens((prev) => prev.map((i) => {
+      if (i.id !== movDialog.item.id) return i;
+      const newQtd = movDialog.tipo === "entrada" ? i.quantidade + movQtd : Math.max(0, i.quantidade - movQtd);
+      return { ...i, quantidade: newQtd };
+    }));
+    toast({ title: `${movDialog.tipo === "entrada" ? "Entrada" : "Saída"} registrada: ${movQtd} ${movDialog.item.unidade}` });
+    setMovDialog(null); setMovQtd(0);
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Estoque</h1>
-        <p className="text-muted-foreground text-sm">Controle de materiais e insumos</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Estoque</h1>
+          <p className="text-muted-foreground text-sm">Controle de materiais e insumos</p>
+        </div>
+        <Button className="gap-2" onClick={openNew}><Plus className="h-4 w-4" /> Novo Item</Button>
       </div>
 
-      <div className="rounded-lg border bg-card shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder="Buscar no estoque..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <Select value={catFilter} onValueChange={setCatFilter}>
+          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+          <SelectContent>{categorias.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+
+      <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -20,34 +92,88 @@ const Estoque = () => {
               <TableHead>Quantidade</TableHead>
               <TableHead>Mínimo</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {itensEstoque.map((item) => {
+            {filtered.map((item) => {
               const baixo = item.quantidade <= item.minimo;
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.id}</TableCell>
                   <TableCell>{item.produto}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="text-xs">{item.categoria}</Badge>
-                  </TableCell>
-                  <TableCell className={baixo ? "text-destructive font-bold" : "font-medium"}>
-                    {item.quantidade} {item.unidade}
-                  </TableCell>
+                  <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
+                  <TableCell className={baixo ? "text-destructive font-bold" : "font-medium"}>{item.quantidade} {item.unidade}</TableCell>
                   <TableCell className="text-muted-foreground">{item.minimo} {item.unidade}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${baixo ? "text-destructive" : "text-success"}`}>
                       <span className={`h-2 w-2 rounded-full ${baixo ? "bg-destructive" : "bg-success"}`} />
-                      {baixo ? "Baixo Estoque" : "Normal"}
+                      {baixo ? "Baixo" : "Normal"}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-0.5">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setMovDialog({ item, tipo: "entrada" }); setMovQtd(0); }}>
+                        <ArrowDownUp className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
             })}
+            {filtered.length === 0 && <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Nenhum item encontrado.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>
+
+      {/* Add/Edit dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editingId ? "Editar Item" : "Novo Item"}</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5"><Label>Produto *</Label><Input value={form.produto} onChange={(e) => setForm({ ...form, produto: e.target.value })} /></div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1.5"><Label>Quantidade</Label><Input type="number" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: Number(e.target.value) })} /></div>
+              <div className="space-y-1.5"><Label>Unidade</Label><Input value={form.unidade} onChange={(e) => setForm({ ...form, unidade: e.target.value })} /></div>
+              <div className="space-y-1.5"><Label>Mínimo</Label><Input type="number" value={form.minimo} onChange={(e) => setForm({ ...form, minimo: Number(e.target.value) })} /></div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Categoria</Label>
+              <Select value={form.categoria} onValueChange={(v) => setForm({ ...form, categoria: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{categorias.filter((c) => c !== "Todos").map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleSave}>{editingId ? "Salvar" : "Adicionar"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Movement dialog */}
+      <Dialog open={!!movDialog} onOpenChange={() => setMovDialog(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Movimentação - {movDialog?.item.produto}</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Button variant={movDialog?.tipo === "entrada" ? "default" : "outline"} className="flex-1" onClick={() => movDialog && setMovDialog({ ...movDialog, tipo: "entrada" })}>Entrada</Button>
+              <Button variant={movDialog?.tipo === "saida" ? "default" : "outline"} className="flex-1" onClick={() => movDialog && setMovDialog({ ...movDialog, tipo: "saida" })}>Saída</Button>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Quantidade ({movDialog?.item.unidade})</Label>
+              <Input type="number" min={1} value={movQtd || ""} onChange={(e) => setMovQtd(Number(e.target.value))} />
+            </div>
+            <p className="text-sm text-muted-foreground">Estoque atual: {movDialog?.item.quantidade} {movDialog?.item.unidade}</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMovDialog(null)}>Cancelar</Button>
+            <Button onClick={handleMov} disabled={movQtd <= 0}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
