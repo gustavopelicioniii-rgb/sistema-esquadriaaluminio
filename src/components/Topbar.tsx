@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu } from "lucide-react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -17,6 +17,31 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
 import { useGlobalSearch } from "@/hooks/use-global-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const routeTitles: Record<string, string> = {
+  "/": "Dashboard",
+  "/crm": "CRM",
+  "/clientes": "Clientes",
+  "/orcamentos": "Orçamentos",
+  "/orcamentos/novo": "Novo Orçamento",
+  "/producao": "Produção",
+  "/plano-corte": "Plano de Corte",
+  "/projeto-vidro": "Projeto Vidro",
+  "/relacao-materiais": "Relação de Materiais",
+  "/estoque": "Estoque",
+  "/financeiro": "Financeiro",
+  "/agenda": "Agenda",
+  "/produtos": "Produtos",
+  "/preco-itens": "Preço de Itens",
+  "/relatorios": "Relatórios",
+  "/mapa": "Mapa",
+  "/nota-fiscal": "Nota Fiscal",
+  "/calculo-esquadrias": "Cálculo Esquadrias",
+  "/importar-csv": "Importar CSV",
+  "/administradores": "Administradores",
+  "/funcionarios": "Funcionários",
+  "/configuracoes": "Configurações",
+};
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
