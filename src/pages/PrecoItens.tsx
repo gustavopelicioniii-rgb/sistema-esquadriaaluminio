@@ -5,6 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, FileDown } from "lucide-react";
 import { formatCurrency } from "@/data/mockData";
+import perfilImg from "@/assets/items/perfil.png";
+import vidroImg from "@/assets/items/vidro.png";
+import ferragemImg from "@/assets/items/ferragem.png";
 
 interface ItemPreco {
   id: string;
@@ -19,13 +22,19 @@ interface ItemPreco {
 const itensMock: ItemPreco[] = [
   { id: "1", codigo: "SU-001", descricao: "Perfil Montante 40x25", categoria: "Perfis", preco: 288.20, unidade: "barra", cor: "Amadeirado" },
   { id: "2", codigo: "SU-002", descricao: "Perfil Trilho 50x30", categoria: "Perfis", preco: 276.36, unidade: "barra", cor: "Amadeirado" },
-  { id: "3", codigo: "SU-003", descricao: "Perfil Contramarco 75x35", categoria: "Perfis", preco: 208.00, unidade: "barra", cor: "Amadeirado" },
+  { id: "3", codigo: "SU-003", descricao: "Perfil Contramarco 75×35", categoria: "Perfis", preco: 208.00, unidade: "barra", cor: "Amadeirado" },
   { id: "4", codigo: "SU-039", descricao: "Perfil Folha Móvel 60mm", categoria: "Perfis", preco: 190.00, unidade: "barra", cor: "Amadeirado" },
   { id: "5", codigo: "VD-001", descricao: "Vidro 6mm Comum Incolor", categoria: "Vidros", preco: 106.25, unidade: "m²", cor: "Incolor" },
   { id: "6", codigo: "VD-002", descricao: "Vidro 8mm Temperado", categoria: "Vidros", preco: 185.00, unidade: "m²", cor: "Incolor" },
   { id: "7", codigo: "FR-001", descricao: "Fechadura Multiponto", categoria: "Ferragens", preco: 89.90, unidade: "pç", cor: "Cromado" },
   { id: "8", codigo: "FR-002", descricao: "Roldana Dupla 30mm", categoria: "Ferragens", preco: 12.50, unidade: "pç", cor: "Preto" },
 ];
+
+const categoryImage: Record<string, string> = {
+  Perfis: perfilImg,
+  Vidros: vidroImg,
+  Ferragens: ferragemImg,
+};
 
 const PrecoItens = () => {
   const [search, setSearch] = useState("");
@@ -57,6 +66,7 @@ const PrecoItens = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-16">Imagem</TableHead>
               <TableHead>Código</TableHead>
               <TableHead>Descrição</TableHead>
               <TableHead>Categoria</TableHead>
@@ -68,6 +78,18 @@ const PrecoItens = () => {
           <TableBody>
             {filtered.map((item) => (
               <TableRow key={item.id}>
+                <TableCell>
+                  <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={categoryImage[item.categoria]}
+                      alt={item.categoria}
+                      loading="lazy"
+                      width={40}
+                      height={40}
+                      className="h-8 w-8 object-contain"
+                    />
+                  </div>
+                </TableCell>
                 <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
                 <TableCell className="font-medium">{item.descricao}</TableCell>
                 <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
