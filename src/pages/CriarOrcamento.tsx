@@ -143,7 +143,7 @@ const CriarOrcamento = () => {
               <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-center min-h-[260px]">
+              <div id="budget-frame-preview" className="flex items-center justify-center min-h-[260px]">
                 <FramePreview
                   width_mm={largura * 10}
                   height_mm={altura * 10}
