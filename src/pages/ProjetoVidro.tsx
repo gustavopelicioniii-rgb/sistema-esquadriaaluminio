@@ -134,6 +134,12 @@ function ProjetoDetalhe({
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => {
+              exportProjetoVidroPDF(projeto);
+              toast.success("PDF exportado com sucesso!");
+            }}>
+            <FileDown className="h-3.5 w-3.5" /> Exportar PDF
+          </Button>
           <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
             <Edit2 className="h-3.5 w-3.5" /> Editar
           </Button>
