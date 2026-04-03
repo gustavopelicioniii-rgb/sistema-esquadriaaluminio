@@ -49,20 +49,62 @@ function getTypologyInfo(typologyId: string) {
 function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void }) {
   const [largura, setLargura] = useState(plano.largura);
   const [altura, setAltura] = useState(plano.altura);
+  const [folgasOpen, setFolgasOpen] = useState(false);
   const typ = getTypologyInfo(plano.typologyId);
+
+  // Load original rules to allow folga overrides
+  const originalCutRules = useMemo(() => getCutRulesForTypology(plano.typologyId), [plano.typologyId]);
+  const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typologyId), [plano.typologyId]);
+
+  // Folga overrides: keyed by rule id
+  const [cutFolgas, setCutFolgas] = useState<Record<string, number>>(() => {
+    const map: Record<string, number> = {};
+    originalCutRules.forEach(r => { map[r.id] = r.constant_mm; });
+    return map;
+  });
+  const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(() => {
+    const map: Record<string, { w: number; h: number }> = {};
+    originalGlassRules.forEach(r => { map[r.id] = { w: r.width_constant_mm, h: r.height_constant_mm }; });
+    return map;
+  });
+
+  const updateCutFolga = useCallback((id: string, value: number) => {
+    setCutFolgas(prev => ({ ...prev, [id]: value }));
+  }, []);
+
+  const updateGlassFolga = useCallback((id: string, field: 'w' | 'h', value: number) => {
+    setGlassFolgas(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }));
+  }, []);
+
+  const resetFolgas = useCallback(() => {
+    const cutMap: Record<string, number> = {};
+    originalCutRules.forEach(r => { cutMap[r.id] = r.constant_mm; });
+    setCutFolgas(cutMap);
+    const glassMap: Record<string, { w: number; h: number }> = {};
+    originalGlassRules.forEach(r => { glassMap[r.id] = { w: r.width_constant_mm, h: r.height_constant_mm }; });
+    setGlassFolgas(glassMap);
+  }, [originalCutRules, originalGlassRules]);
 
   const result: CalculationOutput | null = useMemo(() => {
     if (!typ) return null;
     try {
-      const cutRules = getCutRulesForTypology(plano.typologyId);
-      const glassRules = getGlassRulesForTypology(plano.typologyId);
+      // Apply folga overrides to rules
+      const adjustedCutRules = originalCutRules.map(r => ({
+        ...r,
+        constant_mm: cutFolgas[r.id] ?? r.constant_mm,
+      }));
+      const adjustedGlassRules = originalGlassRules.map(r => ({
+        ...r,
+        width_constant_mm: glassFolgas[r.id]?.w ?? r.width_constant_mm,
+        height_constant_mm: glassFolgas[r.id]?.h ?? r.height_constant_mm,
+      }));
       const components = getComponentsForTypology(plano.typologyId);
       return calculateTypology(
         { typology_id: plano.typologyId, width_mm: largura, height_mm: altura, quantity: 1 },
-        cutRules, glassRules, components, typ.name, typ.num_folhas
+        adjustedCutRules, adjustedGlassRules, components, typ.name, typ.num_folhas
       );
     } catch { return null; }
-  }, [plano.typologyId, largura, altura, typ]);
+  }, [plano.typologyId, largura, altura, typ, cutFolgas, glassFolgas, originalCutRules, originalGlassRules]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
