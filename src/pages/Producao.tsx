@@ -60,6 +60,7 @@ const Producao = () => {
   const [search, setSearch] = useState("");
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
+  const [detailPedido, setDetailPedido] = useState<Pedido | null>(null);
 
   const fetchPedidos = useCallback(async () => {
     const { data, error } = await supabase.from("pedidos").select("*").order("pedido_num", { ascending: true });
