@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Monitor, ArrowLeft, Trash2, Edit2, Eye, Search, FileDown, Loader2 } from "lucide-react";
 import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 
 // Types
