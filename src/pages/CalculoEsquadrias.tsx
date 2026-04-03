@@ -116,20 +116,20 @@ export default function CalculoEsquadrias() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Calculator className="h-6 w-6 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Calculator className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             Cálculo de Esquadrias
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Motor de cálculo de cortes, vidros e componentes por tipologia
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Motor de cálculo de cortes, vidros e componentes
           </p>
         </div>
         {result && (
-          <Button variant="outline" onClick={handleReset} className="gap-2">
+          <Button variant="outline" onClick={handleReset} className="gap-2 w-full sm:w-auto">
             <RotateCcw className="h-4 w-4" />
             Novo Cálculo
           </Button>
@@ -145,7 +145,7 @@ export default function CalculoEsquadrias() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
               <Label>Fabricante</Label>
               <Select
@@ -201,7 +201,8 @@ export default function CalculoEsquadrias() {
                 <Input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-20" />
                 <Button onClick={handleCalculate} className="flex-1 gap-2">
                   <Calculator className="h-4 w-4" />
-                  Calcular
+                  <span className="hidden sm:inline">Calcular</span>
+                  <span className="sm:hidden">Calc</span>
                 </Button>
               </div>
             </div>
@@ -219,7 +220,7 @@ export default function CalculoEsquadrias() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex flex-col items-center gap-6">
               <div id="frame-preview-for-pdf">
               <FramePreview
                 width_mm={parseFloat(width) || 1200}
@@ -231,8 +232,8 @@ export default function CalculoEsquadrias() {
                 has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
                 notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
                 colorId={selectedColor}
-                maxWidth={320}
-                maxHeight={260}
+                maxWidth={280}
+                maxHeight={220}
               />
               </div>
               <div className="space-y-3">
@@ -254,14 +255,14 @@ export default function CalculoEsquadrias() {
       {result && (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <Card>
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
                   <Layers className="h-3.5 w-3.5" />
                   Peças de Alumínio
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.cuts.reduce((s, c) => s + c.quantity, 0)}
                 </div>
               </CardContent>
@@ -272,7 +273,7 @@ export default function CalculoEsquadrias() {
                   <Weight className="h-3.5 w-3.5" />
                   Peso Total Alumínio
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.total_aluminum_weight_kg.toFixed(2)} kg
                 </div>
               </CardContent>
@@ -283,7 +284,7 @@ export default function CalculoEsquadrias() {
                   <Grid3X3 className="h-3.5 w-3.5" />
                   Área de Vidro
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.total_glass_area_m2.toFixed(4)} m²
                 </div>
               </CardContent>
@@ -294,7 +295,7 @@ export default function CalculoEsquadrias() {
                   <Package className="h-3.5 w-3.5" />
                   Barras Necessárias
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.profiles_summary.reduce((s, p) => s + p.total_bars_needed, 0)}
                 </div>
               </CardContent>
@@ -304,12 +305,12 @@ export default function CalculoEsquadrias() {
           {/* Tabs with detailed results */}
           <Card>
             <Tabs defaultValue="cuts">
-              <CardHeader className="pb-0">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">
+              <CardHeader className="pb-0 px-3 sm:px-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <CardTitle className="text-sm sm:text-base">
                     {result.typology_name} — {result.input.width_mm} × {result.input.height_mm} mm
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="gap-2" onClick={async () => {
+                  <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto" onClick={async () => {
                     toast.info("Gerando PDF...");
                     await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
                     toast.success("PDF exportado com sucesso!");
@@ -318,18 +319,21 @@ export default function CalculoEsquadrias() {
                     Exportar
                   </Button>
                 </div>
-                <TabsList className="mt-3">
-                  <TabsTrigger value="cuts">Lista de Corte</TabsTrigger>
-                  <TabsTrigger value="glass">Vidros</TabsTrigger>
-                  <TabsTrigger value="components">Componentes</TabsTrigger>
-                  <TabsTrigger value="bars">Plano de Barras</TabsTrigger>
-                  <TabsTrigger value="summary">Resumo por Perfil</TabsTrigger>
-                </TabsList>
+                <div className="mt-3 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+                  <TabsList className="w-max sm:w-auto">
+                    <TabsTrigger value="cuts" className="text-xs sm:text-sm">Corte</TabsTrigger>
+                    <TabsTrigger value="glass" className="text-xs sm:text-sm">Vidros</TabsTrigger>
+                    <TabsTrigger value="components" className="text-xs sm:text-sm">Comp.</TabsTrigger>
+                    <TabsTrigger value="bars" className="text-xs sm:text-sm">Barras</TabsTrigger>
+                    <TabsTrigger value="summary" className="text-xs sm:text-sm">Resumo</TabsTrigger>
+                  </TabsList>
+                </div>
               </CardHeader>
 
               {/* CUTS TAB */}
               <TabsContent value="cuts">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -364,18 +368,20 @@ export default function CalculoEsquadrias() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
 
               {/* GLASS TAB */}
               <TabsContent value="glass">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Vidro</TableHead>
-                        <TableHead className="text-right">Largura (mm)</TableHead>
-                        <TableHead className="text-right">Altura (mm)</TableHead>
+                        <TableHead className="text-right">Largura</TableHead>
+                        <TableHead className="text-right">Altura</TableHead>
                         <TableHead className="text-center">Qtd</TableHead>
                         <TableHead className="text-right">Área (m²)</TableHead>
                         <TableHead>Tipo</TableHead>
@@ -400,15 +406,17 @@ export default function CalculoEsquadrias() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
 
               {/* COMPONENTS TAB */}
               <TabsContent value="components">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                   {result.components.length === 0 ? (
                     <p className="text-muted-foreground text-sm text-center py-8">Nenhum componente cadastrado para esta tipologia.</p>
                   ) : (
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -416,7 +424,7 @@ export default function CalculoEsquadrias() {
                           <TableHead>Tipo</TableHead>
                           <TableHead className="text-center">Qtd</TableHead>
                           <TableHead>Unidade</TableHead>
-                          <TableHead className="text-right">Comprimento Total</TableHead>
+                          <TableHead className="text-right">Comp. Total</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -435,6 +443,7 @@ export default function CalculoEsquadrias() {
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   )}
                 </CardContent>
               </TabsContent>
@@ -503,15 +512,16 @@ export default function CalculoEsquadrias() {
 
               {/* SUMMARY TAB */}
               <TabsContent value="summary">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Perfil</TableHead>
-                        <TableHead className="text-right">Comp. Total (mm)</TableHead>
+                        <TableHead className="text-right">Comp. (mm)</TableHead>
                         <TableHead className="text-center">Barras</TableHead>
-                        <TableHead className="text-right">Peso/m (kg)</TableHead>
-                        <TableHead className="text-right">Peso Total (kg)</TableHead>
+                        <TableHead className="text-right">Peso/m</TableHead>
+                        <TableHead className="text-right">Peso Total</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -538,6 +548,7 @@ export default function CalculoEsquadrias() {
                       </TableRow>
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
             </Tabs>
