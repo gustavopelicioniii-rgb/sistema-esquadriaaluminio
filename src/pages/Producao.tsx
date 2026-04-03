@@ -16,6 +16,7 @@ import PagamentosDialog from "@/components/producao/PagamentosDialog";
 import ContratoDialog from "@/components/producao/ContratoDialog";
 import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
+import { ExportButtons } from "@/components/ExportButtons";
 
 export interface Pedido {
   id: string;
@@ -138,15 +139,30 @@ const Producao = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Serviços</h1>
           <p className="text-muted-foreground text-sm">Pedidos e ordens de serviço</p>
         </div>
-        <Button className="gap-2" onClick={handleNovoPedido}>
-          <Plus className="h-4 w-4" />
-          Novo Pedido
-        </Button>
+        <div className="flex items-center gap-2">
+          <ExportButtons getConfig={() => ({
+            title: "Relatório de Produção",
+            headers: ["Pedido", "Cliente", "Valor", "Status", "Etapa", "Previsão"],
+            columnWidths: [20, 45, 28, 25, 25, 28],
+            summaryCards: [
+              { label: "Total Pedidos", value: String(filtered.length) },
+              { label: "Valor Total", value: formatCurrency(filtered.reduce((s, o) => s + o.valor, 0)) },
+            ],
+            rows: filtered.map((o) => [
+              String(o.pedido_num), o.cliente, formatCurrency(o.valor), o.status, o.etapa || "-", o.previsao || "-",
+            ]),
+            filename: "producao",
+          })} />
+          <Button className="gap-2" onClick={handleNovoPedido}>
+            <Plus className="h-4 w-4" />
+            Novo Pedido
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-6">

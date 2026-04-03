@@ -16,6 +16,7 @@ import {
   CreditCard, ArrowDownCircle, ArrowUpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { ExportButtons } from "@/components/ExportButtons";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -162,9 +163,25 @@ const Financeiro = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Financeiro</h1>
-        <p className="text-muted-foreground text-sm">Visão geral das finanças da empresa</p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Financeiro</h1>
+          <p className="text-muted-foreground text-sm">Visão geral das finanças da empresa</p>
+        </div>
+        <ExportButtons getConfig={() => ({
+          title: "Relatório Financeiro",
+          headers: ["Tipo", "Cliente", "Descrição", "Valor", "Vencimento", "Status"],
+          columnWidths: [22, 38, 38, 28, 28, 22],
+          summaryCards: [
+            { label: "A Receber", value: formatCurrency(aReceber) },
+            { label: "A Pagar", value: formatCurrency(aPagar) },
+            { label: "Saldo", value: formatCurrency(saldo) },
+          ],
+          rows: contas.map((c) => [
+            c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(c.valor), c.vencimento, c.status,
+          ]),
+          filename: "financeiro",
+        })} />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
