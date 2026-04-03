@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Eye, Trash2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Plus, Search, Eye, Trash2, Package } from "lucide-react";
 import { formatCurrency } from "@/data/mockData";
 import { toast } from "@/hooks/use-toast";
 
@@ -16,7 +18,7 @@ interface Produto {
   ativo: boolean;
 }
 
-const produtosMock: Produto[] = [
+const produtosIniciais: Produto[] = [
   { id: "P-001", nome: "Janela de Correr 2 Folhas", categoria: "Janelas", preco: 850, unidade: "m²", ativo: true },
   { id: "P-002", nome: "Janela Maxim-Ar", categoria: "Janelas", preco: 920, unidade: "m²", ativo: true },
   { id: "P-003", nome: "Porta de Correr 3 Folhas", categoria: "Portas", preco: 1050, unidade: "m²", ativo: true },
@@ -29,12 +31,22 @@ const produtosMock: Produto[] = [
 
 const Produtos = () => {
   const [search, setSearch] = useState("");
+  const [produtos, setProdutos] = useState<Produto[]>(produtosIniciais);
+  const [viewProduct, setViewProduct] = useState<Produto | null>(null);
+  const [deleteProduct, setDeleteProduct] = useState<Produto | null>(null);
 
-  const filtered = produtosMock.filter((p) => {
+  const filtered = produtos.filter((p) => {
     if (!search) return true;
     const s = search.toLowerCase();
     return p.nome.toLowerCase().includes(s) || p.categoria.toLowerCase().includes(s);
   });
+
+  const handleDelete = () => {
+    if (!deleteProduct) return;
+    setProdutos((prev) => prev.filter((p) => p.id !== deleteProduct.id));
+    toast({ title: "Produto removido", description: `${deleteProduct.nome} foi excluído com sucesso.` });
+    setDeleteProduct(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -82,10 +94,10 @@ const Produtos = () => {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-0.5">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toast({ title: "Visualizar produto", description: p.nome })}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setViewProduct(p)}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => toast({ title: "Produto removido", variant: "destructive" })}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteProduct(p)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -95,6 +107,69 @@ const Produtos = () => {
           </TableBody>
         </Table>
       </div>
+
+      {/* Dialog de Visualização */}
+      <Dialog open={!!viewProduct} onOpenChange={(open) => !open && setViewProduct(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" />
+              {viewProduct?.nome}
+            </DialogTitle>
+            <DialogDescription>Detalhes do produto</DialogDescription>
+          </DialogHeader>
+          {viewProduct && (
+            <div className="space-y-4 py-2">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Código</p>
+                  <p className="font-semibold">{viewProduct.id}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Categoria</p>
+                  <Badge variant="secondary">{viewProduct.categoria}</Badge>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Preço</p>
+                  <p className="font-bold text-lg text-primary">{formatCurrency(viewProduct.preco)}/{viewProduct.unidade}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Unidade</p>
+                  <p className="font-medium">{viewProduct.unidade}</p>
+                </div>
+                <div className="space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground">Status</p>
+                  <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${viewProduct.ativo ? "text-success" : "text-muted-foreground"}`}>
+                    <span className={`h-2.5 w-2.5 rounded-full ${viewProduct.ativo ? "bg-success" : "bg-muted-foreground"}`} />
+                    {viewProduct.ativo ? "Ativo" : "Inativo"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewProduct(null)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Confirmação de Exclusão */}
+      <AlertDialog open={!!deleteProduct} onOpenChange={(open) => !open && setDeleteProduct(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir produto?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir <strong>{deleteProduct?.nome}</strong>? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
