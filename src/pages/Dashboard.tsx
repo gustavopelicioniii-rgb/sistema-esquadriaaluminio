@@ -31,7 +31,11 @@ const chartTooltipStyle = {
 };
 
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const [period, setPeriod] = useState<PeriodFilter>("todos");
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries();
+  }, [queryClient]);
   const { data: stats, isLoading } = useDashboardStats(period);
   const { data: statusPedidos = [] } = usePedidosStatus(period);
   const { data: receitaMensal = [] } = useReceitaMensal();
