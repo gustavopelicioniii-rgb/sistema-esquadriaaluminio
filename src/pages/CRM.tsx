@@ -112,7 +112,11 @@ function DraggableLeadCard({ lead, onDelete, onView }: { lead: CrmLead; onDelete
 const emptyForm = { nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null };
 
 const CRM = () => {
+  const queryClient = useQueryClient();
   const { data: leads = [], isLoading } = useCrmLeads();
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["crm_leads"] });
+  }, [queryClient]);
   const updateStatus = useUpdateLeadStatus();
   const updateLead = useUpdateLead();
   const createLead = useCreateLead();
