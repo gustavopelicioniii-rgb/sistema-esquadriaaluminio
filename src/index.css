@@ -179,10 +179,10 @@
 [data-radix-popper-content-wrapper] [role="listbox"],
 .popover-glass {
   background: var(--glass-bg) !important;
-  backdrop-filter: blur(24px) saturate(1.8) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.8) !important;
+  backdrop-filter: blur(36px) saturate(2.2) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(2.2) !important;
   border-color: var(--glass-border) !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.2) !important;
 }
 
 /* Topbar glass */
