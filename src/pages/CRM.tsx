@@ -18,7 +18,6 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { useDroppable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import { useCrmLeads, useUpdateLeadStatus, useCreateLead, useDeleteLead, type CrmLead, type CrmLeadStatus } from "@/hooks/use-crm-leads";
 
 const formatCurrency = (value: number) =>
