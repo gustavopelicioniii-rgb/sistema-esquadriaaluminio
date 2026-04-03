@@ -204,12 +204,46 @@ export default function CalculoEsquadrias() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Largura (mm)</Label>
-              <Input type="number" placeholder="Ex: 1200" value={width} onChange={e => setWidth(e.target.value)} />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Label className="cursor-help">Largura (mm) ⓘ</Label>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Mín: {widthLimits.min}mm — Máx: {widthLimits.max}mm</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Input
+                type="number"
+                placeholder={`${widthLimits.min} – ${widthLimits.max}`}
+                min={widthLimits.min}
+                max={widthLimits.max}
+                value={width}
+                onChange={e => setWidth(e.target.value)}
+              />
+              {selectedTyp && <p className="text-[10px] text-muted-foreground">{widthLimits.min} – {widthLimits.max} mm</p>}
             </div>
             <div className="space-y-2">
-              <Label>Altura (mm)</Label>
-              <Input type="number" placeholder="Ex: 1200" value={height} onChange={e => setHeight(e.target.value)} />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Label className="cursor-help">Altura (mm) ⓘ</Label>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Mín: {heightLimits.min}mm — Máx: {heightLimits.max}mm</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Input
+                type="number"
+                placeholder={`${heightLimits.min} – ${heightLimits.max}`}
+                min={heightLimits.min}
+                max={heightLimits.max}
+                value={height}
+                onChange={e => setHeight(e.target.value)}
+              />
+              {selectedTyp && <p className="text-[10px] text-muted-foreground">{heightLimits.min} – {heightLimits.max} mm</p>}
             </div>
             <div className="space-y-2">
               <Label>Quantidade</Label>
