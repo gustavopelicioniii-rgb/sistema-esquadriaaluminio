@@ -277,7 +277,12 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
               <div className="flex items-center gap-2">
                 <Settings2 className="h-4 w-4 text-primary" />
                 <span className="text-sm font-bold">Ajustar Folgas</span>
-                <Badge variant="secondary" className="text-[10px]">Manual</Badge>
+                <Badge
+                  variant={folgasSource === "personalizada" ? "default" : "secondary"}
+                  className={`text-[10px] ${folgasSource === "global" ? "bg-amber-500/15 text-amber-700 border-amber-300" : ""}`}
+                >
+                  {folgasSource === "personalizada" ? "✓ Personalizada" : folgasSource === "global" ? "⚙ Global" : "Catálogo"}
+                </Badge>
               </div>
               <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${folgasOpen ? "rotate-180" : ""}`} />
             </button>
