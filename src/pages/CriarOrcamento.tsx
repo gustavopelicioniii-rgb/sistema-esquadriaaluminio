@@ -202,19 +202,21 @@ const CriarOrcamento = () => {
               <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div id="budget-frame-preview" className="flex items-center justify-center min-h-[260px]">
-                <FramePreview
-                  width_mm={largura * 10}
-                  height_mm={altura * 10}
-                  category={produtoSelecionado?.category ?? "janela_correr"}
-                  subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
-                  num_folhas={produtoSelecionado?.numFolhas ?? 2}
-                  has_veneziana={produtoSelecionado?.veneziana}
-                  colorId={colorId}
-                  maxWidth={320}
-                  maxHeight={260}
-                />
-              </div>
+              <Frame3DWrapper className="flex items-center justify-center min-h-[260px]">
+                <div id="budget-frame-preview">
+                  <FramePreview
+                    width_mm={largura * 10}
+                    height_mm={altura * 10}
+                    category={produtoSelecionado?.category ?? "janela_correr"}
+                    subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
+                    num_folhas={produtoSelecionado?.numFolhas ?? 2}
+                    has_veneziana={produtoSelecionado?.veneziana}
+                    colorId={colorId}
+                    maxWidth={320}
+                    maxHeight={260}
+                  />
+                </div>
+              </Frame3DWrapper>
               <ColorSelector selectedColorId={colorId} onColorChange={setColorId} />
             </CardContent>
           </Card>
