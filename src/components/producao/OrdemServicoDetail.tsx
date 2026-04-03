@@ -196,58 +196,59 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack}>
-            <ChevronLeft className="h-5 w-5" />
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 sm:h-9 sm:w-9" onClick={onBack}>
+            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
-          <div>
-            <h2 className="text-xl font-bold">Serviço {pedido.pedido_num}</h2>
-            <p className="text-sm text-muted-foreground">{pedido.cliente}</p>
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-bold truncate">Serviço {pedido.pedido_num}</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">{pedido.cliente}</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowAddEtapa(true)}>
-          <Plus className="h-4 w-4" />
-          Nova etapa
+        <Button variant="outline" size="sm" className="gap-1 sm:gap-1.5 text-xs sm:text-sm shrink-0" onClick={() => setShowAddEtapa(true)}>
+          <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Nova etapa</span>
+          <span className="sm:hidden">Nova</span>
         </Button>
       </div>
 
       {/* Progress Summary */}
-      <div className="rounded-lg border bg-card p-5 space-y-3">
+      <div className="rounded-lg border bg-card p-3 sm:p-5 space-y-2 sm:space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-sm">Progresso Geral</h3>
+          <h3 className="font-semibold text-xs sm:text-sm">Progresso Geral</h3>
           <span className={cn(
-            "rounded-full px-3 py-1 text-xs font-bold",
+            "rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold",
             overallPct === 100 ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
           )}>
             {overallPct}%
           </span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all duration-500", overallPct === 100 ? "bg-emerald-500" : "bg-primary")}
             style={{ width: `${overallPct}%` }}
           />
         </div>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-[10px] sm:text-xs text-muted-foreground">
           <span>{completedEtapas}/{totalEtapas} etapas concluídas</span>
           <span>{totalChecked}/{totalItems} itens marcados</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 sm:gap-2 pt-1">
           {etapas.map((etapa) => {
             const prog = getEtapaProgress(etapa);
             return (
               <button
                 key={etapa.id}
                 onClick={() => setExpandedEtapas((prev) => ({ ...prev, [etapa.id]: true }))}
-                className="flex items-center gap-1.5 text-xs rounded-md border px-2 py-1.5 hover:bg-muted/50 transition-colors text-left"
+                className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs rounded-md border px-1.5 sm:px-2 py-1 sm:py-1.5 hover:bg-muted/50 transition-colors text-left"
               >
                 {prog.complete ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                  <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500 shrink-0" />
                 ) : (
-                  <Circle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <Circle className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground shrink-0" />
                 )}
                 <span className="truncate">{etapa.label}</span>
               </button>

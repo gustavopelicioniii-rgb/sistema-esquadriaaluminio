@@ -146,12 +146,12 @@ export default function EtapaCard({
                 <label
                   key={item.key}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors",
+                    "flex items-center gap-2 sm:gap-3 rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 cursor-pointer transition-colors",
                     isChecked ? "bg-emerald-500/5 border-emerald-500/20" : "hover:bg-muted/30 border-border/50"
                   )}
                 >
                   <Checkbox checked={isChecked} onCheckedChange={() => onToggleCheck(item.key, isChecked)} />
-                  <span className={cn("text-sm", isChecked && "line-through text-muted-foreground")}>
+                  <span className={cn("text-xs sm:text-sm", isChecked && "line-through text-muted-foreground")}>
                     {item.label}
                   </span>
                 </label>
