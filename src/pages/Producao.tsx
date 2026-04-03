@@ -38,7 +38,7 @@ export interface Pedido {
 }
 
 type FilterKey = "todos" | "atrasado" | "em_andamento" | "concluido";
-type DialogType = "reagendar" | "pagamentos" | "contrato" | "impressoes" | "etapa" | null;
+type DialogType = "reagendar" | "pagamentos" | "contrato" | "impressoes" | "etapa" | "custos" | "editar" | "tarefas" | "compartilhar" | null;
 
 const filters: { key: FilterKey; label: string }[] = [
   { key: "todos", label: "Todos" },
