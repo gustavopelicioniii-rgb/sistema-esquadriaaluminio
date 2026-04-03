@@ -309,6 +309,42 @@ export type Database = {
         }
         Relationships: []
       }
+      projetos_vidro: {
+        Row: {
+          cor: string
+          created_at: string
+          espessura: string
+          id: string
+          preco_m2: number
+          tipo: string
+          titulo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cor?: string
+          created_at?: string
+          espessura?: string
+          id?: string
+          preco_m2?: number
+          tipo?: string
+          titulo: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          cor?: string
+          created_at?: string
+          espessura?: string
+          id?: string
+          preco_m2?: number
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -329,6 +365,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vidro_itens: {
+        Row: {
+          altura_mm: number
+          created_at: string
+          descricao: string
+          id: string
+          largura_mm: number
+          projeto_id: string
+          quantidade: number
+        }
+        Insert: {
+          altura_mm?: number
+          created_at?: string
+          descricao: string
+          id?: string
+          largura_mm?: number
+          projeto_id: string
+          quantidade?: number
+        }
+        Update: {
+          altura_mm?: number
+          created_at?: string
+          descricao?: string
+          id?: string
+          largura_mm?: number
+          projeto_id?: string
+          quantidade?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vidro_itens_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos_vidro"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
