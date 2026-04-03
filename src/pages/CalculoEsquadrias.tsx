@@ -368,6 +368,7 @@ export default function CalculoEsquadrias() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
 
