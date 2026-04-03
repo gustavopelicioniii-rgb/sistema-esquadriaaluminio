@@ -280,7 +280,7 @@ const CRM = () => {
 
       {/* New Lead Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>Novo Lead</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
