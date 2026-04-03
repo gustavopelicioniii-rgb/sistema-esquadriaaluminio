@@ -309,6 +309,42 @@ export type Database = {
         }
         Relationships: []
       }
+      produtos: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          codigo: string
+          created_at: string
+          id: string
+          nome: string
+          preco: number
+          unidade: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria?: string
+          codigo: string
+          created_at?: string
+          id?: string
+          nome: string
+          preco?: number
+          unidade?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          codigo?: string
+          created_at?: string
+          id?: string
+          nome?: string
+          preco?: number
+          unidade?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projetos_vidro: {
         Row: {
           cor: string
