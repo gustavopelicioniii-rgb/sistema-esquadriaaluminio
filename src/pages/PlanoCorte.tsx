@@ -172,12 +172,59 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
       );
     } catch { return null; }
   }, [plano.typologyId, largura, altura, typ, cutFolgas, glassFolgas, originalCutRules, originalGlassRules]);
+  // Bar optimization for PDF
+  const barResults: OptimizationResult[] = useMemo(() => {
+    if (!result) return [];
+    try {
+      // Group cuts by profile_code
+      const byProfile = new Map<string, CutPiece[]>();
+      result.cuts.forEach((cut, i) => {
+        const pieces = byProfile.get(cut.profile_code) || [];
+        for (let q = 0; q < cut.quantity; q++) {
+          pieces.push({
+            id: `${cut.cut_rule_id}-${q}`,
+            length_mm: cut.cut_length_mm,
+            label: cut.piece_name,
+            profile_code: cut.profile_code,
+          });
+        }
+        byProfile.set(cut.profile_code, pieces);
+      });
+      const results: OptimizationResult[] = [];
+      byProfile.forEach((pieces, code) => {
+        try {
+          results.push(optimizeBars(pieces));
+        } catch { /* skip invalid */ }
+      });
+      return results;
+    } catch { return []; }
+  }, [result]);
+
+  const handleExportPDF = useCallback(async () => {
+    if (!result) return;
+    toast.loading("Gerando PDF...");
+    try {
+      await generateCutListPDF(result, barResults, "frame-preview-svg");
+      toast.dismiss();
+      toast.success("PDF exportado com sucesso!");
+    } catch {
+      toast.dismiss();
+      toast.error("Erro ao gerar PDF");
+    }
+  }, [result, barResults]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
-        <ArrowLeft className="h-4 w-4" /> Voltar
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
+          <ArrowLeft className="h-4 w-4" /> Voltar
+        </Button>
+        {result && (
+          <Button size="sm" className="gap-2" onClick={handleExportPDF}>
+            <FileDown className="h-4 w-4" /> Exportar PDF
+          </Button>
+        )}
+      </div>
 
       {/* Header with preview */}
       <Card>
