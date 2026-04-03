@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Monitor, ArrowLeft, Trash2, Edit2, Eye, Search } from "lucide-react";
+import { Plus, Monitor, ArrowLeft, Trash2, Edit2, Eye, Search, FileDown } from "lucide-react";
+import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
 import { formatCurrency } from "@/data/mockData";
 
@@ -133,6 +134,12 @@ function ProjetoDetalhe({
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => {
+              exportProjetoVidroPDF(projeto);
+              toast.success("PDF exportado com sucesso!");
+            }}>
+            <FileDown className="h-3.5 w-3.5" /> Exportar PDF
+          </Button>
           <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
             <Edit2 className="h-3.5 w-3.5" /> Editar
           </Button>
