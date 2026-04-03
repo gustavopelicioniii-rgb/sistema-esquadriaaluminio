@@ -153,11 +153,12 @@ const Producao = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Serviços</h1>
-          <p className="text-muted-foreground text-sm">Pedidos e ordens de serviço</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Serviços</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Pedidos e ordens de serviço</p>
         </div>
         <div className="flex items-center gap-2">
           <ExportButtons getConfig={() => ({
@@ -173,15 +174,32 @@ const Producao = () => {
             ]),
             filename: "producao",
           })} />
-          <Button className="gap-2" onClick={handleNovoPedido}>
+          <Button size="sm" className="gap-1.5 sm:gap-2" onClick={handleNovoPedido}>
             <Plus className="h-4 w-4" />
-            Novo Pedido
+            <span className="hidden sm:inline">Novo Pedido</span>
+            <span className="sm:hidden">Novo</span>
           </Button>
         </div>
       </div>
 
+      {/* Mobile: horizontal filter tabs */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 md:hidden scrollbar-none">
+        {filters.map((item) => (
+          <button key={item.key} onClick={() => setFilter(item.key)}
+            className={cn("flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors shrink-0",
+              filter === item.key ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+            {item.label}
+            <span className={cn("flex h-4 min-w-4 items-center justify-center rounded-full text-[9px] font-bold",
+              filter === item.key ? "bg-primary-foreground/20 text-primary-foreground" : "bg-background text-muted-foreground")}>
+              {getCounts(item.key)}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex gap-6">
-        <div className="w-48 shrink-0 space-y-4">
+        {/* Desktop sidebar - hidden on mobile */}
+        <div className="hidden md:block w-48 shrink-0 space-y-4">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">VISUALIZAR</p>
             <div className="space-y-0.5">
@@ -206,8 +224,9 @@ const Producao = () => {
           </div>
         </div>
 
-        <div className="flex-1 space-y-4">
-          <div className="relative max-w-md">
+        <div className="flex-1 min-w-0 space-y-4">
+          {/* Search */}
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Buscar pedido ou cliente..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
@@ -215,43 +234,43 @@ const Producao = () => {
           {loading ? (
             <div className="text-center py-12 text-muted-foreground">Carregando pedidos...</div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               {filtered.map((op) => {
                 const dias = getDiasLabel(op);
                 return (
                   <Card key={op.id} className="shadow-sm border-border/50">
-                    <CardContent className="p-6 space-y-4">
-                      {/* Title + edit icon */}
+                    <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                      {/* Title + icon */}
                       <div className="flex items-start justify-between">
-                        <h3 className="font-bold text-lg cursor-pointer hover:text-primary transition-colors" onClick={() => setDetailPedido(op)}>
+                        <h3 className="font-bold text-base sm:text-lg cursor-pointer hover:text-primary transition-colors" onClick={() => setDetailPedido(op)}>
                           PEDIDO {op.pedido_num}
                         </h3>
-                        <CheckCircle2 className="h-6 w-6 text-primary shrink-0" />
+                        <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
                       </div>
 
                       {/* Client info */}
-                      <div className="space-y-1 text-sm text-muted-foreground">
+                      <div className="space-y-0.5 text-xs sm:text-sm text-muted-foreground">
                         <div className="flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5 shrink-0" />
-                          <span>{op.cliente}</span>
+                          <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
+                          <span className="truncate">{op.cliente}</span>
                         </div>
                         {op.endereco && (
                           <div className="flex items-start gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                            <span>{op.endereco}</span>
+                            <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 mt-0.5 shrink-0" />
+                            <span className="line-clamp-2">{op.endereco}</span>
                           </div>
                         )}
                         {op.telefone && (
                           <div className="flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5 shrink-0" />
+                            <Phone className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                             <span>{op.telefone}</span>
                           </div>
                         )}
                       </div>
 
                       {/* Etapa + vendedor + previsão */}
-                      <div className="space-y-1 text-sm">
-                        {op.etapa && <p className="font-bold uppercase">{op.etapa}</p>}
+                      <div className="space-y-0.5 text-xs sm:text-sm">
+                        {op.etapa && <p className="font-bold uppercase text-xs sm:text-sm">{op.etapa}</p>}
                         {op.vendedor && <p className="text-muted-foreground"><span className="font-medium text-foreground">Vendedor:</span> {op.vendedor}</p>}
                         {op.previsao && (
                           <p className="text-muted-foreground">
@@ -260,28 +279,26 @@ const Producao = () => {
                         )}
                       </div>
 
-                      {/* Valor + dias badge + data */}
-                      <div className="flex items-center justify-between">
-                        <p className="text-xl font-bold text-emerald-600">{formatCurrency(op.valor)}</p>
-                        <div className="flex items-center gap-2">
-                          <span className={cn("rounded-full px-2.5 py-0.5 text-[10px] font-bold", dias.color)}>
-                            {dias.label}
-                          </span>
-                        </div>
+                      {/* Valor + dias badge */}
+                      <div className="flex items-center justify-between flex-wrap gap-1">
+                        <p className="text-lg sm:text-xl font-bold text-emerald-600">{formatCurrency(op.valor)}</p>
+                        <span className={cn("rounded-full px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap", dias.color)}>
+                          {dias.label}
+                        </span>
                       </div>
 
                       {/* Progress bar */}
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Progresso do serviço 0%</p>
-                        <Progress value={0} className="h-1.5" />
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">Progresso do serviço 0%</p>
+                        <Progress value={0} className="h-1 sm:h-1.5" />
                       </div>
 
-                      {/* Action icons grid 4x2 */}
-                      <div className="grid grid-cols-4 gap-3 pt-1">
+                      {/* Action icons grid */}
+                      <div className="grid grid-cols-4 gap-1.5 sm:gap-3 pt-1">
                         {actionButtons.map(({ key, icon: Icon, label }) => (
                           <button
                             key={key}
-                            className="flex flex-col items-center gap-1.5 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                            className="flex flex-col items-center gap-1 sm:gap-1.5 py-1.5 sm:py-2 text-muted-foreground hover:text-foreground transition-colors"
                             title={label}
                             onClick={() => {
                               if (key === "tarefas") {
@@ -293,18 +310,18 @@ const Producao = () => {
                               }
                             }}
                           >
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                              <Icon className="h-5 w-5" />
+                            <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-muted">
+                              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
-                            <span className="text-[10px] leading-tight text-center">{label}</span>
+                            <span className="text-[8px] sm:text-[10px] leading-tight text-center line-clamp-2">{label}</span>
                           </button>
                         ))}
                       </div>
 
                       {/* Cancelar / Concluir */}
-                      <div className="flex gap-3 pt-1">
-                        <Button variant="outline" className="flex-1" onClick={() => setCancelConfirm(op)}>Cancelar</Button>
-                        <Button className="flex-1" onClick={() => handleConcluir(op)}>Concluir pedido</Button>
+                      <div className="flex gap-2 sm:gap-3 pt-1">
+                        <Button variant="outline" size="sm" className="flex-1 text-xs sm:text-sm" onClick={() => setCancelConfirm(op)}>Cancelar</Button>
+                        <Button size="sm" className="flex-1 text-xs sm:text-sm" onClick={() => handleConcluir(op)}>Concluir</Button>
                       </div>
                     </CardContent>
                   </Card>

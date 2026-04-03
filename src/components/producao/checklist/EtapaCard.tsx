@@ -58,39 +58,39 @@ export default function EtapaCard({
         )}
         <button
           onClick={onToggleExpand}
-          className="flex flex-1 items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
+          className="flex flex-1 items-center justify-between px-3 sm:px-5 py-3 sm:py-4 hover:bg-muted/30 transition-colors min-w-0"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {isComplete ? (
-              <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500 shrink-0" />
             ) : (
-              <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
+              <Circle className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
             )}
-            <div className="text-left">
-              <p className="font-semibold text-sm">
+            <div className="text-left min-w-0">
+              <p className="font-semibold text-xs sm:text-sm truncate">
                 {etapa.label}
                 {etapa.isCustom && (
-                  <span className="ml-2 text-[10px] bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
+                  <span className="ml-1.5 sm:ml-2 text-[8px] sm:text-[10px] bg-accent text-accent-foreground rounded px-1 sm:px-1.5 py-0.5 font-medium">
                     Personalizada
                   </span>
                 )}
               </p>
-              <p className="text-xs text-muted-foreground">
-                Progresso: {pct}% ({checked}/{total})
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
+                {pct}% ({checked}/{total})
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <span
               className={cn(
-                "rounded-full px-2.5 py-0.5 text-[10px] font-bold",
+                "rounded-full px-1.5 sm:px-2.5 py-0.5 text-[8px] sm:text-[10px] font-bold hidden sm:inline-flex",
                 isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
               )}
             >
               {isComplete ? "Concluído" : "Pendente"}
             </span>
             <ChevronDown
-              className={cn("h-4 w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
+              className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
             />
           </div>
         </button>
@@ -106,10 +106,10 @@ export default function EtapaCard({
 
       {/* Expanded content */}
       {isExpanded && (
-        <div className="px-5 py-4 space-y-4">
+        <div className="px-3 sm:px-5 py-3 sm:py-4 space-y-3 sm:space-y-4">
           {/* Select all + actions */}
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
               <Checkbox checked={allChecked} onCheckedChange={(v) => onSelectAll(!!v)} />
               Selecionar todos
             </label>
@@ -146,12 +146,12 @@ export default function EtapaCard({
                 <label
                   key={item.key}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors",
+                    "flex items-center gap-2 sm:gap-3 rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 cursor-pointer transition-colors",
                     isChecked ? "bg-emerald-500/5 border-emerald-500/20" : "hover:bg-muted/30 border-border/50"
                   )}
                 >
                   <Checkbox checked={isChecked} onCheckedChange={() => onToggleCheck(item.key, isChecked)} />
-                  <span className={cn("text-sm", isChecked && "line-through text-muted-foreground")}>
+                  <span className={cn("text-xs sm:text-sm", isChecked && "line-through text-muted-foreground")}>
                     {item.label}
                   </span>
                 </label>
