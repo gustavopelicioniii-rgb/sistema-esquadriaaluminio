@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical, Search } from "lucide-react";
+import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical, Search, Users, DollarSign, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -205,7 +205,36 @@ const CRM = () => {
         </div>
       </div>
 
-      {/* Pipeline Board */}
+      {/* Stats */}
+      {!isLoading && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="rounded-xl border bg-card p-3">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
+              <Users className="h-3.5 w-3.5" /> Total de Leads
+            </div>
+            <p className="text-xl font-bold">{leads.length}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-3">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
+              <DollarSign className="h-3.5 w-3.5" /> Valor Total
+            </div>
+            <p className="text-xl font-bold">{formatCurrency(leads.reduce((s, l) => s + l.valor, 0))}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-3">
+            <div className="flex items-center gap-2 text-xs font-medium mb-1 text-green-600">
+              <TrendingUp className="h-3.5 w-3.5" /> Ganhos
+            </div>
+            <p className="text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "fechado").reduce((s, l) => s + l.valor, 0))}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-3">
+            <div className="flex items-center gap-2 text-xs font-medium mb-1 text-orange-600">
+              <CalendarDays className="h-3.5 w-3.5" /> Em Negociação
+            </div>
+            <p className="text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "negociacao" || l.status === "em_orcamento").reduce((s, l) => s + l.valor, 0))}</p>
+          </div>
+        </div>
+      )}
+
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-3 overflow-x-auto pb-4">
           {columns.map((col) => {
