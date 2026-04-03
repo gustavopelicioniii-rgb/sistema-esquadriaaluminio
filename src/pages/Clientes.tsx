@@ -68,10 +68,12 @@ const Clientes = () => {
     fetchClientes();
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("clientes").delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    const { error } = await supabase.from("clientes").delete().eq("id", deleteId);
     if (error) { toast({ title: "Erro ao remover", variant: "destructive" }); return; }
     toast({ title: "Cliente removido", variant: "destructive" });
+    setDeleteId(null);
     fetchClientes();
   };
 
