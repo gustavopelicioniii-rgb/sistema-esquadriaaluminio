@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import { generateBudgetPDF } from "@/utils/pdfGenerator";
 
 const tiposProduto = [
   { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
@@ -99,9 +101,38 @@ const CriarOrcamento = () => {
                 <Input type="number" value={quantidade} onChange={(e) => setQuantidade(Number(e.target.value))} min={1} />
               </div>
             </div>
-            <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="w-full mt-2">
-              Salvar Orçamento
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="flex-1">
+                Salvar Orçamento
+              </Button>
+              <Button
+                variant="outline"
+                disabled={!cliente || !tipo || !calculo}
+                className="gap-2"
+                onClick={async () => {
+                  if (!calculo || !produtoSelecionado) return;
+                  sonnerToast.info("Gerando PDF...");
+                  await generateBudgetPDF(
+                    {
+                      cliente,
+                      produto: produtoSelecionado.label,
+                      larguraCm: largura,
+                      alturaCm: altura,
+                      quantidade,
+                      areaM2: calculo.areaM2,
+                      custoTotal: calculo.custoTotal,
+                      margem: calculo.margem,
+                      valorFinal: calculo.valorFinal,
+                    },
+                    "budget-frame-preview"
+                  );
+                  sonnerToast.success("PDF exportado!");
+                }}
+              >
+                <FileDown className="h-4 w-4" />
+                PDF
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -112,7 +143,7 @@ const CriarOrcamento = () => {
               <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-center min-h-[260px]">
+              <div id="budget-frame-preview" className="flex items-center justify-center min-h-[260px]">
                 <FramePreview
                   width_mm={largura * 10}
                   height_mm={altura * 10}
