@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { LogIn } from "lucide-react";
+import { lovable } from "@/integrations/lovable/index";
+import { Separator } from "@/components/ui/separator";
 
 const Login = () => {
   usePageTitle("Login");
