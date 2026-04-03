@@ -32,6 +32,7 @@ const Agenda = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchEventos = async () => {
     const { data, error } = await supabase.from("agenda").select("*").order("data");
