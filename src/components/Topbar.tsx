@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu } from "lucide-react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -17,6 +17,31 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
 import { useGlobalSearch } from "@/hooks/use-global-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const routeTitles: Record<string, string> = {
+  "/": "Dashboard",
+  "/crm": "CRM",
+  "/clientes": "Clientes",
+  "/orcamentos": "Orçamentos",
+  "/orcamentos/novo": "Novo Orçamento",
+  "/producao": "Produção",
+  "/plano-corte": "Plano de Corte",
+  "/projeto-vidro": "Projeto Vidro",
+  "/relacao-materiais": "Relação de Materiais",
+  "/estoque": "Estoque",
+  "/financeiro": "Financeiro",
+  "/agenda": "Agenda",
+  "/produtos": "Produtos",
+  "/preco-itens": "Preço de Itens",
+  "/relatorios": "Relatórios",
+  "/mapa": "Mapa",
+  "/nota-fiscal": "Nota Fiscal",
+  "/calculo-esquadrias": "Cálculo Esquadrias",
+  "/importar-csv": "Importar CSV",
+  "/administradores": "Administradores",
+  "/funcionarios": "Funcionários",
+  "/configuracoes": "Configurações",
+};
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
@@ -36,13 +61,16 @@ export function Topbar() {
   const { theme, toggle } = useTheme();
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { results, loading: searchLoading } = useGlobalSearch(search);
   const isMobile = useIsMobile();
 
+  const pageTitle = routeTitles[location.pathname] || "";
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
 
@@ -76,6 +104,12 @@ export function Topbar() {
         </SheetContent>
       </Sheet>
 
+      {/* Mobile page title */}
+      {isMobile && pageTitle && (
+        <span className="text-sm font-semibold truncate max-w-[140px]">{pageTitle}</span>
+      )}
+
+      {/* Desktop search */}
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
@@ -115,6 +149,13 @@ export function Topbar() {
       </div>
 
       <div className="ml-auto flex items-center gap-1">
+        {/* Mobile search icon */}
+        {isMobile && (
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileSearchOpen(true)}>
+            <Search className="h-4 w-4" />
+          </Button>
+        )}
+
         <Button variant="ghost" size="icon" onClick={toggle} className="h-9 w-9">
           {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
         </Button>
@@ -199,6 +240,55 @@ export function Topbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Mobile search overlay */}
+      {mobileSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
+              <Input
+                autoFocus
+                placeholder="Buscar clientes, orçamentos, pedidos..."
+                className="pl-9 h-10 bg-muted/50 border-0 focus-visible:ring-1"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
+              />
+            </div>
+            <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0" onClick={() => { setMobileSearchOpen(false); setSearch(""); setSearchOpen(false); }}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1 mt-2">
+            {search.trim().length >= 2 && results.length > 0 ? (
+              results.map((r) => (
+                <button
+                  key={`${r.type}-${r.id}`}
+                  className="w-full px-3 py-3 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
+                  onClick={() => { navigate(r.url); setSearch(""); setMobileSearchOpen(false); }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{r.label}</p>
+                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
+                  </div>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
+                    {r.type}
+                  </span>
+                </button>
+              ))
+            ) : search.trim().length >= 2 && !searchLoading ? (
+              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                Nenhum resultado para "{search}"
+              </div>
+            ) : (
+              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                Digite ao menos 2 caracteres para buscar
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      )}
     </header>
   );
 }
