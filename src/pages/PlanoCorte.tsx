@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown } from "lucide-react";
+import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
