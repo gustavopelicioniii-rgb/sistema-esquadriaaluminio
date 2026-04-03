@@ -117,7 +117,19 @@ export default function MaterialDetailDialog({
                 const pricePerCut = (cut.weight_kg / cut.quantity) * precoPerfilKg;
                 const totalPrice = cut.weight_kg * precoPerfilKg;
                 return (
-                  <div key={i} className="flex items-start gap-4 pb-3 border-b border-border/30 last:border-0">
+                  <div key={i} className="flex items-start gap-3 pb-3 border-b border-border/30 last:border-0">
+                    {/* Profile cross-section illustration */}
+                    <div className="w-10 h-10 rounded-md bg-muted/40 flex items-center justify-center shrink-0 mt-0.5">
+                      <ProfileCrossSection
+                        profileType={(() => {
+                          const profile = getProfileByCode(cut.profile_code);
+                          return profile?.profile_type || "marco";
+                        })()}
+                        profileCode={cut.profile_code}
+                        size={32}
+                        color="hsl(var(--foreground))"
+                      />
+                    </div>
                     {/* Profile info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
