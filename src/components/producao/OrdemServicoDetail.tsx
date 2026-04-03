@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Plus, CheckCircle2, Circle } from "lucide-react";
@@ -8,6 +8,7 @@ import type { Pedido } from "@/pages/Producao";
 import { defaultEtapasConfig, type Etapa } from "./checklist/etapasConfig";
 import EtapaCard from "./checklist/EtapaCard";
 import AddEtapaDialog from "./checklist/AddEtapaDialog";
+import EditEtapaDialog from "./checklist/EditEtapaDialog";
 
 interface Props {
   pedido: Pedido;
@@ -21,6 +22,11 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
   const [expandedEtapas, setExpandedEtapas] = useState<Record<string, boolean>>({ conferir_medidas: true });
   const [loading, setLoading] = useState(true);
   const [showAddEtapa, setShowAddEtapa] = useState(false);
+  const [editingEtapa, setEditingEtapa] = useState<Etapa | null>(null);
+
+  // Drag state
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
 
   const fetchCustomEtapas = useCallback(async () => {
     const { data: customEtapas } = await supabase
@@ -133,10 +139,43 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
   const deleteCustomEtapa = async (etapa: Etapa) => {
     if (!etapa.dbId) return;
     await supabase.from("pedido_custom_etapas").delete().eq("id", etapa.dbId);
-    // Also clean checklist states
     await supabase.from("pedido_checklists").delete().eq("pedido_id", pedido.id).eq("etapa", etapa.id);
     toast({ title: "Etapa excluída", description: `"${etapa.label}" foi removida.` });
     loadAll();
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (idx: number) => {
+    setDragIdx(idx);
+  };
+
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    setOverIdx(idx);
+  };
+
+  const handleDrop = async (idx: number) => {
+    if (dragIdx === null || dragIdx === idx) {
+      setDragIdx(null);
+      setOverIdx(null);
+      return;
+    }
+
+    const newEtapas = [...etapas];
+    const [moved] = newEtapas.splice(dragIdx, 1);
+    newEtapas.splice(idx, 0, moved);
+    setEtapas(newEtapas);
+    setDragIdx(null);
+    setOverIdx(null);
+
+    // Persist order for custom etapas
+    const customInOrder = newEtapas.filter((e) => e.isCustom && e.dbId);
+    for (let i = 0; i < customInOrder.length; i++) {
+      await supabase
+        .from("pedido_custom_etapas")
+        .update({ ordem: i } as any)
+        .eq("id", customInOrder[i].dbId!);
+    }
   };
 
   // Progress summary
@@ -217,22 +256,39 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
         </div>
       </div>
 
-      {/* Etapas */}
-      {etapas.map((etapa) => (
-        <EtapaCard
+      {/* Etapas with drag and drop */}
+      {etapas.map((etapa, idx) => (
+        <div
           key={etapa.id}
-          etapa={etapa}
-          pedidoId={pedido.id}
-          checkStates={checkStates[etapa.id] || {}}
-          annotation={annotations[etapa.id] || ""}
-          isExpanded={expandedEtapas[etapa.id] ?? false}
-          onToggleExpand={() => setExpandedEtapas((prev) => ({ ...prev, [etapa.id]: !prev[etapa.id] }))}
-          onToggleCheck={(itemKey, currentVal) => toggleCheck(etapa.id, itemKey, currentVal)}
-          onSelectAll={(check) => selectAll(etapa.id, etapa.items, check)}
-          onAnnotationChange={(text) => setAnnotations((prev) => ({ ...prev, [etapa.id]: text }))}
-          onAnnotationBlur={(text) => saveAnnotation(etapa.id, text)}
-          onDeleteEtapa={etapa.isCustom ? () => deleteCustomEtapa(etapa) : undefined}
-        />
+          draggable
+          onDragStart={() => handleDragStart(idx)}
+          onDragOver={(e) => handleDragOver(e, idx)}
+          onDrop={() => handleDrop(idx)}
+          onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
+          className={cn(
+            "transition-opacity",
+            dragIdx === idx && "opacity-50",
+            overIdx === idx && dragIdx !== idx && "border-t-2 border-primary"
+          )}
+        >
+          <EtapaCard
+            etapa={etapa}
+            pedidoId={pedido.id}
+            checkStates={checkStates[etapa.id] || {}}
+            annotation={annotations[etapa.id] || ""}
+            isExpanded={expandedEtapas[etapa.id] ?? false}
+            onToggleExpand={() => setExpandedEtapas((prev) => ({ ...prev, [etapa.id]: !prev[etapa.id] }))}
+            onToggleCheck={(itemKey, currentVal) => toggleCheck(etapa.id, itemKey, currentVal)}
+            onSelectAll={(check) => selectAll(etapa.id, etapa.items, check)}
+            onAnnotationChange={(text) => setAnnotations((prev) => ({ ...prev, [etapa.id]: text }))}
+            onAnnotationBlur={(text) => saveAnnotation(etapa.id, text)}
+            onDeleteEtapa={etapa.isCustom ? () => deleteCustomEtapa(etapa) : undefined}
+            onEditEtapa={etapa.isCustom ? () => setEditingEtapa(etapa) : undefined}
+            dragHandleProps={{
+              onMouseDown: (e: React.MouseEvent) => e.stopPropagation(),
+            }}
+          />
+        </div>
       ))}
 
       {/* Add Etapa Dialog */}
@@ -242,6 +298,16 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
         pedidoId={pedido.id}
         onCreated={loadAll}
       />
+
+      {/* Edit Etapa Dialog */}
+      {editingEtapa && (
+        <EditEtapaDialog
+          open={!!editingEtapa}
+          onOpenChange={(open) => !open && setEditingEtapa(null)}
+          etapa={editingEtapa}
+          onSaved={loadAll}
+        />
+      )}
     </div>
   );
 }
