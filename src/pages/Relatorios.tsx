@@ -118,17 +118,18 @@ const Relatorios = () => {
       }
       case "orcamentos": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
-        const total = orcamentos!.reduce((s, o) => s + Number(o.valor), 0);
+        const filtered = orcamentos!.filter((o) => filterByDate(o.data));
+        const total = filtered.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Orçamentos Emitidos", subtitle: "Todos os orçamentos do período",
+          title: "Orçamentos Emitidos", subtitle: periodoLabel(),
           headers: ["Número", "Cliente", "Produto", "Valor", "Data", "Status"],
           columnWidths: [25, 40, 40, 30, 25, 25],
           summaryCards: [
-            { label: "Total", value: String(orcamentos!.length) },
+            { label: "Total", value: String(filtered.length) },
             { label: "Valor Total", value: formatCurrency(total) },
-            { label: "Aprovados", value: String(orcamentos!.filter((o) => o.status === "aprovado").length) },
+            { label: "Aprovados", value: String(filtered.filter((o) => o.status === "aprovado").length) },
           ],
-          rows: orcamentos!.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data, o.status]),
+          rows: filtered.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data, o.status]),
         };
       }
       case "producao": {
