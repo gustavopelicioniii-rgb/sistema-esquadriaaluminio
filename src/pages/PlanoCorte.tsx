@@ -76,6 +76,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
   const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
   const [folgasSaving, setFolgasSaving] = useState(false);
   const [folgasLoaded, setFolgasLoaded] = useState(false);
+  const [folgasSource, setFolgasSource] = useState<"catalogo" | "global" | "personalizada">("catalogo");
 
   // Load saved folgas: first try per-typology, then apply global offsets as fallback
   const folgasKey = `folgas_${plano.typologyId}`;
@@ -88,6 +89,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
           const saved = JSON.parse(perTyp.valor);
           if (saved.cut) setCutFolgas(prev => ({ ...prev, ...saved.cut }));
           if (saved.glass) setGlassFolgas(prev => ({ ...prev, ...saved.glass }));
+          setFolgasSource("personalizada");
           setFolgasLoaded(true);
           return;
         } catch { /* ignore */ }
@@ -118,6 +120,9 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
               return map;
             });
           }
+          if (pOffset !== 0 || vwOffset !== 0 || vhOffset !== 0) {
+            setFolgasSource("global");
+          }
         } catch { /* ignore */ }
       }
       setFolgasLoaded(true);
@@ -135,6 +140,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
     } else {
       await supabase.from("configuracoes").insert({ chave: folgasKey, valor: payload });
     }
+    setFolgasSource("personalizada");
     setFolgasSaving(false);
     toast.success("Folgas salvas com sucesso!");
   }, [cutFolgas, glassFolgas, folgasKey]);
@@ -272,7 +278,12 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
               <div className="flex items-center gap-2">
                 <Settings2 className="h-4 w-4 text-primary" />
                 <span className="text-sm font-bold">Ajustar Folgas</span>
-                <Badge variant="secondary" className="text-[10px]">Manual</Badge>
+                <Badge
+                  variant={folgasSource === "personalizada" ? "default" : "secondary"}
+                  className={`text-[10px] ${folgasSource === "global" ? "bg-amber-500/15 text-amber-700 border-amber-300" : ""}`}
+                >
+                  {folgasSource === "personalizada" ? "✓ Personalizada" : folgasSource === "global" ? "⚙ Global" : "Catálogo"}
+                </Badge>
               </div>
               <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${folgasOpen ? "rotate-180" : ""}`} />
             </button>
