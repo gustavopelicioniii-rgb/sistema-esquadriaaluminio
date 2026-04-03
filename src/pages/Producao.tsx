@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/formatters";
 import { Card, CardContent } from "@/components/ui/card";
