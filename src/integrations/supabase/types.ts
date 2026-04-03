@@ -298,6 +298,44 @@ export type Database = {
           },
         ]
       }
+      pedido_checklist_fotos: {
+        Row: {
+          created_at: string
+          etapa: string
+          foto_url: string
+          id: string
+          item_key: string | null
+          nome_arquivo: string | null
+          pedido_id: string
+        }
+        Insert: {
+          created_at?: string
+          etapa: string
+          foto_url: string
+          id?: string
+          item_key?: string | null
+          nome_arquivo?: string | null
+          pedido_id: string
+        }
+        Update: {
+          created_at?: string
+          etapa?: string
+          foto_url?: string
+          id?: string
+          item_key?: string | null
+          nome_arquivo?: string | null
+          pedido_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_checklist_fotos_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pedido_checklists: {
         Row: {
           anotacao: string | null
@@ -335,6 +373,76 @@ export type Database = {
             columns: ["pedido_id"]
             isOneToOne: false
             referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedido_custom_etapas: {
+        Row: {
+          created_at: string
+          etapa_key: string
+          id: string
+          label: string
+          ordem: number
+          pedido_id: string
+        }
+        Insert: {
+          created_at?: string
+          etapa_key: string
+          id?: string
+          label: string
+          ordem?: number
+          pedido_id: string
+        }
+        Update: {
+          created_at?: string
+          etapa_key?: string
+          id?: string
+          label?: string
+          ordem?: number
+          pedido_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_custom_etapas_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedido_custom_items: {
+        Row: {
+          created_at: string
+          etapa_id: string
+          id: string
+          item_key: string
+          label: string
+          ordem: number
+        }
+        Insert: {
+          created_at?: string
+          etapa_id: string
+          id?: string
+          item_key: string
+          label: string
+          ordem?: number
+        }
+        Update: {
+          created_at?: string
+          etapa_id?: string
+          id?: string
+          item_key?: string
+          label?: string
+          ordem?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_custom_items_etapa_id_fkey"
+            columns: ["etapa_id"]
+            isOneToOne: false
+            referencedRelation: "pedido_custom_etapas"
             referencedColumns: ["id"]
           },
         ]
