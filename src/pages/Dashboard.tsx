@@ -19,19 +19,19 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Greeting */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Olá, {saudacao}, Admin.</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Olá, {saudacao}, Admin.</h1>
           <p className="text-muted-foreground text-sm">{capitalizedDia}, {dataFormatada}</p>
         </div>
-        <div className="flex gap-2">
-          <button className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
+        <div className="flex gap-2 flex-wrap">
+          <button className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium hover:bg-muted transition-colors">
             👥 Parceiros
           </button>
-          <button className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
+          <button className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium hover:bg-muted transition-colors">
             📋 Assinaturas <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">1</span>
           </button>
-          <button className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+          <button className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
             ▶ Tutoriais
           </button>
         </div>
