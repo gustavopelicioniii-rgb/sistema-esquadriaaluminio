@@ -220,15 +220,38 @@ const Clientes = () => {
     );
   };
 
+  const openCreateLeadDialog = (status: CrmLeadStatus) => {
+    setLeadForm({ nome: "", valor: 0, telefone: "", email: "", status, observacao: "", follow_up_date: null });
+    setLeadDialogStatus(status);
+    setLeadDialogOpen(true);
+  };
+
   const handleCreateLead = () => {
     if (!leadForm.nome.trim()) { sonnerToast.error("Nome é obrigatório"); return; }
     createLead.mutate(leadForm, {
-      onSuccess: () => { sonnerToast.success("Lead criado"); setLeadDialogOpen(false); setLeadForm(emptyLeadForm); },
+      onSuccess: () => { sonnerToast.success("Lead criado"); setLeadDialogOpen(false); },
     });
   };
 
   const handleDeleteLead = (id: string) => {
     deleteLead.mutate(id, { onSuccess: () => sonnerToast.success("Lead removido") });
+  };
+
+  const openLeadDetail = (lead: CrmLead) => {
+    setDetailLead(lead);
+    setEditObs(lead.observacao || "");
+    setEditFollowUp(lead.follow_up_date ? new Date(lead.follow_up_date) : undefined);
+  };
+
+  const saveLeadDetail = () => {
+    if (!detailLead) return;
+    updateLead.mutate({
+      id: detailLead.id,
+      observacao: editObs,
+      follow_up_date: editFollowUp ? format(editFollowUp, "yyyy-MM-dd") : null,
+    }, {
+      onSuccess: () => { sonnerToast.success("Lead atualizado"); setDetailLead(null); },
+    });
   };
 
   return (
