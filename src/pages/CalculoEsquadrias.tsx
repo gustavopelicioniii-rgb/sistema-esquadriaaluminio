@@ -232,8 +232,8 @@ export default function CalculoEsquadrias() {
                 has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
                 notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
                 colorId={selectedColor}
-                maxWidth={320}
-                maxHeight={260}
+                maxWidth={280}
+                maxHeight={220}
               />
               </div>
               <div className="space-y-3">
