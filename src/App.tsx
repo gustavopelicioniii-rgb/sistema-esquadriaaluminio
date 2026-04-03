@@ -24,6 +24,7 @@ import Administradores from "./pages/Administradores";
 import Funcionarios from "./pages/Funcionarios";
 import Configuracoes from "./pages/Configuracoes";
 import CalculoEsquadrias from "./pages/CalculoEsquadrias";
+import NotaFiscal from "./pages/NotaFiscal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
