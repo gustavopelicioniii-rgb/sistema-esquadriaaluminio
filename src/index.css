@@ -158,40 +158,60 @@
 
 /* ===== Apply glass to shadcn components globally ===== */
 
-/* Cards */
+/* Cards — Liquid Glass 2.0 */
 [data-slot="card"],
 .card-glass {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
-  border-color: var(--glass-border) !important;
-  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(48px) saturate(2.5) brightness(1.05);
+  -webkit-backdrop-filter: blur(48px) saturate(2.5) brightness(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.04);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-[data-slot="card"]:hover {
-  box-shadow: var(--glass-shadow), 0 12px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.15);
-  transform: translateY(-1px);
+.dark [data-slot="card"],
+.dark .card-glass {
+  background: rgba(15, 23, 42, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+[data-slot="card"]:hover,
+.card-glass:hover {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.5);
+  transform: translateY(-2px);
+}
+
+.dark [data-slot="card"]:hover,
+.dark .card-glass:hover {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-2px);
 }
 
 /* Dialogs / Popovers */
 [role="dialog"] > div,
 [data-radix-popper-content-wrapper] [role="listbox"],
 .popover-glass {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(36px) saturate(2.2) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(2.2) !important;
-  border-color: var(--glass-border) !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(48px) saturate(2.5) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(2.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.4) !important;
 }
 
-/* Topbar glass */
+/* Topbar — Liquid Glass 2.0 */
 .topbar-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
-  border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 1px 16px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(48px) saturate(2.5) brightness(1.02);
+  -webkit-backdrop-filter: blur(48px) saturate(2.5) brightness(1.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06), inset 0 -1px 0 rgba(255,255,255,0.3);
+}
+
+.dark .topbar-glass {
+  background: rgba(10, 15, 30, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(255,255,255,0.04);
 }
 
 /* Sidebar glass 2.0 */
