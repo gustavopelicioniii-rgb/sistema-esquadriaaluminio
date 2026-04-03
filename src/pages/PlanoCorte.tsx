@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
+import { supabase } from "@/integrations/supabase/client";
 import { typologies } from "@/data/catalog";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
