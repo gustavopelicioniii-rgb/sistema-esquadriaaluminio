@@ -26,6 +26,27 @@ type ReportData = {
 const Relatorios = () => {
   usePageTitle("Relatórios");
   const [generating, setGenerating] = useState<string | null>(null);
+  const [dataInicio, setDataInicio] = useState<Date | undefined>(undefined);
+  const [dataFim, setDataFim] = useState<Date | undefined>(undefined);
+
+  const filterByDate = (dateStr: string) => {
+    if (!dataInicio && !dataFim) return true;
+    const d = new Date(dateStr);
+    if (dataInicio && d < dataInicio) return false;
+    if (dataFim) {
+      const end = new Date(dataFim);
+      end.setHours(23, 59, 59, 999);
+      if (d > end) return false;
+    }
+    return true;
+  };
+
+  const periodoLabel = () => {
+    if (dataInicio && dataFim) return `${format(dataInicio, "dd/MM/yyyy")} a ${format(dataFim, "dd/MM/yyyy")}`;
+    if (dataInicio) return `A partir de ${format(dataInicio, "dd/MM/yyyy")}`;
+    if (dataFim) return `Até ${format(dataFim, "dd/MM/yyyy")}`;
+    return "Todo o período";
+  };
 
   const fetchReportData = async (key: string): Promise<ReportData> => {
     switch (key) {
