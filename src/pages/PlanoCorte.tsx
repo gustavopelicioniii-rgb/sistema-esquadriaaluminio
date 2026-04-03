@@ -73,20 +73,55 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
   const [cutFolgas, setCutFolgas] = useState<Record<string, number>>(defaultCutFolgas);
   const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
   const [folgasSaving, setFolgasSaving] = useState(false);
+  const [folgasLoaded, setFolgasLoaded] = useState(false);
 
-  // Load saved folgas from configuracoes table
+  // Load saved folgas: first try per-typology, then apply global offsets as fallback
   const folgasKey = `folgas_${plano.typologyId}`;
   useEffect(() => {
-    supabase.from("configuracoes").select("valor").eq("chave", folgasKey).maybeSingle().then(({ data }) => {
-      if (data?.valor) {
+    const loadFolgas = async () => {
+      // Load per-typology override
+      const { data: perTyp } = await supabase.from("configuracoes").select("valor").eq("chave", folgasKey).maybeSingle();
+      if (perTyp?.valor) {
         try {
-          const saved = JSON.parse(data.valor);
+          const saved = JSON.parse(perTyp.valor);
           if (saved.cut) setCutFolgas(prev => ({ ...prev, ...saved.cut }));
           if (saved.glass) setGlassFolgas(prev => ({ ...prev, ...saved.glass }));
-        } catch { /* ignore parse errors */ }
+          setFolgasLoaded(true);
+          return;
+        } catch { /* ignore */ }
       }
-    });
-  }, [folgasKey]);
+
+      // No per-typology override → apply global offsets
+      const { data: globalData } = await supabase.from("configuracoes").select("valor").eq("chave", "folgas_global").maybeSingle();
+      if (globalData?.valor) {
+        try {
+          const global = JSON.parse(globalData.valor);
+          const pOffset = global.perfil_offset ?? 0;
+          const vwOffset = global.vidro_largura_offset ?? 0;
+          const vhOffset = global.vidro_altura_offset ?? 0;
+
+          if (pOffset !== 0) {
+            setCutFolgas(() => {
+              const map: Record<string, number> = {};
+              originalCutRules.forEach(r => { map[r.id] = r.constant_mm + pOffset; });
+              return map;
+            });
+          }
+          if (vwOffset !== 0 || vhOffset !== 0) {
+            setGlassFolgas(() => {
+              const map: Record<string, { w: number; h: number }> = {};
+              originalGlassRules.forEach(r => {
+                map[r.id] = { w: r.width_constant_mm + vwOffset, h: r.height_constant_mm + vhOffset };
+              });
+              return map;
+            });
+          }
+        } catch { /* ignore */ }
+      }
+      setFolgasLoaded(true);
+    };
+    loadFolgas();
+  }, [folgasKey, originalCutRules, originalGlassRules]);
 
   const saveFolgas = useCallback(async () => {
     setFolgasSaving(true);
