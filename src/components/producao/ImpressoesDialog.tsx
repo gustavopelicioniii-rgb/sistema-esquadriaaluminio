@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 import { Printer, FileText, Receipt, ClipboardList } from "lucide-react";
 import type { Pedido } from "@/pages/Producao";
 

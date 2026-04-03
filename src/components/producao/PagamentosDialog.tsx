@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 import { Check, Plus, Trash2 } from "lucide-react";
 import type { Pedido } from "@/pages/Producao";
 

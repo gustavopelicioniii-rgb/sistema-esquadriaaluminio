@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology, getTypologyById, profiles } from "@/data/catalog";
 import { cn } from "@/lib/utils";

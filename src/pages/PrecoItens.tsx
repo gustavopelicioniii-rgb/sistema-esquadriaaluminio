@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Search, FileDown } from "lucide-react";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 import perfilImg from "@/assets/items/perfil.png";
 import vidroImg from "@/assets/items/vidro.png";
 import ferragemImg from "@/assets/items/ferragem.png";

@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import { formatCurrency } from "@/data/mockData";
+import { formatCurrency } from "@/lib/formatters";
 
 interface VidroItem {
   id: string;
