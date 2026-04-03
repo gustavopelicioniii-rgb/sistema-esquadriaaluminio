@@ -257,8 +257,8 @@ const Clientes = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
-        <p className="text-muted-foreground text-sm">Gerencie clientes e leads</p>
+        <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clientes</h1>
+        <p className="text-muted-foreground text-xs sm:text-sm">Gerencie clientes e leads</p>
       </div>
 
       <Tabs defaultValue="lista">
