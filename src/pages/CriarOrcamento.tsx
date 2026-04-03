@@ -101,9 +101,38 @@ const CriarOrcamento = () => {
                 <Input type="number" value={quantidade} onChange={(e) => setQuantidade(Number(e.target.value))} min={1} />
               </div>
             </div>
-            <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="w-full mt-2">
-              Salvar Orçamento
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="flex-1">
+                Salvar Orçamento
+              </Button>
+              <Button
+                variant="outline"
+                disabled={!cliente || !tipo || !calculo}
+                className="gap-2"
+                onClick={async () => {
+                  if (!calculo || !produtoSelecionado) return;
+                  sonnerToast.info("Gerando PDF...");
+                  await generateBudgetPDF(
+                    {
+                      cliente,
+                      produto: produtoSelecionado.label,
+                      larguraCm: largura,
+                      alturaCm: altura,
+                      quantidade,
+                      areaM2: calculo.areaM2,
+                      custoTotal: calculo.custoTotal,
+                      margem: calculo.margem,
+                      valorFinal: calculo.valorFinal,
+                    },
+                    "budget-frame-preview"
+                  );
+                  sonnerToast.success("PDF exportado!");
+                }}
+              >
+                <FileDown className="h-4 w-4" />
+                PDF
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
