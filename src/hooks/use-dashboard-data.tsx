@@ -96,25 +96,70 @@ export function useReceitaMensal() {
     queryKey: ["receita_mensal"],
     queryFn: async () => {
       const { data: pedidos = [] } = await supabase.from("pedidos").select("valor, created_at");
-
       const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
       const now = new Date();
       const result: { mes: string; valor: number }[] = [];
-
       for (let i = 5; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const year = d.getFullYear();
         const month = d.getMonth();
         const total = pedidos
-          .filter(p => {
-            const pd = new Date(p.created_at);
-            return pd.getFullYear() === year && pd.getMonth() === month;
-          })
+          .filter(p => { const pd = new Date(p.created_at); return pd.getFullYear() === year && pd.getMonth() === month; })
           .reduce((s, p) => s + Number(p.valor), 0);
         result.push({ mes: meses[month], valor: total });
       }
-
       return result;
+    },
+  });
+}
+
+export function useOrcamentosStatus(period: PeriodFilter = "todos") {
+  return useQuery({
+    queryKey: ["orcamentos_status", period],
+    queryFn: async () => {
+      const { from } = getDateRange(period);
+      let query = supabase.from("orcamentos").select("status, valor");
+      if (from) query = query.gte("created_at", from);
+      const { data } = await query;
+      const orcamentos = data ?? [];
+      const grouped: Record<string, { count: number; total: number }> = {};
+      orcamentos.forEach(o => {
+        if (!grouped[o.status]) grouped[o.status] = { count: 0, total: 0 };
+        grouped[o.status].count++;
+        grouped[o.status].total += Number(o.valor);
+      });
+      return [
+        { name: "Pendente", value: grouped["pendente"]?.count ?? 0, total: grouped["pendente"]?.total ?? 0, color: "hsl(38, 92%, 50%)" },
+        { name: "Aprovado", value: grouped["aprovado"]?.count ?? 0, total: grouped["aprovado"]?.total ?? 0, color: "hsl(142, 71%, 45%)" },
+        { name: "Recusado", value: grouped["recusado"]?.count ?? 0, total: grouped["recusado"]?.total ?? 0, color: "hsl(0, 84%, 60%)" },
+      ];
+    },
+  });
+}
+
+export function useProducaoEtapas(period: PeriodFilter = "todos") {
+  return useQuery({
+    queryKey: ["producao_etapas", period],
+    queryFn: async () => {
+      const { from } = getDateRange(period);
+      let query = supabase.from("pedidos").select("etapa").eq("status", "em_andamento");
+      if (from) query = query.gte("created_at", from);
+      const { data } = await query;
+      const pedidos = data ?? [];
+      const counts: Record<string, number> = {};
+      pedidos.forEach(p => {
+        const etapa = p.etapa?.trim() || "Sem etapa";
+        counts[etapa] = (counts[etapa] || 0) + 1;
+      });
+      const colors = [
+        "hsl(217, 91%, 53%)", "hsl(38, 92%, 50%)", "hsl(142, 71%, 45%)",
+        "hsl(280, 67%, 55%)", "hsl(0, 84%, 60%)", "hsl(180, 60%, 45%)",
+      ];
+      return Object.entries(counts).map(([name, value], i) => ({
+        name,
+        value,
+        color: colors[i % colors.length],
+      }));
     },
   });
 }
