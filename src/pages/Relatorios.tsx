@@ -206,7 +206,7 @@ const Relatorios = () => {
             <span className="text-sm text-muted-foreground">até</span>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("w-[160px] justify-start text-left font-normal", !dataFim && "text-muted-foreground")}>
+                <Button variant="outline" size="sm" className={cn("w-[130px] sm:w-[160px] justify-start text-left font-normal text-xs sm:text-sm", !dataFim && "text-muted-foreground")}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dataFim ? format(dataFim, "dd/MM/yyyy") : "Data final"}
                 </Button>
