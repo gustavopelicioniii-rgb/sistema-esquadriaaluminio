@@ -53,11 +53,40 @@ function normalizeHeader(h: string): string {
     .replace(/^_|_$/g, "");
 }
 
-function findColumn(headers: string[], candidates: string[]): string | null {
-  for (const c of candidates) {
-    const found = headers.find(h => normalizeHeader(h) === c);
-    if (found) return found;
+/** Sinônimos para auto-mapeamento de colunas CSV */
+const COLUMN_SYNONYMS: Record<string, string[]> = {
+  // Estoque
+  codigo: ["codigo", "cod", "code", "sku", "ref", "referencia", "id", "item"],
+  produto: ["produto", "nome", "name", "descricao", "description", "material", "item", "peca"],
+  quantidade: ["quantidade", "qtd", "qty", "qtde", "quant", "estoque", "saldo"],
+  unidade: ["unidade", "un", "unit", "und", "medida"],
+  categoria: ["categoria", "cat", "category", "tipo", "type", "grupo", "group", "classe"],
+  minimo: ["minimo", "min", "minimum", "estoque_minimo", "qtd_minima", "ponto_reposicao"],
+  // Perfis
+  nome: ["nome", "name", "descricao", "description", "produto"],
+  tipo: ["tipo", "type", "perfil_tipo", "profile_type"],
+  peso_metro: ["peso_metro", "peso", "weight", "kg_m", "peso_kg", "peso_linear"],
+  comprimento_barra: ["comprimento_barra", "comprimento", "length", "barra", "tamanho"],
+  material: ["material", "mat"],
+  linha: ["linha", "line", "serie", "familia"],
+};
+
+function findBestMatch(headers: string[], targetKey: string): string | null {
+  const synonyms = COLUMN_SYNONYMS[targetKey] || [targetKey];
+  const normalizedHeaders = headers.map(h => ({ original: h, normalized: normalizeHeader(h) }));
+
+  // 1. Exact match on normalized header
+  for (const syn of synonyms) {
+    const match = normalizedHeaders.find(h => h.normalized === syn);
+    if (match) return match.original;
   }
+
+  // 2. Header contains synonym or synonym contains header
+  for (const syn of synonyms) {
+    const match = normalizedHeaders.find(h => h.normalized.includes(syn) || syn.includes(h.normalized));
+    if (match) return match.original;
+  }
+
   return null;
 }
 
@@ -89,12 +118,16 @@ const ImportarCSV = () => {
         setHeaders(hdrs);
         setRows(data);
 
-        // Auto-map columns
+        // Auto-map columns using synonyms
         const targetCols = mode === "estoque" ? Object.keys(ESTOQUE_COLUMNS_MAP) : Object.keys(PERFIL_COLUMNS_MAP);
         const autoMap: Record<string, string> = {};
+        const usedHeaders = new Set<string>();
         for (const target of targetCols) {
-          const match = hdrs.find(h => normalizeHeader(h) === target || normalizeHeader(h).includes(target));
-          if (match) autoMap[target] = match;
+          const match = findBestMatch(hdrs.filter(h => !usedHeaders.has(h)), target);
+          if (match) {
+            autoMap[target] = match;
+            usedHeaders.add(match);
+          }
         }
         setColumnMap(autoMap);
         setStep("map");
