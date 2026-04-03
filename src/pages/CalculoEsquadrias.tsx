@@ -220,7 +220,7 @@ export default function CalculoEsquadrias() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex flex-col items-center gap-6">
               <div id="frame-preview-for-pdf">
               <FramePreview
                 width_mm={parseFloat(width) || 1200}
