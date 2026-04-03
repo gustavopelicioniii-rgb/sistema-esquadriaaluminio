@@ -45,6 +45,7 @@ const menuItems = [
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Administradores", url: "/administradores", icon: UserCog },
   { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
+  { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
 ];
 
 export function AppSidebar() {

@@ -57,6 +57,7 @@ const App = () => (
             <Route path="/funcionarios" element={<Funcionarios />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
             <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
+            <Route path="/nota-fiscal" element={<NotaFiscal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
