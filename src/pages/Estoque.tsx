@@ -10,6 +10,7 @@ import { Plus, Search, Pencil, ArrowDownUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 const categorias = ["Todos", "Perfis", "Vidros", "Acessórios", "Insumos", "Fixação"];
 
