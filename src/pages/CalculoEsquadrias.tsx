@@ -305,12 +305,12 @@ export default function CalculoEsquadrias() {
           {/* Tabs with detailed results */}
           <Card>
             <Tabs defaultValue="cuts">
-              <CardHeader className="pb-0">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">
+              <CardHeader className="pb-0 px-3 sm:px-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <CardTitle className="text-sm sm:text-base">
                     {result.typology_name} — {result.input.width_mm} × {result.input.height_mm} mm
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="gap-2" onClick={async () => {
+                  <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto" onClick={async () => {
                     toast.info("Gerando PDF...");
                     await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
                     toast.success("PDF exportado com sucesso!");
@@ -319,13 +319,15 @@ export default function CalculoEsquadrias() {
                     Exportar
                   </Button>
                 </div>
-                <TabsList className="mt-3">
-                  <TabsTrigger value="cuts">Lista de Corte</TabsTrigger>
-                  <TabsTrigger value="glass">Vidros</TabsTrigger>
-                  <TabsTrigger value="components">Componentes</TabsTrigger>
-                  <TabsTrigger value="bars">Plano de Barras</TabsTrigger>
-                  <TabsTrigger value="summary">Resumo por Perfil</TabsTrigger>
-                </TabsList>
+                <div className="mt-3 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+                  <TabsList className="w-max sm:w-auto">
+                    <TabsTrigger value="cuts" className="text-xs sm:text-sm">Corte</TabsTrigger>
+                    <TabsTrigger value="glass" className="text-xs sm:text-sm">Vidros</TabsTrigger>
+                    <TabsTrigger value="components" className="text-xs sm:text-sm">Comp.</TabsTrigger>
+                    <TabsTrigger value="bars" className="text-xs sm:text-sm">Barras</TabsTrigger>
+                    <TabsTrigger value="summary" className="text-xs sm:text-sm">Resumo</TabsTrigger>
+                  </TabsList>
+                </div>
               </CardHeader>
 
               {/* CUTS TAB */}
