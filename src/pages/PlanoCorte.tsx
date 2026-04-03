@@ -254,10 +254,41 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
 const PlanoCorte = () => {
   const [search, setSearch] = useState("");
   const [selectedPlano, setSelectedPlano] = useState<PlanoSalvo | null>(null);
+  const [planos, setPlanos] = useState<PlanoSalvo[]>(mockPlanos);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [novoNome, setNovoNome] = useState("");
+  const [novoResponsavel, setNovoResponsavel] = useState("");
+  const [novoLargura, setNovoLargura] = useState(1000);
+  const [novoAltura, setNovoAltura] = useState(1000);
+  const [novoTypologyId, setNovoTypologyId] = useState("");
 
-  const filtered = mockPlanos.filter(p =>
+  const filtered = planos.filter(p =>
     !search || p.nome.toLowerCase().includes(search.toLowerCase()) || p.responsavel.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleAddPlano = () => {
+    if (!novoNome || !novoResponsavel || !novoTypologyId) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+    const novo: PlanoSalvo = {
+      id: `p${Date.now()}`,
+      typologyId: novoTypologyId,
+      nome: novoNome,
+      responsavel: novoResponsavel,
+      data: new Date().toLocaleDateString("pt-BR"),
+      largura: novoLargura,
+      altura: novoAltura,
+    };
+    setPlanos(prev => [novo, ...prev]);
+    setDialogOpen(false);
+    setNovoNome("");
+    setNovoResponsavel("");
+    setNovoLargura(1000);
+    setNovoAltura(1000);
+    setNovoTypologyId("");
+    toast.success("Plano de corte adicionado!");
+  };
 
   if (selectedPlano) {
     return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} />;
@@ -271,7 +302,7 @@ const PlanoCorte = () => {
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Plano de Corte</h1>
           <p className="text-muted-foreground text-sm">Gerencie os planos de corte dos produtos</p>
         </div>
-        <Button className="gap-2 w-full sm:w-auto">
+        <Button className="gap-2 w-full sm:w-auto" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4" />
           Adicionar
         </Button>
@@ -332,6 +363,52 @@ const PlanoCorte = () => {
           Nenhum plano de corte encontrado.
         </div>
       )}
+
+      {/* Dialog Adicionar */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Novo Plano de Corte</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Tipologia</Label>
+              <Select value={novoTypologyId} onValueChange={setNovoTypologyId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a tipologia..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {typologies.map(t => (
+                    <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Nome do produto</Label>
+              <Input value={novoNome} onChange={e => setNovoNome(e.target.value)} placeholder="Ex: Janela 2 Folhas Sala" />
+            </div>
+            <div className="space-y-2">
+              <Label>Responsável</Label>
+              <Input value={novoResponsavel} onChange={e => setNovoResponsavel(e.target.value)} placeholder="Nome do responsável" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Largura (mm)</Label>
+                <Input type="number" value={novoLargura} onChange={e => setNovoLargura(Number(e.target.value))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Altura (mm)</Label>
+                <Input type="number" value={novoAltura} onChange={e => setNovoAltura(Number(e.target.value))} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleAddPlano}>Adicionar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
