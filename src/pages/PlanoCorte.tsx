@@ -16,7 +16,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { typologies } from "@/data/catalog";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
-import type { CalculationOutput } from "@/types/calculation";
+import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
+import { optimizeBars } from "@/lib/bar-optimizer";
+import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 
 // Mock saved plans
 interface PlanoSalvo {
