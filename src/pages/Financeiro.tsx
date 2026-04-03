@@ -1,48 +1,58 @@
 import { useState } from "react";
-import { contasFinanceiras, financeiroResumo, formatCurrency, formatDate } from "@/data/mockData";
+import { useContasFinanceiras, useCreateConta, useUpdateConta, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   TrendingUp, TrendingDown, Wallet, DollarSign,
-  Search, Plus, CheckCircle2,
-  Receipt, FileText, FolderOpen, BarChart3,
-  CreditCard, ArrowDownCircle, ArrowUpCircle, ClipboardList,
+  Search, Plus, CheckCircle2, Loader2,
+  CreditCard, ArrowDownCircle, ArrowUpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
+const formatDate = (dateStr: string) =>
+  new Intl.DateTimeFormat("pt-BR").format(new Date(dateStr));
+
 type StatusFilter = "todos" | "pendente" | "pago" | "vencido";
 
-// Module cards matching the reference image
-const modulos = [
-  { id: "receber", label: "Contas a Receber", desc: "Gerenciar contas a receber", icon: ArrowDownCircle, color: "text-primary" },
-  { id: "pagar", label: "Contas a Pagar", desc: "Gerenciar contas a pagar", icon: ArrowUpCircle, color: "text-primary" },
-  { id: "pagamentos", label: "Pagamentos", desc: "Registrar pagamentos", icon: CreditCard, color: "text-primary" },
-  { id: "notas", label: "Notas Fiscais", desc: "Consultar notas fiscais", icon: Receipt, color: "text-primary" },
-  { id: "emissao", label: "Emissão de NF", desc: "Emitir novas NFs", icon: FileText, color: "text-primary" },
-  { id: "contratos", label: "Contratos", desc: "Gerenciar contratos", icon: ClipboardList, color: "text-primary" },
-  { id: "documentos", label: "Documentos", desc: "Arquivos documentais", icon: FolderOpen, color: "text-primary" },
-  { id: "fluxo", label: "Fluxo de Caixa", desc: "Análise de fluxo", icon: BarChart3, color: "text-primary" },
-];
-
-// Sub-view for Contas a Receber / Pagar
-function ContasView({ tipo }: { tipo: "receber" | "pagar" }) {
+function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: ContaFinanceira[] }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
   const [search, setSearch] = useState("");
+  const updateConta = useUpdateConta();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const createConta = useCreateConta();
+  const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "" });
 
-  const contas = contasFinanceiras.filter(c => c.tipo === tipo);
-  const filtered = contas.filter(c => {
-    if (statusFilter !== "todos" && c.status !== statusFilter) return false;
-    if (search) {
-      const s = search.toLowerCase();
-      return c.cliente.toLowerCase().includes(s) || c.descricao.toLowerCase().includes(s);
-    }
-    return true;
-  });
+  const filtered = contas
+    .filter(c => c.tipo === tipo)
+    .filter(c => {
+      if (statusFilter !== "todos" && c.status !== statusFilter) return false;
+      if (search) {
+        const s = search.toLowerCase();
+        return c.cliente.toLowerCase().includes(s) || c.descricao.toLowerCase().includes(s);
+      }
+      return true;
+    });
+
+  const handleCreate = () => {
+    if (!form.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
+    createConta.mutate(
+      { ...form, tipo, status: "pendente" },
+      {
+        onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "" }); },
+      }
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -51,7 +61,7 @@ function ContasView({ tipo }: { tipo: "receber" | "pagar" }) {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Buscar lançamentos..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
-        <Button className="gap-2 w-full sm:w-auto">
+        <Button className="gap-2 w-full sm:w-auto" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4" /> {tipo === "receber" ? "Nova Receita" : "Nova Despesa"}
         </Button>
       </div>
@@ -89,7 +99,12 @@ function ContasView({ tipo }: { tipo: "receber" | "pagar" }) {
                     <TableCell><StatusBadge status={conta.status} /></TableCell>
                     <TableCell className="text-right">
                       {conta.status !== "pago" && (
-                        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => toast.success(`${conta.id} marcado como recebido`)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1.5 text-xs"
+                          onClick={() => updateConta.mutate({ id: conta.id, status: "pago" }, { onSuccess: () => toast.success("Marcado como pago") })}
+                        >
                           <CheckCircle2 className="h-3.5 w-3.5" /> Recebido
                         </Button>
                       )}
@@ -106,79 +121,59 @@ function ContasView({ tipo }: { tipo: "receber" | "pagar" }) {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{tipo === "receber" ? "Nova Receita" : "Nova Despesa"}</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5"><Label>Cliente *</Label><Input value={form.cliente} onChange={e => setForm({ ...form, cliente: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Descrição</Label><Input value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={form.valor || ""} onChange={e => setForm({ ...form, valor: Number(e.target.value) })} /></div>
+              <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={form.vencimento} onChange={e => setForm({ ...form, vencimento: e.target.value })} /></div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleCreate} disabled={createConta.isPending}>Criar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// Placeholder sub-view
-function PlaceholderView({ title }: { title: string }) {
-  return (
-    <Card>
-      <CardContent className="p-8 text-center text-muted-foreground">
-        <p className="text-sm">Módulo <strong>{title}</strong> em desenvolvimento.</p>
-      </CardContent>
-    </Card>
-  );
-}
-
 const Financeiro = () => {
-  const [activeModule, setActiveModule] = useState<string | null>(null);
+  const { data: contas = [], isLoading } = useContasFinanceiras();
+  const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
 
-  const summaryCards = [
-    { label: "Total a Receber", valor: financeiroResumo.aReceber, icon: TrendingUp, color: "text-success", sub: `${contasFinanceiras.filter(c => c.tipo === "receber").length} contas` },
-    { label: "Total a Pagar", valor: financeiroResumo.aPagar, icon: TrendingDown, color: "text-destructive", sub: `${contasFinanceiras.filter(c => c.tipo === "pagar").length} contas` },
-    { label: "Recebido", valor: financeiroResumo.aReceber - financeiroResumo.inadimplencia, icon: Wallet, color: "text-primary", sub: `${contasFinanceiras.filter(c => c.status === "pago").length} pagas` },
-    { label: "Saldo", valor: financeiroResumo.saldoProjetado, icon: DollarSign, color: "text-primary", sub: financeiroResumo.saldoProjetado >= 0 ? "Positivo" : "Negativo" },
-  ];
+  const aReceber = contas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
+  const aPagar = contas.filter(c => c.tipo === "pagar").reduce((s, c) => s + Number(c.valor), 0);
+  const totalPago = contas.filter(c => c.status === "pago").reduce((s, c) => s + Number(c.valor), 0);
+  const saldo = aReceber - aPagar;
 
-  const renderModule = () => {
-    switch (activeModule) {
-      case "receber": return <ContasView tipo="receber" />;
-      case "pagar": return <ContasView tipo="pagar" />;
-      case "notas":
-      case "emissao": return <PlaceholderView title="Notas Fiscais" />;
-      case "pagamentos": return <PlaceholderView title="Pagamentos" />;
-      case "contratos": return <PlaceholderView title="Contratos" />;
-      case "documentos": return <PlaceholderView title="Documentos" />;
-      case "fluxo": return <PlaceholderView title="Fluxo de Caixa" />;
-      default: return null;
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Financeiro</h1>
         <p className="text-muted-foreground text-sm">Visão geral das finanças da empresa</p>
       </div>
 
-      {/* Module grid */}
-      <div>
-        <h2 className="text-sm font-bold mb-3">Acessar Módulos</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {modulos.map(mod => (
-            <Card
-              key={mod.id}
-              className={cn(
-                "cursor-pointer hover:shadow-md hover:border-primary/30 transition-all",
-                activeModule === mod.id && "border-primary shadow-md"
-              )}
-              onClick={() => setActiveModule(activeModule === mod.id ? null : mod.id)}
-            >
-              <CardContent className="p-4">
-                <mod.icon className={cn("h-5 w-5 mb-2", mod.color)} />
-                <h3 className="text-sm font-bold">{mod.label}</h3>
-                <p className="text-[11px] text-muted-foreground">{mod.desc}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Summary stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {summaryCards.map(card => (
+        {[
+          { label: "Total a Receber", valor: aReceber, icon: TrendingUp, color: "text-success" },
+          { label: "Total a Pagar", valor: aPagar, icon: TrendingDown, color: "text-destructive" },
+          { label: "Pago", valor: totalPago, icon: Wallet, color: "text-primary" },
+          { label: "Saldo", valor: saldo, icon: DollarSign, color: saldo >= 0 ? "text-success" : "text-destructive" },
+        ].map(card => (
           <Card key={card.label} className="shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-1">
@@ -186,38 +181,41 @@ const Financeiro = () => {
                 <card.icon className={cn("h-4 w-4", card.color)} />
               </div>
               <p className="text-lg sm:text-2xl font-bold">{formatCurrency(card.valor)}</p>
-              <p className="text-[11px] text-muted-foreground">{card.sub}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Active module content */}
-      {activeModule && renderModule()}
+      <Tabs value={activeTab} onValueChange={v => setActiveTab(v as any)}>
+        <TabsList>
+          <TabsTrigger value="resumo">Resumo</TabsTrigger>
+          <TabsTrigger value="receber">A Receber</TabsTrigger>
+          <TabsTrigger value="pagar">A Pagar</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {/* Últimas Contas */}
-      {!activeModule && (
+      {activeTab === "resumo" && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-bold">Últimas Contas</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
           <CardContent>
-            {contasFinanceiras.length > 0 ? (
+            {contas.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Cliente</TableHead>
                       <TableHead>Descrição</TableHead>
+                      <TableHead>Tipo</TableHead>
                       <TableHead>Valor</TableHead>
                       <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {contasFinanceiras.slice(0, 5).map(c => (
+                    {contas.slice(0, 10).map(c => (
                       <TableRow key={c.id}>
                         <TableCell className="font-medium">{c.cliente}</TableCell>
                         <TableCell className="text-muted-foreground">{c.descricao}</TableCell>
+                        <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-4 w-4 text-success" /> : <ArrowUpCircle className="h-4 w-4 text-destructive" />}</TableCell>
                         <TableCell className="font-semibold">{formatCurrency(c.valor)}</TableCell>
                         <TableCell><StatusBadge status={c.status} /></TableCell>
                       </TableRow>
@@ -231,6 +229,9 @@ const Financeiro = () => {
           </CardContent>
         </Card>
       )}
+
+      {activeTab === "receber" && <ContasView tipo="receber" contas={contas} />}
+      {activeTab === "pagar" && <ContasView tipo="pagar" contas={contas} />}
     </div>
   );
 };
