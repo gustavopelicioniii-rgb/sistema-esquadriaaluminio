@@ -4,6 +4,7 @@ import { formatCurrency } from "@/data/mockData";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import {
   Plus, Search, MapPin, Phone, User, Calendar,
@@ -93,9 +94,13 @@ const Producao = () => {
     fetchPedidos();
   };
 
-  const handleCancelar = async (op: Pedido) => {
-    await supabase.from("pedidos").delete().eq("id", op.id);
-    toast({ title: "Pedido cancelado", description: `Pedido ${op.pedido_num} foi removido.`, variant: "destructive" });
+  const [cancelConfirm, setCancelConfirm] = useState<Pedido | null>(null);
+
+  const handleCancelar = async () => {
+    if (!cancelConfirm) return;
+    await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
+    toast({ title: "Pedido cancelado", description: `Pedido ${cancelConfirm.pedido_num} foi removido.`, variant: "destructive" });
+    setCancelConfirm(null);
     fetchPedidos();
   };
 
@@ -216,7 +221,7 @@ const Producao = () => {
                         ))}
                       </div>
                       <div className="flex gap-2 pt-1">
-                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => handleCancelar(op)}>Cancelar</Button>
+                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => setCancelConfirm(op)}>Cancelar</Button>
                         <Button size="sm" className="flex-1 text-xs" onClick={() => handleConcluir(op)}>Concluir pedido</Button>
                       </div>
                     </CardContent>
@@ -240,6 +245,23 @@ const Producao = () => {
           <AlterarEtapaDialog open={activeDialog === "etapa"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
         </>
       )}
+
+      <AlertDialog open={!!cancelConfirm} onOpenChange={(v) => !v && setCancelConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancelar pedido {cancelConfirm?.pedido_num}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é irreversível. O pedido e todos os pagamentos associados serão removidos permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Voltar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelar} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Confirmar cancelamento
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
