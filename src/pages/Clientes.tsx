@@ -123,7 +123,7 @@ const Clientes = () => {
     setLoading(false);
   };
 
-  useState(() => { fetchClientes(); });
+  useEffect(() => { fetchClientes(); }, []);
 
   const filtered = clientes.filter((c) => {
     if (!search) return true;
