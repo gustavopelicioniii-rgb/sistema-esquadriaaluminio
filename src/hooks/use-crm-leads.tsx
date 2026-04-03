@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type CrmLeadStatus = "novo" | "em_orcamento" | "negociacao" | "fechado";
+export type CrmLeadStatus = "novo" | "qualificado" | "em_orcamento" | "negociacao" | "fechado" | "perdido";
 
 export interface CrmLead {
   id: string;
