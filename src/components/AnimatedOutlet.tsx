@@ -5,17 +5,24 @@ export function AnimatedOutlet({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [displayChildren, setDisplayChildren] = useState(children);
   const [transitionStage, setTransitionStage] = useState<"enter" | "exit">("enter");
-  const prevKey = useRef(location.key);
+  const prevPath = useRef(location.pathname);
 
   useEffect(() => {
-    if (location.key !== prevKey.current) {
+    if (location.pathname !== prevPath.current) {
       setTransitionStage("exit");
     }
-  }, [location.key, children]);
+  }, [location.pathname]);
 
-  const handleTransitionEnd = () => {
+  // Update children ref when they change (for same-path re-renders)
+  useEffect(() => {
+    if (transitionStage === "enter") {
+      setDisplayChildren(children);
+    }
+  }, [children, transitionStage]);
+
+  const handleAnimationEnd = () => {
     if (transitionStage === "exit") {
-      prevKey.current = location.key;
+      prevPath.current = location.pathname;
       setDisplayChildren(children);
       setTransitionStage("enter");
     }
@@ -23,8 +30,9 @@ export function AnimatedOutlet({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      key={transitionStage + prevPath.current}
       className={transitionStage === "enter" ? "page-enter" : "page-exit"}
-      onAnimationEnd={handleTransitionEnd}
+      onAnimationEnd={handleAnimationEnd}
     >
       {displayChildren}
     </div>
