@@ -230,7 +230,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
       <Card>
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-            <div className="bg-muted/30 rounded-xl p-3 flex items-center justify-center">
+            <div id="frame-preview-svg" className="bg-muted/30 rounded-xl p-3 flex items-center justify-center">
               {typ && (
                 <FramePreview
                   width_mm={largura}
