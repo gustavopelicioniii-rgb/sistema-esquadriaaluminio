@@ -65,11 +65,11 @@ const Orcamentos = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Orçamentos</h1>
-          <p className="text-muted-foreground text-sm">Gerencie os orçamentos emitidos para seus clientes.</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Orçamentos</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Gerencie os orçamentos emitidos.</p>
         </div>
         <div className="flex items-center gap-2">
           <ExportButtons getConfig={() => ({
@@ -83,14 +83,40 @@ const Orcamentos = () => {
             rows: filtered.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(o.valor), o.data, o.status]),
             filename: "orcamentos",
           })} />
-          <Button onClick={() => navigate("/orcamentos/novo")} className="gap-2">
+          <Button onClick={() => navigate("/orcamentos/novo")} className="gap-2 text-xs sm:text-sm">
             <Plus className="h-4 w-4" />
-            Novo Orçamento
+            <span className="hidden sm:inline">Novo Orçamento</span>
+            <span className="sm:hidden">Novo</span>
           </Button>
         </div>
       </div>
 
+      {/* Mobile filter tabs */}
+      <div className="md:hidden overflow-x-auto">
+        <div className="flex gap-1 p-1 rounded-lg border bg-muted/50 w-fit">
+          {filterItems.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setFilter(item.key)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap shrink-0",
+                filter === item.key ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              )}
+            >
+              {item.label}
+              <span className={cn(
+                "flex h-4 min-w-4 items-center justify-center rounded-full text-[9px] font-bold",
+                filter === item.key ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"
+              )}>
+                {getCounts(item.key)}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex gap-6">
+        {/* Desktop sidebar */}
         <div className="w-48 shrink-0 space-y-4 hidden md:block">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">FILTRAR POR STATUS</p>
@@ -117,7 +143,7 @@ const Orcamentos = () => {
           </div>
         </div>
 
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-4 min-w-0">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Buscar por cliente, produto..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -129,8 +155,8 @@ const Orcamentos = () => {
                 <TableRow>
                   <TableHead>Número</TableHead>
                   <TableHead>Cliente</TableHead>
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Data</TableHead>
+                  <TableHead className="hidden sm:table-cell">Produto</TableHead>
+                  <TableHead className="hidden md:table-cell">Data</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -139,19 +165,19 @@ const Orcamentos = () => {
               <TableBody>
                 {filtered.map((orc) => (
                   <TableRow key={orc.id}>
-                    <TableCell className="font-semibold text-primary">{orc.numero}</TableCell>
-                    <TableCell className="font-medium">{orc.cliente}</TableCell>
-                    <TableCell className="text-muted-foreground">{orc.produto}</TableCell>
-                    <TableCell className="text-muted-foreground">{formatDate(orc.data)}</TableCell>
-                    <TableCell className="font-semibold">{formatCurrency(orc.valor)}</TableCell>
+                    <TableCell className="font-semibold text-primary text-xs sm:text-sm">{orc.numero}</TableCell>
+                    <TableCell className="font-medium text-xs sm:text-sm">{orc.cliente}</TableCell>
+                    <TableCell className="text-muted-foreground hidden sm:table-cell">{orc.produto}</TableCell>
+                    <TableCell className="text-muted-foreground hidden md:table-cell">{formatDate(orc.data)}</TableCell>
+                    <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(orc.valor)}</TableCell>
                     <TableCell><StatusBadge status={orc.status} /></TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-0.5">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedOrcamento(orc)} title="Visualizar">
-                          <Eye className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => setSelectedOrcamento(orc)} title="Visualizar">
+                          <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(orc)} title="Excluir">
-                          <Trash2 className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(orc)} title="Excluir">
+                          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -171,34 +197,34 @@ const Orcamentos = () => {
       </div>
 
       <Dialog open={!!selectedOrcamento} onOpenChange={() => setSelectedOrcamento(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Orçamento {selectedOrcamento?.numero}</DialogTitle>
             <DialogDescription>Detalhes do orçamento para {selectedOrcamento?.cliente}</DialogDescription>
           </DialogHeader>
           {selectedOrcamento && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Cliente</p>
-                  <p className="font-medium">{selectedOrcamento.cliente}</p>
+                  <p className="text-muted-foreground text-xs">Cliente</p>
+                  <p className="font-medium text-sm">{selectedOrcamento.cliente}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Data</p>
-                  <p className="font-medium">{formatDate(selectedOrcamento.data)}</p>
+                  <p className="text-muted-foreground text-xs">Data</p>
+                  <p className="font-medium text-sm">{formatDate(selectedOrcamento.data)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Produto</p>
-                  <p className="font-medium">{selectedOrcamento.produto}</p>
+                  <p className="text-muted-foreground text-xs">Produto</p>
+                  <p className="font-medium text-sm">{selectedOrcamento.produto}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Status</p>
+                  <p className="text-muted-foreground text-xs">Status</p>
                   <StatusBadge status={selectedOrcamento.status} />
                 </div>
               </div>
               <div className="border-t pt-3 flex justify-between items-center">
-                <span className="font-semibold">Valor Total</span>
-                <span className="text-xl font-bold text-primary">{formatCurrency(selectedOrcamento.valor)}</span>
+                <span className="font-semibold text-sm">Valor Total</span>
+                <span className="text-lg sm:text-xl font-bold text-primary">{formatCurrency(selectedOrcamento.valor)}</span>
               </div>
             </div>
           )}
