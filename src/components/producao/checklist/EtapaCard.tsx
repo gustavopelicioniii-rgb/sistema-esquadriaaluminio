@@ -47,9 +47,16 @@ export default function EtapaCard({
   return (
     <div className="rounded-lg border bg-card overflow-hidden">
       {/* Header */}
-      <button
-        onClick={onToggleExpand}
-        className="flex w-full items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
+      <div className="flex w-full items-center">
+        {dragHandleProps && (
+          <div {...dragHandleProps} className="flex items-center px-2 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+            <GripVertical className="h-4 w-4" />
+          </div>
+        )}
+        <button
+          onClick={onToggleExpand}
+          className="flex flex-1 items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
+        >
       >
         <div className="flex items-center gap-3">
           {isComplete ? (
