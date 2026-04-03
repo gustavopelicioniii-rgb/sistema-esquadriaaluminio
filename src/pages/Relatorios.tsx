@@ -83,7 +83,7 @@ const Relatorios = () => {
             { label: "A Pagar", value: formatCurrency(totalPag) },
             { label: "Saldo", value: formatCurrency(totalRec - totalPag) },
           ],
-          rows: contas!.map((c: any) => [
+          rows: filtered.map((c: any) => [
             c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(Number(c.valor)), c.status,
           ]),
         };
