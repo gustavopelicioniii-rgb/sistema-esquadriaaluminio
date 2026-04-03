@@ -116,6 +116,7 @@ const CRM = () => {
   const createLead = useCreateLead();
   const deleteLead = useDeleteLead();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogStatus, setDialogStatus] = useState<CrmLeadStatus>("novo");
   const [detailLead, setDetailLead] = useState<CrmLead | null>(null);
@@ -125,7 +126,12 @@ const CRM = () => {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
-  const getLeadsByStatus = (status: CrmLeadStatus) => leads.filter((l) => l.status === status);
+  const filteredLeads = leads.filter((l) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return l.nome.toLowerCase().includes(q) || (l.telefone || "").includes(q) || (l.email || "").toLowerCase().includes(q);
+  });
+  const getLeadsByStatus = (status: CrmLeadStatus) => filteredLeads.filter((l) => l.status === status);
   const activeLead = activeId ? leads.find((l) => l.id === activeId) : null;
 
   const handleDragStart = (event: DragStartEvent) => setActiveId(event.active.id as string);
