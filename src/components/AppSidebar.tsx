@@ -1,7 +1,7 @@
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, UserCheck, Calculator, Receipt, Package,
+  UserCog, UserCheck, Calculator, Receipt, Package, Upload,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -29,6 +29,7 @@ const menuItems = [
   { title: "Administradores", url: "/administradores", icon: UserCog },
   { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
+  { title: "Importar CSV", url: "/importar-csv", icon: Upload },
 ];
 
 export function AppSidebar() {

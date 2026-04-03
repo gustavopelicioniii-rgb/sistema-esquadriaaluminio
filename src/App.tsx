@@ -35,6 +35,7 @@ const Funcionarios = lazy(() => import("./pages/Funcionarios"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
+const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -77,6 +78,7 @@ const App = () => (
                 <Route path="/mapa" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Mapa /></Suspense></AppLayout></P>} />
                 <Route path="/nota-fiscal" element={<P><AppLayout><Suspense fallback={<PageLoading />}><NotaFiscal /></Suspense></AppLayout></P>} />
                 <Route path="/calculo-esquadrias" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CalculoEsquadrias /></Suspense></AppLayout></P>} />
+                <Route path="/importar-csv" element={<P><AppLayout><Suspense fallback={<PageLoading />}><ImportarCSV /></Suspense></AppLayout></P>} />
                 
                 {/* Admin only */}
                 <Route path="/administradores" element={<Admin><AppLayout><Suspense fallback={<PageLoading />}><Administradores /></Suspense></AppLayout></Admin>} />
