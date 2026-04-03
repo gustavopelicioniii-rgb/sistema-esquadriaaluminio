@@ -9,14 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown } from "lucide-react";
+import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies } from "@/data/catalog";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
-import type { CalculationOutput } from "@/types/calculation";
+import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
+import { optimizeBars } from "@/lib/bar-optimizer";
+import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 
 // Mock saved plans
 interface PlanoSalvo {
@@ -170,18 +172,65 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
       );
     } catch { return null; }
   }, [plano.typologyId, largura, altura, typ, cutFolgas, glassFolgas, originalCutRules, originalGlassRules]);
+  // Bar optimization for PDF
+  const barResults: OptimizationResult[] = useMemo(() => {
+    if (!result) return [];
+    try {
+      // Group cuts by profile_code
+      const byProfile = new Map<string, CutPiece[]>();
+      result.cuts.forEach((cut, i) => {
+        const pieces = byProfile.get(cut.profile_code) || [];
+        for (let q = 0; q < cut.quantity; q++) {
+          pieces.push({
+            id: `${cut.cut_rule_id}-${q}`,
+            length_mm: cut.cut_length_mm,
+            label: cut.piece_name,
+            profile_code: cut.profile_code,
+          });
+        }
+        byProfile.set(cut.profile_code, pieces);
+      });
+      const results: OptimizationResult[] = [];
+      byProfile.forEach((pieces, code) => {
+        try {
+          results.push(optimizeBars(pieces));
+        } catch { /* skip invalid */ }
+      });
+      return results;
+    } catch { return []; }
+  }, [result]);
+
+  const handleExportPDF = useCallback(async () => {
+    if (!result) return;
+    toast.loading("Gerando PDF...");
+    try {
+      await generateCutListPDF(result, barResults, "frame-preview-svg");
+      toast.dismiss();
+      toast.success("PDF exportado com sucesso!");
+    } catch {
+      toast.dismiss();
+      toast.error("Erro ao gerar PDF");
+    }
+  }, [result, barResults]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
-        <ArrowLeft className="h-4 w-4" /> Voltar
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
+          <ArrowLeft className="h-4 w-4" /> Voltar
+        </Button>
+        {result && (
+          <Button size="sm" className="gap-2" onClick={handleExportPDF}>
+            <FileDown className="h-4 w-4" /> Exportar PDF
+          </Button>
+        )}
+      </div>
 
       {/* Header with preview */}
       <Card>
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-            <div className="bg-muted/30 rounded-xl p-3 flex items-center justify-center">
+            <div id="frame-preview-svg" className="bg-muted/30 rounded-xl p-3 flex items-center justify-center">
               {typ && (
                 <FramePreview
                   width_mm={largura}
