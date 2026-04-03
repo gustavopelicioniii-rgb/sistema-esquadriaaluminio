@@ -69,12 +69,13 @@ const Relatorios = () => {
       }
       case "faturamento": {
         const { data: contas = [] } = await supabase.from("contas_financeiras").select("*");
-        const receber = contas!.filter((c: any) => c.tipo === "receber");
-        const pagar = contas!.filter((c: any) => c.tipo === "pagar");
+        const filtered = contas!.filter((c: any) => filterByDate(c.vencimento));
+        const receber = filtered.filter((c: any) => c.tipo === "receber");
+        const pagar = filtered.filter((c: any) => c.tipo === "pagar");
         const totalRec = receber.reduce((s, c: any) => s + Number(c.valor), 0);
         const totalPag = pagar.reduce((s, c: any) => s + Number(c.valor), 0);
         return {
-          title: "Faturamento Mensal", subtitle: "Receitas e despesas do período",
+          title: "Faturamento Mensal", subtitle: periodoLabel(),
           headers: ["Tipo", "Cliente", "Descrição", "Valor", "Status"],
           columnWidths: [25, 40, 40, 30, 25],
           summaryCards: [
