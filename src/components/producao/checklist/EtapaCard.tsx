@@ -35,6 +35,8 @@ export default function EtapaCard({
   onAnnotationChange,
   onAnnotationBlur,
   onDeleteEtapa,
+  onEditEtapa,
+  dragHandleProps,
 }: Props) {
   const checked = etapa.items.filter((i) => checkStates[i.key]).length;
   const total = etapa.items.length;
