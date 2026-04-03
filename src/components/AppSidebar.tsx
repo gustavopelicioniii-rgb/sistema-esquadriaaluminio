@@ -31,7 +31,7 @@ const menuItems = [
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Administradores", url: "/administradores", icon: UserCog },
   { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
-  { title: "Importar CSV", url: "/importar-csv", icon: Upload },
+  { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
 ];
 
 export function AppSidebar() {
