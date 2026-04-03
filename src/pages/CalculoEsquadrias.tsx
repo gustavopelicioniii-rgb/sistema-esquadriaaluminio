@@ -88,7 +88,8 @@ export default function CalculoEsquadrias() {
         glassRules,
         components,
         typology.name,
-        typology.num_folhas
+        typology.num_folhas,
+        typology
       );
       setResult(output);
 
