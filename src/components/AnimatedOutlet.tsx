@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, cloneElement, isValidElement } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation, useOutlet } from "react-router-dom";
 
 export function AnimatedOutlet({ children }: { children?: React.ReactNode }) {
