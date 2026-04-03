@@ -87,10 +87,19 @@ export function calculateTypology(
   glassRules: GlassRule[],
   components: TypologyComponent[],
   typologyName: string,
-  typologyNumFolhas: number
+  typologyNumFolhas: number,
+  typology?: Pick<Typology, 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'>
 ): CalculationOutput {
   const { width_mm: L, height_mm: H, quantity } = input;
   const numFolhas = input.num_folhas ?? typologyNumFolhas;
+
+  // ===== VALIDAR DIMENSÕES =====
+  if (typology) {
+    const validation = validateDimensions(L, H, { ...typology, name: typologyName });
+    if (!validation.valid) {
+      throw new Error(validation.errors.join('; '));
+    }
+  }
 
   // ===== CALCULAR CORTES =====
   const cuts: CutResult[] = cutRules.map(rule => {
