@@ -111,7 +111,7 @@ const Agenda = () => {
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Card className="shadow-sm">
-            <CardContent className="p-4">
+            <CardContent className="p-2 sm:p-4">
               <div className="flex items-center justify-between mb-4">
                 <Button variant="ghost" size="icon" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
                 <h2 className="font-semibold">{MONTHS[month]} {year}</h2>
