@@ -1,17 +1,28 @@
-import { DollarSign, FileCheck, TrendingUp, Factory, ExternalLink, BarChart3, Receipt, Package, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useDashboardStats, usePedidosStatus } from "@/hooks/use-dashboard-data";
+import { Button } from "@/components/ui/button";
+import { useDashboardStats, usePedidosStatus, useReceitaMensal, type PeriodFilter } from "@/hooks/use-dashboard-data";
+import { formatCurrency } from "@/lib/formatters";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from "recharts";
+import { cn } from "@/lib/utils";
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+const periodOptions: { key: PeriodFilter; label: string }[] = [
+  { key: "semana", label: "7 dias" },
+  { key: "mes", label: "30 dias" },
+  { key: "trimestre", label: "3 meses" },
+  { key: "ano", label: "12 meses" },
+  { key: "todos", label: "Todos" },
+];
 
 const Dashboard = () => {
-  const { data: stats, isLoading } = useDashboardStats();
-  const { data: statusPedidos = [] } = usePedidosStatus();
+  const [period, setPeriod] = useState<PeriodFilter>("todos");
+  const { data: stats, isLoading } = useDashboardStats(period);
+  const { data: statusPedidos = [] } = usePedidosStatus(period);
+  const { data: receitaMensal = [] } = useReceitaMensal();
 
   const now = new Date();
   const hora = now.getHours();
@@ -30,11 +41,29 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Greeting */}
+      {/* Greeting + Period Filter */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Olá, {saudacao}!</h1>
           <p className="text-muted-foreground text-sm">{capitalizedDia}, {dataFormatada}</p>
+        </div>
+        <div className="flex items-center gap-1 rounded-lg border bg-muted/50 p-1">
+          {periodOptions.map((opt) => (
+            <Button
+              key={opt.key}
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "h-8 px-3 text-xs font-medium rounded-md transition-all",
+                period === opt.key
+                  ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              onClick={() => setPeriod(opt.key)}
+            >
+              {opt.label}
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -133,15 +162,34 @@ const Dashboard = () => {
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
         <Card className="lg:col-span-4 shadow-sm border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Saldo Financeiro</CardTitle>
+            <CardTitle className="text-base font-semibold">Receita Mensal</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-center h-[200px]">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">{formatCurrency(stats.saldoProjetado)}</p>
-                <p className="text-sm text-muted-foreground mt-1">saldo projetado</p>
+            {receitaMensal.length > 0 && receitaMensal.some(r => r.valor > 0) ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={receitaMensal}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="mes" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
+                  <Tooltip
+                    formatter={(value: number) => [formatCurrency(value), "Receita"]}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground">
+                <CalendarDays className="h-10 w-10 mb-2 opacity-40" />
+                <p className="text-sm">Sem dados de receita nos últimos 6 meses</p>
+                <p className="text-xs mt-1">Crie pedidos para ver o gráfico</p>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -150,17 +198,23 @@ const Dashboard = () => {
             <CardTitle className="text-base font-semibold">Status dos Pedidos</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie data={statusPedidos} cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={4} dataKey="value">
-                  {statusPedidos.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
-                <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-              </PieChart>
-            </ResponsiveContainer>
+            {statusPedidos.some(s => s.value > 0) ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie data={statusPedidos} cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={4} dataKey="value">
+                    {statusPedidos.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
+                <p className="text-sm">Sem pedidos no período</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
