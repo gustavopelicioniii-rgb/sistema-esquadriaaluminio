@@ -276,6 +276,7 @@ const Dashboard = () => {
         </Card>
       </div>
     </div>
+    </PullToRefresh>
   );
 };
 

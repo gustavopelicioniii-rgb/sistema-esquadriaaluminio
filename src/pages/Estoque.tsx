@@ -208,6 +208,7 @@ const Estoque = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </PullToRefresh>
   );
 };
 

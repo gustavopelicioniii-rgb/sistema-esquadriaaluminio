@@ -364,6 +364,7 @@ const Producao = () => {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </PullToRefresh>
   );
 };
 
