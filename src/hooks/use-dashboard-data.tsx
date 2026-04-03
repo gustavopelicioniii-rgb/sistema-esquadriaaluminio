@@ -1,15 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function useDashboardStats() {
+export type PeriodFilter = "semana" | "mes" | "trimestre" | "ano" | "todos";
+
+function getDateRange(period: PeriodFilter): { from: string | null } {
+  if (period === "todos") return { from: null };
+  const now = new Date();
+  const d = new Date(now);
+  switch (period) {
+    case "semana": d.setDate(d.getDate() - 7); break;
+    case "mes": d.setMonth(d.getMonth() - 1); break;
+    case "trimestre": d.setMonth(d.getMonth() - 3); break;
+    case "ano": d.setFullYear(d.getFullYear() - 1); break;
+  }
+  return { from: d.toISOString().split("T")[0] };
+}
+
+export function useDashboardStats(period: PeriodFilter = "todos") {
   return useQuery({
-    queryKey: ["dashboard_stats"],
+    queryKey: ["dashboard_stats", period],
     queryFn: async () => {
+      const { from } = getDateRange(period);
+
+      let pedidosQuery = supabase.from("pedidos").select("*");
+      let orcamentosQuery = supabase.from("orcamentos").select("*");
+      let contasQuery = supabase.from("contas_financeiras").select("*");
+
+      if (from) {
+        pedidosQuery = pedidosQuery.gte("created_at", from);
+        orcamentosQuery = orcamentosQuery.gte("created_at", from);
+        contasQuery = contasQuery.gte("created_at", from);
+      }
+
       const [pedidosRes, orcamentosRes, estoqueRes, contasRes] = await Promise.all([
-        supabase.from("pedidos").select("*"),
-        supabase.from("orcamentos").select("*"),
+        pedidosQuery,
+        orcamentosQuery,
         supabase.from("estoque").select("*"),
-        supabase.from("contas_financeiras").select("*"),
+        contasQuery,
       ]);
 
       const pedidos = pedidosRes.data ?? [];
@@ -43,11 +70,14 @@ export function useDashboardStats() {
   });
 }
 
-export function usePedidosStatus() {
+export function usePedidosStatus(period: PeriodFilter = "todos") {
   return useQuery({
-    queryKey: ["pedidos_status"],
+    queryKey: ["pedidos_status", period],
     queryFn: async () => {
-      const { data } = await supabase.from("pedidos").select("status");
+      const { from } = getDateRange(period);
+      let query = supabase.from("pedidos").select("status");
+      if (from) query = query.gte("created_at", from);
+      const { data } = await query;
       const pedidos = data ?? [];
       const counts: Record<string, number> = {};
       pedidos.forEach(p => { counts[p.status] = (counts[p.status] || 0) + 1; });
@@ -57,6 +87,34 @@ export function usePedidosStatus() {
         { name: "Concluído", value: counts["concluido"] ?? 0, color: "hsl(142, 71%, 45%)" },
         { name: "Atrasado", value: counts["atrasado"] ?? 0, color: "hsl(0, 84%, 60%)" },
       ];
+    },
+  });
+}
+
+export function useReceitaMensal() {
+  return useQuery({
+    queryKey: ["receita_mensal"],
+    queryFn: async () => {
+      const { data: pedidos = [] } = await supabase.from("pedidos").select("valor, created_at");
+
+      const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+      const now = new Date();
+      const result: { mes: string; valor: number }[] = [];
+
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const year = d.getFullYear();
+        const month = d.getMonth();
+        const total = pedidos
+          .filter(p => {
+            const pd = new Date(p.created_at);
+            return pd.getFullYear() === year && pd.getMonth() === month;
+          })
+          .reduce((s, p) => s + Number(p.valor), 0);
+        result.push({ mes: meses[month], valor: total });
+      }
+
+      return result;
     },
   });
 }
