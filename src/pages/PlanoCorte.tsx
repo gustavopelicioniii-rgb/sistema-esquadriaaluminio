@@ -76,6 +76,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
   const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
   const [folgasSaving, setFolgasSaving] = useState(false);
   const [folgasLoaded, setFolgasLoaded] = useState(false);
+  const [folgasSource, setFolgasSource] = useState<"catalogo" | "global" | "personalizada">("catalogo");
 
   // Load saved folgas: first try per-typology, then apply global offsets as fallback
   const folgasKey = `folgas_${plano.typologyId}`;
