@@ -26,12 +26,17 @@ export function BottomNav() {
               key={item.to}
               to={item.to}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[56px]",
-                active ? "text-primary" : "text-muted-foreground"
+                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all duration-200 min-w-[56px]",
+                active ? "text-primary scale-105" : "text-muted-foreground"
               )}
             >
-              <item.icon className={cn("h-5 w-5", active && "text-primary")} />
-              <span className={cn("text-[10px] font-medium", active && "font-semibold")}>{item.label}</span>
+              <div className={cn(
+                "relative flex items-center justify-center transition-all duration-200",
+                active && "after:absolute after:-bottom-1 after:h-0.5 after:w-4 after:rounded-full after:bg-primary"
+              )}>
+                <item.icon className={cn("h-5 w-5 transition-all duration-200", active && "text-primary")} />
+              </div>
+              <span className={cn("text-[10px] font-medium transition-all duration-200", active && "font-semibold")}>{item.label}</span>
             </NavLink>
           );
         })}
