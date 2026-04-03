@@ -392,11 +392,72 @@ const Clientes = () => {
               <div className="space-y-1.5"><Label>Telefone</Label><Input value={leadForm.telefone} onChange={(e) => setLeadForm({ ...leadForm, telefone: e.target.value })} /></div>
             </div>
             <div className="space-y-1.5"><Label>Email</Label><Input value={leadForm.email} onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Observação</Label><Textarea rows={2} value={leadForm.observacao} onChange={(e) => setLeadForm({ ...leadForm, observacao: e.target.value })} placeholder="Anotações sobre o lead..." /></div>
+            <div className="space-y-1.5">
+              <Label>Data de Follow-up</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !leadForm.follow_up_date && "text-muted-foreground")}>
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    {leadForm.follow_up_date ? format(new Date(leadForm.follow_up_date), "dd/MM/yyyy") : "Selecione uma data"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={leadForm.follow_up_date ? new Date(leadForm.follow_up_date) : undefined}
+                    onSelect={(d) => setLeadForm({ ...leadForm, follow_up_date: d ? format(d, "yyyy-MM-dd") : null })}
+                    locale={ptBR} className="p-3 pointer-events-auto" />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setLeadDialogOpen(false)}>Cancelar</Button>
             <Button onClick={handleCreateLead} disabled={createLead.isPending}>
               {createLead.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Lead"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Lead Detail Dialog */}
+      <Dialog open={!!detailLead} onOpenChange={(open) => { if (!open) setDetailLead(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{detailLead?.nome}</DialogTitle></DialogHeader>
+          {detailLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><span className="text-muted-foreground">Valor:</span> <span className="font-semibold">{formatCurrency(detailLead.valor)}</span></div>
+                <div><span className="text-muted-foreground">Telefone:</span> <span>{detailLead.telefone || "—"}</span></div>
+                <div><span className="text-muted-foreground">Email:</span> <span>{detailLead.email || "—"}</span></div>
+                <div><span className="text-muted-foreground">Status:</span> <span className="font-medium">{columns.find(c => c.id === detailLead.status)?.title}</span></div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Observação</Label>
+                <Textarea rows={3} value={editObs} onChange={(e) => setEditObs(e.target.value)} placeholder="Anotações, detalhes do contato..." />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Data de Follow-up</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editFollowUp && "text-muted-foreground")}>
+                      <CalendarDays className="mr-2 h-4 w-4" />
+                      {editFollowUp ? format(editFollowUp, "dd/MM/yyyy") : "Selecione uma data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={editFollowUp} onSelect={setEditFollowUp} locale={ptBR} className="p-3 pointer-events-auto" />
+                  </PopoverContent>
+                </Popover>
+                {editFollowUp && (
+                  <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditFollowUp(undefined)}>Limpar data</Button>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDetailLead(null)}>Cancelar</Button>
+            <Button onClick={saveLeadDetail} disabled={updateLead.isPending}>
+              {updateLead.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
             </Button>
           </DialogFooter>
         </DialogContent>
