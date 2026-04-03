@@ -224,7 +224,6 @@ const CRM = () => {
 };
 
 function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: string) => void }) {
-  const { useDraggable } = require("@dnd-kit/core");
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: lead.id,
   });
