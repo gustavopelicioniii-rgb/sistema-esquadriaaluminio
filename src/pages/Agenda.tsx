@@ -158,7 +158,7 @@ const Agenda = () => {
                     </div>
                     <div className="flex gap-0.5 shrink-0">
                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(evento)}><Pencil className="h-3 w-3" /></Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(evento.id)}><Trash2 className="h-3 w-3" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteId(evento.id)}><Trash2 className="h-3 w-3" /></Button>
                     </div>
                   </div>
                 </CardContent>
