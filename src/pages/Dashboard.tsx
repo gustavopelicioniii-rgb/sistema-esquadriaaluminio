@@ -58,6 +58,7 @@ const Dashboard = () => {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4 sm:space-y-6">
       {/* Greeting + Period Filter */}
       <div className="flex flex-col gap-3">
