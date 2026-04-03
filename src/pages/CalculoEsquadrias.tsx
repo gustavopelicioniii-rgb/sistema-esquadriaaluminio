@@ -201,7 +201,8 @@ export default function CalculoEsquadrias() {
                 <Input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-20" />
                 <Button onClick={handleCalculate} className="flex-1 gap-2">
                   <Calculator className="h-4 w-4" />
-                  Calcular
+                  <span className="hidden sm:inline">Calcular</span>
+                  <span className="sm:hidden">Calc</span>
                 </Button>
               </div>
             </div>
