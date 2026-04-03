@@ -5,24 +5,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import type { OrdemProducao } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import type { Pedido } from "@/pages/Producao";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ordem: OrdemProducao;
+  pedido: Pedido;
 }
 
-export default function ReagendarDialog({ open, onOpenChange, ordem }: Props) {
+export default function ReagendarDialog({ open, onOpenChange, pedido }: Props) {
   const [novaData, setNovaData] = useState("");
   const [motivo, setMotivo] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (!novaData) {
       toast({ title: "Erro", description: "Informe a nova data.", variant: "destructive" });
       return;
     }
-    toast({ title: "Reagendado", description: `Pedido ${ordem.pedidoNum} reagendado para ${novaData}.` });
+    setSaving(true);
+    const { error } = await supabase.from("pedidos").update({
+      previsao: novaData,
+      anotacao: motivo ? `Reagendado: ${motivo}` : pedido.anotacao,
+    } as any).eq("id", pedido.id);
+    setSaving(false);
+
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Reagendado", description: `Pedido ${pedido.pedido_num} reagendado para ${novaData}.` });
     setNovaData("");
     setMotivo("");
     onOpenChange(false);
@@ -32,12 +45,12 @@ export default function ReagendarDialog({ open, onOpenChange, ordem }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Reagendar Pedido {ordem.pedidoNum}</DialogTitle>
+          <DialogTitle>Reagendar Pedido {pedido.pedido_num}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
             <Label>Previsão atual</Label>
-            <Input value={ordem.previsao} disabled />
+            <Input value={pedido.previsao || "Não definida"} disabled />
           </div>
           <div className="space-y-2">
             <Label>Nova data de previsão</Label>
@@ -50,7 +63,7 @@ export default function ReagendarDialog({ open, onOpenChange, ordem }: Props) {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleSalvar}>Reagendar</Button>
+          <Button onClick={handleSalvar} disabled={saving}>{saving ? "Salvando..." : "Reagendar"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

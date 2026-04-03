@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import type { OrdemProducao } from "@/data/mockData";
+import type { Pedido } from "@/pages/Producao";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ordem: OrdemProducao;
+  pedido: Pedido;
 }
 
 const etapas = [
@@ -24,19 +25,43 @@ const etapas = [
   { id: "fechado", label: "Fechado", color: "bg-muted-foreground" },
 ];
 
-export default function AlterarEtapaDialog({ open, onOpenChange, ordem }: Props) {
+export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props) {
   const [selected, setSelected] = useState(
-    ordem.etapa ? etapas.find((e) => e.label.toLowerCase() === ordem.etapa?.toLowerCase())?.id || "" : ""
+    pedido.etapa ? etapas.find((e) => e.label.toLowerCase() === pedido.etapa?.toLowerCase())?.id || "" : ""
   );
   const [obs, setObs] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (!selected) {
       toast({ title: "Erro", description: "Selecione uma etapa.", variant: "destructive" });
       return;
     }
     const etapa = etapas.find((e) => e.id === selected);
-    toast({ title: "Etapa alterada", description: `Pedido ${ordem.pedidoNum} → ${etapa?.label}` });
+    setSaving(true);
+
+    // Update pedido
+    const { error: updateErr } = await supabase.from("pedidos").update({
+      etapa: etapa?.label,
+      etapa_data: new Date().toLocaleString("pt-BR"),
+      anotacao: obs || pedido.anotacao,
+    } as any).eq("id", pedido.id);
+
+    // Save history
+    await supabase.from("pedido_etapas").insert({
+      pedido_id: pedido.id,
+      etapa: etapa?.label,
+      observacao: obs,
+    } as any);
+
+    setSaving(false);
+
+    if (updateErr) {
+      toast({ title: "Erro", description: updateErr.message, variant: "destructive" });
+      return;
+    }
+
+    toast({ title: "Etapa alterada", description: `Pedido ${pedido.pedido_num} → ${etapa?.label}` });
     setObs("");
     onOpenChange(false);
   };
@@ -45,26 +70,19 @@ export default function AlterarEtapaDialog({ open, onOpenChange, ordem }: Props)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Alterar Etapa – Pedido {ordem.pedidoNum}</DialogTitle>
+          <DialogTitle>Alterar Etapa – Pedido {pedido.pedido_num}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
-          {ordem.etapa && (
-            <p className="text-sm text-muted-foreground">
-              Etapa atual: <span className="font-medium text-foreground">{ordem.etapa}</span>
-            </p>
+          {pedido.etapa && (
+            <p className="text-sm text-muted-foreground">Etapa atual: <span className="font-medium text-foreground">{pedido.etapa}</span></p>
           )}
           <div className="space-y-2">
             <Label>Nova etapa</Label>
             <div className="grid grid-cols-2 gap-2">
               {etapas.map((e) => (
-                <button
-                  key={e.id}
-                  onClick={() => setSelected(e.id)}
-                  className={cn(
-                    "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors text-left",
-                    selected === e.id ? "border-primary bg-primary/5 font-medium" : "hover:bg-muted/50"
-                  )}
-                >
+                <button key={e.id} onClick={() => setSelected(e.id)}
+                  className={cn("flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors text-left",
+                    selected === e.id ? "border-primary bg-primary/5 font-medium" : "hover:bg-muted/50")}>
                   <span className={cn("h-2.5 w-2.5 rounded-full shrink-0", e.color)} />
                   {e.label}
                 </button>
@@ -78,7 +96,7 @@ export default function AlterarEtapaDialog({ open, onOpenChange, ordem }: Props)
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleSalvar}>Salvar etapa</Button>
+          <Button onClick={handleSalvar} disabled={saving}>{saving ? "Salvando..." : "Salvar etapa"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
