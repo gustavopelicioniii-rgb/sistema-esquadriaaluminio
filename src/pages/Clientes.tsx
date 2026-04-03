@@ -56,7 +56,7 @@ function DroppableColumn({ id, children }: { id: string; children: React.ReactNo
     <div
       ref={setNodeRef}
       className={cn(
-        "flex-1 min-h-[400px] rounded-xl border-2 border-dashed p-3 transition-colors duration-200 flex flex-col gap-2",
+        "flex-1 min-h-[300px] sm:min-h-[400px] rounded-xl border-2 border-dashed p-2 sm:p-3 transition-colors duration-200 flex flex-col gap-2",
         isOver ? "border-primary/40 bg-primary/5" : "border-border/40 bg-muted/20"
       )}
     >
@@ -257,8 +257,8 @@ const Clientes = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
-        <p className="text-muted-foreground text-sm">Gerencie clientes e leads</p>
+        <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clientes</h1>
+        <p className="text-muted-foreground text-xs sm:text-sm">Gerencie clientes e leads</p>
       </div>
 
       <Tabs defaultValue="lista">
@@ -327,11 +327,11 @@ const Clientes = () => {
             <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="flex gap-3 overflow-x-auto pb-4">
+              <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 -mx-3 px-3 sm:mx-0 sm:px-0">
                 {columns.map((col) => {
                   const colLeads = getLeadsByStatus(col.id);
                   return (
-                    <div key={col.id} className="flex flex-col min-w-[200px] flex-1">
+                    <div key={col.id} className="flex flex-col min-w-[150px] sm:min-w-[200px] flex-1">
                       <div className="flex items-center gap-2 mb-3">
                         <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
                           {col.title}

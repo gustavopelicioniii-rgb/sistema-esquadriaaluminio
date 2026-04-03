@@ -56,23 +56,23 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
         <div className="relative flex-1 max-w-md w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Buscar lançamentos..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
-        <Button className="gap-2 w-full sm:w-auto" onClick={() => setDialogOpen(true)}>
+        <Button className="gap-2 w-full sm:w-auto text-xs sm:text-sm" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4" /> {tipo === "receber" ? "Nova Receita" : "Nova Despesa"}
         </Button>
       </div>
 
       <Tabs value={statusFilter} onValueChange={v => setStatusFilter(v as StatusFilter)}>
-        <TabsList>
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="pendente">Pendente</TabsTrigger>
-          <TabsTrigger value="pago">Pago</TabsTrigger>
-          <TabsTrigger value="vencido">Vencido</TabsTrigger>
+        <TabsList className="h-8 sm:h-9">
+          <TabsTrigger value="todos" className="text-xs sm:text-sm px-2 sm:px-3">Todos</TabsTrigger>
+          <TabsTrigger value="pendente" className="text-xs sm:text-sm px-2 sm:px-3">Pendente</TabsTrigger>
+          <TabsTrigger value="pago" className="text-xs sm:text-sm px-2 sm:px-3">Pago</TabsTrigger>
+          <TabsTrigger value="vencido" className="text-xs sm:text-sm px-2 sm:px-3">Vencido</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -83,7 +83,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
               <TableHeader>
                 <TableRow>
                   <TableHead>Cliente</TableHead>
-                  <TableHead>Descrição</TableHead>
+                  <TableHead className="hidden sm:table-cell">Descrição</TableHead>
                   <TableHead>Vencimento</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Status</TableHead>
@@ -93,20 +93,22 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
               <TableBody>
                 {filtered.map(conta => (
                   <TableRow key={conta.id}>
-                    <TableCell className="font-medium">{conta.cliente}</TableCell>
-                    <TableCell className="text-muted-foreground">{conta.descricao}</TableCell>
-                    <TableCell>{formatDate(conta.vencimento)}</TableCell>
-                    <TableCell className="font-semibold">{formatCurrency(conta.valor)}</TableCell>
+                    <TableCell className="font-medium text-xs sm:text-sm">{conta.cliente}</TableCell>
+                    <TableCell className="text-muted-foreground hidden sm:table-cell">{conta.descricao}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">{formatDate(conta.vencimento)}</TableCell>
+                    <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(conta.valor)}</TableCell>
                     <TableCell><StatusBadge status={conta.status} /></TableCell>
                     <TableCell className="text-right">
                       {conta.status !== "pago" && (
                         <Button
                           variant="outline"
                           size="sm"
-                          className="gap-1.5 text-xs"
+                          className="gap-1 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3"
                           onClick={() => updateConta.mutate({ id: conta.id, status: "pago" }, { onSuccess: () => toast.success("Marcado como pago") })}
                         >
-                          <CheckCircle2 className="h-3.5 w-3.5" /> Recebido
+                          <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                          <span className="hidden sm:inline">Recebido</span>
+                          <span className="sm:hidden">Pago</span>
                         </Button>
                       )}
                     </TableCell>
@@ -114,7 +116,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                 ))}
                 {filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Nenhum lançamento encontrado.</TableCell>
+                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum lançamento encontrado.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -124,7 +126,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{tipo === "receber" ? "Nova Receita" : "Nova Despesa"}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Cliente *</Label><Input value={form.cliente} onChange={e => setForm({ ...form, cliente: e.target.value })} /></div>
@@ -162,11 +164,11 @@ const Financeiro = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Financeiro</h1>
-          <p className="text-muted-foreground text-sm">Visão geral das finanças da empresa</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Financeiro</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Visão geral das finanças</p>
         </div>
         <ExportButtons getConfig={() => ({
           title: "Relatório Financeiro",
@@ -184,44 +186,44 @@ const Financeiro = () => {
         })} />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
         {[
-          { label: "Total a Receber", valor: aReceber, icon: TrendingUp, color: "text-success" },
-          { label: "Total a Pagar", valor: aPagar, icon: TrendingDown, color: "text-destructive" },
+          { label: "A Receber", valor: aReceber, icon: TrendingUp, color: "text-success" },
+          { label: "A Pagar", valor: aPagar, icon: TrendingDown, color: "text-destructive" },
           { label: "Pago", valor: totalPago, icon: Wallet, color: "text-primary" },
           { label: "Saldo", valor: saldo, icon: DollarSign, color: saldo >= 0 ? "text-success" : "text-destructive" },
         ].map(card => (
           <Card key={card.label} className="shadow-sm">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-muted-foreground">{card.label}</span>
-                <card.icon className={cn("h-4 w-4", card.color)} />
+                <span className="text-[10px] sm:text-xs text-muted-foreground">{card.label}</span>
+                <card.icon className={cn("h-3 w-3 sm:h-4 sm:w-4", card.color)} />
               </div>
-              <p className="text-lg sm:text-2xl font-bold">{formatCurrency(card.valor)}</p>
+              <p className="text-sm sm:text-2xl font-bold">{formatCurrency(card.valor)}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <Tabs value={activeTab} onValueChange={v => setActiveTab(v as any)}>
-        <TabsList>
-          <TabsTrigger value="resumo">Resumo</TabsTrigger>
-          <TabsTrigger value="receber">A Receber</TabsTrigger>
-          <TabsTrigger value="pagar">A Pagar</TabsTrigger>
+        <TabsList className="h-8 sm:h-9">
+          <TabsTrigger value="resumo" className="text-xs sm:text-sm px-2 sm:px-3">Resumo</TabsTrigger>
+          <TabsTrigger value="receber" className="text-xs sm:text-sm px-2 sm:px-3">A Receber</TabsTrigger>
+          <TabsTrigger value="pagar" className="text-xs sm:text-sm px-2 sm:px-3">A Pagar</TabsTrigger>
         </TabsList>
       </Tabs>
 
       {activeTab === "resumo" && (
         <Card>
-          <CardHeader><CardTitle className="text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
-          <CardContent>
+          <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
+          <CardContent className="px-0 sm:px-6">
             {contas.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Cliente</TableHead>
-                      <TableHead>Descrição</TableHead>
+                      <TableHead className="hidden sm:table-cell">Descrição</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Valor</TableHead>
                       <TableHead>Status</TableHead>
@@ -230,10 +232,10 @@ const Financeiro = () => {
                   <TableBody>
                     {contas.slice(0, 10).map(c => (
                       <TableRow key={c.id}>
-                        <TableCell className="font-medium">{c.cliente}</TableCell>
-                        <TableCell className="text-muted-foreground">{c.descricao}</TableCell>
-                        <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-4 w-4 text-success" /> : <ArrowUpCircle className="h-4 w-4 text-destructive" />}</TableCell>
-                        <TableCell className="font-semibold">{formatCurrency(c.valor)}</TableCell>
+                        <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
+                        <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
+                        <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" /> : <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />}</TableCell>
+                        <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(c.valor)}</TableCell>
                         <TableCell><StatusBadge status={c.status} /></TableCell>
                       </TableRow>
                     ))}
@@ -241,7 +243,7 @@ const Financeiro = () => {
                 </Table>
               </div>
             ) : (
-              <p className="text-center text-muted-foreground text-sm py-8">Nenhuma movimentação financeira ainda.</p>
+              <p className="text-center text-muted-foreground text-xs sm:text-sm py-8">Nenhuma movimentação financeira ainda.</p>
             )}
           </CardContent>
         </Card>

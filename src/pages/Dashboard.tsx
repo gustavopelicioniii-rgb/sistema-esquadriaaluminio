@@ -14,10 +14,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const periodOptions: { key: PeriodFilter; label: string }[] = [
-  { key: "semana", label: "7 dias" },
-  { key: "mes", label: "30 dias" },
-  { key: "trimestre", label: "3 meses" },
-  { key: "ano", label: "12 meses" },
+  { key: "semana", label: "7d" },
+  { key: "mes", label: "30d" },
+  { key: "trimestre", label: "3m" },
+  { key: "ano", label: "12m" },
   { key: "todos", label: "Todos" },
 ];
 
@@ -52,21 +52,21 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Greeting + Period Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Olá, {saudacao}!</h1>
-          <p className="text-muted-foreground text-sm">{capitalizedDia}, {dataFormatada}</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Olá, {saudacao}!</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">{capitalizedDia}, {dataFormatada}</p>
         </div>
-        <div className="flex items-center gap-1 rounded-lg border bg-muted/50 p-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 rounded-lg border bg-muted/50 p-0.5 sm:p-1 overflow-x-auto w-fit">
           {periodOptions.map((opt) => (
             <Button
               key={opt.key}
               variant="ghost"
               size="sm"
               className={cn(
-                "h-8 px-3 text-xs font-medium rounded-md transition-all",
+                "h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs font-medium rounded-md transition-all shrink-0",
                 period === opt.key
                   ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
                   : "text-muted-foreground hover:text-foreground"
@@ -80,163 +80,138 @@ const Dashboard = () => {
       </div>
 
       {/* Top stats row */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-foreground text-background border-0 shadow-lg">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider opacity-80">VENDAS</span>
-            </div>
-            <p className="text-2xl font-bold">{formatCurrency(stats.vendas)}</p>
-            <div className="mt-3 flex gap-6 text-xs opacity-70">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
+        <Card className="bg-foreground text-background border-0 shadow-lg col-span-2 sm:col-span-1">
+          <CardContent className="p-3 sm:p-5">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">VENDAS</span>
+            <p className="text-lg sm:text-2xl font-bold mt-1">{formatCurrency(stats.vendas)}</p>
+            <div className="mt-2 sm:mt-3 flex gap-4 sm:gap-6 text-[10px] sm:text-xs opacity-70">
               <div>
                 <span className="block">Ticket-médio</span>
                 <span className="font-semibold">{formatCurrency(stats.ticketMedio)}</span>
               </div>
               <div>
                 <span className="block">Vendas totais</span>
-                <span className="font-semibold">{stats.vendasCount} vendas</span>
+                <span className="font-semibold">{stats.vendasCount}</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm border-border/50">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">OBRAS ENTREGUES</span>
-            <p className="text-3xl font-bold mt-2">{stats.obrasEntregues}</p>
-            <p className="text-xs text-muted-foreground mt-1">concluídas</p>
+          <CardContent className="p-3 sm:p-5">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">OBRAS</span>
+            <p className="text-xl sm:text-3xl font-bold mt-1 sm:mt-2">{stats.obrasEntregues}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">concluídas</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm border-border/50">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">ORÇAMENTOS</span>
-            <p className="text-2xl font-bold mt-2">{formatCurrency(stats.orcamentosRealizados)}</p>
-            <div className="mt-3 flex gap-6 text-xs text-muted-foreground">
-              <div>
-                <span className="block">Qtd. total</span>
-                <span className="font-semibold text-foreground">{stats.orcamentosCount} orçamentos</span>
-              </div>
-            </div>
+          <CardContent className="p-3 sm:p-5">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">ORÇAMENTOS</span>
+            <p className="text-base sm:text-2xl font-bold mt-1 sm:mt-2">{formatCurrency(stats.orcamentosRealizados)}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{stats.orcamentosCount} orç.</p>
           </CardContent>
         </Card>
 
         <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">PRODUÇÃO</span>
-            <p className="text-3xl font-bold mt-2">{stats.producaoAndamento}</p>
-            <p className="text-xs opacity-80 mt-1">pedidos em andamento</p>
+          <CardContent className="p-3 sm:p-5">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">PRODUÇÃO</span>
+            <p className="text-xl sm:text-3xl font-bold mt-1 sm:mt-2">{stats.producaoAndamento}</p>
+            <p className="text-[10px] sm:text-xs opacity-80">em andamento</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Second row */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="shadow-sm border-border/50">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
-                <TrendingUp className="h-4 w-4 text-success" />
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        {[
+          { label: "A Receber", valor: stats.aReceber, icon: TrendingUp, color: "text-success", iconBg: "bg-success/10" },
+          { label: "A Pagar", valor: stats.aPagar, icon: DollarSign, color: "text-destructive", iconBg: "bg-destructive/10" },
+          { label: "Estoque", valor: stats.estoqueTotal, icon: Package, color: "text-warning", iconBg: "bg-warning/10", isCount: true },
+        ].map(card => (
+          <Card key={card.label} className="shadow-sm border-border/50">
+            <CardContent className="p-3 sm:p-5">
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+                <div className={cn("flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg", card.iconBg)}>
+                  <card.icon className={cn("h-3 w-3 sm:h-4 sm:w-4", card.color)} />
+                </div>
+                <span className="text-[10px] sm:text-sm font-semibold truncate">{card.label}</span>
               </div>
-              <span className="text-sm font-semibold">A Receber</span>
-            </div>
-            <p className="text-2xl font-bold">{formatCurrency(stats.aReceber)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm border-border/50">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10">
-                <DollarSign className="h-4 w-4 text-destructive" />
-              </div>
-              <span className="text-sm font-semibold">A Pagar</span>
-            </div>
-            <p className="text-2xl font-bold">{formatCurrency(stats.aPagar)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm border-border/50">
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
-                <Package className="h-4 w-4 text-warning" />
-              </div>
-              <span className="text-sm font-semibold">Estoque</span>
-            </div>
-            <p className="text-2xl font-bold">{stats.estoqueTotal}</p>
-            <p className="text-xs text-muted-foreground mt-1">itens no inventário</p>
-          </CardContent>
-        </Card>
+              <p className="text-sm sm:text-2xl font-bold">
+                {card.isCount ? card.valor : formatCurrency(card.valor as number)}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Charts Row 1 — Receita + Status Pedidos */}
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-7">
         <Card className="lg:col-span-4 shadow-sm border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Receita Mensal</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-sm sm:text-base font-semibold">Receita Mensal</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-1 sm:px-6">
             {receitaMensal.length > 0 && receitaMensal.some(r => r.valor > 0) ? (
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={receitaMensal}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="mes" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
+                  <XAxis dataKey="mes" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} width={35} />
                   <Tooltip formatter={(value: number) => [formatCurrency(value), "Receita"]} contentStyle={chartTooltipStyle} />
                   <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground">
-                <CalendarDays className="h-10 w-10 mb-2 opacity-40" />
-                <p className="text-sm">Sem dados de receita nos últimos 6 meses</p>
-                <p className="text-xs mt-1">Crie pedidos para ver o gráfico</p>
+              <div className="flex flex-col items-center justify-center h-[220px] text-muted-foreground">
+                <CalendarDays className="h-8 w-8 mb-2 opacity-40" />
+                <p className="text-xs sm:text-sm">Sem dados de receita</p>
               </div>
             )}
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-3 shadow-sm border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Status dos Pedidos</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-sm sm:text-base font-semibold">Status dos Pedidos</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-1 sm:px-6">
             {statusPedidos.some(s => s.value > 0) ? (
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
-                  <Pie data={statusPedidos} cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={4} dataKey="value">
+                  <Pie data={statusPedidos} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={4} dataKey="value">
                     {statusPedidos.map((entry, index) => (
                       <Cell key={index} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "10px" }} />
                   <Tooltip contentStyle={chartTooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
-                <p className="text-sm">Sem pedidos no período</p>
+              <div className="flex flex-col items-center justify-center h-[220px] text-muted-foreground">
+                <p className="text-xs sm:text-sm">Sem pedidos no período</p>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts Row 2 — Orçamentos por Status + Produção por Etapa */}
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+      {/* Charts Row 2 */}
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-2">
         <Card className="shadow-sm border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Orçamentos por Status</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-sm sm:text-base font-semibold">Orçamentos por Status</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-1 sm:px-6">
             {orcamentosStatus.some(s => s.value > 0) ? (
               <>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={orcamentosStatus} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                    <XAxis type="number" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis type="category" dataKey="name" fontSize={12} tickLine={false} axisLine={false} width={80} />
+                    <XAxis type="number" fontSize={10} tickLine={false} axisLine={false} />
+                    <YAxis type="category" dataKey="name" fontSize={10} tickLine={false} axisLine={false} width={65} />
                     <Tooltip
                       formatter={(value: number, _name: string, props: any) => [
                         `${value} orçamentos · ${formatCurrency(props.payload.total)}`,
@@ -251,44 +226,43 @@ const Dashboard = () => {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
-                <div className="flex gap-4 mt-2 justify-center">
+                <div className="flex gap-3 sm:gap-4 mt-2 justify-center">
                   {orcamentosStatus.map((s) => (
                     <div key={s.name} className="text-center">
-                      <p className="text-lg font-bold">{s.value}</p>
-                      <p className="text-[11px] text-muted-foreground">{s.name}</p>
+                      <p className="text-sm sm:text-lg font-bold">{s.value}</p>
+                      <p className="text-[10px] sm:text-[11px] text-muted-foreground">{s.name}</p>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
-                <p className="text-sm">Sem orçamentos no período</p>
+              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground">
+                <p className="text-xs sm:text-sm">Sem orçamentos no período</p>
               </div>
             )}
           </CardContent>
         </Card>
 
         <Card className="shadow-sm border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">Produção por Etapa</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-sm sm:text-base font-semibold">Produção por Etapa</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-1 sm:px-6">
             {producaoEtapas.length > 0 && producaoEtapas.some(e => e.value > 0) ? (
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
-                  <Pie data={producaoEtapas} cx="50%" cy="50%" innerRadius={45} outerRadius={80} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} (${value})`}>
+                  <Pie data={producaoEtapas} cx="50%" cy="50%" innerRadius={35} outerRadius={65} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} (${value})`} fontSize={10}>
                     {producaoEtapas.map((entry, index) => (
                       <Cell key={index} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
+                  <Legend iconType="circle" iconSize={6} wrapperStyle={{ fontSize: "10px" }} />
                   <Tooltip contentStyle={chartTooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground">
-                <p className="text-sm">Sem pedidos em produção</p>
-                <p className="text-xs mt-1">Pedidos em andamento aparecerão aqui</p>
+              <div className="flex flex-col items-center justify-center h-[220px] text-muted-foreground">
+                <p className="text-xs sm:text-sm">Sem pedidos em produção</p>
               </div>
             )}
           </CardContent>
