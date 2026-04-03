@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck } from "lucide-react";
+import { useState } from "react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -12,23 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
+import { useGlobalSearch } from "@/hooks/use-global-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const searchableItems = [
-  { label: "Igor Soares de Souza", type: "Cliente", url: "/clientes" },
-  { label: "Maria Santos", type: "Cliente", url: "/clientes" },
-  { label: "Carlos Oliveira", type: "Cliente", url: "/clientes" },
-  { label: "#1042 - Vidraçaria Norte SP", type: "Orçamento", url: "/orcamentos" },
-  { label: "#1043 - Construtora Silva Ltda", type: "Orçamento", url: "/orcamentos" },
-  { label: "Perfil Montante 40x25", type: "Estoque", url: "/estoque" },
-  { label: "Vidro Temperado 8mm", type: "Estoque", url: "/estoque" },
-  { label: "Fechadura Multiponto", type: "Estoque", url: "/estoque" },
-];
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
   pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
   producao: { icon: Wrench, color: "text-primary", route: "/producao" },
+};
+
+const typeBadgeColors: Record<string, string> = {
+  Cliente: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  Orçamento: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  Pedido: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  Produto: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+  Estoque: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
 };
 
 export function Topbar() {
@@ -38,12 +36,7 @@ export function Topbar() {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
-
-  const results = useMemo(() => {
-    if (!search.trim()) return [];
-    const s = search.toLowerCase();
-    return searchableItems.filter((i) => i.label.toLowerCase().includes(s)).slice(0, 8);
-  }, [search]);
+  const { results, loading: searchLoading } = useGlobalSearch(search);
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
