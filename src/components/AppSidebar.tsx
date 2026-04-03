@@ -1,7 +1,7 @@
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, UserCheck, Calculator, Receipt, Package, Upload, Kanban,
+  UserCog, UserCheck, Calculator, Receipt, Package, Upload,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ import {
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
-  { title: "CRM", url: "/crm", icon: Kanban },
+  
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Serviços", url: "/producao", icon: Wrench },

@@ -15,7 +15,7 @@ const Cadastro = lazy(() => import("./pages/Cadastro"));
 const EsqueciSenha = lazy(() => import("./pages/EsqueciSenha"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const CRM = lazy(() => import("./pages/CRM"));
+
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 const CriarOrcamento = lazy(() => import("./pages/CriarOrcamento"));
@@ -61,7 +61,7 @@ const App = () => (
 
                 {/* Protected routes */}
                 <Route element={<P><AppLayout><Suspense fallback={<PageLoading />}><Dashboard /></Suspense></AppLayout></P>} path="/" />
-                <Route path="/crm" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CRM /></Suspense></AppLayout></P>} />
+                
                 <Route path="/clientes" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Clientes /></Suspense></AppLayout></P>} />
                 <Route path="/orcamentos" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Orcamentos /></Suspense></AppLayout></P>} />
                 <Route path="/orcamentos/novo" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CriarOrcamento /></Suspense></AppLayout></P>} />
