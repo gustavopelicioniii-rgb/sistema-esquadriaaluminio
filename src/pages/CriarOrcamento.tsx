@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft, FileDown } from "lucide-react";
+import { ArrowLeft, FileDown, Building2, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
@@ -33,7 +34,12 @@ const CriarOrcamento = () => {
   const [altura, setAltura] = useState(120);
   const [quantidade, setQuantidade] = useState(1);
   const [colorId, setColorId] = useState("natural");
-
+  const [empresaNome, setEmpresaNome] = useState("");
+  const [empresaTelefone, setEmpresaTelefone] = useState("");
+  const [empresaEmail, setEmpresaEmail] = useState("");
+  const [empresaEndereco, setEmpresaEndereco] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [empresaOpen, setEmpresaOpen] = useState(false);
   const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
   const calculo = useMemo(() => {
@@ -101,6 +107,50 @@ const CriarOrcamento = () => {
                 <Input type="number" value={quantidade} onChange={(e) => setQuantidade(Number(e.target.value))} min={1} />
               </div>
             </div>
+
+            {/* Company info collapsible */}
+            <Collapsible open={empresaOpen} onOpenChange={setEmpresaOpen}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-between text-muted-foreground gap-2">
+                  <span className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Dados da empresa no PDF
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${empresaOpen ? "rotate-180" : ""}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-3 pt-2">
+                <div className="space-y-2">
+                  <Label className="text-xs">Nome da Empresa</Label>
+                  <Input placeholder="Ex: AlumPro Esquadrias" value={empresaNome} onChange={e => setEmpresaNome(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-xs">Telefone</Label>
+                    <Input placeholder="(11) 99999-0000" value={empresaTelefone} onChange={e => setEmpresaTelefone(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">Email</Label>
+                    <Input placeholder="contato@empresa.com" value={empresaEmail} onChange={e => setEmpresaEmail(e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">Endereço</Label>
+                  <Input placeholder="Rua, nº - Cidade/UF" value={empresaEndereco} onChange={e => setEmpresaEndereco(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">URL do Logotipo</Label>
+                  <Input placeholder="https://... (imagem PNG/JPG)" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} />
+                  {logoUrl && (
+                    <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
+                      <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                      <span className="text-xs text-muted-foreground">Preview do logo</span>
+                    </div>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
             <div className="flex gap-2">
               <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="flex-1">
                 Salvar Orçamento
@@ -112,6 +162,13 @@ const CriarOrcamento = () => {
                 onClick={async () => {
                   if (!calculo || !produtoSelecionado) return;
                   sonnerToast.info("Gerando PDF...");
+                  const empresa = empresaNome ? {
+                    nome: empresaNome,
+                    telefone: empresaTelefone || undefined,
+                    email: empresaEmail || undefined,
+                    endereco: empresaEndereco || undefined,
+                    logoUrl: logoUrl || undefined,
+                  } : undefined;
                   await generateBudgetPDF(
                     {
                       cliente,
@@ -123,6 +180,7 @@ const CriarOrcamento = () => {
                       custoTotal: calculo.custoTotal,
                       margem: calculo.margem,
                       valorFinal: calculo.valorFinal,
+                      empresa,
                     },
                     "budget-frame-preview"
                   );
