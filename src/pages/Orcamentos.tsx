@@ -66,15 +66,28 @@ const Orcamentos = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Orçamentos</h1>
           <p className="text-muted-foreground text-sm">Gerencie os orçamentos emitidos para seus clientes.</p>
         </div>
-        <Button onClick={() => navigate("/orcamentos/novo")} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Novo Orçamento
-        </Button>
+        <div className="flex items-center gap-2">
+          <ExportButtons getConfig={() => ({
+            title: "Orçamentos Emitidos",
+            headers: ["Número", "Cliente", "Produto", "Valor", "Data", "Status"],
+            columnWidths: [25, 40, 40, 30, 25, 25],
+            summaryCards: [
+              { label: "Total", value: String(filtered.length) },
+              { label: "Valor Total", value: formatCurrency(filtered.reduce((s, o) => s + o.valor, 0)) },
+            ],
+            rows: filtered.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(o.valor), o.data, o.status]),
+            filename: "orcamentos",
+          })} />
+          <Button onClick={() => navigate("/orcamentos/novo")} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Orçamento
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-6">
