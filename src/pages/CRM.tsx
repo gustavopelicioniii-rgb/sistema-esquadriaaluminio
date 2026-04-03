@@ -13,6 +13,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDraggable,
   type DragStartEvent,
   type DragEndEvent,
 } from "@dnd-kit/core";
