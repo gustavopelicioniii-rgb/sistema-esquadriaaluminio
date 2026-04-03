@@ -22,7 +22,7 @@ import {
   DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable,
   type DragStartEvent, type DragEndEvent,
 } from "@dnd-kit/core";
-import { useCrmLeads, useUpdateLeadStatus, useCreateLead, useDeleteLead, type CrmLead, type CrmLeadStatus } from "@/hooks/use-crm-leads";
+import { useCrmLeads, useUpdateLeadStatus, useUpdateLead, useCreateLead, useDeleteLead, type CrmLead, type CrmLeadStatus } from "@/hooks/use-crm-leads";
 
 // ── Types ──
 type Cliente = {
