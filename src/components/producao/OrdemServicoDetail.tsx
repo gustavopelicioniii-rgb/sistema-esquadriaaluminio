@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, CheckCircle2, Circle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
 import { defaultEtapasConfig, type Etapa } from "./checklist/etapasConfig";
@@ -138,6 +139,19 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
     loadAll();
   };
 
+  // Progress summary
+  const getEtapaProgress = (etapa: Etapa) => {
+    const states = checkStates[etapa.id] || {};
+    const checked = etapa.items.filter((i) => states[i.key]).length;
+    return { checked, total: etapa.items.length, complete: checked === etapa.items.length && etapa.items.length > 0 };
+  };
+
+  const completedEtapas = etapas.filter((e) => getEtapaProgress(e).complete).length;
+  const totalEtapas = etapas.length;
+  const totalItems = etapas.reduce((sum, e) => sum + e.items.length, 0);
+  const totalChecked = etapas.reduce((sum, e) => sum + getEtapaProgress(e).checked, 0);
+  const overallPct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+
   if (loading) {
     return <div className="text-center py-12 text-muted-foreground">Carregando checklist...</div>;
   }
@@ -159,6 +173,48 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
           <Plus className="h-4 w-4" />
           Nova etapa
         </Button>
+      </div>
+
+      {/* Progress Summary */}
+      <div className="rounded-lg border bg-card p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm">Progresso Geral</h3>
+          <span className={cn(
+            "rounded-full px-3 py-1 text-xs font-bold",
+            overallPct === 100 ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
+          )}>
+            {overallPct}%
+          </span>
+        </div>
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className={cn("h-full rounded-full transition-all duration-500", overallPct === 100 ? "bg-emerald-500" : "bg-primary")}
+            style={{ width: `${overallPct}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{completedEtapas}/{totalEtapas} etapas concluídas</span>
+          <span>{totalChecked}/{totalItems} itens marcados</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-1">
+          {etapas.map((etapa) => {
+            const prog = getEtapaProgress(etapa);
+            return (
+              <button
+                key={etapa.id}
+                onClick={() => setExpandedEtapas((prev) => ({ ...prev, [etapa.id]: true }))}
+                className="flex items-center gap-1.5 text-xs rounded-md border px-2 py-1.5 hover:bg-muted/50 transition-colors text-left"
+              >
+                {prog.complete ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                ) : (
+                  <Circle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                )}
+                <span className="truncate">{etapa.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Etapas */}
