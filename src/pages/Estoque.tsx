@@ -91,13 +91,13 @@ const Estoque = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Estoque</h1>
-          <p className="text-muted-foreground text-sm">Controle de materiais e insumos</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Estoque</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Controle de materiais e insumos</p>
         </div>
-        <Button className="gap-2" onClick={openNew}><Plus className="h-4 w-4" /> Novo Item</Button>
+        <Button className="gap-2 text-xs sm:text-sm" onClick={openNew}><Plus className="h-4 w-4" /> Novo Item</Button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">

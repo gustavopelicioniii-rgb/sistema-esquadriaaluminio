@@ -99,13 +99,13 @@ const Agenda = () => {
   const todayStr = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Agenda</h1>
-          <p className="text-muted-foreground text-sm">Compromissos e eventos agendados</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Agenda</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Compromissos e eventos agendados</p>
         </div>
-        <Button className="gap-2" onClick={() => openNew()}><Plus className="h-4 w-4" /> Novo Evento</Button>
+        <Button className="gap-2 text-xs sm:text-sm" onClick={() => openNew()}><Plus className="h-4 w-4" /> Novo Evento</Button>
       </div>
 
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
