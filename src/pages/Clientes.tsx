@@ -318,8 +318,8 @@ const Clientes = () => {
         {/* ── Tab Kanban ── */}
         <TabsContent value="kanban" className="space-y-4">
           <div className="flex justify-end">
-            <Button className="gap-2" onClick={() => setLeadDialogOpen(true)}>
-              <Plus className="h-4 w-4" /> Novo Lead
+            <Button className="gap-2 rounded-lg" onClick={() => openCreateLeadDialog("novo")}>
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
 
@@ -327,29 +327,34 @@ const Clientes = () => {
             <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 overflow-x-auto">
+              <div className="flex gap-3 overflow-x-auto pb-4">
                 {columns.map((col) => {
                   const colLeads = getLeadsByStatus(col.id);
-                  const total = colLeads.reduce((s, l) => s + l.valor, 0);
                   return (
-                    <div key={col.id} className="flex flex-col min-w-[250px]">
+                    <div key={col.id} className="flex flex-col min-w-[200px] flex-1">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className={`h-2.5 w-2.5 rounded-full ${col.color}`} />
-                        <h3 className="text-sm font-semibold">{col.title}</h3>
-                        <span className="ml-auto text-xs text-muted-foreground">{colLeads.length} · {formatCurrency(total)}</span>
+                        <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
+                          {col.title}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-medium">{colLeads.length}</span>
+                        <button onClick={() => openCreateLeadDialog(col.id)} className="ml-auto text-muted-foreground hover:text-foreground transition-colors">
+                          <Plus className="h-4 w-4" />
+                        </button>
                       </div>
                       <DroppableColumn id={col.id}>
+                        <button onClick={() => openCreateLeadDialog(col.id)} className="w-full border-2 border-dashed border-border/50 rounded-lg py-3 text-xs text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors">
+                          + Adicionar lead
+                        </button>
                         {colLeads.map((lead) => (
-                          <div key={lead.id}><DraggableLeadCard lead={lead} onDelete={handleDeleteLead} /></div>
+                          <DraggableLeadCard key={lead.id} lead={lead} onDelete={handleDeleteLead} onView={openLeadDetail} />
                         ))}
-                        {colLeads.length === 0 && <p className="text-xs text-muted-foreground text-center py-8">Arraste leads aqui</p>}
                       </DroppableColumn>
                     </div>
                   );
                 })}
               </div>
               <DragOverlay>
-                {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} /></div> : null}
+                {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} /></div> : null}
               </DragOverlay>
             </DndContext>
           )}
