@@ -58,7 +58,8 @@ export default function MaterialDetailDialog({
         glassRules,
         components,
         typology.name,
-        typology.num_folhas
+        typology.num_folhas,
+        typology
       );
     } catch {
       return null;
