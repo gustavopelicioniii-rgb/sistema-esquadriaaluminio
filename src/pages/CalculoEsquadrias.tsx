@@ -116,20 +116,20 @@ export default function CalculoEsquadrias() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Calculator className="h-6 w-6 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Calculator className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             Cálculo de Esquadrias
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Motor de cálculo de cortes, vidros e componentes por tipologia
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Motor de cálculo de cortes, vidros e componentes
           </p>
         </div>
         {result && (
-          <Button variant="outline" onClick={handleReset} className="gap-2">
+          <Button variant="outline" onClick={handleReset} className="gap-2 w-full sm:w-auto">
             <RotateCcw className="h-4 w-4" />
             Novo Cálculo
           </Button>
