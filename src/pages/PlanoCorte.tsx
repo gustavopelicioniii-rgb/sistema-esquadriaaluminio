@@ -258,9 +258,13 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
                 </div>
               )}
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" className="text-xs" onClick={resetFolgas}>
                   Restaurar Padrão
+                </Button>
+                <Button size="sm" className="text-xs gap-1.5" onClick={saveFolgas} disabled={folgasSaving}>
+                  <Save className="h-3 w-3" />
+                  {folgasSaving ? "Salvando..." : "Salvar Folgas"}
                 </Button>
               </div>
             </CardContent>
