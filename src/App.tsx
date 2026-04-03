@@ -35,6 +35,7 @@ const Funcionarios = lazy(() => import("./pages/Funcionarios"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
+const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
