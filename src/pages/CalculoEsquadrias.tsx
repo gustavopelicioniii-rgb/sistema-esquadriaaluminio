@@ -262,7 +262,7 @@ export default function CalculoEsquadrias() {
                   <Layers className="h-3.5 w-3.5" />
                   Peças de Alumínio
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.cuts.reduce((s, c) => s + c.quantity, 0)}
                 </div>
               </CardContent>
