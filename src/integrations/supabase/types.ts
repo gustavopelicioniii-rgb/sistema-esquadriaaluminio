@@ -14,7 +14,174 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agenda: {
+        Row: {
+          created_at: string
+          data: string
+          hora: string | null
+          id: string
+          local: string | null
+          responsavel: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          responsavel?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          responsavel?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      clientes: {
+        Row: {
+          cidade: string | null
+          created_at: string
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          orcamentos_count: number
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cidade?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          orcamentos_count?: number
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cidade?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          orcamentos_count?: number
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      configuracoes: {
+        Row: {
+          chave: string
+          created_at: string
+          id: string
+          updated_at: string
+          valor: string
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          valor?: string
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          valor?: string
+        }
+        Relationships: []
+      }
+      estoque: {
+        Row: {
+          categoria: string
+          codigo: string
+          created_at: string
+          id: string
+          minimo: number
+          produto: string
+          quantidade: number
+          unidade: string
+          updated_at: string
+        }
+        Insert: {
+          categoria?: string
+          codigo: string
+          created_at?: string
+          id?: string
+          minimo?: number
+          produto: string
+          quantidade?: number
+          unidade?: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          codigo?: string
+          created_at?: string
+          id?: string
+          minimo?: number
+          produto?: string
+          quantidade?: number
+          unidade?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      orcamentos: {
+        Row: {
+          cliente: string
+          created_at: string
+          data: string
+          id: string
+          itens: Json
+          numero: string
+          produto: string
+          status: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          cliente: string
+          created_at?: string
+          data?: string
+          id?: string
+          itens?: Json
+          numero: string
+          produto: string
+          status?: string
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          data?: string
+          id?: string
+          itens?: Json
+          numero?: string
+          produto?: string
+          status?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
