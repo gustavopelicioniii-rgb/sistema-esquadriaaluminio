@@ -12,10 +12,10 @@ import {
 
 export function Topbar() {
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-card px-4">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4">
       <SidebarTrigger className="-ml-1" />
 
-      <div className="relative flex-1 max-w-md">
+      <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Buscar clientes, orçamentos, produtos..."

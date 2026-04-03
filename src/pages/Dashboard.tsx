@@ -207,7 +207,7 @@ const Dashboard = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid gap-4 lg:grid-cols-7">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
         <Card className="lg:col-span-4 shadow-sm border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">Receita Mensal</CardTitle>
