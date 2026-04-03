@@ -9,8 +9,14 @@ import {
   RefreshCcw, CreditCard, FileText, Printer, GitBranch,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import ReagendarDialog from "@/components/producao/ReagendarDialog";
+import PagamentosDialog from "@/components/producao/PagamentosDialog";
+import ContratoDialog from "@/components/producao/ContratoDialog";
+import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
+import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 
 type FilterKey = "todos" | "atrasado" | "em_andamento" | "concluido";
+type DialogType = "reagendar" | "pagamentos" | "contrato" | "impressoes" | "etapa" | null;
 
 const filters: { key: FilterKey; label: string }[] = [
   { key: "todos", label: "Todos" },
@@ -19,9 +25,19 @@ const filters: { key: FilterKey; label: string }[] = [
   { key: "concluido", label: "Concluídos" },
 ];
 
+const actionButtons = [
+  { key: "reagendar" as const, icon: RefreshCcw, label: "Reagendar" },
+  { key: "pagamentos" as const, icon: CreditCard, label: "Pagamentos" },
+  { key: "contrato" as const, icon: FileText, label: "Contrato" },
+  { key: "impressoes" as const, icon: Printer, label: "Impressões" },
+  { key: "etapa" as const, icon: GitBranch, label: "Alterar etapa" },
+];
+
 const Producao = () => {
   const [filter, setFilter] = useState<FilterKey>("todos");
   const [search, setSearch] = useState("");
+  const [activeDialog, setActiveDialog] = useState<DialogType>(null);
+  const [selectedOrdem, setSelectedOrdem] = useState<OrdemProducao | null>(null);
 
   const filtered = ordensProducao.filter((op) => {
     if (filter !== "todos" && op.status !== filter) return false;
@@ -46,6 +62,16 @@ const Producao = () => {
 
   const handleCancelar = (op: OrdemProducao) => {
     toast({ title: "Pedido cancelado", description: `Pedido ${op.pedidoNum} foi cancelado.`, variant: "destructive" });
+  };
+
+  const openDialog = (type: DialogType, op: OrdemProducao) => {
+    setSelectedOrdem(op);
+    setActiveDialog(type);
+  };
+
+  const closeDialog = () => {
+    setActiveDialog(null);
+    setSelectedOrdem(null);
   };
 
   return (
@@ -114,7 +140,6 @@ const Producao = () => {
               return (
                 <Card key={op.id} className="shadow-sm border-border/50">
                   <CardContent className="p-5 space-y-3">
-                    {/* Header */}
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-base">PEDIDO {op.pedidoNum}</h3>
                       <span className={cn("rounded-full px-2.5 py-0.5 text-[10px] font-bold", dias.color)}>
@@ -122,7 +147,6 @@ const Producao = () => {
                       </span>
                     </div>
 
-                    {/* Client info */}
                     <div className="space-y-1 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1.5"><User className="h-3 w-3" />{op.cliente}</div>
                       <div className="flex items-start gap-1.5"><MapPin className="h-3 w-3 mt-0.5 shrink-0" />{op.endereco}</div>
@@ -136,7 +160,6 @@ const Producao = () => {
 
                     <p className="text-xl font-bold">{formatCurrency(op.valor)}</p>
 
-                    {/* Etapa */}
                     {op.etapa && (
                       <div className="rounded bg-muted/50 px-3 py-2 text-xs">
                         <span className="font-semibold uppercase text-muted-foreground">{op.etapa}</span>
@@ -147,21 +170,19 @@ const Producao = () => {
 
                     {/* Action icons */}
                     <div className="flex items-center justify-center gap-3 pt-1">
-                      {[
-                        { icon: RefreshCcw, label: "Reagendar" },
-                        { icon: CreditCard, label: "Pagamentos" },
-                        { icon: FileText, label: "Contrato" },
-                        { icon: Printer, label: "Impressões" },
-                        { icon: GitBranch, label: "Alterar etapa" },
-                      ].map(({ icon: Icon, label }) => (
-                        <button key={label} className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors" title={label}>
+                      {actionButtons.map(({ key, icon: Icon, label }) => (
+                        <button
+                          key={key}
+                          className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                          title={label}
+                          onClick={() => openDialog(key, op)}
+                        >
                           <Icon className="h-4 w-4" />
                           <span className="text-[9px]">{label}</span>
                         </button>
                       ))}
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex gap-2 pt-1">
                       <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => handleCancelar(op)}>
                         Cancelar
@@ -182,6 +203,17 @@ const Producao = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      {selectedOrdem && (
+        <>
+          <ReagendarDialog open={activeDialog === "reagendar"} onOpenChange={(v) => !v && closeDialog()} ordem={selectedOrdem} />
+          <PagamentosDialog open={activeDialog === "pagamentos"} onOpenChange={(v) => !v && closeDialog()} ordem={selectedOrdem} />
+          <ContratoDialog open={activeDialog === "contrato"} onOpenChange={(v) => !v && closeDialog()} ordem={selectedOrdem} />
+          <ImpressoesDialog open={activeDialog === "impressoes"} onOpenChange={(v) => !v && closeDialog()} ordem={selectedOrdem} />
+          <AlterarEtapaDialog open={activeDialog === "etapa"} onOpenChange={(v) => !v && closeDialog()} ordem={selectedOrdem} />
+        </>
+      )}
     </div>
   );
 };
