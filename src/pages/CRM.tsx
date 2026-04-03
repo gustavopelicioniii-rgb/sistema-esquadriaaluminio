@@ -382,6 +382,7 @@ const CRM = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </PullToRefresh>
   );
 };
 
