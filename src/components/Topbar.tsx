@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck } from "lucide-react";
+import { useState } from "react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -12,23 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
+import { useGlobalSearch } from "@/hooks/use-global-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const searchableItems = [
-  { label: "Igor Soares de Souza", type: "Cliente", url: "/clientes" },
-  { label: "Maria Santos", type: "Cliente", url: "/clientes" },
-  { label: "Carlos Oliveira", type: "Cliente", url: "/clientes" },
-  { label: "#1042 - Vidraçaria Norte SP", type: "Orçamento", url: "/orcamentos" },
-  { label: "#1043 - Construtora Silva Ltda", type: "Orçamento", url: "/orcamentos" },
-  { label: "Perfil Montante 40x25", type: "Estoque", url: "/estoque" },
-  { label: "Vidro Temperado 8mm", type: "Estoque", url: "/estoque" },
-  { label: "Fechadura Multiponto", type: "Estoque", url: "/estoque" },
-];
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
   pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
   producao: { icon: Wrench, color: "text-primary", route: "/producao" },
+};
+
+const typeBadgeColors: Record<string, string> = {
+  Cliente: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  Orçamento: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  Pedido: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  Produto: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+  Estoque: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
 };
 
 export function Topbar() {
@@ -38,12 +36,7 @@ export function Topbar() {
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
-
-  const results = useMemo(() => {
-    if (!search.trim()) return [];
-    const s = search.toLowerCase();
-    return searchableItems.filter((i) => i.label.toLowerCase().includes(s)).slice(0, 8);
-  }, [search]);
+  const { results, loading: searchLoading } = useGlobalSearch(search);
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
@@ -65,23 +58,38 @@ export function Topbar() {
 
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
         <Input
-          placeholder="Buscar clientes, orçamentos, produtos..."
+          placeholder="Buscar clientes, orçamentos, pedidos..."
           className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
           value={search}
           onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
           onFocus={() => setSearchOpen(true)}
           onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
         />
-        {searchOpen && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden">
-            {results.map((r, i) => (
-              <button key={i} className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex justify-between items-center"
-                onMouseDown={() => { navigate(r.url); setSearch(""); setSearchOpen(false); }}>
-                <span className="font-medium">{r.label}</span>
-                <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{r.type}</span>
-              </button>
-            ))}
+        {searchOpen && search.trim().length >= 2 && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden max-h-80 overflow-y-auto">
+            {results.length > 0 ? (
+              results.map((r) => (
+                <button
+                  key={`${r.type}-${r.id}`}
+                  className="w-full px-3 py-2.5 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
+                  onMouseDown={() => { navigate(r.url); setSearch(""); setSearchOpen(false); }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{r.label}</p>
+                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
+                  </div>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
+                    {r.type}
+                  </span>
+                </button>
+              ))
+            ) : !searchLoading ? (
+              <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                Nenhum resultado para "{search}"
+              </div>
+            ) : null}
           </div>
         )}
       </div>
