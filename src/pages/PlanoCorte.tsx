@@ -89,6 +89,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
           const saved = JSON.parse(perTyp.valor);
           if (saved.cut) setCutFolgas(prev => ({ ...prev, ...saved.cut }));
           if (saved.glass) setGlassFolgas(prev => ({ ...prev, ...saved.glass }));
+          setFolgasSource("personalizada");
           setFolgasLoaded(true);
           return;
         } catch { /* ignore */ }
