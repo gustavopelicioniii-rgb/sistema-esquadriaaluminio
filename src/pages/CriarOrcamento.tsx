@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import { generateBudgetPDF } from "@/utils/pdfGenerator";
 
 const tiposProduto = [
   { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
