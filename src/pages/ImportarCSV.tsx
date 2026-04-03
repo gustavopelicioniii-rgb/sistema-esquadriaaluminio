@@ -249,7 +249,7 @@ const ImportarCSV = () => {
 
             <Separator className="my-6" />
 
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground space-y-4">
               <p className="font-medium text-foreground mb-2">Colunas esperadas ({mode === "estoque" ? "Estoque" : "Perfis"}):</p>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(colsMap).map(([key, label]) => (
@@ -257,6 +257,31 @@ const ImportarCSV = () => {
                     {label} {requiredCols.includes(key) && "*"}
                   </Badge>
                 ))}
+              </div>
+              <p className="text-xs">* Campos obrigatórios</p>
+
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <p className="font-medium text-foreground text-sm">📋 Instruções de formato</p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li>O arquivo deve ser <strong>.csv</strong> separado por vírgula ou ponto-e-vírgula</li>
+                  <li>A primeira linha deve conter os nomes das colunas (cabeçalho)</li>
+                  <li>Codificação recomendada: <strong>UTF-8</strong></li>
+                  <li>Campos com vírgula devem estar entre aspas duplas</li>
+                  <li>Valores numéricos devem usar ponto como separador decimal (ex: 0.52)</li>
+                </ul>
+
+                <p className="font-medium text-foreground text-xs mt-3">Exemplo de CSV — {mode === "estoque" ? "Estoque" : "Perfis"}:</p>
+                <pre className="bg-background rounded p-2 text-[11px] font-mono overflow-x-auto whitespace-pre">
+{mode === "estoque"
+  ? `codigo,produto,quantidade,unidade,categoria,minimo
+ALU-001,Parafuso Sextavado 5mm,500,pçs,Fixação,100
+ALU-002,Feltrinho Adesivo 10mm,1200,pçs,Vedação,200
+ALU-003,Roldana Simples 20mm,80,pçs,Acessórios,20`
+  : `codigo,nome,tipo,peso_metro,comprimento_barra,material,linha
+PF-001,Montante Fixo,Montante,0.52,6000,Alumínio,Suprema
+PF-002,Travessa Inferior,Travessa,0.48,6000,Alumínio,Gold
+PF-003,Marco Lateral,Marco,0.61,6000,Alumínio,Suprema`}
+                </pre>
               </div>
             </div>
           </CardContent>
