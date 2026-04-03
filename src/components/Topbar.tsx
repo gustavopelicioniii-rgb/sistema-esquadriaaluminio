@@ -38,8 +38,10 @@ export function Topbar() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { results, loading: searchLoading } = useGlobalSearch(search);
+  const isMobile = useIsMobile();
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
