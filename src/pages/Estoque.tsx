@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,7 +91,10 @@ const Estoque = () => {
     fetchItens();
   };
 
+  const handleRefresh = useCallback(async () => { await fetchItens(); }, []);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -204,6 +208,7 @@ const Estoque = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </PullToRefresh>
   );
 };
 

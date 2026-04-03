@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +31,11 @@ const chartTooltipStyle = {
 };
 
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const [period, setPeriod] = useState<PeriodFilter>("todos");
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries();
+  }, [queryClient]);
   const { data: stats, isLoading } = useDashboardStats(period);
   const { data: statusPedidos = [] } = usePedidosStatus(period);
   const { data: receitaMensal = [] } = useReceitaMensal();
@@ -52,6 +58,7 @@ const Dashboard = () => {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4 sm:space-y-6">
       {/* Greeting + Period Filter */}
       <div className="flex flex-col gap-3">
@@ -269,6 +276,7 @@ const Dashboard = () => {
         </Card>
       </div>
     </div>
+    </PullToRefresh>
   );
 };
 

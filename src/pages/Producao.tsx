@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/formatters";
 import { Card, CardContent } from "@/components/ui/card";
@@ -153,6 +154,7 @@ const Producao = () => {
   }
 
   return (
+    <PullToRefresh onRefresh={fetchPedidos}>
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -362,6 +364,7 @@ const Producao = () => {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </PullToRefresh>
   );
 };
 
