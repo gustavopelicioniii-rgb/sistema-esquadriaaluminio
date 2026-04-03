@@ -118,12 +118,16 @@ const ImportarCSV = () => {
         setHeaders(hdrs);
         setRows(data);
 
-        // Auto-map columns
+        // Auto-map columns using synonyms
         const targetCols = mode === "estoque" ? Object.keys(ESTOQUE_COLUMNS_MAP) : Object.keys(PERFIL_COLUMNS_MAP);
         const autoMap: Record<string, string> = {};
+        const usedHeaders = new Set<string>();
         for (const target of targetCols) {
-          const match = hdrs.find(h => normalizeHeader(h) === target || normalizeHeader(h).includes(target));
-          if (match) autoMap[target] = match;
+          const match = findBestMatch(hdrs.filter(h => !usedHeaders.has(h)), target);
+          if (match) {
+            autoMap[target] = match;
+            usedHeaders.add(match);
+          }
         }
         setColumnMap(autoMap);
         setStep("map");
