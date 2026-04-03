@@ -106,10 +106,10 @@ export default function EtapaCard({
 
       {/* Expanded content */}
       {isExpanded && (
-        <div className="px-5 py-4 space-y-4">
+        <div className="px-3 sm:px-5 py-3 sm:py-4 space-y-3 sm:space-y-4">
           {/* Select all + actions */}
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
               <Checkbox checked={allChecked} onCheckedChange={(v) => onSelectAll(!!v)} />
               Selecionar todos
             </label>
