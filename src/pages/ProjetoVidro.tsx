@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Monitor, ArrowLeft, Trash2, Edit2, Eye, Search } from "lucide-react";
+import { Plus, Monitor, ArrowLeft, Trash2, Edit2, Eye, Search, FileDown } from "lucide-react";
+import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
 import { formatCurrency } from "@/data/mockData";
 
