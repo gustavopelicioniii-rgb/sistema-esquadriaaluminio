@@ -512,15 +512,16 @@ export default function CalculoEsquadrias() {
 
               {/* SUMMARY TAB */}
               <TabsContent value="summary">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Perfil</TableHead>
-                        <TableHead className="text-right">Comp. Total (mm)</TableHead>
+                        <TableHead className="text-right">Comp. (mm)</TableHead>
                         <TableHead className="text-center">Barras</TableHead>
-                        <TableHead className="text-right">Peso/m (kg)</TableHead>
-                        <TableHead className="text-right">Peso Total (kg)</TableHead>
+                        <TableHead className="text-right">Peso/m</TableHead>
+                        <TableHead className="text-right">Peso Total</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -547,6 +548,7 @@ export default function CalculoEsquadrias() {
                       </TableRow>
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
             </Tabs>
