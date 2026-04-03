@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
@@ -14,18 +14,19 @@ import { getColorById, aluminumColors } from "@/components/frame-preview/colors"
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateBudgetPDF } from "@/utils/pdfGenerator";
 import { cn } from "@/lib/utils";
+import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
 
 const tiposProduto = [
-  { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
-  { value: "janela_correr_4f", label: "Janela de Correr 4F", precoM2: 880, category: "janela_correr", subcategory: "4_folhas", numFolhas: 4 },
-  { value: "janela_maximar_1f", label: "Janela Maxim-Ar 1F", precoM2: 920, category: "janela_maximar", subcategory: "1_folha", numFolhas: 1 },
-  { value: "janela_maximar_2f", label: "Janela Maxim-Ar 2F", precoM2: 950, category: "janela_maximar", subcategory: "2_folhas", numFolhas: 2 },
-  { value: "porta_giro_1f", label: "Porta de Giro 1F", precoM2: 950, category: "porta_giro", subcategory: "1_folha", numFolhas: 1 },
-  { value: "porta_giro_2f", label: "Porta de Giro 2F", precoM2: 1000, category: "porta_giro", subcategory: "2_folhas", numFolhas: 2 },
-  { value: "porta_correr_2f", label: "Porta de Correr 2F", precoM2: 1050, category: "porta_correr", subcategory: "2_folhas", numFolhas: 2 },
-  { value: "porta_correr_4f", label: "Porta de Correr 4F", precoM2: 1100, category: "porta_correr", subcategory: "4_folhas", numFolhas: 4 },
-  { value: "janela_veneziana", label: "Janela c/ Veneziana 2F", precoM2: 1200, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, veneziana: true },
-  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4 },
+  { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-jc2f" },
+  { value: "janela_correr_4f", label: "Janela de Correr 4F", precoM2: 880, category: "janela_correr", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-jc4f" },
+  { value: "janela_maximar_1f", label: "Janela Maxim-Ar 1F", precoM2: 920, category: "janela_maximar", subcategory: "1_folha", numFolhas: 1, typologyId: "typ-su-jma1" },
+  { value: "janela_maximar_2f", label: "Janela Maxim-Ar 2F", precoM2: 950, category: "janela_maximar", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-jma2" },
+  { value: "porta_giro_1f", label: "Porta de Giro 1F", precoM2: 950, category: "porta_giro", subcategory: "1_folha", numFolhas: 1, typologyId: "typ-su-pg1f" },
+  { value: "porta_giro_2f", label: "Porta de Giro 2F", precoM2: 1000, category: "porta_giro", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-pg2f" },
+  { value: "porta_correr_2f", label: "Porta de Correr 2F", precoM2: 1050, category: "porta_correr", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-pc2f" },
+  { value: "porta_correr_4f", label: "Porta de Correr 4F", precoM2: 1100, category: "porta_correr", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-pc4f" },
+  { value: "janela_veneziana", label: "Janela c/ Veneziana 2F", precoM2: 1200, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, veneziana: true, typologyId: "typ-su-jc2fv" },
+  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-jcam" },
 ];
 
 const vidroOptions = ["Comum", "Temperado", "Laminado", "Jateado", "Nenhum"];
@@ -51,6 +52,8 @@ const CriarOrcamento = () => {
   const [temAcrescimo, setTemAcrescimo] = useState(false);
   const [ambiente, setAmbiente] = useState("");
   const [observacoes, setObservacoes] = useState("");
+
+  const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
 
   const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
@@ -134,6 +137,12 @@ const CriarOrcamento = () => {
             </p>
             <button className="flex items-center gap-1 text-xs text-primary font-medium mt-1 hover:underline">
               <Pencil className="h-3 w-3" /> Editar produto
+            </button>
+            <button
+              onClick={() => setMaterialDialogOpen(true)}
+              className="flex items-center gap-1 text-xs text-primary font-medium mt-1 hover:underline"
+            >
+              <List className="h-3 w-3" /> Ver materiais
             </button>
           </div>
         </div>
@@ -414,6 +423,20 @@ const CriarOrcamento = () => {
           </div>
         </div>
       </div>
+
+      {/* Material Detail Dialog */}
+      {produtoSelecionado && (
+        <MaterialDetailDialog
+          open={materialDialogOpen}
+          onOpenChange={setMaterialDialogOpen}
+          typologyId={produtoSelecionado.typologyId}
+          larguraCm={largura}
+          alturaCm={altura}
+          quantidade={quantidade}
+          colorName={getColorById(colorId).name}
+          colorHex={getColorById(colorId).hex}
+        />
+      )}
     </div>
   );
 };
