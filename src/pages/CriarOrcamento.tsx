@@ -1,18 +1,19 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft, FileDown, Building2, ChevronDown } from "lucide-react";
+import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
-import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import { FramePreview } from "@/components/frame-preview";
+import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateBudgetPDF } from "@/utils/pdfGenerator";
+import { cn } from "@/lib/utils";
 
 const tiposProduto = [
   { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
@@ -27,66 +28,130 @@ const tiposProduto = [
   { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4 },
 ];
 
+const vidroOptions = ["Comum", "Temperado", "Laminado", "Jateado", "Nenhum"];
+const ferragemColors = [
+  { id: "cromado", name: "Cromado", hex: "#C0C0C0" },
+  { id: "preto", name: "Preto", hex: "#333333" },
+  { id: "branco", name: "Branco", hex: "#F0F0F0" },
+  { id: "bronze", name: "Bronze", hex: "#8B6914" },
+];
+
 const CriarOrcamento = () => {
   const navigate = useNavigate();
   const [cliente, setCliente] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [largura, setLargura] = useState(150);
+  const [tipo, setTipo] = useState("janela_correr_2f");
+  const [largura, setLargura] = useState(200);
   const [altura, setAltura] = useState(120);
   const [quantidade, setQuantidade] = useState(1);
   const [colorId, setColorId] = useState("natural");
-  const [empresaNome, setEmpresaNome] = useState("");
-  const [empresaTelefone, setEmpresaTelefone] = useState("");
-  const [empresaEmail, setEmpresaEmail] = useState("");
-  const [empresaEndereco, setEmpresaEndereco] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [empresaOpen, setEmpresaOpen] = useState(false);
+  const [ferragemColorId, setFerragemColorId] = useState("preto");
+  const [vidroTipo, setVidroTipo] = useState("Nenhum");
+  const [margemPercent, setMargemPercent] = useState(100);
+  const [acrescimo, setAcrescimo] = useState(0);
+  const [temAcrescimo, setTemAcrescimo] = useState(false);
+  const [ambiente, setAmbiente] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+
   const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
   const calculo = useMemo(() => {
     const produto = tiposProduto.find((t) => t.value === tipo);
     if (!produto) return null;
     const areaM2 = (largura / 100) * (altura / 100);
-    const custoUnitario = areaM2 * produto.precoM2;
-    const custoTotal = custoUnitario * quantidade;
-    const margem = custoTotal * 0.35;
-    const valorFinal = custoTotal + margem;
-    return { custoUnitario, custoTotal, margem, valorFinal, areaM2 };
-  }, [tipo, largura, altura, quantidade]);
+    const custo = areaM2 * produto.precoM2 * quantidade;
+    const lucro = custo * (margemPercent / 100);
+    const subtotal = custo + lucro;
+    const acrescimoVal = temAcrescimo ? acrescimo : 0;
+    const total = subtotal + acrescimoVal;
+    return { areaM2, custo, lucro, subtotal, acrescimo: acrescimoVal, total };
+  }, [tipo, largura, altura, quantidade, margemPercent, temAcrescimo, acrescimo]);
 
   const handleSalvar = () => {
     toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
     navigate("/orcamentos");
   };
 
+  const handleLimpar = () => {
+    setCliente("");
+    setTipo("janela_correr_2f");
+    setLargura(200);
+    setAltura(120);
+    setQuantidade(1);
+    setColorId("natural");
+    setFerragemColorId("preto");
+    setVidroTipo("Nenhum");
+    setMargemPercent(100);
+    setAcrescimo(0);
+    setTemAcrescimo(false);
+    setAmbiente("");
+    setObservacoes("");
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/orcamentos")}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Novo Orçamento</h1>
-          <p className="text-muted-foreground text-sm">Preencha os dados do orçamento</p>
+    <div className="flex flex-col h-[calc(100vh-4rem)]">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("/orcamentos")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm font-medium text-muted-foreground">Orçamentos</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>
+          <Button size="sm" onClick={handleSalvar} className="bg-primary">Salvar</Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Form */}
-        <Card className="shadow-sm border-border/50">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-base">Dados do Produto</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      {/* Main content - two columns */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left panel - Preview */}
+        <div className="w-[280px] shrink-0 border-r border-border/50 flex flex-col bg-muted/30">
+          <div className="flex-1 flex items-center justify-center p-4">
+            <Frame3DWrapper className="flex items-center justify-center">
+              <div id="budget-frame-preview">
+                <FramePreview
+                  width_mm={largura * 10}
+                  height_mm={altura * 10}
+                  category={produtoSelecionado?.category ?? "janela_correr"}
+                  subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
+                  num_folhas={produtoSelecionado?.numFolhas ?? 2}
+                  has_veneziana={produtoSelecionado?.veneziana}
+                  colorId={colorId}
+                  maxWidth={220}
+                  maxHeight={200}
+                />
+              </div>
+            </Frame3DWrapper>
+          </div>
+          <div className="px-4 pb-4 space-y-1">
+            <p className="text-sm font-bold uppercase tracking-wide">
+              {produtoSelecionado?.label ?? "Selecione"}
+            </p>
+            <p className="text-xs text-muted-foreground">{cliente || "Cliente não informado"}</p>
+            <p className="text-xs text-muted-foreground">
+              Largura: {largura * 10} × {altura * 10} mm
+            </p>
+            <button className="flex items-center gap-1 text-xs text-primary font-medium mt-1 hover:underline">
+              <Pencil className="h-3 w-3" /> Editar produto
+            </button>
+          </div>
+        </div>
+
+        {/* Right panel - Scrollable form */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-xl mx-auto p-6 space-y-6">
+            {/* Cliente */}
             <div className="space-y-2">
               <Label>Cliente</Label>
               <Input placeholder="Nome do cliente" value={cliente} onChange={(e) => setCliente(e.target.value)} />
             </div>
+
+            {/* Tipo de Produto */}
             <div className="space-y-2">
               <Label>Tipo de Produto</Label>
               <Select value={tipo} onValueChange={setTipo}>
-                <SelectTrigger><SelectValue placeholder="Selecione o produto" /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {tiposProduto.map((t) => (
                     <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
@@ -94,7 +159,9 @@ const CriarOrcamento = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+
+            {/* Dimensões */}
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Largura (cm)</Label>
                 <Input type="number" value={largura} onChange={(e) => setLargura(Number(e.target.value))} />
@@ -103,73 +170,226 @@ const CriarOrcamento = () => {
                 <Label>Altura (cm)</Label>
                 <Input type="number" value={altura} onChange={(e) => setAltura(Number(e.target.value))} />
               </div>
-              <div className="space-y-2">
-                <Label>Quantidade</Label>
-                <Input type="number" value={quantidade} onChange={(e) => setQuantidade(Number(e.target.value))} min={1} />
+            </div>
+
+            {/* Tipo de vidro */}
+            <div className="space-y-2">
+              <Label>Tipo de vidro</Label>
+              <div className="flex flex-wrap gap-2">
+                {vidroOptions.map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setVidroTipo(v)}
+                    className={cn(
+                      "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
+                      vidroTipo === v
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    )}
+                  >
+                    {v.toUpperCase()}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Company info collapsible */}
-            <Collapsible open={empresaOpen} onOpenChange={setEmpresaOpen}>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="w-full justify-between text-muted-foreground gap-2">
-                  <span className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4" />
-                    Dados da empresa no PDF
-                  </span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${empresaOpen ? "rotate-180" : ""}`} />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-3 pt-2">
-                <div className="space-y-2">
-                  <Label className="text-xs">Nome da Empresa</Label>
-                  <Input placeholder="Ex: AlumPro Esquadrias" value={empresaNome} onChange={e => setEmpresaNome(e.target.value)} />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label className="text-xs">Telefone</Label>
-                    <Input placeholder="(11) 99999-0000" value={empresaTelefone} onChange={e => setEmpresaTelefone(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs">Email</Label>
-                    <Input placeholder="contato@empresa.com" value={empresaEmail} onChange={e => setEmpresaEmail(e.target.value)} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs">Endereço</Label>
-                  <Input placeholder="Rua, nº - Cidade/UF" value={empresaEndereco} onChange={e => setEmpresaEndereco(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs">URL do Logotipo</Label>
-                  <Input placeholder="https://... (imagem PNG/JPG)" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} />
-                  {logoUrl && (
-                    <div className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                      <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                      <span className="text-xs text-muted-foreground">Preview do logo</span>
-                    </div>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
+            {/* Cor dos alumínios */}
+            <div className="space-y-2">
+              <Label>Cor dos alumínios</Label>
+              <div className="flex flex-wrap gap-2">
+                {aluminumColors.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setColorId(c.id)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                      colorId === c.id
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-muted/30 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <span
+                      className="w-4 h-4 rounded-full border border-border/50"
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleSalvar} disabled={!cliente || !tipo} className="flex-1">
-                Salvar Orçamento
+            {/* Cor das ferragens */}
+            <div className="space-y-2">
+              <Label>Cor das ferragens</Label>
+              <div className="flex flex-wrap gap-2">
+                {ferragemColors.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setFerragemColorId(c.id)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+                      ferragemColorId === c.id
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-muted/30 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <span
+                      className="w-4 h-4 rounded-full border border-border/50"
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Quantidade */}
+            <div className="space-y-2">
+              <Label>Quantidade</Label>
+              <div className="flex items-center gap-0">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-r-none"
+                  onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <Input
+                  type="number"
+                  value={quantidade}
+                  onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value)))}
+                  className="rounded-none text-center w-full border-x-0"
+                  min={1}
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-l-none"
+                  onClick={() => setQuantidade(quantidade + 1)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Acréscimo toggle */}
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-0">
+                <button
+                  onClick={() => setTemAcrescimo(false)}
+                  className={cn(
+                    "py-2.5 text-sm font-medium rounded-l-lg border transition-colors",
+                    !temAcrescimo
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted/50 text-muted-foreground border-border"
+                  )}
+                >
+                  Sem acréscimo
+                </button>
+                <button
+                  onClick={() => setTemAcrescimo(true)}
+                  className={cn(
+                    "py-2.5 text-sm font-medium rounded-r-lg border border-l-0 transition-colors",
+                    temAcrescimo
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted/50 text-muted-foreground border-border"
+                  )}
+                >
+                  Adicionar acréscimo
+                </button>
+              </div>
+              {temAcrescimo && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">R$</span>
+                  <Input
+                    type="number"
+                    value={acrescimo}
+                    onChange={(e) => setAcrescimo(Number(e.target.value))}
+                    placeholder="0,00"
+                    min={0}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Margem de lucro */}
+            <div className="space-y-2">
+              <Label>Margem de lucro</Label>
+              <div className="flex items-center gap-0">
+                <span className="flex items-center justify-center h-10 w-10 bg-primary text-primary-foreground rounded-l-md text-sm font-bold shrink-0">
+                  %
+                </span>
+                <Input
+                  type="number"
+                  value={margemPercent}
+                  onChange={(e) => setMargemPercent(Number(e.target.value))}
+                  className="rounded-l-none"
+                  min={0}
+                />
+              </div>
+            </div>
+
+            {/* Ambiente */}
+            <div className="space-y-2">
+              <Label>Ambiente da instalação (opcional)</Label>
+              <Input
+                placeholder="Ex: Sala, Quarto, Cozinha..."
+                value={ambiente}
+                onChange={(e) => setAmbiente(e.target.value)}
+              />
+            </div>
+
+            {/* Observações */}
+            <div className="space-y-2">
+              <Label>Adicionar observações (opcional)</Label>
+              <Textarea
+                placeholder="Observações adicionais..."
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            {/* Cost summary */}
+            {calculo && (
+              <div className="border-t pt-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Custo</span>
+                  <span className="font-medium text-destructive">{formatCurrency(calculo.custo)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Lucro</span>
+                  <span className="font-medium text-green-600">{formatCurrency(calculo.lucro)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium">{formatCurrency(calculo.subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Acréscimo</span>
+                  <span className="font-medium">+ {formatCurrency(calculo.acrescimo)}</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="font-bold text-base">TOTAL</span>
+                  <span className="font-bold text-lg">{formatCurrency(calculo.total)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex gap-2 pb-6">
+              <Button onClick={handleSalvar} disabled={!cliente} className="flex-1 gap-2">
+                <Plus className="h-4 w-4" />
+                Adicionar
               </Button>
               <Button
                 variant="outline"
-                disabled={!cliente || !tipo || !calculo}
+                disabled={!cliente || !calculo}
                 className="gap-2"
                 onClick={async () => {
                   if (!calculo || !produtoSelecionado) return;
                   sonnerToast.info("Gerando PDF...");
-                  const empresa = empresaNome ? {
-                    nome: empresaNome,
-                    telefone: empresaTelefone || undefined,
-                    email: empresaEmail || undefined,
-                    endereco: empresaEndereco || undefined,
-                    logoUrl: logoUrl || undefined,
-                  } : undefined;
                   await generateBudgetPDF(
                     {
                       cliente,
@@ -178,10 +398,9 @@ const CriarOrcamento = () => {
                       alturaCm: altura,
                       quantidade,
                       areaM2: calculo.areaM2,
-                      custoTotal: calculo.custoTotal,
-                      margem: calculo.margem,
-                      valorFinal: calculo.valorFinal,
-                      empresa,
+                      custoTotal: calculo.custo,
+                      margem: calculo.lucro,
+                      valorFinal: calculo.total,
                     },
                     "budget-frame-preview"
                   );
@@ -192,62 +411,7 @@ const CriarOrcamento = () => {
                 PDF
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Preview & Calculation */}
-        <div className="space-y-4">
-          <Card className="shadow-sm border-border/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-base">Visualização da Esquadria</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Frame3DWrapper className="flex items-center justify-center min-h-[260px]">
-                <div id="budget-frame-preview">
-                  <FramePreview
-                    width_mm={largura * 10}
-                    height_mm={altura * 10}
-                    category={produtoSelecionado?.category ?? "janela_correr"}
-                    subcategory={produtoSelecionado?.subcategory ?? "2_folhas"}
-                    num_folhas={produtoSelecionado?.numFolhas ?? 2}
-                    has_veneziana={produtoSelecionado?.veneziana}
-                    colorId={colorId}
-                    maxWidth={320}
-                    maxHeight={260}
-                  />
-                </div>
-              </Frame3DWrapper>
-              <ColorSelector selectedColorId={colorId} onColorChange={setColorId} />
-            </CardContent>
-          </Card>
-
-          {calculo && (
-            <Card className="shadow-sm border-border/50">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base">Resultado do Cálculo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Área unitária</span>
-                    <span className="font-medium">{calculo.areaM2.toFixed(2)} m²</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Custo estimado</span>
-                    <span className="font-medium">{formatCurrency(calculo.custoTotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Margem (35%)</span>
-                    <span className="font-medium">{formatCurrency(calculo.margem)}</span>
-                  </div>
-                  <div className="border-t pt-3 flex justify-between">
-                    <span className="font-semibold">Valor Final</span>
-                    <span className="text-xl font-bold text-primary">{formatCurrency(calculo.valorFinal)}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          </div>
         </div>
       </div>
     </div>
