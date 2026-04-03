@@ -7,16 +7,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Search, Phone, Mail, MapPin, Pencil, Trash2, GripVertical, Loader2 } from "lucide-react";
+import { Plus, Search, Phone, Mail, MapPin, Pencil, Trash2, GripVertical, Loader2, CalendarDays, MessageSquare, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable, useDroppable,
   type DragStartEvent, type DragEndEvent,
 } from "@dnd-kit/core";
-import { useCrmLeads, useUpdateLeadStatus, useCreateLead, useDeleteLead, type CrmLead, type CrmLeadStatus } from "@/hooks/use-crm-leads";
+import { useCrmLeads, useUpdateLeadStatus, useUpdateLead, useCreateLead, useDeleteLead, type CrmLead, type CrmLeadStatus } from "@/hooks/use-crm-leads";
 
 // ── Types ──
 type Cliente = {
@@ -35,48 +41,76 @@ const emptyClientForm = { nome: "", telefone: "", email: "", endereco: "", cidad
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-const columns: { id: CrmLeadStatus; title: string; color: string }[] = [
-  { id: "novo", title: "Novo", color: "bg-primary" },
-  { id: "em_orcamento", title: "Em Orçamento", color: "bg-warning" },
-  { id: "negociacao", title: "Negociação", color: "bg-[hsl(280,67%,55%)]" },
-  { id: "fechado", title: "Fechado", color: "bg-success" },
+const columns: { id: CrmLeadStatus; title: string; badgeBg: string; badgeText: string }[] = [
+  { id: "novo", title: "Novo", badgeBg: "bg-blue-100", badgeText: "text-blue-700" },
+  { id: "qualificado", title: "Qualificado", badgeBg: "bg-indigo-100", badgeText: "text-indigo-700" },
+  { id: "em_orcamento", title: "Proposta", badgeBg: "bg-orange-100", badgeText: "text-orange-700" },
+  { id: "negociacao", title: "Negociação", badgeBg: "bg-red-100", badgeText: "text-red-600" },
+  { id: "fechado", title: "Ganho", badgeBg: "bg-green-100", badgeText: "text-green-700" },
+  { id: "perdido", title: "Perdido", badgeBg: "bg-red-50", badgeText: "text-red-500" },
 ];
 
 function DroppableColumn({ id, children }: { id: string; children: React.ReactNode }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`space-y-2 min-h-[200px] rounded-lg p-2 transition-colors duration-200 ${isOver ? "bg-primary/10 ring-2 ring-primary/30" : "bg-muted/30"}`}>
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "flex-1 min-h-[400px] rounded-xl border-2 border-dashed p-3 transition-colors duration-200 flex flex-col gap-2",
+        isOver ? "border-primary/40 bg-primary/5" : "border-border/40 bg-muted/20"
+      )}
+    >
       {children}
     </div>
   );
 }
 
-function LeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: string) => void }) {
+function LeadCard({ lead, onDelete, onView }: { lead: CrmLead; onDelete: (id: string) => void; onView: (lead: CrmLead) => void }) {
+  const hasFollowUp = lead.follow_up_date;
+  const isOverdue = hasFollowUp && new Date(lead.follow_up_date!) < new Date(new Date().toDateString());
+
   return (
-    <Card className="cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-shadow border-border/50">
-      <CardContent className="p-3">
-        <div className="flex items-start gap-2">
-          <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium truncate">{lead.nome}</p>
-            <p className="text-base font-bold text-primary mt-0.5">{formatCurrency(lead.valor)}</p>
-            <div className="flex items-center justify-between mt-1.5">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Phone className="h-3 w-3" />
-                <span className="text-xs">{lead.telefone}</span>
-              </div>
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
+    <div className="bg-card rounded-lg border border-border/60 shadow-sm hover:shadow-md transition-shadow p-3 cursor-grab active:cursor-grabbing">
+      <div className="flex items-start gap-2">
+        <GripVertical className="h-4 w-4 text-muted-foreground/40 mt-0.5 shrink-0" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold truncate">{lead.nome}</p>
+          <p className="text-base font-bold text-primary mt-0.5">{formatCurrency(lead.valor)}</p>
+          {lead.observacao && (
+            <p className="text-xs text-muted-foreground mt-1 truncate flex items-center gap-1">
+              <MessageSquare className="h-3 w-3 shrink-0" /> {lead.observacao}
+            </p>
+          )}
+          {hasFollowUp && (
+            <p className={cn("text-xs mt-1 flex items-center gap-1", isOverdue ? "text-destructive font-medium" : "text-muted-foreground")}>
+              <CalendarDays className="h-3 w-3 shrink-0" />
+              {format(new Date(lead.follow_up_date!), "dd/MM/yyyy")}
+              {isOverdue && " (atrasado)"}
+            </p>
+          )}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Phone className="h-3 w-3" />
+              <span className="text-xs">{lead.telefone}</span>
+            </div>
+            <div className="flex gap-0.5">
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary"
+                onClick={(e) => { e.stopPropagation(); onView(lead); }}>
+                <Eye className="h-3 w-3" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
                 <Trash2 className="h-3 w-3" />
               </Button>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
-function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: string) => void }) {
+function DraggableLeadCard({ lead, onDelete, onView }: { lead: CrmLead; onDelete: (id: string) => void; onView: (lead: CrmLead) => void }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: lead.id });
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -85,12 +119,10 @@ function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: s
   };
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      <LeadCard lead={lead} onDelete={onDelete} />
+      <LeadCard lead={lead} onDelete={onDelete} onView={onView} />
     </div>
   );
 }
-
-const emptyLeadForm = { nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null };
 
 // ── Main Component ──
 const Clientes = () => {
@@ -108,11 +140,16 @@ const Clientes = () => {
   // Kanban state
   const { data: leads = [], isLoading: leadsLoading } = useCrmLeads();
   const updateStatus = useUpdateLeadStatus();
+  const updateLead = useUpdateLead();
   const createLead = useCreateLead();
   const deleteLead = useDeleteLead();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [leadDialogOpen, setLeadDialogOpen] = useState(false);
-  const [leadForm, setLeadForm] = useState(emptyLeadForm);
+  const [leadDialogStatus, setLeadDialogStatus] = useState<CrmLeadStatus>("novo");
+  const [leadForm, setLeadForm] = useState({ nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null });
+  const [detailLead, setDetailLead] = useState<CrmLead | null>(null);
+  const [editObs, setEditObs] = useState("");
+  const [editFollowUp, setEditFollowUp] = useState<Date | undefined>();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -183,15 +220,38 @@ const Clientes = () => {
     );
   };
 
+  const openCreateLeadDialog = (status: CrmLeadStatus) => {
+    setLeadForm({ nome: "", valor: 0, telefone: "", email: "", status, observacao: "", follow_up_date: null });
+    setLeadDialogStatus(status);
+    setLeadDialogOpen(true);
+  };
+
   const handleCreateLead = () => {
     if (!leadForm.nome.trim()) { sonnerToast.error("Nome é obrigatório"); return; }
     createLead.mutate(leadForm, {
-      onSuccess: () => { sonnerToast.success("Lead criado"); setLeadDialogOpen(false); setLeadForm(emptyLeadForm); },
+      onSuccess: () => { sonnerToast.success("Lead criado"); setLeadDialogOpen(false); },
     });
   };
 
   const handleDeleteLead = (id: string) => {
     deleteLead.mutate(id, { onSuccess: () => sonnerToast.success("Lead removido") });
+  };
+
+  const openLeadDetail = (lead: CrmLead) => {
+    setDetailLead(lead);
+    setEditObs(lead.observacao || "");
+    setEditFollowUp(lead.follow_up_date ? new Date(lead.follow_up_date) : undefined);
+  };
+
+  const saveLeadDetail = () => {
+    if (!detailLead) return;
+    updateLead.mutate({
+      id: detailLead.id,
+      observacao: editObs,
+      follow_up_date: editFollowUp ? format(editFollowUp, "yyyy-MM-dd") : null,
+    }, {
+      onSuccess: () => { sonnerToast.success("Lead atualizado"); setDetailLead(null); },
+    });
   };
 
   return (
@@ -258,8 +318,8 @@ const Clientes = () => {
         {/* ── Tab Kanban ── */}
         <TabsContent value="kanban" className="space-y-4">
           <div className="flex justify-end">
-            <Button className="gap-2" onClick={() => setLeadDialogOpen(true)}>
-              <Plus className="h-4 w-4" /> Novo Lead
+            <Button className="gap-2 rounded-lg" onClick={() => openCreateLeadDialog("novo")}>
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
 
@@ -267,29 +327,34 @@ const Clientes = () => {
             <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 overflow-x-auto">
+              <div className="flex gap-3 overflow-x-auto pb-4">
                 {columns.map((col) => {
                   const colLeads = getLeadsByStatus(col.id);
-                  const total = colLeads.reduce((s, l) => s + l.valor, 0);
                   return (
-                    <div key={col.id} className="flex flex-col min-w-[250px]">
+                    <div key={col.id} className="flex flex-col min-w-[200px] flex-1">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className={`h-2.5 w-2.5 rounded-full ${col.color}`} />
-                        <h3 className="text-sm font-semibold">{col.title}</h3>
-                        <span className="ml-auto text-xs text-muted-foreground">{colLeads.length} · {formatCurrency(total)}</span>
+                        <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
+                          {col.title}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-medium">{colLeads.length}</span>
+                        <button onClick={() => openCreateLeadDialog(col.id)} className="ml-auto text-muted-foreground hover:text-foreground transition-colors">
+                          <Plus className="h-4 w-4" />
+                        </button>
                       </div>
                       <DroppableColumn id={col.id}>
+                        <button onClick={() => openCreateLeadDialog(col.id)} className="w-full border-2 border-dashed border-border/50 rounded-lg py-3 text-xs text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors">
+                          + Adicionar lead
+                        </button>
                         {colLeads.map((lead) => (
-                          <div key={lead.id}><DraggableLeadCard lead={lead} onDelete={handleDeleteLead} /></div>
+                          <DraggableLeadCard key={lead.id} lead={lead} onDelete={handleDeleteLead} onView={openLeadDetail} />
                         ))}
-                        {colLeads.length === 0 && <p className="text-xs text-muted-foreground text-center py-8">Arraste leads aqui</p>}
                       </DroppableColumn>
                     </div>
                   );
                 })}
               </div>
               <DragOverlay>
-                {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} /></div> : null}
+                {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} /></div> : null}
               </DragOverlay>
             </DndContext>
           )}
@@ -327,11 +392,72 @@ const Clientes = () => {
               <div className="space-y-1.5"><Label>Telefone</Label><Input value={leadForm.telefone} onChange={(e) => setLeadForm({ ...leadForm, telefone: e.target.value })} /></div>
             </div>
             <div className="space-y-1.5"><Label>Email</Label><Input value={leadForm.email} onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Observação</Label><Textarea rows={2} value={leadForm.observacao} onChange={(e) => setLeadForm({ ...leadForm, observacao: e.target.value })} placeholder="Anotações sobre o lead..." /></div>
+            <div className="space-y-1.5">
+              <Label>Data de Follow-up</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !leadForm.follow_up_date && "text-muted-foreground")}>
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    {leadForm.follow_up_date ? format(new Date(leadForm.follow_up_date), "dd/MM/yyyy") : "Selecione uma data"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={leadForm.follow_up_date ? new Date(leadForm.follow_up_date) : undefined}
+                    onSelect={(d) => setLeadForm({ ...leadForm, follow_up_date: d ? format(d, "yyyy-MM-dd") : null })}
+                    locale={ptBR} className="p-3 pointer-events-auto" />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setLeadDialogOpen(false)}>Cancelar</Button>
             <Button onClick={handleCreateLead} disabled={createLead.isPending}>
               {createLead.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Lead"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Lead Detail Dialog */}
+      <Dialog open={!!detailLead} onOpenChange={(open) => { if (!open) setDetailLead(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{detailLead?.nome}</DialogTitle></DialogHeader>
+          {detailLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><span className="text-muted-foreground">Valor:</span> <span className="font-semibold">{formatCurrency(detailLead.valor)}</span></div>
+                <div><span className="text-muted-foreground">Telefone:</span> <span>{detailLead.telefone || "—"}</span></div>
+                <div><span className="text-muted-foreground">Email:</span> <span>{detailLead.email || "—"}</span></div>
+                <div><span className="text-muted-foreground">Status:</span> <span className="font-medium">{columns.find(c => c.id === detailLead.status)?.title}</span></div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Observação</Label>
+                <Textarea rows={3} value={editObs} onChange={(e) => setEditObs(e.target.value)} placeholder="Anotações, detalhes do contato..." />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Data de Follow-up</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editFollowUp && "text-muted-foreground")}>
+                      <CalendarDays className="mr-2 h-4 w-4" />
+                      {editFollowUp ? format(editFollowUp, "dd/MM/yyyy") : "Selecione uma data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={editFollowUp} onSelect={setEditFollowUp} locale={ptBR} className="p-3 pointer-events-auto" />
+                  </PopoverContent>
+                </Popover>
+                {editFollowUp && (
+                  <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditFollowUp(undefined)}>Limpar data</Button>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDetailLead(null)}>Cancelar</Button>
+            <Button onClick={saveLeadDetail} disabled={updateLead.isPending}>
+              {updateLead.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
             </Button>
           </DialogFooter>
         </DialogContent>
