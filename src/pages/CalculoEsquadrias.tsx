@@ -332,7 +332,8 @@ export default function CalculoEsquadrias() {
 
               {/* CUTS TAB */}
               <TabsContent value="cuts">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
