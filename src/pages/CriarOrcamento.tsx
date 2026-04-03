@@ -144,6 +144,7 @@ const CriarOrcamento = () => {
             >
               <List className="h-3 w-3" /> Ver materiais
             </button>
+          </div>
         </div>
 
         {/* Right panel - Scrollable form */}
