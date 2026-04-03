@@ -37,7 +37,7 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <Sidebar collapsible="icon" className="sidebar-glass border-r-0">
       <div className="flex h-16 items-center gap-3 px-4 border-b border-sidebar-border">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
           <span className="text-sidebar-primary-foreground font-extrabold text-sm">AP</span>

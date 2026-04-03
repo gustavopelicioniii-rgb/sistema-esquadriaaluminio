@@ -52,7 +52,7 @@ export function Topbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4">
+    <header className="topbar-glass sticky top-0 z-30 flex h-14 items-center gap-2 sm:gap-4 px-3 sm:px-4">
       <SidebarTrigger className="-ml-1" />
 
       <div className="relative flex-1 max-w-md hidden sm:block">
