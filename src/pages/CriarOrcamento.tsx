@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/data/mockData";
-import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
@@ -14,6 +14,7 @@ import { getColorById, aluminumColors } from "@/components/frame-preview/colors"
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateBudgetPDF } from "@/utils/pdfGenerator";
 import { cn } from "@/lib/utils";
+import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
 
 const tiposProduto = [
   { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2 },
