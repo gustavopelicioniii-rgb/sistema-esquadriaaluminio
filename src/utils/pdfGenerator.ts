@@ -48,6 +48,13 @@ interface BudgetPdfData {
   custoTotal: number;
   margem: number;
   valorFinal: number;
+  empresa?: {
+    nome: string;
+    telefone?: string;
+    email?: string;
+    endereco?: string;
+    logoUrl?: string;
+  };
 }
 
 export async function generateBudgetPDF(data: BudgetPdfData, svgElementId: string) {
@@ -58,17 +65,69 @@ export async function generateBudgetPDF(data: BudgetPdfData, svgElementId: strin
   let y = margin;
 
   // Header
-  pdf.setFillColor(37, 99, 235); // primary blue
-  pdf.rect(0, 0, pageWidth, 40, "F");
+  pdf.setFillColor(37, 99, 235);
+  pdf.rect(0, 0, pageWidth, 44, "F");
+
+  // Logo
+  let logoEndX = margin;
+  if (data.empresa?.logoUrl) {
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = reject;
+        img.src = data.empresa!.logoUrl!;
+      });
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+      const logoData = canvas.toDataURL("image/png");
+      const logoH = 16;
+      const logoW = (img.width / img.height) * logoH;
+      pdf.addImage(logoData, "PNG", margin, 6, logoW, logoH);
+      logoEndX = margin + logoW + 5;
+    } catch {
+      logoEndX = margin;
+    }
+  }
+
+  // Company name or default
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(20);
+  pdf.setFontSize(18);
   pdf.setFont("helvetica", "bold");
-  pdf.text("ORÇAMENTO", margin, 18);
+  pdf.text(data.empresa?.nome || "ORÇAMENTO", logoEndX, 18);
+
+  // Company contact info (right-aligned)
+  const contactLines: string[] = [];
+  if (data.empresa?.telefone) contactLines.push(data.empresa.telefone);
+  if (data.empresa?.email) contactLines.push(data.empresa.email);
+  if (data.empresa?.endereco) contactLines.push(data.empresa.endereco);
+
+  if (contactLines.length > 0) {
+    pdf.setFontSize(8);
+    pdf.setFont("helvetica", "normal");
+    contactLines.forEach((line, i) => {
+      pdf.text(line, pageWidth - margin, 10 + i * 4, { align: "right" });
+    });
+  }
+
+  // Date and client below company name
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.text(`Data: ${new Date().toLocaleDateString("pt-BR")}`, margin, 28);
-  pdf.text(`Cliente: ${data.cliente}`, margin, 34);
-  y = 50;
+  pdf.text(`Data: ${new Date().toLocaleDateString("pt-BR")}`, logoEndX, 28);
+  pdf.text(`Cliente: ${data.cliente}`, logoEndX, 34);
+
+  // "ORÇAMENTO" subtitle if company name was used
+  if (data.empresa?.nome) {
+    pdf.setFontSize(9);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("ORÇAMENTO", logoEndX, 40);
+  }
+
+  y = 54;
 
   // Product info section
   pdf.setTextColor(30, 30, 30);
