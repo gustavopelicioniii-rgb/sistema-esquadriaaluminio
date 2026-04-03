@@ -1,108 +1,52 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronLeft, CheckCircle2, Circle, Printer } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
+import { defaultEtapasConfig, type Etapa } from "./checklist/etapasConfig";
+import EtapaCard from "./checklist/EtapaCard";
+import AddEtapaDialog from "./checklist/AddEtapaDialog";
 
 interface Props {
   pedido: Pedido;
   onBack: () => void;
 }
 
-interface ChecklistItem {
-  key: string;
-  label: string;
-  checked: boolean;
-}
-
-interface Etapa {
-  id: string;
-  label: string;
-  items: { key: string; label: string }[];
-}
-
-const etapasConfig: Etapa[] = [
-  {
-    id: "conferir_medidas",
-    label: "Conferir medidas do vão",
-    items: [
-      { key: "medir_largura", label: "Medir largura do vão" },
-      { key: "medir_altura", label: "Medir altura do vão" },
-      { key: "verificar_prumo", label: "Verificar prumo e nível" },
-      { key: "conferir_esquadro", label: "Conferir esquadro" },
-      { key: "registrar_medidas", label: "Registrar medidas no sistema" },
-      { key: "foto_vao", label: "Tirar foto do vão" },
-    ],
-  },
-  {
-    id: "solicitar_materiais",
-    label: "Solicitar materiais",
-    items: [
-      { key: "listar_acessorios", label: "Acessórios – listar e conferir" },
-      { key: "listar_aluminios", label: "Alumínios – listar perfis necessários" },
-      { key: "listar_vidros", label: "Vidros – especificar tipo, cor e espessura" },
-      { key: "enviar_pedido_fornecedor", label: "Enviar pedido ao fornecedor" },
-      { key: "confirmar_prazo", label: "Confirmar prazo de entrega" },
-    ],
-  },
-  {
-    id: "recebimento",
-    label: "Recebimento dos materiais",
-    items: [
-      { key: "conferir_nf", label: "Conferir nota fiscal" },
-      { key: "conferir_quantidades", label: "Conferir quantidades recebidas" },
-      { key: "verificar_danos", label: "Verificar danos no transporte" },
-      { key: "armazenar", label: "Armazenar materiais corretamente" },
-      { key: "dar_baixa_estoque", label: "Dar baixa no estoque" },
-    ],
-  },
-  {
-    id: "instalacao",
-    label: "Instalação",
-    items: [
-      { key: "preparar_local", label: "Preparar local de instalação" },
-      { key: "montar_esquadria", label: "Montar esquadria" },
-      { key: "fixar_contramarco", label: "Fixar contramarco" },
-      { key: "instalar_vidros", label: "Instalar vidros" },
-      { key: "aplicar_silicone", label: "Aplicar silicone e vedação" },
-      { key: "testar_funcionamento", label: "Testar funcionamento (abrir/fechar)" },
-      { key: "limpar_local", label: "Limpar local após instalação" },
-    ],
-  },
-  {
-    id: "entrega",
-    label: "Entrega",
-    items: [
-      { key: "agendar_entrega", label: "Agendar data de entrega com cliente" },
-      { key: "embalar_pecas", label: "Embalar peças para transporte" },
-      { key: "carregar_veiculo", label: "Carregar veículo" },
-      { key: "entregar_cliente", label: "Entregar ao cliente" },
-      { key: "coletar_assinatura", label: "Coletar assinatura de recebimento" },
-    ],
-  },
-  {
-    id: "vistoria",
-    label: "Vistoria",
-    items: [
-      { key: "verificar_acabamento", label: "Verificar acabamento final" },
-      { key: "testar_vedacao", label: "Testar vedação contra água" },
-      { key: "verificar_ferragens", label: "Verificar ferragens e fechaduras" },
-      { key: "cliente_aprovar", label: "Cliente aprovar o serviço" },
-      { key: "registrar_garantia", label: "Registrar garantia" },
-      { key: "foto_final", label: "Tirar foto do serviço finalizado" },
-    ],
-  },
-];
-
 export default function OrdemServicoDetail({ pedido, onBack }: Props) {
+  const [etapas, setEtapas] = useState<Etapa[]>(defaultEtapasConfig);
   const [checkStates, setCheckStates] = useState<Record<string, Record<string, boolean>>>({});
   const [annotations, setAnnotations] = useState<Record<string, string>>({});
   const [expandedEtapas, setExpandedEtapas] = useState<Record<string, boolean>>({ conferir_medidas: true });
   const [loading, setLoading] = useState(true);
+  const [showAddEtapa, setShowAddEtapa] = useState(false);
+
+  const fetchCustomEtapas = useCallback(async () => {
+    const { data: customEtapas } = await supabase
+      .from("pedido_custom_etapas")
+      .select("*")
+      .eq("pedido_id", pedido.id)
+      .order("ordem");
+
+    if (!customEtapas || customEtapas.length === 0) return [];
+
+    const etapaIds = (customEtapas as any[]).map((e) => e.id);
+    const { data: customItems } = await supabase
+      .from("pedido_custom_items")
+      .select("*")
+      .in("etapa_id", etapaIds)
+      .order("ordem");
+
+    return (customEtapas as any[]).map((e) => ({
+      id: e.etapa_key,
+      label: e.label,
+      isCustom: true,
+      dbId: e.id,
+      items: ((customItems as any[]) || [])
+        .filter((i) => i.etapa_id === e.id)
+        .map((i) => ({ key: i.item_key, label: i.label })),
+    })) as Etapa[];
+  }, [pedido.id]);
 
   const fetchChecklist = useCallback(async () => {
     const { data, error } = await supabase
@@ -128,12 +72,19 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
 
     setCheckStates(states);
     setAnnotations(annots);
-    setLoading(false);
   }, [pedido.id]);
 
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    const custom = await fetchCustomEtapas();
+    setEtapas([...defaultEtapasConfig, ...custom]);
+    await fetchChecklist();
+    setLoading(false);
+  }, [fetchCustomEtapas, fetchChecklist]);
+
   useEffect(() => {
-    fetchChecklist();
-  }, [fetchChecklist]);
+    loadAll();
+  }, [loadAll]);
 
   const toggleCheck = async (etapaId: string, itemKey: string, currentVal: boolean) => {
     const newVal = !currentVal;
@@ -143,12 +94,7 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
     }));
 
     const { error } = await supabase.from("pedido_checklists").upsert(
-      {
-        pedido_id: pedido.id,
-        etapa: etapaId,
-        item_key: itemKey,
-        checked: newVal,
-      } as any,
+      { pedido_id: pedido.id, etapa: etapaId, item_key: itemKey, checked: newVal } as any,
       { onConflict: "pedido_id,etapa,item_key" }
     );
 
@@ -163,15 +109,8 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
 
   const saveAnnotation = async (etapaId: string, text: string) => {
     setAnnotations((prev) => ({ ...prev, [etapaId]: text }));
-
     await supabase.from("pedido_checklists").upsert(
-      {
-        pedido_id: pedido.id,
-        etapa: etapaId,
-        item_key: "_anotacao",
-        checked: false,
-        anotacao: text,
-      } as any,
+      { pedido_id: pedido.id, etapa: etapaId, item_key: "_anotacao", checked: false, anotacao: text } as any,
       { onConflict: "pedido_id,etapa,item_key" }
     );
   };
@@ -179,32 +118,24 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
   const selectAll = async (etapaId: string, items: { key: string }[], check: boolean) => {
     const newStates = { ...checkStates };
     if (!newStates[etapaId]) newStates[etapaId] = {};
-    items.forEach((item) => {
-      newStates[etapaId][item.key] = check;
-    });
+    items.forEach((item) => { newStates[etapaId][item.key] = check; });
     setCheckStates(newStates);
 
     for (const item of items) {
       await supabase.from("pedido_checklists").upsert(
-        {
-          pedido_id: pedido.id,
-          etapa: etapaId,
-          item_key: item.key,
-          checked: check,
-        } as any,
+        { pedido_id: pedido.id, etapa: etapaId, item_key: item.key, checked: check } as any,
         { onConflict: "pedido_id,etapa,item_key" }
       );
     }
   };
 
-  const getProgress = (etapaId: string, items: { key: string }[]) => {
-    const states = checkStates[etapaId] || {};
-    const checked = items.filter((i) => states[i.key]).length;
-    return { checked, total: items.length, pct: items.length > 0 ? Math.round((checked / items.length) * 100) : 0 };
-  };
-
-  const toggleExpand = (etapaId: string) => {
-    setExpandedEtapas((prev) => ({ ...prev, [etapaId]: !prev[etapaId] }));
+  const deleteCustomEtapa = async (etapa: Etapa) => {
+    if (!etapa.dbId) return;
+    await supabase.from("pedido_custom_etapas").delete().eq("id", etapa.dbId);
+    // Also clean checklist states
+    await supabase.from("pedido_checklists").delete().eq("pedido_id", pedido.id).eq("etapa", etapa.id);
+    toast({ title: "Etapa excluída", description: `"${etapa.label}" foi removida.` });
+    loadAll();
   };
 
   if (loading) {
@@ -214,138 +145,47 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h2 className="text-xl font-bold">Serviço {pedido.pedido_num}</h2>
-          <p className="text-sm text-muted-foreground">{pedido.cliente}</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={onBack}>
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h2 className="text-xl font-bold">Serviço {pedido.pedido_num}</h2>
+            <p className="text-sm text-muted-foreground">{pedido.cliente}</p>
+          </div>
         </div>
+        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowAddEtapa(true)}>
+          <Plus className="h-4 w-4" />
+          Nova etapa
+        </Button>
       </div>
 
       {/* Etapas */}
-      {etapasConfig.map((etapa, idx) => {
-        const progress = getProgress(etapa.id, etapa.items);
-        const isExpanded = expandedEtapas[etapa.id] ?? false;
-        const isComplete = progress.pct === 100;
-        const allChecked = etapa.items.every((i) => checkStates[etapa.id]?.[i.key]);
+      {etapas.map((etapa) => (
+        <EtapaCard
+          key={etapa.id}
+          etapa={etapa}
+          pedidoId={pedido.id}
+          checkStates={checkStates[etapa.id] || {}}
+          annotation={annotations[etapa.id] || ""}
+          isExpanded={expandedEtapas[etapa.id] ?? false}
+          onToggleExpand={() => setExpandedEtapas((prev) => ({ ...prev, [etapa.id]: !prev[etapa.id] }))}
+          onToggleCheck={(itemKey, currentVal) => toggleCheck(etapa.id, itemKey, currentVal)}
+          onSelectAll={(check) => selectAll(etapa.id, etapa.items, check)}
+          onAnnotationChange={(text) => setAnnotations((prev) => ({ ...prev, [etapa.id]: text }))}
+          onAnnotationBlur={(text) => saveAnnotation(etapa.id, text)}
+          onDeleteEtapa={etapa.isCustom ? () => deleteCustomEtapa(etapa) : undefined}
+        />
+      ))}
 
-        return (
-          <div key={etapa.id} className="rounded-lg border bg-card overflow-hidden">
-            {/* Etapa header */}
-            <button
-              onClick={() => toggleExpand(etapa.id)}
-              className="flex w-full items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                {isComplete ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                ) : (
-                  <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
-                )}
-                <div className="text-left">
-                  <p className="font-semibold text-sm">{etapa.label}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Progresso: {progress.pct}% ({progress.checked}/{progress.total})
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    "rounded-full px-2.5 py-0.5 text-[10px] font-bold",
-                    isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
-                  )}
-                >
-                  {isComplete ? "Concluído" : "Pendente"}
-                </span>
-                <ChevronDown
-                  className={cn("h-4 w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
-                />
-              </div>
-            </button>
-
-            {/* Progress bar */}
-            <div className="h-1 bg-muted">
-              <div
-                className={cn("h-full transition-all duration-300", isComplete ? "bg-emerald-500" : "bg-primary")}
-                style={{ width: `${progress.pct}%` }}
-              />
-            </div>
-
-            {/* Expanded content */}
-            {isExpanded && (
-              <div className="px-5 py-4 space-y-4">
-                {/* Select all */}
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
-                    <Checkbox
-                      checked={allChecked}
-                      onCheckedChange={(v) => selectAll(etapa.id, etapa.items, !!v)}
-                    />
-                    Selecionar todos
-                  </label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 text-xs"
-                    onClick={() => toast({ title: "Checklist enviado", description: `Etapa "${etapa.label}" enviada.` })}
-                  >
-                    <Printer className="h-3.5 w-3.5" />
-                    Enviar checklist
-                  </Button>
-                </div>
-
-                {/* Checklist items */}
-                <div className="space-y-2">
-                  {etapa.items.map((item) => {
-                    const isChecked = checkStates[etapa.id]?.[item.key] ?? false;
-                    return (
-                      <label
-                        key={item.key}
-                        className={cn(
-                          "flex items-center gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors",
-                          isChecked
-                            ? "bg-emerald-500/5 border-emerald-500/20"
-                            : "hover:bg-muted/30 border-border/50"
-                        )}
-                      >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={() => toggleCheck(etapa.id, item.key, isChecked)}
-                        />
-                        <span
-                          className={cn(
-                            "text-sm",
-                            isChecked && "line-through text-muted-foreground"
-                          )}
-                        >
-                          {item.label}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-
-                {/* Annotation */}
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Anotação
-                  </p>
-                  <Textarea
-                    placeholder="Observações sobre esta etapa..."
-                    value={annotations[etapa.id] || ""}
-                    onChange={(e) => setAnnotations((prev) => ({ ...prev, [etapa.id]: e.target.value }))}
-                    onBlur={(e) => saveAnnotation(etapa.id, e.target.value)}
-                    className="min-h-[80px]"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {/* Add Etapa Dialog */}
+      <AddEtapaDialog
+        open={showAddEtapa}
+        onOpenChange={setShowAddEtapa}
+        pedidoId={pedido.id}
+        onCreated={loadAll}
+      />
     </div>
   );
 }
