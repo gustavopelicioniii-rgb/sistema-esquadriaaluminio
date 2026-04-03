@@ -59,7 +59,22 @@ export function Topbar() {
 
   return (
     <header className="topbar-glass sticky top-0 z-30 flex h-14 items-center gap-2 sm:gap-4 px-3 sm:px-4">
-      <SidebarTrigger className="-ml-1" />
+      {isMobile ? (
+        <Button variant="ghost" size="icon" className="-ml-1 h-9 w-9" onClick={() => setMobileMenuOpen(true)}>
+          <Menu className="h-5 w-5" />
+        </Button>
+      ) : (
+        <SidebarTrigger className="-ml-1" />
+      )}
+
+      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <SheetContent side="left" className="p-0 w-72">
+          <SheetTitle className="sr-only">Menu</SheetTitle>
+          <div onClick={() => setMobileMenuOpen(false)}>
+            <AppSidebar />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
