@@ -541,51 +541,51 @@ const ProjetoVidroPage = () => {
 
       {/* New project dialog */}
       <Dialog open={novoOpen} onOpenChange={setNovoOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-[460px]">
           <DialogHeader>
-            <DialogTitle>Novo Projeto de Vidro</DialogTitle>
+            <DialogTitle className="text-lg">Novo Projeto de Vidro</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label>Título</Label>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Título</Label>
               <Input
                 value={novoTitulo}
                 onChange={(e) => setNovoTitulo(e.target.value)}
                 placeholder="Ex: Vidro 8mm Temperado - Fumê"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Tipo</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Tipo</Label>
                 <Select value={novoTipo} onValueChange={setNovoTipo}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {tiposVidro.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Espessura</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Espessura</Label>
                 <Select value={novoEspessura} onValueChange={setNovoEspessura}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {espessuras.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Cor</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Cor</Label>
                 <Select value={novoCor} onValueChange={setNovoCor}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {cores.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Preço por m²</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Preço por m²</Label>
                 <Input
                   type="number"
                   value={novoPrecoM2}
@@ -594,7 +594,7 @@ const ProjetoVidroPage = () => {
               </div>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setNovoOpen(false)}>Cancelar</Button>
             <Button onClick={handleCreate}>Criar Projeto</Button>
           </DialogFooter>
