@@ -53,6 +53,8 @@ const CriarOrcamento = () => {
   const [ambiente, setAmbiente] = useState("");
   const [observacoes, setObservacoes] = useState("");
 
+  const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
+
   const produtoSelecionado = tiposProduto.find((t) => t.value === tipo);
 
   const calculo = useMemo(() => {
