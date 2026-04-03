@@ -273,7 +273,7 @@ export default function CalculoEsquadrias() {
                   <Weight className="h-3.5 w-3.5" />
                   Peso Total Alumínio
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.total_aluminum_weight_kg.toFixed(2)} kg
                 </div>
               </CardContent>
