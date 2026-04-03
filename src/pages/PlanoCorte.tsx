@@ -140,6 +140,7 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
     } else {
       await supabase.from("configuracoes").insert({ chave: folgasKey, valor: payload });
     }
+    setFolgasSource("personalizada");
     setFolgasSaving(false);
     toast.success("Folgas salvas com sucesso!");
   }, [cutFolgas, glassFolgas, folgasKey]);
