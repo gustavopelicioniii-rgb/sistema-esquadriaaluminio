@@ -108,7 +108,7 @@ const Agenda = () => {
         <Button className="gap-2" onClick={() => openNew()}><Plus className="h-4 w-4" /> Novo Evento</Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Card className="shadow-sm">
             <CardContent className="p-4">
