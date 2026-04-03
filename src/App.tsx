@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import { PageLoading } from "@/components/LoadingSpinner";
+import { ThemeProvider } from "@/hooks/use-theme";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CRM = lazy(() => import("./pages/CRM"));
@@ -33,42 +34,44 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppLayout>
-          <Suspense fallback={<PageLoading />}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/crm" element={<CRM />} />
-              <Route path="/clientes" element={<Clientes />} />
-              <Route path="/orcamentos" element={<Orcamentos />} />
-              <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
-              <Route path="/producao" element={<Producao />} />
-              <Route path="/plano-corte" element={<PlanoCorte />} />
-              <Route path="/projeto-vidro" element={<ProjetoVidro />} />
-              <Route path="/relacao-materiais" element={<RelacaoMateriais />} />
-              <Route path="/estoque" element={<Estoque />} />
-              <Route path="/financeiro" element={<Financeiro />} />
-              <Route path="/agenda" element={<Agenda />} />
-              <Route path="/produtos" element={<Produtos />} />
-              <Route path="/preco-itens" element={<PrecoItens />} />
-              <Route path="/relatorios" element={<Relatorios />} />
-              <Route path="/mapa" element={<Mapa />} />
-              <Route path="/administradores" element={<Administradores />} />
-              <Route path="/funcionarios" element={<Funcionarios />} />
-              <Route path="/configuracoes" element={<Configuracoes />} />
-              <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
-              <Route path="/nota-fiscal" element={<NotaFiscal />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </AppLayout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppLayout>
+            <Suspense fallback={<PageLoading />}>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/crm" element={<CRM />} />
+                <Route path="/clientes" element={<Clientes />} />
+                <Route path="/orcamentos" element={<Orcamentos />} />
+                <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
+                <Route path="/producao" element={<Producao />} />
+                <Route path="/plano-corte" element={<PlanoCorte />} />
+                <Route path="/projeto-vidro" element={<ProjetoVidro />} />
+                <Route path="/relacao-materiais" element={<RelacaoMateriais />} />
+                <Route path="/estoque" element={<Estoque />} />
+                <Route path="/financeiro" element={<Financeiro />} />
+                <Route path="/agenda" element={<Agenda />} />
+                <Route path="/produtos" element={<Produtos />} />
+                <Route path="/preco-itens" element={<PrecoItens />} />
+                <Route path="/relatorios" element={<Relatorios />} />
+                <Route path="/mapa" element={<Mapa />} />
+                <Route path="/administradores" element={<Administradores />} />
+                <Route path="/funcionarios" element={<Funcionarios />} />
+                <Route path="/configuracoes" element={<Configuracoes />} />
+                <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
+                <Route path="/nota-fiscal" element={<NotaFiscal />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </AppLayout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
