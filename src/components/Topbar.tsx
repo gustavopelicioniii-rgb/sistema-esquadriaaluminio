@@ -104,6 +104,12 @@ export function Topbar() {
         </SheetContent>
       </Sheet>
 
+      {/* Mobile page title */}
+      {isMobile && pageTitle && (
+        <span className="text-sm font-semibold truncate max-w-[140px]">{pageTitle}</span>
+      )}
+
+      {/* Desktop search */}
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
@@ -143,6 +149,13 @@ export function Topbar() {
       </div>
 
       <div className="ml-auto flex items-center gap-1">
+        {/* Mobile search icon */}
+        {isMobile && (
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileSearchOpen(true)}>
+            <Search className="h-4 w-4" />
+          </Button>
+        )}
+
         <Button variant="ghost" size="icon" onClick={toggle} className="h-9 w-9">
           {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
         </Button>
