@@ -1,7 +1,7 @@
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, UserCheck, Calculator, Receipt, Package,
+  UserCog, UserCheck, Calculator, Receipt, Package, Upload,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
