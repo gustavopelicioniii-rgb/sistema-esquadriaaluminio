@@ -140,11 +140,16 @@ const Clientes = () => {
   // Kanban state
   const { data: leads = [], isLoading: leadsLoading } = useCrmLeads();
   const updateStatus = useUpdateLeadStatus();
+  const updateLead = useUpdateLead();
   const createLead = useCreateLead();
   const deleteLead = useDeleteLead();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [leadDialogOpen, setLeadDialogOpen] = useState(false);
-  const [leadForm, setLeadForm] = useState(emptyLeadForm);
+  const [leadDialogStatus, setLeadDialogStatus] = useState<CrmLeadStatus>("novo");
+  const [leadForm, setLeadForm] = useState({ nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null });
+  const [detailLead, setDetailLead] = useState<CrmLead | null>(null);
+  const [editObs, setEditObs] = useState("");
+  const [editFollowUp, setEditFollowUp] = useState<Date | undefined>();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
