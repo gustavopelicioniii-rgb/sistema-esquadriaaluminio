@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
