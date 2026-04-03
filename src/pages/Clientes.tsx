@@ -90,7 +90,7 @@ function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: s
   );
 }
 
-const emptyLeadForm = { nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "" };
+const emptyLeadForm = { nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null };
 
 // ── Main Component ──
 const Clientes = () => {
