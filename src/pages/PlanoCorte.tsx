@@ -120,6 +120,9 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
               return map;
             });
           }
+          if (pOffset !== 0 || vwOffset !== 0 || vhOffset !== 0) {
+            setFolgasSource("global");
+          }
         } catch { /* ignore */ }
       }
       setFolgasLoaded(true);
