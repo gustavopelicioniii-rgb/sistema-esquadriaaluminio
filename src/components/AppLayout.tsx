@@ -3,13 +3,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Topbar } from "@/components/Topbar";
 import { AnimatedOutlet } from "@/components/AnimatedOutlet";
 import { BottomNav } from "@/components/BottomNav";
-import { Outlet } from "react-router-dom";
 
-interface AppLayoutProps {
-  children?: React.ReactNode;
-}
-
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full app-bg">
