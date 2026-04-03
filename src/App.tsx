@@ -61,7 +61,7 @@ const App = () => (
 
                 {/* Protected routes */}
                 <Route element={<P><AppLayout><Suspense fallback={<PageLoading />}><Dashboard /></Suspense></AppLayout></P>} path="/" />
-                <Route path="/crm" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CRM /></Suspense></AppLayout></P>} />
+                
                 <Route path="/clientes" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Clientes /></Suspense></AppLayout></P>} />
                 <Route path="/orcamentos" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Orcamentos /></Suspense></AppLayout></P>} />
                 <Route path="/orcamentos/novo" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CriarOrcamento /></Suspense></AppLayout></P>} />
