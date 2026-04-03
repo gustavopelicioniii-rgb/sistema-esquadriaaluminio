@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
+import { supabase } from "@/integrations/supabase/client";
 import { typologies } from "@/data/catalog";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
@@ -57,16 +58,49 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
   const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typologyId), [plano.typologyId]);
 
   // Folga overrides: keyed by rule id
-  const [cutFolgas, setCutFolgas] = useState<Record<string, number>>(() => {
+  const defaultCutFolgas = useMemo(() => {
     const map: Record<string, number> = {};
     originalCutRules.forEach(r => { map[r.id] = r.constant_mm; });
     return map;
-  });
-  const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(() => {
+  }, [originalCutRules]);
+
+  const defaultGlassFolgas = useMemo(() => {
     const map: Record<string, { w: number; h: number }> = {};
     originalGlassRules.forEach(r => { map[r.id] = { w: r.width_constant_mm, h: r.height_constant_mm }; });
     return map;
-  });
+  }, [originalGlassRules]);
+
+  const [cutFolgas, setCutFolgas] = useState<Record<string, number>>(defaultCutFolgas);
+  const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
+  const [folgasSaving, setFolgasSaving] = useState(false);
+
+  // Load saved folgas from configuracoes table
+  const folgasKey = `folgas_${plano.typologyId}`;
+  useEffect(() => {
+    supabase.from("configuracoes").select("valor").eq("chave", folgasKey).maybeSingle().then(({ data }) => {
+      if (data?.valor) {
+        try {
+          const saved = JSON.parse(data.valor);
+          if (saved.cut) setCutFolgas(prev => ({ ...prev, ...saved.cut }));
+          if (saved.glass) setGlassFolgas(prev => ({ ...prev, ...saved.glass }));
+        } catch { /* ignore parse errors */ }
+      }
+    });
+  }, [folgasKey]);
+
+  const saveFolgas = useCallback(async () => {
+    setFolgasSaving(true);
+    const payload = JSON.stringify({ cut: cutFolgas, glass: glassFolgas });
+    // Upsert: try update first, then insert
+    const { data: existing } = await supabase.from("configuracoes").select("id").eq("chave", folgasKey).maybeSingle();
+    if (existing) {
+      await supabase.from("configuracoes").update({ valor: payload }).eq("chave", folgasKey);
+    } else {
+      await supabase.from("configuracoes").insert({ chave: folgasKey, valor: payload });
+    }
+    setFolgasSaving(false);
+    toast.success("Folgas salvas com sucesso!");
+  }, [cutFolgas, glassFolgas, folgasKey]);
 
   const updateCutFolga = useCallback((id: string, value: number) => {
     setCutFolgas(prev => ({ ...prev, [id]: value }));
@@ -77,13 +111,9 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
   }, []);
 
   const resetFolgas = useCallback(() => {
-    const cutMap: Record<string, number> = {};
-    originalCutRules.forEach(r => { cutMap[r.id] = r.constant_mm; });
-    setCutFolgas(cutMap);
-    const glassMap: Record<string, { w: number; h: number }> = {};
-    originalGlassRules.forEach(r => { glassMap[r.id] = { w: r.width_constant_mm, h: r.height_constant_mm }; });
-    setGlassFolgas(glassMap);
-  }, [originalCutRules, originalGlassRules]);
+    setCutFolgas(defaultCutFolgas);
+    setGlassFolgas(defaultGlassFolgas);
+  }, [defaultCutFolgas, defaultGlassFolgas]);
 
   const result: CalculationOutput | null = useMemo(() => {
     if (!typ) return null;
@@ -228,9 +258,13 @@ function PlanoDetalhe({ plano, onBack }: { plano: PlanoSalvo; onBack: () => void
                 </div>
               )}
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" className="text-xs" onClick={resetFolgas}>
                   Restaurar Padrão
+                </Button>
+                <Button size="sm" className="text-xs gap-1.5" onClick={saveFolgas} disabled={folgasSaving}>
+                  <Save className="h-3 w-3" />
+                  {folgasSaving ? "Salvando..." : "Salvar Folgas"}
                 </Button>
               </div>
             </CardContent>
