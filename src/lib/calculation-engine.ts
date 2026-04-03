@@ -2,6 +2,7 @@ import type {
   CutRule,
   GlassRule,
   TypologyComponent,
+  Typology,
   CalculationInput,
   CutResult,
   GlassResult,
@@ -9,6 +10,41 @@ import type {
   ProfileSummary,
   CalculationOutput,
 } from "@/types/calculation";
+
+/** Limites padrão por categoria (mm) quando não definidos na tipologia */
+const DEFAULT_LIMITS: Record<string, { minW: number; maxW: number; minH: number; maxH: number }> = {
+  janela:     { minW: 400, maxW: 6000, minH: 300, maxH: 3000 },
+  porta:      { minW: 500, maxW: 6000, minH: 1800, maxH: 3500 },
+  vitro:      { minW: 300, maxW: 4000, minH: 300, maxH: 3000 },
+  veneziana:  { minW: 400, maxW: 4000, minH: 400, maxH: 3000 },
+  maxim_ar:   { minW: 300, maxW: 2500, minH: 300, maxH: 2000 },
+  camarao:    { minW: 800, maxW: 6000, minH: 400, maxH: 3000 },
+  pivotante:  { minW: 600, maxW: 2000, minH: 1800, maxH: 3500 },
+  basculante: { minW: 300, maxW: 2500, minH: 200, maxH: 1500 },
+};
+
+/**
+ * Valida dimensões contra limites da tipologia ou defaults da categoria
+ */
+export function validateDimensions(
+  widthMm: number,
+  heightMm: number,
+  typology: Pick<Typology, 'name' | 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'>
+): { valid: boolean; errors: string[] } {
+  const defaults = DEFAULT_LIMITS[typology.category] ?? DEFAULT_LIMITS.janela;
+  const minW = typology.min_width_mm ?? defaults.minW;
+  const maxW = typology.max_width_mm ?? defaults.maxW;
+  const minH = typology.min_height_mm ?? defaults.minH;
+  const maxH = typology.max_height_mm ?? defaults.maxH;
+
+  const errors: string[] = [];
+  if (widthMm < minW) errors.push(`Largura ${widthMm}mm abaixo do mínimo (${minW}mm) para ${typology.name}`);
+  if (widthMm > maxW) errors.push(`Largura ${widthMm}mm acima do máximo (${maxW}mm) para ${typology.name}`);
+  if (heightMm < minH) errors.push(`Altura ${heightMm}mm abaixo do mínimo (${minH}mm) para ${typology.name}`);
+  if (heightMm > maxH) errors.push(`Altura ${heightMm}mm acima do máximo (${maxH}mm) para ${typology.name}`);
+
+  return { valid: errors.length === 0, errors };
+}
 
 /**
  * Resolve a dimensão de referência com base em L e H
@@ -51,10 +87,19 @@ export function calculateTypology(
   glassRules: GlassRule[],
   components: TypologyComponent[],
   typologyName: string,
-  typologyNumFolhas: number
+  typologyNumFolhas: number,
+  typology?: Pick<Typology, 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'>
 ): CalculationOutput {
   const { width_mm: L, height_mm: H, quantity } = input;
   const numFolhas = input.num_folhas ?? typologyNumFolhas;
+
+  // ===== VALIDAR DIMENSÕES =====
+  if (typology) {
+    const validation = validateDimensions(L, H, { ...typology, name: typologyName });
+    if (!validation.valid) {
+      throw new Error(validation.errors.join('; '));
+    }
+  }
 
   // ===== CALCULAR CORTES =====
   const cuts: CutResult[] = cutRules.map(rule => {
