@@ -221,7 +221,7 @@ const Producao = () => {
                         ))}
                       </div>
                       <div className="flex gap-2 pt-1">
-                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => handleCancelar(op)}>Cancelar</Button>
+                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => setCancelConfirm(op)}>Cancelar</Button>
                         <Button size="sm" className="flex-1 text-xs" onClick={() => handleConcluir(op)}>Concluir pedido</Button>
                       </div>
                     </CardContent>
