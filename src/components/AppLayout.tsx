@@ -17,9 +17,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div className="flex-1 flex flex-col min-w-0">
           <Topbar />
           <main className="flex-1 p-3 sm:p-6 pb-20 sm:pb-6 overflow-auto">
-            <AnimatedOutlet>
-              {children || <Outlet />}
-            </AnimatedOutlet>
+            <AnimatedOutlet />
           </main>
         </div>
         <BottomNav />
