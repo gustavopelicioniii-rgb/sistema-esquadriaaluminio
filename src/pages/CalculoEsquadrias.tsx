@@ -295,7 +295,7 @@ export default function CalculoEsquadrias() {
                   <Package className="h-3.5 w-3.5" />
                   Barras Necessárias
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.profiles_summary.reduce((s, p) => s + p.total_bars_needed, 0)}
                 </div>
               </CardContent>
