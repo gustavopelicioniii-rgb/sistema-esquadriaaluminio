@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
