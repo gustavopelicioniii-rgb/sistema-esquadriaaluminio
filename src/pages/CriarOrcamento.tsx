@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateBudgetPDF } from "@/utils/pdfGenerator";
 
 const tiposProduto = [
