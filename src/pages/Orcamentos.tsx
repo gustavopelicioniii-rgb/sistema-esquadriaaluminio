@@ -10,6 +10,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import { Plus, Eye, Copy, Send, Trash2, Search, FileDown, Loader2 } from "lucide-react";
+import { ExportButtons } from "@/components/ExportButtons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
