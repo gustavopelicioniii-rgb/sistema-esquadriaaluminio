@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/data/mockData";
 import { calculateTypology } from "@/lib/calculation-engine";
-import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology, getTypologyById, getProfileByCode } from "@/data/catalog";
+import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology, getTypologyById, profiles } from "@/data/catalog";
 import { cn } from "@/lib/utils";
 import { ProfileCrossSection } from "./ProfileCrossSection";
 import type { CalculationOutput } from "@/types/calculation";
