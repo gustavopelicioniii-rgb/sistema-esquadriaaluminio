@@ -191,10 +191,10 @@ const Relatorios = () => {
       <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
         <CardContent className="p-3 sm:p-4">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <span className="text-sm font-medium text-muted-foreground">Período:</span>
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Período:</span>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("w-[160px] justify-start text-left font-normal", !dataInicio && "text-muted-foreground")}>
+                <Button variant="outline" size="sm" className={cn("w-[130px] sm:w-[160px] justify-start text-left font-normal text-xs sm:text-sm", !dataInicio && "text-muted-foreground")}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Data inicial"}
                 </Button>
