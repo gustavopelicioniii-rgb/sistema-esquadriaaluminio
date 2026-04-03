@@ -284,7 +284,7 @@ export default function CalculoEsquadrias() {
                   <Grid3X3 className="h-3.5 w-3.5" />
                   Área de Vidro
                 </div>
-                <div className="text-2xl font-bold text-foreground">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">
                   {result.total_glass_area_m2.toFixed(4)} m²
                 </div>
               </CardContent>
