@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { calculateTypology } from "@/lib/calculation-engine";
+import { calculateTypology, validateDimensions } from "@/lib/calculation-engine";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import {
@@ -39,6 +40,21 @@ export default function CalculoEsquadrias() {
     () => typologies.filter(t => t.product_line_id === selectedLine && t.active),
     [selectedLine]
   );
+
+  const selectedTyp = useMemo(
+    () => filteredTypologies.find(t => t.id === selectedTypology),
+    [filteredTypologies, selectedTypology]
+  );
+
+  const widthLimits = useMemo(() => {
+    if (!selectedTyp) return { min: 400, max: 6000 };
+    return { min: selectedTyp.min_width_mm ?? 400, max: selectedTyp.max_width_mm ?? 6000 };
+  }, [selectedTyp]);
+
+  const heightLimits = useMemo(() => {
+    if (!selectedTyp) return { min: 300, max: 3500 };
+    return { min: selectedTyp.min_height_mm ?? 300, max: selectedTyp.max_height_mm ?? 3500 };
+  }, [selectedTyp]);
 
   const handleCalculate = () => {
     if (!selectedTypology || !width || !height) {
@@ -72,7 +88,8 @@ export default function CalculoEsquadrias() {
         glassRules,
         components,
         typology.name,
-        typology.num_folhas
+        typology.num_folhas,
+        typology
       );
       setResult(output);
 
@@ -188,12 +205,46 @@ export default function CalculoEsquadrias() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Largura (mm)</Label>
-              <Input type="number" placeholder="Ex: 1200" value={width} onChange={e => setWidth(e.target.value)} />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Label className="cursor-help">Largura (mm) ⓘ</Label>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Mín: {widthLimits.min}mm — Máx: {widthLimits.max}mm</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Input
+                type="number"
+                placeholder={`${widthLimits.min} – ${widthLimits.max}`}
+                min={widthLimits.min}
+                max={widthLimits.max}
+                value={width}
+                onChange={e => setWidth(e.target.value)}
+              />
+              {selectedTyp && <p className="text-[10px] text-muted-foreground">{widthLimits.min} – {widthLimits.max} mm</p>}
             </div>
             <div className="space-y-2">
-              <Label>Altura (mm)</Label>
-              <Input type="number" placeholder="Ex: 1200" value={height} onChange={e => setHeight(e.target.value)} />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Label className="cursor-help">Altura (mm) ⓘ</Label>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Mín: {heightLimits.min}mm — Máx: {heightLimits.max}mm</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Input
+                type="number"
+                placeholder={`${heightLimits.min} – ${heightLimits.max}`}
+                min={heightLimits.min}
+                max={heightLimits.max}
+                value={height}
+                onChange={e => setHeight(e.target.value)}
+              />
+              {selectedTyp && <p className="text-[10px] text-muted-foreground">{heightLimits.min} – {heightLimits.max} mm</p>}
             </div>
             <div className="space-y-2">
               <Label>Quantidade</Label>
