@@ -385,19 +385,34 @@ const Clientes = () => {
       <Dialog open={leadDialogOpen} onOpenChange={setLeadDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Novo Lead</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1.5"><Label>Nome *</Label><Input value={leadForm.nome} onChange={(e) => setLeadForm({ ...leadForm, nome: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={leadForm.valor || ""} onChange={(e) => setLeadForm({ ...leadForm, valor: Number(e.target.value) })} /></div>
-              <div className="space-y-1.5"><Label>Telefone</Label><Input value={leadForm.telefone} onChange={(e) => setLeadForm({ ...leadForm, telefone: e.target.value })} /></div>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Nome *</Label>
+              <Input placeholder="Nome do lead" value={leadForm.nome} onChange={(e) => setLeadForm({ ...leadForm, nome: e.target.value })} />
             </div>
-            <div className="space-y-1.5"><Label>Email</Label><Input value={leadForm.email} onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })} /></div>
-            <div className="space-y-1.5"><Label>Observação</Label><Textarea rows={2} value={leadForm.observacao} onChange={(e) => setLeadForm({ ...leadForm, observacao: e.target.value })} placeholder="Anotações sobre o lead..." /></div>
-            <div className="space-y-1.5">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Valor (R$)</Label>
+                <Input type="number" placeholder="0,00" value={leadForm.valor || ""} onChange={(e) => setLeadForm({ ...leadForm, valor: Number(e.target.value) })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Telefone</Label>
+                <Input placeholder="(00) 00000-0000" value={leadForm.telefone} onChange={(e) => setLeadForm({ ...leadForm, telefone: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input placeholder="email@exemplo.com" value={leadForm.email} onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Observação</Label>
+              <Textarea rows={2} value={leadForm.observacao} onChange={(e) => setLeadForm({ ...leadForm, observacao: e.target.value })} placeholder="Anotações sobre o lead..." />
+            </div>
+            <div className="space-y-2">
               <Label>Data de Follow-up</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !leadForm.follow_up_date && "text-muted-foreground")}>
+                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-10", !leadForm.follow_up_date && "text-muted-foreground")}>
                     <CalendarDays className="mr-2 h-4 w-4" />
                     {leadForm.follow_up_date ? format(new Date(leadForm.follow_up_date), "dd/MM/yyyy") : "Selecione uma data"}
                   </Button>
