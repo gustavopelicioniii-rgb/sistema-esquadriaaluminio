@@ -107,6 +107,78 @@ export type Database = {
         }
         Relationships: []
       }
+      contas_financeiras: {
+        Row: {
+          cliente: string
+          created_at: string
+          descricao: string
+          id: string
+          status: string
+          tipo: string
+          updated_at: string
+          valor: number
+          vencimento: string
+        }
+        Insert: {
+          cliente: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor?: number
+          vencimento?: string
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor?: number
+          vencimento?: string
+        }
+        Relationships: []
+      }
+      crm_leads: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          nome: string
+          observacao: string | null
+          status: string
+          telefone: string | null
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome: string
+          observacao?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          nome?: string
+          observacao?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       estoque: {
         Row: {
           categoria: string
