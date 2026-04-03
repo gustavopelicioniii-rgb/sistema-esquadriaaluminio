@@ -189,14 +189,20 @@ const CRM = () => {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">CRM</h1>
           <p className="text-muted-foreground text-sm">Pipeline de vendas e gestão de leads</p>
         </div>
-        <Button className="gap-2 rounded-lg" onClick={() => openCreateDialog("novo")}>
-          <Plus className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Buscar lead..." className="pl-9 w-[220px]" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          </div>
+          <Button className="gap-2 rounded-lg" onClick={() => openCreateDialog("novo")}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Pipeline Board */}
