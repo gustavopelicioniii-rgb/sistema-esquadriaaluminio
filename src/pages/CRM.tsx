@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical } from "lucide-react";
+import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical, Search } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -116,6 +116,7 @@ const CRM = () => {
   const createLead = useCreateLead();
   const deleteLead = useDeleteLead();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogStatus, setDialogStatus] = useState<CrmLeadStatus>("novo");
   const [detailLead, setDetailLead] = useState<CrmLead | null>(null);
@@ -125,7 +126,12 @@ const CRM = () => {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
-  const getLeadsByStatus = (status: CrmLeadStatus) => leads.filter((l) => l.status === status);
+  const filteredLeads = leads.filter((l) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return l.nome.toLowerCase().includes(q) || (l.telefone || "").includes(q) || (l.email || "").toLowerCase().includes(q);
+  });
+  const getLeadsByStatus = (status: CrmLeadStatus) => filteredLeads.filter((l) => l.status === status);
   const activeLead = activeId ? leads.find((l) => l.id === activeId) : null;
 
   const handleDragStart = (event: DragStartEvent) => setActiveId(event.active.id as string);
@@ -183,14 +189,20 @@ const CRM = () => {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">CRM</h1>
           <p className="text-muted-foreground text-sm">Pipeline de vendas e gestão de leads</p>
         </div>
-        <Button className="gap-2 rounded-lg" onClick={() => openCreateDialog("novo")}>
-          <Plus className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Buscar lead..." className="pl-9 w-[220px]" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          </div>
+          <Button className="gap-2 rounded-lg" onClick={() => openCreateDialog("novo")}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Pipeline Board */}
