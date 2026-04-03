@@ -412,10 +412,11 @@ export default function CalculoEsquadrias() {
 
               {/* COMPONENTS TAB */}
               <TabsContent value="components">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                   {result.components.length === 0 ? (
                     <p className="text-muted-foreground text-sm text-center py-8">Nenhum componente cadastrado para esta tipologia.</p>
                   ) : (
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -423,7 +424,7 @@ export default function CalculoEsquadrias() {
                           <TableHead>Tipo</TableHead>
                           <TableHead className="text-center">Qtd</TableHead>
                           <TableHead>Unidade</TableHead>
-                          <TableHead className="text-right">Comprimento Total</TableHead>
+                          <TableHead className="text-right">Comp. Total</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -442,6 +443,7 @@ export default function CalculoEsquadrias() {
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   )}
                 </CardContent>
               </TabsContent>
