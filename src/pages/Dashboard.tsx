@@ -2,7 +2,10 @@ import { useState } from "react";
 import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useDashboardStats, usePedidosStatus, useReceitaMensal, type PeriodFilter } from "@/hooks/use-dashboard-data";
+import {
+  useDashboardStats, usePedidosStatus, useReceitaMensal,
+  useOrcamentosStatus, useProducaoEtapas, type PeriodFilter,
+} from "@/hooks/use-dashboard-data";
 import { formatCurrency } from "@/lib/formatters";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -18,11 +21,20 @@ const periodOptions: { key: PeriodFilter; label: string }[] = [
   { key: "todos", label: "Todos" },
 ];
 
+const chartTooltipStyle = {
+  backgroundColor: "hsl(var(--card))",
+  border: "1px solid hsl(var(--border))",
+  borderRadius: "8px",
+  fontSize: "12px",
+};
+
 const Dashboard = () => {
   const [period, setPeriod] = useState<PeriodFilter>("todos");
   const { data: stats, isLoading } = useDashboardStats(period);
   const { data: statusPedidos = [] } = usePedidosStatus(period);
   const { data: receitaMensal = [] } = useReceitaMensal();
+  const { data: orcamentosStatus = [] } = useOrcamentosStatus(period);
+  const { data: producaoEtapas = [] } = useProducaoEtapas(period);
 
   const now = new Date();
   const hora = now.getHours();
@@ -158,7 +170,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Charts */}
+      {/* Charts Row 1 — Receita + Status Pedidos */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
         <Card className="lg:col-span-4 shadow-sm border-border/50">
           <CardHeader className="pb-2">
@@ -171,15 +183,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="mes" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), "Receita"]}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                    }}
-                  />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value), "Receita"]} contentStyle={chartTooltipStyle} />
                   <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -207,12 +211,84 @@ const Dashboard = () => {
                     ))}
                   </Pie>
                   <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
-                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
                 <p className="text-sm">Sem pedidos no período</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row 2 — Orçamentos por Status + Produção por Etapa */}
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <Card className="shadow-sm border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Orçamentos por Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {orcamentosStatus.some(s => s.value > 0) ? (
+              <>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={orcamentosStatus} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                    <XAxis type="number" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis type="category" dataKey="name" fontSize={12} tickLine={false} axisLine={false} width={80} />
+                    <Tooltip
+                      formatter={(value: number, _name: string, props: any) => [
+                        `${value} orçamentos · ${formatCurrency(props.payload.total)}`,
+                        "Quantidade",
+                      ]}
+                      contentStyle={chartTooltipStyle}
+                    />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      {orcamentosStatus.map((entry, index) => (
+                        <Cell key={index} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="flex gap-4 mt-2 justify-center">
+                  {orcamentosStatus.map((s) => (
+                    <div key={s.name} className="text-center">
+                      <p className="text-lg font-bold">{s.value}</p>
+                      <p className="text-[11px] text-muted-foreground">{s.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground">
+                <p className="text-sm">Sem orçamentos no período</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Produção por Etapa</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {producaoEtapas.length > 0 && producaoEtapas.some(e => e.value > 0) ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie data={producaoEtapas} cx="50%" cy="50%" innerRadius={45} outerRadius={80} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} (${value})`}>
+                    {producaoEtapas.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px" }} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground">
+                <p className="text-sm">Sem pedidos em produção</p>
+                <p className="text-xs mt-1">Pedidos em andamento aparecerão aqui</p>
               </div>
             )}
           </CardContent>
