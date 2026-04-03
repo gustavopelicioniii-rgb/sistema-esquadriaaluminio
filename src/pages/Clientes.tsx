@@ -327,11 +327,11 @@ const Clientes = () => {
             <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="flex gap-3 overflow-x-auto pb-4">
+              <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 -mx-3 px-3 sm:mx-0 sm:px-0">
                 {columns.map((col) => {
                   const colLeads = getLeadsByStatus(col.id);
                   return (
-                    <div key={col.id} className="flex flex-col min-w-[200px] flex-1">
+                    <div key={col.id} className="flex flex-col min-w-[150px] sm:min-w-[200px] flex-1">
                       <div className="flex items-center gap-2 mb-3">
                         <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
                           {col.title}
