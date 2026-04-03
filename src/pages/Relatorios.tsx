@@ -189,8 +189,8 @@ const Relatorios = () => {
       </div>
 
       <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-3">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="text-sm font-medium text-muted-foreground">Período:</span>
             <Popover>
               <PopoverTrigger asChild>
