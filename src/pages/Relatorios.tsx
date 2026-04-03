@@ -224,11 +224,11 @@ const Relatorios = () => {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {relatorios.map((r) => (
           <Card key={r.key} className="group relative overflow-hidden border-border/40 bg-card/80 backdrop-blur-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300">
-            <CardContent className="p-5">
-              <div className="flex items-start gap-3 mb-3">
+            <CardContent className="p-3 sm:p-5">
+              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
                   <r.icon className="h-5 w-5 text-primary" />
                 </div>
