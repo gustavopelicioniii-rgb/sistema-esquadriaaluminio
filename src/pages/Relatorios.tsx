@@ -134,17 +134,18 @@ const Relatorios = () => {
       }
       case "producao": {
         const { data: pedidos = [] } = await supabase.from("pedidos").select("*");
-        const totalValor = pedidos!.reduce((s, o) => s + Number(o.valor), 0);
+        const filtered = pedidos!.filter((o) => o.previsao ? filterByDate(o.previsao) : !dataInicio && !dataFim);
+        const totalValor = filtered.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Desempenho Produção", subtitle: "Métricas de produção e eficiência",
+          title: "Desempenho Produção", subtitle: periodoLabel(),
           headers: ["Pedido", "Cliente", "Valor", "Status", "Previsão"],
           columnWidths: [20, 50, 30, 28, 35],
           summaryCards: [
-            { label: "Pedidos", value: String(pedidos!.length) },
+            { label: "Pedidos", value: String(filtered.length) },
             { label: "Valor Total", value: formatCurrency(totalValor) },
-            { label: "Em Andamento", value: String(pedidos!.filter((o) => o.status === "em_andamento").length) },
+            { label: "Em Andamento", value: String(filtered.filter((o) => o.status === "em_andamento").length) },
           ],
-          rows: pedidos!.map((o) => [
+          rows: filtered.map((o) => [
             String(o.pedido_num), o.cliente, formatCurrency(Number(o.valor)), o.status, o.previsao || "-",
           ]),
         };
