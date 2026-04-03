@@ -19,6 +19,8 @@ interface Props {
   onAnnotationChange: (text: string) => void;
   onAnnotationBlur: (text: string) => void;
   onDeleteEtapa?: () => void;
+  onEditEtapa?: () => void;
+  dragHandleProps?: Record<string, any>;
 }
 
 export default function EtapaCard({
