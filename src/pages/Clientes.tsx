@@ -30,6 +30,7 @@ const Clientes = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchClientes = async () => {
     const { data, error } = await supabase.from("clientes").select("*").order("nome");
