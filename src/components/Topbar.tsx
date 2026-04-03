@@ -61,13 +61,16 @@ export function Topbar() {
   const { theme, toggle } = useTheme();
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { results, loading: searchLoading } = useGlobalSearch(search);
   const isMobile = useIsMobile();
 
+  const pageTitle = routeTitles[location.pathname] || "";
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
   const roleLabel = role === "admin" ? "Admin" : "Funcionário";
 
