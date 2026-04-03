@@ -99,19 +99,19 @@ const Agenda = () => {
   const todayStr = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Agenda</h1>
-          <p className="text-muted-foreground text-sm">Compromissos e eventos agendados</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Agenda</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Compromissos e eventos agendados</p>
         </div>
-        <Button className="gap-2" onClick={() => openNew()}><Plus className="h-4 w-4" /> Novo Evento</Button>
+        <Button className="gap-2 text-xs sm:text-sm" onClick={() => openNew()}><Plus className="h-4 w-4" /> Novo Evento</Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Card className="shadow-sm">
-            <CardContent className="p-4">
+            <CardContent className="p-2 sm:p-4">
               <div className="flex items-center justify-between mb-4">
                 <Button variant="ghost" size="icon" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
                 <h2 className="font-semibold">{MONTHS[month]} {year}</h2>
@@ -127,7 +127,7 @@ const Agenda = () => {
                   const isToday = dateStr === todayStr;
                   return (
                     <button key={i} onClick={() => setSelectedDate(isSelected ? null : dateStr)} onDoubleClick={() => openNew(dateStr)}
-                      className={`relative h-12 sm:h-16 rounded-md text-sm transition-colors ${isSelected ? "bg-primary text-primary-foreground" : "hover:bg-accent"} ${isToday && !isSelected ? "font-bold text-primary" : ""}`}>
+                      className={`relative h-10 sm:h-16 rounded-md text-xs sm:text-sm transition-colors ${isSelected ? "bg-primary text-primary-foreground" : "hover:bg-accent"} ${isToday && !isSelected ? "font-bold text-primary" : ""}`}>
                       {day}
                       {hasEvents && <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${isSelected ? "bg-primary-foreground" : "bg-primary"}`} />}
                     </button>
@@ -173,7 +173,7 @@ const Agenda = () => {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{editingId ? "Editar Evento" : "Novo Evento"}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Título *</Label><Input value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} /></div>

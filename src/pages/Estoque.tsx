@@ -10,6 +10,7 @@ import { Plus, Search, Pencil, ArrowDownUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 const categorias = ["Todos", "Perfis", "Vidros", "Acessórios", "Insumos", "Fixação"];
 
@@ -90,13 +91,13 @@ const Estoque = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Estoque</h1>
-          <p className="text-muted-foreground text-sm">Controle de materiais e insumos</p>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Estoque</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">Controle de materiais e insumos</p>
         </div>
-        <Button className="gap-2" onClick={openNew}><Plus className="h-4 w-4" /> Novo Item</Button>
+        <Button className="gap-2 text-xs sm:text-sm" onClick={openNew}><Plus className="h-4 w-4" /> Novo Item</Button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -114,51 +115,51 @@ const Estoque = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Código</TableHead>
-              <TableHead>Produto</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>Mínimo</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead className="text-xs">Código</TableHead>
+              <TableHead className="text-xs">Produto</TableHead>
+              <TableHead className="hidden sm:table-cell text-xs">Categoria</TableHead>
+              <TableHead className="text-xs">Qtd</TableHead>
+              <TableHead className="hidden md:table-cell text-xs">Mínimo</TableHead>
+              <TableHead className="text-xs">Status</TableHead>
+              <TableHead className="text-right text-xs">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Carregando...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Carregando...</TableCell></TableRow>
             ) : filtered.map((item) => {
               const baixo = item.quantidade <= item.minimo;
               return (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.codigo}</TableCell>
-                  <TableCell>{item.produto}</TableCell>
-                  <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
-                  <TableCell className={baixo ? "text-destructive font-bold" : "font-medium"}>{item.quantidade} {item.unidade}</TableCell>
-                  <TableCell className="text-muted-foreground">{item.minimo} {item.unidade}</TableCell>
+                  <TableCell className="font-medium text-xs sm:text-sm">{item.codigo}</TableCell>
+                  <TableCell className="text-xs sm:text-sm">{item.produto}</TableCell>
+                  <TableCell className="hidden sm:table-cell"><Badge variant="secondary" className="text-[10px] sm:text-xs">{item.categoria}</Badge></TableCell>
+                  <TableCell className={cn("text-xs sm:text-sm", baixo ? "text-destructive font-bold" : "font-medium")}>{item.quantidade} {item.unidade}</TableCell>
+                  <TableCell className="text-muted-foreground hidden md:table-cell text-xs sm:text-sm">{item.minimo} {item.unidade}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${baixo ? "text-destructive" : "text-success"}`}>
-                      <span className={`h-2 w-2 rounded-full ${baixo ? "bg-destructive" : "bg-success"}`} />
-                      {baixo ? "Baixo" : "Normal"}
+                    <span className={`inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold ${baixo ? "text-destructive" : "text-success"}`}>
+                      <span className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full ${baixo ? "bg-destructive" : "bg-success"}`} />
+                      {baixo ? "Baixo" : "OK"}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-0.5">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setMovDialog({ item, tipo: "entrada" }); setMovQtd(0); }}>
-                        <ArrowDownUp className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => openEdit(item)}><Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => { setMovDialog({ item, tipo: "entrada" }); setMovQtd(0); }}>
+                        <ArrowDownUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
               );
             })}
-            {!loading && filtered.length === 0 && <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">Nenhum item encontrado.</TableCell></TableRow>}
+            {!loading && filtered.length === 0 && <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum item encontrado.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{editingId ? "Editar Item" : "Novo Item"}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Produto *</Label><Input value={form.produto} onChange={(e) => setForm({ ...form, produto: e.target.value })} /></div>

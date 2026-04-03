@@ -39,7 +39,7 @@ function DroppableColumn({ id, children }: { id: string; children: React.ReactNo
     <div
       ref={setNodeRef}
       className={cn(
-        "flex-1 min-h-[400px] rounded-xl border-2 border-dashed p-3 transition-colors duration-200 flex flex-col gap-2",
+        "flex-1 min-h-[300px] sm:min-h-[400px] rounded-xl border-2 border-dashed p-2 sm:p-3 transition-colors duration-200 flex flex-col gap-2",
         isOver ? "border-primary/40 bg-primary/5" : "border-border/40 bg-muted/20"
       )}
     >
@@ -207,40 +207,40 @@ const CRM = () => {
 
       {/* Stats */}
       {!isLoading && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
-              <Users className="h-3.5 w-3.5" /> Total de Leads
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs font-medium mb-1">
+              <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Total
             </div>
-            <p className="text-xl font-bold">{leads.length}</p>
+            <p className="text-base sm:text-xl font-bold">{leads.length}</p>
           </div>
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
-              <DollarSign className="h-3.5 w-3.5" /> Valor Total
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs font-medium mb-1">
+              <DollarSign className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Valor
             </div>
-            <p className="text-xl font-bold">{formatCurrency(leads.reduce((s, l) => s + l.valor, 0))}</p>
+            <p className="text-sm sm:text-xl font-bold">{formatCurrency(leads.reduce((s, l) => s + l.valor, 0))}</p>
           </div>
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-xs font-medium mb-1 text-green-600">
-              <TrendingUp className="h-3.5 w-3.5" /> Ganhos
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium mb-1 text-green-600">
+              <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Ganhos
             </div>
-            <p className="text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "fechado").reduce((s, l) => s + l.valor, 0))}</p>
+            <p className="text-sm sm:text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "fechado").reduce((s, l) => s + l.valor, 0))}</p>
           </div>
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-xs font-medium mb-1 text-orange-600">
-              <CalendarDays className="h-3.5 w-3.5" /> Em Negociação
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-medium mb-1 text-orange-600">
+              <CalendarDays className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Negociação
             </div>
-            <p className="text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "negociacao" || l.status === "em_orcamento").reduce((s, l) => s + l.valor, 0))}</p>
+            <p className="text-sm sm:text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "negociacao" || l.status === "em_orcamento").reduce((s, l) => s + l.valor, 0))}</p>
           </div>
         </div>
       )}
 
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 overflow-x-auto pb-4">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 -mx-3 px-3 sm:mx-0 sm:px-0">
           {columns.map((col) => {
             const colLeads = getLeadsByStatus(col.id);
             return (
-              <div key={col.id} className="flex flex-col min-w-[200px] flex-1">
+              <div key={col.id} className="flex flex-col min-w-[140px] sm:min-w-[200px] flex-1">
                 {/* Column Header */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
@@ -280,7 +280,7 @@ const CRM = () => {
 
       {/* New Lead Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>Novo Lead</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
@@ -333,7 +333,7 @@ const CRM = () => {
 
       {/* Detail / Edit Dialog */}
       <Dialog open={!!detailLead} onOpenChange={(open) => { if (!open) setDetailLead(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{detailLead?.nome}</DialogTitle></DialogHeader>
           {detailLead && (
             <div className="space-y-4">
