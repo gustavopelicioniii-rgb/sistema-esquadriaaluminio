@@ -258,7 +258,27 @@ const ImportarCSV = () => {
                   </Badge>
                 ))}
               </div>
-              <p className="text-xs">* Campos obrigatórios</p>
+               <p className="text-xs">* Campos obrigatórios</p>
+               <Button
+                 variant="outline"
+                 size="sm"
+                 className="mt-2 gap-2"
+                 onClick={() => {
+                   const content = mode === "estoque"
+                     ? "codigo,produto,quantidade,unidade,categoria,minimo\nALU-001,Parafuso Sextavado 5mm,500,pçs,Fixação,100\nALU-002,Feltrinho Adesivo 10mm,1200,pçs,Vedação,200"
+                     : "codigo,nome,tipo,peso_metro,comprimento_barra,material,linha\nPF-001,Montante Fixo,Montante,0.52,6000,Alumínio,Suprema\nPF-002,Travessa Inferior,Travessa,0.48,6000,Alumínio,Gold";
+                   const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
+                   const url = URL.createObjectURL(blob);
+                   const a = document.createElement("a");
+                   a.href = url;
+                   a.download = mode === "estoque" ? "modelo_estoque.csv" : "modelo_perfis.csv";
+                   a.click();
+                   URL.revokeObjectURL(url);
+                 }}
+               >
+                 <FileSpreadsheet className="h-4 w-4" />
+                 Baixar modelo CSV
+               </Button>
 
               <div className="bg-muted/50 rounded-lg p-4 space-y-3">
                 <p className="font-medium text-foreground text-sm">📋 Instruções de formato</p>
