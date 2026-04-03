@@ -52,10 +52,11 @@ const Relatorios = () => {
     switch (key) {
       case "vendas": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
-        const approved = orcamentos!.filter((o) => o.status === "aprovado");
+        const filtered = orcamentos!.filter((o) => filterByDate(o.data));
+        const approved = filtered.filter((o) => o.status === "aprovado");
         const total = approved.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Vendas por Período", subtitle: "Relatório de vendas aprovadas",
+          title: "Vendas por Período", subtitle: periodoLabel(),
           headers: ["Número", "Cliente", "Produto", "Valor", "Data"],
           columnWidths: [25, 45, 45, 30, 35],
           summaryCards: [
