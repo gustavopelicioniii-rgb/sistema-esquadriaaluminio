@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet } from "lucide-react";
+import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet, CalendarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { formatCurrency } from "@/lib/formatters";
 import { generateReportPdf } from "@/utils/reportPdfGenerator";
 import { generateExcel } from "@/utils/excelGenerator";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type ReportData = {
   title: string;
@@ -21,15 +26,37 @@ type ReportData = {
 const Relatorios = () => {
   usePageTitle("Relatórios");
   const [generating, setGenerating] = useState<string | null>(null);
+  const [dataInicio, setDataInicio] = useState<Date | undefined>(undefined);
+  const [dataFim, setDataFim] = useState<Date | undefined>(undefined);
+
+  const filterByDate = (dateStr: string) => {
+    if (!dataInicio && !dataFim) return true;
+    const d = new Date(dateStr);
+    if (dataInicio && d < dataInicio) return false;
+    if (dataFim) {
+      const end = new Date(dataFim);
+      end.setHours(23, 59, 59, 999);
+      if (d > end) return false;
+    }
+    return true;
+  };
+
+  const periodoLabel = () => {
+    if (dataInicio && dataFim) return `${format(dataInicio, "dd/MM/yyyy")} a ${format(dataFim, "dd/MM/yyyy")}`;
+    if (dataInicio) return `A partir de ${format(dataInicio, "dd/MM/yyyy")}`;
+    if (dataFim) return `Até ${format(dataFim, "dd/MM/yyyy")}`;
+    return "Todo o período";
+  };
 
   const fetchReportData = async (key: string): Promise<ReportData> => {
     switch (key) {
       case "vendas": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
-        const approved = orcamentos!.filter((o) => o.status === "aprovado");
+        const filtered = orcamentos!.filter((o) => filterByDate(o.data));
+        const approved = filtered.filter((o) => o.status === "aprovado");
         const total = approved.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Vendas por Período", subtitle: "Relatório de vendas aprovadas",
+          title: "Vendas por Período", subtitle: periodoLabel(),
           headers: ["Número", "Cliente", "Produto", "Valor", "Data"],
           columnWidths: [25, 45, 45, 30, 35],
           summaryCards: [
@@ -42,12 +69,13 @@ const Relatorios = () => {
       }
       case "faturamento": {
         const { data: contas = [] } = await supabase.from("contas_financeiras").select("*");
-        const receber = contas!.filter((c: any) => c.tipo === "receber");
-        const pagar = contas!.filter((c: any) => c.tipo === "pagar");
+        const filtered = contas!.filter((c: any) => filterByDate(c.vencimento));
+        const receber = filtered.filter((c: any) => c.tipo === "receber");
+        const pagar = filtered.filter((c: any) => c.tipo === "pagar");
         const totalRec = receber.reduce((s, c: any) => s + Number(c.valor), 0);
         const totalPag = pagar.reduce((s, c: any) => s + Number(c.valor), 0);
         return {
-          title: "Faturamento Mensal", subtitle: "Receitas e despesas do período",
+          title: "Faturamento Mensal", subtitle: periodoLabel(),
           headers: ["Tipo", "Cliente", "Descrição", "Valor", "Status"],
           columnWidths: [25, 40, 40, 30, 25],
           summaryCards: [
@@ -55,7 +83,7 @@ const Relatorios = () => {
             { label: "A Pagar", value: formatCurrency(totalPag) },
             { label: "Saldo", value: formatCurrency(totalRec - totalPag) },
           ],
-          rows: contas!.map((c: any) => [
+          rows: filtered.map((c: any) => [
             c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(Number(c.valor)), c.status,
           ]),
         };
@@ -90,32 +118,34 @@ const Relatorios = () => {
       }
       case "orcamentos": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
-        const total = orcamentos!.reduce((s, o) => s + Number(o.valor), 0);
+        const filtered = orcamentos!.filter((o) => filterByDate(o.data));
+        const total = filtered.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Orçamentos Emitidos", subtitle: "Todos os orçamentos do período",
+          title: "Orçamentos Emitidos", subtitle: periodoLabel(),
           headers: ["Número", "Cliente", "Produto", "Valor", "Data", "Status"],
           columnWidths: [25, 40, 40, 30, 25, 25],
           summaryCards: [
-            { label: "Total", value: String(orcamentos!.length) },
+            { label: "Total", value: String(filtered.length) },
             { label: "Valor Total", value: formatCurrency(total) },
-            { label: "Aprovados", value: String(orcamentos!.filter((o) => o.status === "aprovado").length) },
+            { label: "Aprovados", value: String(filtered.filter((o) => o.status === "aprovado").length) },
           ],
-          rows: orcamentos!.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data, o.status]),
+          rows: filtered.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data, o.status]),
         };
       }
       case "producao": {
         const { data: pedidos = [] } = await supabase.from("pedidos").select("*");
-        const totalValor = pedidos!.reduce((s, o) => s + Number(o.valor), 0);
+        const filtered = pedidos!.filter((o) => o.previsao ? filterByDate(o.previsao) : !dataInicio && !dataFim);
+        const totalValor = filtered.reduce((s, o) => s + Number(o.valor), 0);
         return {
-          title: "Desempenho Produção", subtitle: "Métricas de produção e eficiência",
+          title: "Desempenho Produção", subtitle: periodoLabel(),
           headers: ["Pedido", "Cliente", "Valor", "Status", "Previsão"],
           columnWidths: [20, 50, 30, 28, 35],
           summaryCards: [
-            { label: "Pedidos", value: String(pedidos!.length) },
+            { label: "Pedidos", value: String(filtered.length) },
             { label: "Valor Total", value: formatCurrency(totalValor) },
-            { label: "Em Andamento", value: String(pedidos!.filter((o) => o.status === "em_andamento").length) },
+            { label: "Em Andamento", value: String(filtered.filter((o) => o.status === "em_andamento").length) },
           ],
-          rows: pedidos!.map((o) => [
+          rows: filtered.map((o) => [
             String(o.pedido_num), o.cliente, formatCurrency(Number(o.valor)), o.status, o.previsao || "-",
           ]),
         };
@@ -157,6 +187,43 @@ const Relatorios = () => {
         <h1 className="text-2xl font-bold tracking-tight">Relatórios</h1>
         <p className="text-muted-foreground text-sm">Gere relatórios e análises do sistema em PDF ou Excel</p>
       </div>
+
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground">Período:</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("w-[160px] justify-start text-left font-normal", !dataInicio && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Data inicial"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dataInicio} onSelect={setDataInicio} locale={ptBR} initialFocus className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
+            <span className="text-sm text-muted-foreground">até</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("w-[160px] justify-start text-left font-normal", !dataFim && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dataFim ? format(dataFim, "dd/MM/yyyy") : "Data final"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dataFim} onSelect={setDataFim} locale={ptBR} initialFocus className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
+            {(dataInicio || dataFim) && (
+              <Button variant="ghost" size="sm" onClick={() => { setDataInicio(undefined); setDataFim(undefined); }}>
+                Limpar
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {relatorios.map((r) => (
           <Card key={r.key} className="group relative overflow-hidden border-border/40 bg-card/80 backdrop-blur-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300">
