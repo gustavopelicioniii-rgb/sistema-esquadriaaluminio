@@ -127,7 +127,7 @@ const Agenda = () => {
                   const isToday = dateStr === todayStr;
                   return (
                     <button key={i} onClick={() => setSelectedDate(isSelected ? null : dateStr)} onDoubleClick={() => openNew(dateStr)}
-                      className={`relative h-12 sm:h-16 rounded-md text-sm transition-colors ${isSelected ? "bg-primary text-primary-foreground" : "hover:bg-accent"} ${isToday && !isSelected ? "font-bold text-primary" : ""}`}>
+                      className={`relative h-10 sm:h-16 rounded-md text-xs sm:text-sm transition-colors ${isSelected ? "bg-primary text-primary-foreground" : "hover:bg-accent"} ${isToday && !isSelected ? "font-bold text-primary" : ""}`}>
                       {day}
                       {hasEvents && <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${isSelected ? "bg-primary-foreground" : "bg-primary"}`} />}
                     </button>
