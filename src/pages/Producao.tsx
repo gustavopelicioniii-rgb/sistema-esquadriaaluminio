@@ -215,7 +215,7 @@ const Producao = () => {
           {loading ? (
             <div className="text-center py-12 text-muted-foreground">Carregando pedidos...</div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               {filtered.map((op) => {
                 const dias = getDiasLabel(op);
                 return (
