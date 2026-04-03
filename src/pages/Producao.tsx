@@ -217,7 +217,7 @@ const Producao = () => {
                   <Card key={op.id} className="shadow-sm border-border/50">
                     <CardContent className="p-5 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-base">PEDIDO {op.pedido_num}</h3>
+                        <h3 className="font-bold text-base cursor-pointer hover:text-primary transition-colors" onClick={() => setDetailPedido(op)}>PEDIDO {op.pedido_num}</h3>
                         <span className={cn("rounded-full px-2.5 py-0.5 text-[10px] font-bold", dias.color)}>{dias.label}</span>
                       </div>
                       <div className="space-y-1 text-xs text-muted-foreground">
