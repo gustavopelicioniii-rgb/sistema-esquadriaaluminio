@@ -42,6 +42,11 @@ export interface Typology {
   drawing_url?: string;
   notes?: string;
   active: boolean;
+  /** Dimensões mínimas e máximas do vão em mm */
+  min_width_mm?: number;
+  max_width_mm?: number;
+  min_height_mm?: number;
+  max_height_mm?: number;
 }
 
 export interface CutRule {
