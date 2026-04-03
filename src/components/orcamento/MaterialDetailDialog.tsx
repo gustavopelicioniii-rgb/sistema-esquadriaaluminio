@@ -122,7 +122,7 @@ export default function MaterialDetailDialog({
                     <div className="w-10 h-10 rounded-md bg-muted/40 flex items-center justify-center shrink-0 mt-0.5">
                       <ProfileCrossSection
                         profileType={(() => {
-                          const profile = getProfileByCode(cut.profile_code);
+                          const profile = profiles.find(p => p.code === cut.profile_code);
                           return profile?.profile_type || "marco";
                         })()}
                         profileCode={cut.profile_code}
