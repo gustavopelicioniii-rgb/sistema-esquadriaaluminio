@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical, Search } from "lucide-react";
+import { Phone, Plus, Trash2, Loader2, CalendarDays, MessageSquare, Eye, GripVertical, Search, Users, DollarSign, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
