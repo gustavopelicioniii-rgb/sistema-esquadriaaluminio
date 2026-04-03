@@ -207,12 +207,12 @@ const CRM = () => {
 
       {/* Stats */}
       {!isLoading && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
-              <Users className="h-3.5 w-3.5" /> Total de Leads
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs font-medium mb-1">
+              <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Total
             </div>
-            <p className="text-xl font-bold">{leads.length}</p>
+            <p className="text-base sm:text-xl font-bold">{leads.length}</p>
           </div>
           <div className="rounded-xl border bg-card p-3">
             <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
