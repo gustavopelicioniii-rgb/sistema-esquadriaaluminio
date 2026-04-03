@@ -374,13 +374,14 @@ export default function CalculoEsquadrias() {
 
               {/* GLASS TAB */}
               <TabsContent value="glass">
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Vidro</TableHead>
-                        <TableHead className="text-right">Largura (mm)</TableHead>
-                        <TableHead className="text-right">Altura (mm)</TableHead>
+                        <TableHead className="text-right">Largura</TableHead>
+                        <TableHead className="text-right">Altura</TableHead>
                         <TableHead className="text-center">Qtd</TableHead>
                         <TableHead className="text-right">Área (m²)</TableHead>
                         <TableHead>Tipo</TableHead>
@@ -405,6 +406,7 @@ export default function CalculoEsquadrias() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 </CardContent>
               </TabsContent>
 
