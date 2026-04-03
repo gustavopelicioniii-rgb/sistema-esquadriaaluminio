@@ -9,8 +9,10 @@ import { cn } from "@/lib/utils";
 import {
   Plus, Search, MapPin, Phone, User, Calendar,
   RefreshCcw, CreditCard, FileText, Printer, GitBranch,
+  Eye, Pencil, ListChecks, Share2, CheckCircle2,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
 import ReagendarDialog from "@/components/producao/ReagendarDialog";
 import PagamentosDialog from "@/components/producao/PagamentosDialog";
 import ContratoDialog from "@/components/producao/ContratoDialog";
@@ -46,11 +48,14 @@ const filters: { key: FilterKey; label: string }[] = [
 ];
 
 const actionButtons = [
-  { key: "reagendar" as const, icon: RefreshCcw, label: "Reagendar" },
+  { key: "reagendar" as const, icon: RefreshCcw, label: "Alterar prazo" },
   { key: "pagamentos" as const, icon: CreditCard, label: "Pagamentos" },
+  { key: "custos" as const, icon: Eye, label: "Ver custos" },
   { key: "contrato" as const, icon: FileText, label: "Contrato" },
   { key: "impressoes" as const, icon: Printer, label: "Impressões" },
-  { key: "etapa" as const, icon: GitBranch, label: "Alterar etapa" },
+  { key: "editar" as const, icon: Pencil, label: "Editar serviço" },
+  { key: "tarefas" as const, icon: ListChecks, label: "Tarefas" },
+  { key: "compartilhar" as const, icon: Share2, label: "Compartilhar" },
 ];
 
 const Producao = () => {
