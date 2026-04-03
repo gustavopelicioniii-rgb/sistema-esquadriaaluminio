@@ -52,6 +52,11 @@ const Login = () => {
               <Label htmlFor="password">Senha</Label>
               <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
+            <div className="flex justify-end">
+              <Link to="/esqueci-senha" className="text-xs text-muted-foreground hover:text-primary hover:underline">
+                Esqueceu a senha?
+              </Link>
+            </div>
             <Button type="submit" className="w-full gap-2" disabled={loading}>
               <LogIn className="h-4 w-4" />
               {loading ? "Entrando..." : "Entrar"}
