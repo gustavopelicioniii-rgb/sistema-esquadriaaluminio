@@ -86,10 +86,12 @@ const Agenda = () => {
     fetchEventos();
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("agenda").delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    const { error } = await supabase.from("agenda").delete().eq("id", deleteId);
     if (error) { toast({ title: "Erro", variant: "destructive" }); return; }
     toast({ title: "Evento removido", variant: "destructive" });
+    setDeleteId(null);
     fetchEventos();
   };
 
