@@ -7,7 +7,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import { PageLoading } from "@/components/LoadingSpinner";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
+const Login = lazy(() => import("./pages/Login"));
+const Cadastro = lazy(() => import("./pages/Cadastro"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CRM = lazy(() => import("./pages/CRM"));
 const Clientes = lazy(() => import("./pages/Clientes"));
@@ -33,44 +37,55 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
+const P = ({ children }: { children: React.ReactNode }) => <ProtectedRoute>{children}</ProtectedRoute>;
+const Admin = ({ children }: { children: React.ReactNode }) => <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>;
+
 const App = () => (
   <ThemeProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppLayout>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Suspense fallback={<PageLoading />}>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/crm" element={<CRM />} />
-                <Route path="/clientes" element={<Clientes />} />
-                <Route path="/orcamentos" element={<Orcamentos />} />
-                <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
-                <Route path="/producao" element={<Producao />} />
-                <Route path="/plano-corte" element={<PlanoCorte />} />
-                <Route path="/projeto-vidro" element={<ProjetoVidro />} />
-                <Route path="/relacao-materiais" element={<RelacaoMateriais />} />
-                <Route path="/estoque" element={<Estoque />} />
-                <Route path="/financeiro" element={<Financeiro />} />
-                <Route path="/agenda" element={<Agenda />} />
-                <Route path="/produtos" element={<Produtos />} />
-                <Route path="/preco-itens" element={<PrecoItens />} />
-                <Route path="/relatorios" element={<Relatorios />} />
-                <Route path="/mapa" element={<Mapa />} />
-                <Route path="/administradores" element={<Administradores />} />
-                <Route path="/funcionarios" element={<Funcionarios />} />
-                <Route path="/configuracoes" element={<Configuracoes />} />
-                <Route path="/calculo-esquadrias" element={<CalculoEsquadrias />} />
-                <Route path="/nota-fiscal" element={<NotaFiscal />} />
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/cadastro" element={<Cadastro />} />
+
+                {/* Protected routes */}
+                <Route element={<P><AppLayout><Suspense fallback={<PageLoading />}><Dashboard /></Suspense></AppLayout></P>} path="/" />
+                <Route path="/crm" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CRM /></Suspense></AppLayout></P>} />
+                <Route path="/clientes" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Clientes /></Suspense></AppLayout></P>} />
+                <Route path="/orcamentos" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Orcamentos /></Suspense></AppLayout></P>} />
+                <Route path="/orcamentos/novo" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CriarOrcamento /></Suspense></AppLayout></P>} />
+                <Route path="/producao" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Producao /></Suspense></AppLayout></P>} />
+                <Route path="/plano-corte" element={<P><AppLayout><Suspense fallback={<PageLoading />}><PlanoCorte /></Suspense></AppLayout></P>} />
+                <Route path="/projeto-vidro" element={<P><AppLayout><Suspense fallback={<PageLoading />}><ProjetoVidro /></Suspense></AppLayout></P>} />
+                <Route path="/relacao-materiais" element={<P><AppLayout><Suspense fallback={<PageLoading />}><RelacaoMateriais /></Suspense></AppLayout></P>} />
+                <Route path="/estoque" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Estoque /></Suspense></AppLayout></P>} />
+                <Route path="/financeiro" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Financeiro /></Suspense></AppLayout></P>} />
+                <Route path="/agenda" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Agenda /></Suspense></AppLayout></P>} />
+                <Route path="/produtos" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Produtos /></Suspense></AppLayout></P>} />
+                <Route path="/preco-itens" element={<P><AppLayout><Suspense fallback={<PageLoading />}><PrecoItens /></Suspense></AppLayout></P>} />
+                <Route path="/relatorios" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Relatorios /></Suspense></AppLayout></P>} />
+                <Route path="/mapa" element={<P><AppLayout><Suspense fallback={<PageLoading />}><Mapa /></Suspense></AppLayout></P>} />
+                <Route path="/nota-fiscal" element={<P><AppLayout><Suspense fallback={<PageLoading />}><NotaFiscal /></Suspense></AppLayout></P>} />
+                <Route path="/calculo-esquadrias" element={<P><AppLayout><Suspense fallback={<PageLoading />}><CalculoEsquadrias /></Suspense></AppLayout></P>} />
+                
+                {/* Admin only */}
+                <Route path="/administradores" element={<Admin><AppLayout><Suspense fallback={<PageLoading />}><Administradores /></Suspense></AppLayout></Admin>} />
+                <Route path="/funcionarios" element={<Admin><AppLayout><Suspense fallback={<PageLoading />}><Funcionarios /></Suspense></AppLayout></Admin>} />
+                <Route path="/configuracoes" element={<Admin><AppLayout><Suspense fallback={<PageLoading />}><Configuracoes /></Suspense></AppLayout></Admin>} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-          </AppLayout>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   </ThemeProvider>
 );
 
