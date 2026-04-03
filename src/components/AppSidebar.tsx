@@ -13,6 +13,7 @@ import {
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
+  { title: "CRM", url: "/crm", icon: Kanban },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Serviços", url: "/producao", icon: Wrench },
