@@ -214,11 +214,11 @@ const CRM = () => {
             </div>
             <p className="text-base sm:text-xl font-bold">{leads.length}</p>
           </div>
-          <div className="rounded-xl border bg-card p-3">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium mb-1">
-              <DollarSign className="h-3.5 w-3.5" /> Valor Total
+          <div className="rounded-xl border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] sm:text-xs font-medium mb-1">
+              <DollarSign className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Valor
             </div>
-            <p className="text-xl font-bold">{formatCurrency(leads.reduce((s, l) => s + l.valor, 0))}</p>
+            <p className="text-sm sm:text-xl font-bold">{formatCurrency(leads.reduce((s, l) => s + l.valor, 0))}</p>
           </div>
           <div className="rounded-xl border bg-card p-3">
             <div className="flex items-center gap-2 text-xs font-medium mb-1 text-green-600">
