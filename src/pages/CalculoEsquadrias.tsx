@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { calculateTypology } from "@/lib/calculation-engine";
+import { calculateTypology, validateDimensions } from "@/lib/calculation-engine";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import {
