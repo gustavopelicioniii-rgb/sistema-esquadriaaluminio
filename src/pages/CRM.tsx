@@ -333,7 +333,7 @@ const CRM = () => {
 
       {/* Detail / Edit Dialog */}
       <Dialog open={!!detailLead} onOpenChange={(open) => { if (!open) setDetailLead(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{detailLead?.nome}</DialogTitle></DialogHeader>
           {detailLead && (
             <div className="space-y-4">
