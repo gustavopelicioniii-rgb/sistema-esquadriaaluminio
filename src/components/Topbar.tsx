@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -241,9 +242,9 @@ export function Topbar() {
         </DropdownMenu>
       </div>
 
-      {/* Mobile search overlay */}
-      {mobileSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
+      {/* Mobile search overlay via portal to escape stacking context */}
+      {mobileSearchOpen && createPortal(
+        <div className="fixed inset-0 z-[100] bg-background flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -287,7 +288,8 @@ export function Topbar() {
               </div>
             )}
           </ScrollArea>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );
