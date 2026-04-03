@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronDown, CheckCircle2, Circle, Printer, Trash2 } from "lucide-react";
+import { ChevronDown, CheckCircle2, Circle, Printer, Trash2, GripVertical, Pencil } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import ChecklistPhotos from "./ChecklistPhotos";
 import type { Etapa } from "./etapasConfig";
@@ -19,6 +19,8 @@ interface Props {
   onAnnotationChange: (text: string) => void;
   onAnnotationBlur: (text: string) => void;
   onDeleteEtapa?: () => void;
+  onEditEtapa?: () => void;
+  dragHandleProps?: Record<string, any>;
 }
 
 export default function EtapaCard({
@@ -33,6 +35,8 @@ export default function EtapaCard({
   onAnnotationChange,
   onAnnotationBlur,
   onDeleteEtapa,
+  onEditEtapa,
+  dragHandleProps,
 }: Props) {
   const checked = etapa.items.filter((i) => checkStates[i.key]).length;
   const total = etapa.items.length;
@@ -42,45 +46,55 @@ export default function EtapaCard({
 
   return (
     <div className="rounded-lg border bg-card overflow-hidden">
-      {/* Header */}
-      <button
-        onClick={onToggleExpand}
-        className="flex w-full items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          {isComplete ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-          ) : (
-            <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
-          )}
-          <div className="text-left">
-            <p className="font-semibold text-sm">
-              {etapa.label}
-              {etapa.isCustom && (
-                <span className="ml-2 text-[10px] bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
-                  Personalizada
-                </span>
-              )}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Progresso: {pct}% ({checked}/{total})
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span
-            className={cn(
-              "rounded-full px-2.5 py-0.5 text-[10px] font-bold",
-              isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
-            )}
+      {/* Header row */}
+      <div className="flex items-center">
+        {dragHandleProps && (
+          <div
+            {...dragHandleProps}
+            className="flex items-center px-2 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
           >
-            {isComplete ? "Concluído" : "Pendente"}
-          </span>
-          <ChevronDown
-            className={cn("h-4 w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
-          />
-        </div>
-      </button>
+            <GripVertical className="h-4 w-4" />
+          </div>
+        )}
+        <button
+          onClick={onToggleExpand}
+          className="flex flex-1 items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            {isComplete ? (
+              <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground shrink-0" />
+            )}
+            <div className="text-left">
+              <p className="font-semibold text-sm">
+                {etapa.label}
+                {etapa.isCustom && (
+                  <span className="ml-2 text-[10px] bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
+                    Personalizada
+                  </span>
+                )}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Progresso: {pct}% ({checked}/{total})
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-[10px] font-bold",
+                isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
+              )}
+            >
+              {isComplete ? "Concluído" : "Pendente"}
+            </span>
+            <ChevronDown
+              className={cn("h-4 w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
+            />
+          </div>
+        </button>
+      </div>
 
       {/* Progress bar */}
       <div className="h-1 bg-muted">
@@ -100,10 +114,16 @@ export default function EtapaCard({
               Selecionar todos
             </label>
             <div className="flex items-center gap-2">
+              {etapa.isCustom && onEditEtapa && (
+                <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={onEditEtapa}>
+                  <Pencil className="h-3.5 w-3.5" />
+                  Editar
+                </Button>
+              )}
               {etapa.isCustom && onDeleteEtapa && (
                 <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-destructive" onClick={onDeleteEtapa}>
                   <Trash2 className="h-3.5 w-3.5" />
-                  Excluir etapa
+                  Excluir
                 </Button>
               )}
               <Button
