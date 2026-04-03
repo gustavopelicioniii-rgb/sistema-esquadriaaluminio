@@ -343,3 +343,7 @@ textarea:focus,
 .page-exit {
   animation: page-fade-out 0.15s cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
 }
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
