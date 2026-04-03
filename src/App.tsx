@@ -55,6 +55,8 @@ const App = () => (
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/cadastro" element={<Cadastro />} />
+                <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
 
                 {/* Protected routes */}
                 <Route element={<P><AppLayout><Suspense fallback={<PageLoading />}><Dashboard /></Suspense></AppLayout></P>} path="/" />
