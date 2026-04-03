@@ -1,40 +1,42 @@
-import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState, useRef, cloneElement, isValidElement } from "react";
+import { useLocation, useOutlet } from "react-router-dom";
 
-export function AnimatedOutlet({ children }: { children: React.ReactNode }) {
+export function AnimatedOutlet({ children }: { children?: React.ReactNode }) {
   const location = useLocation();
-  const [displayChildren, setDisplayChildren] = useState(children);
-  const [transitionStage, setTransitionStage] = useState<"enter" | "exit">("enter");
+  const outlet = useOutlet();
+  const content = children || outlet;
+  
+  const [displayContent, setDisplayContent] = useState(content);
+  const [stage, setStage] = useState<"enter" | "exit">("enter");
   const prevPath = useRef(location.pathname);
 
   useEffect(() => {
     if (location.pathname !== prevPath.current) {
-      setTransitionStage("exit");
+      setStage("exit");
     }
   }, [location.pathname]);
 
-  // Update children ref when they change (for same-path re-renders)
+  // Keep displayContent in sync when not transitioning
   useEffect(() => {
-    if (transitionStage === "enter") {
-      setDisplayChildren(children);
+    if (stage === "enter") {
+      setDisplayContent(content);
     }
-  }, [children, transitionStage]);
+  }, [content, stage]);
 
   const handleAnimationEnd = () => {
-    if (transitionStage === "exit") {
+    if (stage === "exit") {
       prevPath.current = location.pathname;
-      setDisplayChildren(children);
-      setTransitionStage("enter");
+      setDisplayContent(content);
+      setStage("enter");
     }
   };
 
   return (
     <div
-      key={transitionStage + prevPath.current}
-      className={transitionStage === "enter" ? "page-enter" : "page-exit"}
+      className={stage === "enter" ? "page-enter" : "page-exit"}
       onAnimationEnd={handleAnimationEnd}
     >
-      {displayChildren}
+      {displayContent}
     </div>
   );
 }
