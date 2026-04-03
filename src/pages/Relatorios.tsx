@@ -1,36 +1,35 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2 } from "lucide-react";
+import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { formatCurrency } from "@/lib/formatters";
 import { generateReportPdf } from "@/utils/reportPdfGenerator";
+import { generateExcel } from "@/utils/excelGenerator";
 import { supabase } from "@/integrations/supabase/client";
+
+type ReportData = {
+  title: string;
+  subtitle: string;
+  headers: string[];
+  columnWidths: number[];
+  summaryCards: { label: string; value: string }[];
+  rows: string[][];
+};
 
 const Relatorios = () => {
   usePageTitle("Relatórios");
   const [generating, setGenerating] = useState<string | null>(null);
 
-  const generate = async (key: string, fn: () => Promise<void>) => {
-    setGenerating(key);
-    try { await fn(); }
-    catch (e: any) { toast({ title: "Erro", description: e.message, variant: "destructive" }); }
-    finally { setGenerating(null); }
-  };
-
-  const relatorios = [
-    {
-      key: "vendas",
-      titulo: "Vendas por Período",
-      descricao: "Relatório de vendas filtrado por data",
-      icon: TrendingUp,
-      generate: () => generate("vendas", async () => {
+  const fetchReportData = async (key: string): Promise<ReportData> => {
+    switch (key) {
+      case "vendas": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
         const approved = orcamentos!.filter((o) => o.status === "aprovado");
         const total = approved.reduce((s, o) => s + Number(o.valor), 0);
-        generateReportPdf({
-          title: "Vendas por Período", subtitle: "Relatório de vendas aprovadas", filename: "vendas.pdf",
+        return {
+          title: "Vendas por Período", subtitle: "Relatório de vendas aprovadas",
           headers: ["Número", "Cliente", "Produto", "Valor", "Data"],
           columnWidths: [25, 45, 45, 30, 35],
           summaryCards: [
@@ -39,23 +38,16 @@ const Relatorios = () => {
             { label: "Ticket Médio", value: formatCurrency(approved.length ? total / approved.length : 0) },
           ],
           rows: approved.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data]),
-        });
-        toast({ title: "PDF gerado", description: `${approved.length} vendas exportadas` });
-      }),
-    },
-    {
-      key: "faturamento",
-      titulo: "Faturamento Mensal",
-      descricao: "Receita e despesas por mês",
-      icon: DollarSign,
-      generate: () => generate("faturamento", async () => {
+        };
+      }
+      case "faturamento": {
         const { data: contas = [] } = await supabase.from("contas_financeiras").select("*");
         const receber = contas!.filter((c: any) => c.tipo === "receber");
         const pagar = contas!.filter((c: any) => c.tipo === "pagar");
         const totalRec = receber.reduce((s, c: any) => s + Number(c.valor), 0);
         const totalPag = pagar.reduce((s, c: any) => s + Number(c.valor), 0);
-        generateReportPdf({
-          title: "Faturamento Mensal", subtitle: "Receitas e despesas do período", filename: "faturamento.pdf",
+        return {
+          title: "Faturamento Mensal", subtitle: "Receitas e despesas do período",
           headers: ["Tipo", "Cliente", "Descrição", "Valor", "Status"],
           columnWidths: [25, 40, 40, 30, 25],
           summaryCards: [
@@ -64,23 +56,15 @@ const Relatorios = () => {
             { label: "Saldo", value: formatCurrency(totalRec - totalPag) },
           ],
           rows: contas!.map((c: any) => [
-            c.tipo === "receber" ? "Receita" : "Despesa",
-            c.cliente, c.descricao, formatCurrency(Number(c.valor)), c.status,
+            c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(Number(c.valor)), c.status,
           ]),
-        });
-        toast({ title: "PDF gerado", description: `${receber.length} receitas, ${pagar.length} despesas` });
-      }),
-    },
-    {
-      key: "estoque",
-      titulo: "Estoque Atual",
-      descricao: "Posição atual do estoque de materiais",
-      icon: Package,
-      generate: () => generate("estoque", async () => {
+        };
+      }
+      case "estoque": {
         const { data: itens = [] } = await supabase.from("estoque").select("*");
         const baixo = itens!.filter((i) => i.quantidade <= i.minimo).length;
-        generateReportPdf({
-          title: "Estoque Atual", subtitle: "Posição atual do estoque de materiais", filename: "estoque.pdf",
+        return {
+          title: "Estoque Atual", subtitle: "Posição atual do estoque de materiais",
           headers: ["Código", "Produto", "Categoria", "Qtd", "Un.", "Mín.", "Status"],
           columnWidths: [22, 42, 25, 18, 18, 18, 22],
           summaryCards: [
@@ -92,37 +76,23 @@ const Relatorios = () => {
             i.codigo, i.produto, i.categoria, String(i.quantidade), i.unidade, String(i.minimo),
             i.quantidade <= i.minimo ? "BAIXO" : "Normal",
           ]),
-        });
-        toast({ title: "PDF gerado", description: `${itens!.length} itens exportados` });
-      }),
-    },
-    {
-      key: "clientes",
-      titulo: "Clientes Ativos",
-      descricao: "Lista de clientes com orçamentos recentes",
-      icon: Users,
-      generate: () => generate("clientes", async () => {
+        };
+      }
+      case "clientes": {
         const { data: clientes = [] } = await supabase.from("clientes").select("*");
-        generateReportPdf({
-          title: "Clientes Ativos", subtitle: "Clientes cadastrados", filename: "clientes_ativos.pdf",
+        return {
+          title: "Clientes Ativos", subtitle: "Clientes cadastrados",
           headers: ["Nome", "Telefone", "Email", "Cidade"],
           columnWidths: [50, 35, 50, 40],
           summaryCards: [{ label: "Total Clientes", value: String(clientes!.length) }],
           rows: clientes!.map((c) => [c.nome, c.telefone || "", c.email || "", c.cidade || ""]),
-        });
-        toast({ title: "PDF gerado", description: `${clientes!.length} clientes exportados` });
-      }),
-    },
-    {
-      key: "orcamentos",
-      titulo: "Orçamentos Emitidos",
-      descricao: "Todos os orçamentos do período",
-      icon: FileText,
-      generate: () => generate("orcamentos", async () => {
+        };
+      }
+      case "orcamentos": {
         const { data: orcamentos = [] } = await supabase.from("orcamentos").select("*");
         const total = orcamentos!.reduce((s, o) => s + Number(o.valor), 0);
-        generateReportPdf({
-          title: "Orçamentos Emitidos", subtitle: "Todos os orçamentos do período", filename: "orcamentos.pdf",
+        return {
+          title: "Orçamentos Emitidos", subtitle: "Todos os orçamentos do período",
           headers: ["Número", "Cliente", "Produto", "Valor", "Data", "Status"],
           columnWidths: [25, 40, 40, 30, 25, 25],
           summaryCards: [
@@ -131,20 +101,13 @@ const Relatorios = () => {
             { label: "Aprovados", value: String(orcamentos!.filter((o) => o.status === "aprovado").length) },
           ],
           rows: orcamentos!.map((o) => [o.numero, o.cliente, o.produto, formatCurrency(Number(o.valor)), o.data, o.status]),
-        });
-        toast({ title: "PDF gerado", description: `${orcamentos!.length} orçamentos exportados` });
-      }),
-    },
-    {
-      key: "producao",
-      titulo: "Desempenho Produção",
-      descricao: "Métricas de produção e eficiência",
-      icon: BarChart3,
-      generate: () => generate("producao", async () => {
+        };
+      }
+      case "producao": {
         const { data: pedidos = [] } = await supabase.from("pedidos").select("*");
         const totalValor = pedidos!.reduce((s, o) => s + Number(o.valor), 0);
-        generateReportPdf({
-          title: "Desempenho Produção", subtitle: "Métricas de produção e eficiência", filename: "producao.pdf",
+        return {
+          title: "Desempenho Produção", subtitle: "Métricas de produção e eficiência",
           headers: ["Pedido", "Cliente", "Valor", "Status", "Previsão"],
           columnWidths: [20, 50, 30, 28, 35],
           summaryCards: [
@@ -155,17 +118,44 @@ const Relatorios = () => {
           rows: pedidos!.map((o) => [
             String(o.pedido_num), o.cliente, formatCurrency(Number(o.valor)), o.status, o.previsao || "-",
           ]),
-        });
-        toast({ title: "PDF gerado", description: `${pedidos!.length} pedidos exportados` });
-      }),
-    },
+        };
+      }
+      default:
+        throw new Error("Relatório não encontrado");
+    }
+  };
+
+  const exportReport = async (key: string, format: "pdf" | "excel") => {
+    setGenerating(`${key}-${format}`);
+    try {
+      const data = await fetchReportData(key);
+      if (format === "pdf") {
+        generateReportPdf({ ...data, filename: `${key}.pdf` });
+      } else {
+        generateExcel({ ...data, filename: `${key}.xlsx` });
+      }
+      toast({ title: `${format === "pdf" ? "PDF" : "Excel"} gerado`, description: `${data.rows.length} registros exportados` });
+    } catch (e: any) {
+      toast({ title: "Erro", description: e.message, variant: "destructive" });
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const relatorios = [
+    { key: "vendas", titulo: "Vendas por Período", descricao: "Relatório de vendas filtrado por data", icon: TrendingUp },
+    { key: "faturamento", titulo: "Faturamento Mensal", descricao: "Receita e despesas por mês", icon: DollarSign },
+    { key: "estoque", titulo: "Estoque Atual", descricao: "Posição atual do estoque de materiais", icon: Package },
+    { key: "clientes", titulo: "Clientes Ativos", descricao: "Lista de clientes com orçamentos recentes", icon: Users },
+    { key: "orcamentos", titulo: "Orçamentos Emitidos", descricao: "Todos os orçamentos do período", icon: FileText },
+    { key: "producao", titulo: "Desempenho Produção", descricao: "Métricas de produção e eficiência", icon: BarChart3 },
   ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Relatórios</h1>
-        <p className="text-muted-foreground text-sm">Gere relatórios e análises do sistema</p>
+        <p className="text-muted-foreground text-sm">Gere relatórios e análises do sistema em PDF ou Excel</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {relatorios.map((r) => (
@@ -180,16 +170,28 @@ const Relatorios = () => {
                   <p className="text-xs text-muted-foreground mt-1">{r.descricao}</p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 mt-1 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
-                onClick={r.generate}
-                disabled={generating === r.key}
-              >
-                {generating === r.key ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-                Gerar Relatório
-              </Button>
+              <div className="flex gap-2 mt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                  onClick={() => exportReport(r.key, "pdf")}
+                  disabled={generating === `${r.key}-pdf`}
+                >
+                  {generating === `${r.key}-pdf` ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                  PDF
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-1.5 hover:bg-success/10 hover:text-success hover:border-success/30 transition-colors"
+                  onClick={() => exportReport(r.key, "excel")}
+                  disabled={generating === `${r.key}-excel`}
+                >
+                  {generating === `${r.key}-excel` ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+                  Excel
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
