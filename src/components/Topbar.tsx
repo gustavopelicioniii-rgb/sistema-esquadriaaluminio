@@ -240,6 +240,55 @@ export function Topbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Mobile search overlay */}
+      {mobileSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
+              <Input
+                autoFocus
+                placeholder="Buscar clientes, orçamentos, pedidos..."
+                className="pl-9 h-10 bg-muted/50 border-0 focus-visible:ring-1"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
+              />
+            </div>
+            <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0" onClick={() => { setMobileSearchOpen(false); setSearch(""); setSearchOpen(false); }}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1 mt-2">
+            {search.trim().length >= 2 && results.length > 0 ? (
+              results.map((r) => (
+                <button
+                  key={`${r.type}-${r.id}`}
+                  className="w-full px-3 py-3 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
+                  onClick={() => { navigate(r.url); setSearch(""); setMobileSearchOpen(false); }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{r.label}</p>
+                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
+                  </div>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
+                    {r.type}
+                  </span>
+                </button>
+              ))
+            ) : search.trim().length >= 2 && !searchLoading ? (
+              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                Nenhum resultado para "{search}"
+              </div>
+            ) : (
+              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                Digite ao menos 2 caracteres para buscar
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      )}
     </header>
   );
 }
