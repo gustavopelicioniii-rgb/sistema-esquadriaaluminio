@@ -41,48 +41,76 @@ const emptyClientForm = { nome: "", telefone: "", email: "", endereco: "", cidad
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-const columns: { id: CrmLeadStatus; title: string; color: string }[] = [
-  { id: "novo", title: "Novo", color: "bg-primary" },
-  { id: "em_orcamento", title: "Em Orçamento", color: "bg-warning" },
-  { id: "negociacao", title: "Negociação", color: "bg-[hsl(280,67%,55%)]" },
-  { id: "fechado", title: "Fechado", color: "bg-success" },
+const columns: { id: CrmLeadStatus; title: string; badgeBg: string; badgeText: string }[] = [
+  { id: "novo", title: "Novo", badgeBg: "bg-blue-100", badgeText: "text-blue-700" },
+  { id: "qualificado", title: "Qualificado", badgeBg: "bg-indigo-100", badgeText: "text-indigo-700" },
+  { id: "em_orcamento", title: "Proposta", badgeBg: "bg-orange-100", badgeText: "text-orange-700" },
+  { id: "negociacao", title: "Negociação", badgeBg: "bg-red-100", badgeText: "text-red-600" },
+  { id: "fechado", title: "Ganho", badgeBg: "bg-green-100", badgeText: "text-green-700" },
+  { id: "perdido", title: "Perdido", badgeBg: "bg-red-50", badgeText: "text-red-500" },
 ];
 
 function DroppableColumn({ id, children }: { id: string; children: React.ReactNode }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`space-y-2 min-h-[200px] rounded-lg p-2 transition-colors duration-200 ${isOver ? "bg-primary/10 ring-2 ring-primary/30" : "bg-muted/30"}`}>
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "flex-1 min-h-[400px] rounded-xl border-2 border-dashed p-3 transition-colors duration-200 flex flex-col gap-2",
+        isOver ? "border-primary/40 bg-primary/5" : "border-border/40 bg-muted/20"
+      )}
+    >
       {children}
     </div>
   );
 }
 
-function LeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: string) => void }) {
+function LeadCard({ lead, onDelete, onView }: { lead: CrmLead; onDelete: (id: string) => void; onView: (lead: CrmLead) => void }) {
+  const hasFollowUp = lead.follow_up_date;
+  const isOverdue = hasFollowUp && new Date(lead.follow_up_date!) < new Date(new Date().toDateString());
+
   return (
-    <Card className="cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-shadow border-border/50">
-      <CardContent className="p-3">
-        <div className="flex items-start gap-2">
-          <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium truncate">{lead.nome}</p>
-            <p className="text-base font-bold text-primary mt-0.5">{formatCurrency(lead.valor)}</p>
-            <div className="flex items-center justify-between mt-1.5">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Phone className="h-3 w-3" />
-                <span className="text-xs">{lead.telefone}</span>
-              </div>
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
+    <div className="bg-card rounded-lg border border-border/60 shadow-sm hover:shadow-md transition-shadow p-3 cursor-grab active:cursor-grabbing">
+      <div className="flex items-start gap-2">
+        <GripVertical className="h-4 w-4 text-muted-foreground/40 mt-0.5 shrink-0" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold truncate">{lead.nome}</p>
+          <p className="text-base font-bold text-primary mt-0.5">{formatCurrency(lead.valor)}</p>
+          {lead.observacao && (
+            <p className="text-xs text-muted-foreground mt-1 truncate flex items-center gap-1">
+              <MessageSquare className="h-3 w-3 shrink-0" /> {lead.observacao}
+            </p>
+          )}
+          {hasFollowUp && (
+            <p className={cn("text-xs mt-1 flex items-center gap-1", isOverdue ? "text-destructive font-medium" : "text-muted-foreground")}>
+              <CalendarDays className="h-3 w-3 shrink-0" />
+              {format(new Date(lead.follow_up_date!), "dd/MM/yyyy")}
+              {isOverdue && " (atrasado)"}
+            </p>
+          )}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Phone className="h-3 w-3" />
+              <span className="text-xs">{lead.telefone}</span>
+            </div>
+            <div className="flex gap-0.5">
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary"
+                onClick={(e) => { e.stopPropagation(); onView(lead); }}>
+                <Eye className="h-3 w-3" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
                 <Trash2 className="h-3 w-3" />
               </Button>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
-function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: string) => void }) {
+function DraggableLeadCard({ lead, onDelete, onView }: { lead: CrmLead; onDelete: (id: string) => void; onView: (lead: CrmLead) => void }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: lead.id });
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -91,12 +119,10 @@ function DraggableLeadCard({ lead, onDelete }: { lead: CrmLead; onDelete: (id: s
   };
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      <LeadCard lead={lead} onDelete={onDelete} />
+      <LeadCard lead={lead} onDelete={onDelete} onView={onView} />
     </div>
   );
 }
-
-const emptyLeadForm = { nome: "", valor: 0, telefone: "", email: "", status: "novo" as CrmLeadStatus, observacao: "", follow_up_date: null as string | null };
 
 // ── Main Component ──
 const Clientes = () => {
