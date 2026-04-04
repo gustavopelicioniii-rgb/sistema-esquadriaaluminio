@@ -12,8 +12,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-import logoLight from "@/assets/logo-light.jpg";
-import logoDark from "@/assets/logo-dark.jpg";
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
