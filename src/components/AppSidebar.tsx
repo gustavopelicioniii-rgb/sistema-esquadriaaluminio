@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, UserCheck, Calculator, Receipt, Package, Upload, Kanban,
+  UserCog, UserCheck, Calculator, Receipt, Package, Upload, Kanban, Bell,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -11,15 +11,15 @@ import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-
+import { useNotifications } from "@/hooks/use-notifications";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
-  
-  { title: "CRM", url: "/crm", icon: Kanban },
+  { title: "CRM", url: "/crm", icon: Kanban, badgeKey: "crm" as const },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
-  { title: "Serviços", url: "/producao", icon: Wrench },
+  { title: "Serviços", url: "/producao", icon: Wrench, badgeKey: "producao" as const },
   { title: "Cálculo Esquadrias", url: "/calculo-esquadrias", icon: Calculator },
   { title: "Relação materiais", url: "/relacao-materiais", icon: ClipboardList },
   { title: "Plano de corte", url: "/plano-corte", icon: Scissors },
@@ -27,8 +27,8 @@ const menuItems = [
   { title: "Agenda", url: "/agenda", icon: CalendarDays },
   { title: "Produtos", url: "/produtos", icon: ShoppingBag },
   { title: "Preço dos itens", url: "/preco-itens", icon: DollarSign },
-  { title: "Estoque", url: "/estoque", icon: Package },
-  { title: "Financeiro", url: "/financeiro", icon: DollarSign },
+  { title: "Estoque", url: "/estoque", icon: Package, badgeKey: "estoque" as const },
+  { title: "Financeiro", url: "/financeiro", icon: DollarSign, badgeKey: "pagamento" as const },
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
   { title: "Mapa", url: "/mapa", icon: MapPin },
@@ -41,7 +41,7 @@ export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  
+  const { badgeCounts, unreadCount } = useNotifications();
 
   const isActive = (url: string) =>
     location.pathname === url ||
@@ -74,21 +74,70 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/"}
-                      className="hover:bg-sidebar-accent/50 transition-colors"
-                      activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                const count = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                      <NavLink
+                        to={item.url}
+                        end={item.url === "/"}
+                        className="hover:bg-sidebar-accent/50 transition-colors"
+                        activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+                      >
+                        <div className="relative">
+                          <item.icon className="h-4 w-4" />
+                          {count > 0 && collapsed && (
+                            <span className="absolute -top-1.5 -right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground flex items-center justify-center">
+                              {count > 9 ? "9+" : count}
+                            </span>
+                          )}
+                        </div>
+                        {!collapsed && (
+                          <>
+                            <span className="flex-1">{item.title}</span>
+                            {count > 0 && (
+                              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive/15 text-destructive text-[10px] font-bold px-1">
+                                {count}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+
+              {/* Notificações link */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive("/notificacoes")}>
+                  <NavLink
+                    to="/notificacoes"
+                    className="hover:bg-sidebar-accent/50 transition-colors"
+                    activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+                  >
+                    <div className="relative">
+                      <Bell className="h-4 w-4" />
+                      {unreadCount > 0 && collapsed && (
+                        <span className="absolute -top-1.5 -right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground flex items-center justify-center">
+                          {unreadCount > 9 ? "9+" : unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1">Notificações</span>
+                        {unreadCount > 0 && (
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive/15 text-destructive text-[10px] font-bold px-1">
+                            {unreadCount}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

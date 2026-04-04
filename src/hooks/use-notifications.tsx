@@ -32,6 +32,27 @@ function daysUntil(dateStr: string): number {
   return Math.ceil((target.getTime() - now.getTime()) / 86400000);
 }
 
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    gain.gain.value = 0.15;
+
+    // Two-tone chime
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1175, ctx.currentTime + 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.35);
+  } catch {
+    // Audio not available
+  }
+}
+
 export function useNotifications() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -188,13 +209,14 @@ export function useNotifications() {
     const severityOrder = { critical: 0, warning: 1, info: 2 };
     allNotifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
-    // Show toast for new critical notifications
+    // Show toast + play sound for new critical notifications
     const criticalCount = allNotifs.filter((n) => n.severity === "critical").length;
     if (!initialLoadRef.current && criticalCount > prevCountRef.current) {
       const newCritical = allNotifs.filter((n) => n.severity === "critical");
       const newest = newCritical[0];
       if (newest) {
         toast.error(newest.msg, { description: newest.detail });
+        playNotificationSound();
       }
     }
     prevCountRef.current = criticalCount;
@@ -240,5 +262,12 @@ export function useNotifications() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return { notifications, unreadCount, loading, markAsRead, markAllAsRead };
+  const badgeCounts = {
+    estoque: notifications.filter((n) => n.type === "estoque" && !n.read).length,
+    pagamento: notifications.filter((n) => n.type === "pagamento" && !n.read).length,
+    producao: notifications.filter((n) => n.type === "producao" && !n.read).length,
+    crm: notifications.filter((n) => n.type === "crm" && !n.read).length,
+  };
+
+  return { notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts };
 }
