@@ -56,16 +56,18 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="sidebar-glass border-r-0">
       <div className="flex h-16 items-center gap-3 px-4 sidebar-header-glass">
-        {collapsed ? (
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shrink-0">
-            <span className="text-primary-foreground font-extrabold text-sm">AF</span>
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-[hsl(263,60%,70%)] shrink-0">
+          <span className="text-white font-extrabold text-sm">AF</span>
+        </div>
+        {!collapsed && (
+          <div className="flex flex-col leading-tight">
+            <span className="text-base font-extrabold text-sidebar-foreground tracking-tight">
+              Alu<span className="text-primary">Flow</span>
+            </span>
+            <span className="text-[10px] text-sidebar-muted font-medium">
+              Gestão Inteligente
+            </span>
           </div>
-        ) : (
-          <img
-            src={logoDark}
-            alt="AluFlow"
-            className="h-9 object-contain"
-          />
         )}
       </div>
       <SidebarContent className="pt-2">
