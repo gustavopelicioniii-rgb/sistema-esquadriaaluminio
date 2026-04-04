@@ -20,6 +20,7 @@ import ContratoDialog from "@/components/producao/ContratoDialog";
 import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
+import EditarServicoDialog from "@/components/producao/EditarServicoDialog";
 import { ExportButtons } from "@/components/ExportButtons";
 
 export interface Pedido {
@@ -321,8 +322,18 @@ const Producao = () => {
                             onClick={() => {
                               if (key === "tarefas") {
                                 setDetailPedido(op);
-                              } else if (["reagendar", "pagamentos", "contrato", "impressoes"].includes(key)) {
+                              } else if (["reagendar", "pagamentos", "contrato", "impressoes", "editar"].includes(key)) {
                                 openDialog(key as DialogType, op);
+                              } else if (key === "custos") {
+                                openDialog("pagamentos" as DialogType, op);
+                              } else if (key === "compartilhar") {
+                                const text = `Pedido ${op.pedido_num} - ${op.cliente} - ${op.etapa || ""}`;
+                                if (navigator.share) {
+                                  navigator.share({ title: `Pedido ${op.pedido_num}`, text });
+                                } else {
+                                  navigator.clipboard.writeText(text);
+                                  toast({ title: "Copiado!", description: "Informações do pedido copiadas." });
+                                }
                               } else {
                                 toast({ title: label, description: `Função "${label}" em desenvolvimento.` });
                               }
@@ -360,6 +371,7 @@ const Producao = () => {
           <ContratoDialog open={activeDialog === "contrato"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
           <ImpressoesDialog open={activeDialog === "impressoes"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
           <AlterarEtapaDialog open={activeDialog === "etapa"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
+          <EditarServicoDialog open={activeDialog === "editar"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
         </>
       )}
 
