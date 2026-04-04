@@ -352,47 +352,35 @@ interface CloneMapping {
   constantOffset: number; // ASA Mega has +1mm offset
 }
 
+function makeMapping(lineId: string, prefix: string, typPrefix: string, idPrefix: string, offset: number): CloneMapping {
+  return {
+    lineId, typologyPrefix: typPrefix, idPrefix,
+    profileCodeMap: (c) => {
+      if (c.startsWith("SU-")) return `${prefix}-${c.slice(3)}`;
+      if (c.startsWith("ISU-")) return `I${prefix}-${c.slice(4)}`;
+      if (c === "PAL" || c === "CM-200") return c;
+      return `${prefix}-${c}`;
+    },
+    constantOffset: offset,
+  };
+}
+
 const cloneMappings: CloneMapping[] = [
-  {
-    lineId: "line-mega25", typologyPrefix: "typ-mg25-", idPrefix: "mg25-",
-    profileCodeMap: (c) => {
-      if (c.startsWith("SU-")) return `25-${c.slice(3)}`;
-      if (c.startsWith("ISU-")) return `I25-${c.slice(4)}`;
-      if (c === "PAL") return "PAL";
-      return `25-${c}`;
-    },
-    constantOffset: -1, // Mega tends to be ~1mm more desconto
-  },
-  {
-    lineId: "line-hyspex25su", typologyPrefix: "typ-hy-", idPrefix: "hy-",
-    profileCodeMap: (c) => {
-      if (c.startsWith("SU-")) return `HY-${c.slice(3)}`;
-      if (c.startsWith("ISU-")) return `IHY-${c.slice(4)}`;
-      if (c === "PAL") return "PAL";
-      return `HY-${c}`;
-    },
-    constantOffset: 0,
-  },
-  {
-    lineId: "line-alumasa25", typologyPrefix: "typ-al-", idPrefix: "al-",
-    profileCodeMap: (c) => {
-      if (c.startsWith("SU-")) return `AL-${c.slice(3)}`;
-      if (c.startsWith("ISU-")) return `IAL-${c.slice(4)}`;
-      if (c === "PAL") return "PAL";
-      return `AL-${c}`;
-    },
-    constantOffset: 0,
-  },
-  {
-    lineId: "line-ds-suprema", typologyPrefix: "typ-ds-", idPrefix: "ds-",
-    profileCodeMap: (c) => {
-      if (c.startsWith("SU-")) return `DS-${c.slice(3)}`;
-      if (c.startsWith("ISU-")) return `IDS-${c.slice(4)}`;
-      if (c === "PAL") return "PAL";
-      return `DS-${c}`;
-    },
-    constantOffset: 0,
-  },
+  makeMapping("line-mega25", "25", "typ-mg25-", "mg25-", -1),
+  makeMapping("line-hyspex25su", "HY", "typ-hy-", "hy-", 0),
+  makeMapping("line-alumasa25", "AL", "typ-al-", "al-", 0),
+  makeMapping("line-ds-suprema", "DS", "typ-ds-", "ds-", 0),
+  makeMapping("line-brimetal25", "BR", "typ-br-", "br-", 0),
+  makeMapping("line-cba25", "CB", "typ-cb-", "cb-", 0),
+  makeMapping("line-real25", "RE", "typ-re-", "re-", 0),
+  makeMapping("line-lp25", "LP", "typ-lp-", "lp-", 0),
+  makeMapping("line-alux25", "AX", "typ-ax-", "ax-", 0),
+  makeMapping("line-albras25", "AB", "typ-ab-", "ab-", 0),
+  makeMapping("line-sm25", "SM", "typ-sm-", "sm-", 0),
+  makeMapping("line-prado25", "PR", "typ-pr-", "pr-", 0),
+  makeMapping("line-hydro25", "HB", "typ-hb-", "hb-", 0),
+  makeMapping("line-pin25", "PN", "typ-pn-", "pn-", 0),
+  makeMapping("line-suprema-plus", "SP", "typ-sp-", "sp-", 0),
 ];
 
 function cloneCutRules(source: CutRule[], mapping: CloneMapping): CutRule[] {
