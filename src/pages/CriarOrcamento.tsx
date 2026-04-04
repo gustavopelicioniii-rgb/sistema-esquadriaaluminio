@@ -41,6 +41,7 @@ const ferragemColors = [
 const CriarOrcamento = () => {
   const navigate = useNavigate();
   const createOrcamento = useCreateOrcamento();
+  const [cliente, setCliente] = useState("");
   const [tipo, setTipo] = useState("janela_correr_2f");
   const [largura, setLargura] = useState(200);
   const [altura, setAltura] = useState(120);
