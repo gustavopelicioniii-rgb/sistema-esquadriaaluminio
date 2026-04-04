@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -14,6 +14,17 @@ export interface AppNotification {
   read: boolean;
   severity: "info" | "warning" | "critical";
 }
+
+interface NotificationsContextValue {
+  notifications: AppNotification[];
+  unreadCount: number;
+  loading: boolean;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  badgeCounts: Record<NotificationType, number>;
+}
+
+const NotificationsContext = createContext<NotificationsContextValue | null>(null);
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -41,8 +52,6 @@ function playNotificationSound() {
     gain.connect(ctx.destination);
     osc.type = "sine";
     gain.gain.value = 0.15;
-
-    // Two-tone chime
     osc.frequency.setValueAtTime(880, ctx.currentTime);
     osc.frequency.setValueAtTime(1175, ctx.currentTime + 0.12);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
@@ -53,7 +62,7 @@ function playNotificationSound() {
   }
 }
 
-export function useNotifications() {
+export function NotificationsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,8 +71,6 @@ export function useNotifications() {
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
-
-    const now = new Date().toISOString().split("T")[0];
 
     const [estoqueRes, contasRes, pedidosRes, crmRes] = await Promise.all([
       supabase.from("estoque").select("id, produto, quantidade, minimo, updated_at").order("updated_at", { ascending: false }),
@@ -228,17 +235,15 @@ export function useNotifications() {
 
   useEffect(() => {
     fetchNotifications();
-    // Auto-refresh every 5 minutes
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
-  // Realtime subscriptions
+  // Single realtime subscription
   useEffect(() => {
     if (!user) return;
 
-    const channelName = `notifications-realtime-${crypto.randomUUID()}`;
-    const channel = supabase.channel(channelName);
+    const channel = supabase.channel(`notifications-singleton-${user.id}`);
 
     channel
       .on("postgres_changes", { event: "*", schema: "public", table: "estoque" }, () => fetchNotifications())
@@ -271,5 +276,15 @@ export function useNotifications() {
     crm: notifications.filter((n) => n.type === "crm" && !n.read).length,
   };
 
-  return { notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts };
+  return (
+    <NotificationsContext.Provider value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts }}>
+      {children}
+    </NotificationsContext.Provider>
+  );
+}
+
+export function useNotifications() {
+  const ctx = useContext(NotificationsContext);
+  if (!ctx) throw new Error("useNotifications must be used within NotificationsProvider");
+  return ctx;
 }
