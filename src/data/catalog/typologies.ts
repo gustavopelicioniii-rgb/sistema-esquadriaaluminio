@@ -103,6 +103,14 @@ const topTypologies: Typology[] = [
   { id: "typ-tp-jpiv", product_line_id: "line-top", name: "Janela Pivotante Fachada", category: "pivotante", subcategory: "pivotante", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1800, min_height_mm: 500, max_height_mm: 2500 },
   // Giro (Abre e Tomba)
   { id: "typ-tp-jgiro", product_line_id: "line-top", name: "Janela Giro-Tomba Fachada", category: "janela", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1600, min_height_mm: 500, max_height_mm: 2400 },
+  // Pele de Vidro (Curtain Wall)
+  { id: "typ-tp-cw1", product_line_id: "line-top", name: "Pele de Vidro 1 Módulo", category: "fachada", subcategory: "curtain_wall", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "Módulo unitário de fachada curtain wall com montantes e travessas estruturais", min_width_mm: 600, max_width_mm: 2000, min_height_mm: 1000, max_height_mm: 4000 },
+  { id: "typ-tp-cw2", product_line_id: "line-top", name: "Pele de Vidro 2 Módulos", category: "fachada", subcategory: "curtain_wall", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "2 módulos lado a lado com montante intermediário", min_width_mm: 1200, max_width_mm: 4000, min_height_mm: 1000, max_height_mm: 4000 },
+  { id: "typ-tp-cw3", product_line_id: "line-top", name: "Pele de Vidro 3 Módulos", category: "fachada", subcategory: "curtain_wall", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "3 módulos com 2 montantes intermediários", min_width_mm: 1800, max_width_mm: 6000, min_height_mm: 1000, max_height_mm: 4000 },
+  // Muro Cortina (montantes estruturais contínuos piso-a-piso)
+  { id: "typ-tp-mc1", product_line_id: "line-top", name: "Muro Cortina 1 Módulo", category: "fachada", subcategory: "muro_cortina", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "Montantes estruturais contínuos piso-a-piso com travessas intercaladas", min_width_mm: 600, max_width_mm: 2000, min_height_mm: 2500, max_height_mm: 6000 },
+  { id: "typ-tp-mc2", product_line_id: "line-top", name: "Muro Cortina 2 Módulos", category: "fachada", subcategory: "muro_cortina", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "2 módulos com montante central estrutural", min_width_mm: 1200, max_width_mm: 4000, min_height_mm: 2500, max_height_mm: 6000 },
+  { id: "typ-tp-mc2t", product_line_id: "line-top", name: "Muro Cortina 2 Módulos c/ Travessa", category: "fachada", subcategory: "muro_cortina", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, notes: "2 módulos com travessa horizontal intermediária dividindo em 2 panos", min_width_mm: 1200, max_width_mm: 4000, min_height_mm: 3000, max_height_mm: 6000 },
 ];
 
 // ============================================
