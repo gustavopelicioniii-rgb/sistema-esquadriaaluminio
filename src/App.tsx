@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { PageLoading } from "@/components/LoadingSpinner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
+import { NotificationsProvider } from "@/hooks/use-notifications";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const Login = lazy(() => import("./pages/Login"));
