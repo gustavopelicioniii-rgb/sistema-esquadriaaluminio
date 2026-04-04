@@ -34,6 +34,7 @@ export default function CalculoEsquadrias() {
   const [selectedTypology, setSelectedTypology] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
+  const [fabricanteOpen, setFabricanteOpen] = useState(false);
   const [quantity, setQuantity] = useState("1");
   const [result, setResult] = useState<CalculationOutput | null>(null);
   const [barResults, setBarResults] = useState<OptimizationResult[]>([]);
