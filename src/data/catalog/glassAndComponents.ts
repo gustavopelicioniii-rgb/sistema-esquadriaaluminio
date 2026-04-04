@@ -61,6 +61,15 @@ const topGlassRules: GlassRule[] = [
   { id: "gr-tp-jcam", typology_id: "typ-tp-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -115, height_reference: "H", height_constant_mm: -185, quantity: 4, glass_type: "temperado" },
   { id: "gr-tp-jpiv", typology_id: "typ-tp-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -200, height_reference: "H", height_constant_mm: -190, quantity: 1, glass_type: "temperado" },
   { id: "gr-tp-jgiro", typology_id: "typ-tp-jgiro", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -200, height_reference: "H", height_constant_mm: -190, quantity: 1, glass_type: "temperado" },
+  // Pele de Vidro (Curtain Wall)
+  { id: "gr-tp-cw1", typology_id: "typ-tp-cw1", glass_name: "Vidro Módulo", width_reference: "L", width_constant_mm: -50, height_reference: "H", height_constant_mm: -30, quantity: 1, glass_type: "laminado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  { id: "gr-tp-cw2", typology_id: "typ-tp-cw2", glass_name: "Vidro Módulo", width_reference: "L/2", width_constant_mm: -50, height_reference: "H", height_constant_mm: -30, quantity: 2, glass_type: "laminado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  { id: "gr-tp-cw3", typology_id: "typ-tp-cw3", glass_name: "Vidro Módulo", width_reference: "L/3", width_constant_mm: -50, height_reference: "H", height_constant_mm: -30, quantity: 3, glass_type: "laminado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  // Muro Cortina
+  { id: "gr-tp-mc1", typology_id: "typ-tp-mc1", glass_name: "Vidro Pano", width_reference: "L", width_constant_mm: -40, height_reference: "H", height_constant_mm: -20, quantity: 1, glass_type: "laminado", min_thickness_mm: 10, max_thickness_mm: 12 },
+  { id: "gr-tp-mc2", typology_id: "typ-tp-mc2", glass_name: "Vidro Pano", width_reference: "L/2", width_constant_mm: -40, height_reference: "H", height_constant_mm: -20, quantity: 2, glass_type: "laminado", min_thickness_mm: 10, max_thickness_mm: 12 },
+  { id: "gr-tp-mc2t-s", typology_id: "typ-tp-mc2t", glass_name: "Vidro Pano Superior", width_reference: "L/2", width_constant_mm: -40, height_reference: "H/2", height_constant_mm: -20, quantity: 2, glass_type: "laminado", min_thickness_mm: 10, max_thickness_mm: 12 },
+  { id: "gr-tp-mc2t-i", typology_id: "typ-tp-mc2t", glass_name: "Vidro Pano Inferior", width_reference: "L/2", width_constant_mm: -40, height_reference: "H/2", height_constant_mm: -20, quantity: 2, glass_type: "laminado", min_thickness_mm: 10, max_thickness_mm: 12 },
 ];
 
 // Clone glass rules for compatible lines
