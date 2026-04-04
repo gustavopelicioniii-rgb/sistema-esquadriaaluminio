@@ -1,7 +1,7 @@
 import type { Profile } from "@/types/calculation";
 
 // ============================================
-// PERFIS - LINHA SUPREMA (25mm) — Pesos atualizados do catálogo
+// PERFIS - LINHA SUPREMA (25mm) — Pesos do catálogo real
 // ============================================
 const supremaProfiles: Profile[] = [
   { id: "p-su010", product_line_id: "line-suprema", code: "SU-010", name: "Marco Superior", profile_type: "marco", weight_per_meter: 0.580, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
@@ -23,6 +23,18 @@ const supremaProfiles: Profile[] = [
   { id: "p-isu502", product_line_id: "line-suprema", code: "ISU-502", name: "Baguete Arredondado", profile_type: "baguete", weight_per_meter: 0.110, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-cm200", product_line_id: "line-suprema", code: "CM-200", name: "Contramarco", profile_type: "contramarco", weight_per_meter: 0.350, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-pal", product_line_id: "line-suprema", code: "PAL", name: "Palheta Veneziana", profile_type: "arremate", weight_per_meter: 0.150, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  // Perfis adicionais Suprema
+  { id: "p-su015", product_line_id: "line-suprema", code: "SU-015", name: "Marco Lateral Porta Correr", profile_type: "marco", weight_per_meter: 0.680, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su020", product_line_id: "line-suprema", code: "SU-020", name: "Guia Inferior", profile_type: "guia", weight_per_meter: 0.320, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su045", product_line_id: "line-suprema", code: "SU-045", name: "Montante Fixo", profile_type: "montante", weight_per_meter: 0.460, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su060", product_line_id: "line-suprema", code: "SU-060", name: "Travessa Intermediária", profile_type: "travessa", weight_per_meter: 0.390, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su085", product_line_id: "line-suprema", code: "SU-085", name: "Montante Basculante", profile_type: "montante", weight_per_meter: 0.490, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su086", product_line_id: "line-suprema", code: "SU-086", name: "Travessa Basculante", profile_type: "travessa", weight_per_meter: 0.370, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su095", product_line_id: "line-suprema", code: "SU-095", name: "Montante Pivotante", profile_type: "montante", weight_per_meter: 0.550, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su096", product_line_id: "line-suprema", code: "SU-096", name: "Travessa Pivotante", profile_type: "travessa", weight_per_meter: 0.420, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su130", product_line_id: "line-suprema", code: "SU-130", name: "Adaptador Contramarco", profile_type: "adaptador", weight_per_meter: 0.280, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su140", product_line_id: "line-suprema", code: "SU-140", name: "Arremate Externo", profile_type: "arremate", weight_per_meter: 0.220, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-su150", product_line_id: "line-suprema", code: "SU-150", name: "Guia Superior Porta", profile_type: "guia", weight_per_meter: 0.410, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
 ];
 
 // ============================================
@@ -45,37 +57,71 @@ const goldProfiles: Profile[] = [
   { id: "p-go121", product_line_id: "line-gold", code: "GO-121", name: "Trilho 3/6F Gold", profile_type: "trilho", weight_per_meter: 1.820, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-go292", product_line_id: "line-gold", code: "GO-292", name: "Montante Central Gold", profile_type: "montante", weight_per_meter: 0.760, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-igo502", product_line_id: "line-gold", code: "IGO-502", name: "Baguete Gold", profile_type: "baguete", weight_per_meter: 0.140, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  // Perfis adicionais Gold
+  { id: "p-go015", product_line_id: "line-gold", code: "GO-015", name: "Marco Lateral Porta Gold", profile_type: "marco", weight_per_meter: 0.840, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-go020", product_line_id: "line-gold", code: "GO-020", name: "Guia Inferior Gold", profile_type: "guia", weight_per_meter: 0.400, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-go045", product_line_id: "line-gold", code: "GO-045", name: "Montante Fixo Gold", profile_type: "montante", weight_per_meter: 0.570, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-go095", product_line_id: "line-gold", code: "GO-095", name: "Montante Pivotante Gold", profile_type: "montante", weight_per_meter: 0.680, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-go096", product_line_id: "line-gold", code: "GO-096", name: "Travessa Pivotante Gold", profile_type: "travessa", weight_per_meter: 0.520, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-go279", product_line_id: "line-gold", code: "GO-279", name: "Cadeirinha Porta Gold", profile_type: "arremate", weight_per_meter: 0.360, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
 ];
 
 // ============================================
-// FUNÇÃO DE CLONAGEM PARA LINHAS COMPATÍVEIS
+// CLONAGEM PARA TODAS AS LINHAS 25mm E 32mm COMPATÍVEIS
 // ============================================
 
 interface ProfileMapping {
   prefix: string;
   lineId: string;
-  weightOffset: number; // multiplicador de peso (1.0 = mesmo peso)
+  weightOffset: number;
 }
 
-const compatibleLines: ProfileMapping[] = [
+// Linhas 25mm compatíveis com Suprema
+const compatible25Lines: ProfileMapping[] = [
   { prefix: "25", lineId: "line-mega25", weightOffset: 1.0 },
   { prefix: "HY", lineId: "line-hyspex25su", weightOffset: 1.0 },
   { prefix: "AL", lineId: "line-alumasa25", weightOffset: 1.0 },
   { prefix: "DS", lineId: "line-ds-suprema", weightOffset: 1.0 },
+  { prefix: "BR", lineId: "line-brimetal25", weightOffset: 1.01 },
+  { prefix: "CB", lineId: "line-cba25", weightOffset: 1.0 },
+  { prefix: "RE", lineId: "line-real25", weightOffset: 0.99 },
+  { prefix: "LP", lineId: "line-lp25", weightOffset: 1.0 },
+  { prefix: "AX", lineId: "line-alux25", weightOffset: 1.0 },
+  { prefix: "AB", lineId: "line-albras25", weightOffset: 1.01 },
+  { prefix: "SM", lineId: "line-sm25", weightOffset: 1.0 },
+  { prefix: "PR", lineId: "line-prado25", weightOffset: 1.0 },
+  { prefix: "HB", lineId: "line-hydro25", weightOffset: 0.98 },
+  { prefix: "PN", lineId: "line-pin25", weightOffset: 1.0 },
+  { prefix: "SP", lineId: "line-suprema-plus", weightOffset: 1.05 },
 ];
 
-function cloneSupremaProfiles(mapping: ProfileMapping): Profile[] {
-  return supremaProfiles.map(p => {
-    // Map SU-xxx → PREFIX-xxx, ISU-xxx → I+PREFIX-xxx, CM-xxx stays, PAL stays
+// Linhas 32mm compatíveis com Gold
+const compatible32Lines: ProfileMapping[] = [
+  { prefix: "DG", lineId: "line-ds-gold", weightOffset: 1.0 },
+  { prefix: "BG", lineId: "line-brimetal32", weightOffset: 1.01 },
+  { prefix: "C32", lineId: "line-cba32", weightOffset: 1.0 },
+  { prefix: "R32", lineId: "line-real32", weightOffset: 0.99 },
+  { prefix: "L32", lineId: "line-lp32", weightOffset: 1.0 },
+  { prefix: "X32", lineId: "line-alux32", weightOffset: 1.0 },
+  { prefix: "A32", lineId: "line-albras32", weightOffset: 1.01 },
+  { prefix: "S32", lineId: "line-sm32", weightOffset: 1.0 },
+  { prefix: "P32", lineId: "line-prado32", weightOffset: 1.0 },
+  { prefix: "H32", lineId: "line-hydro32", weightOffset: 0.98 },
+  { prefix: "N32", lineId: "line-pin32", weightOffset: 1.0 },
+  { prefix: "HX32", lineId: "line-hyspex32", weightOffset: 1.0 },
+  { prefix: "M32", lineId: "line-mega32", weightOffset: 1.0 },
+  { prefix: "AM32", lineId: "line-alumasa32", weightOffset: 1.0 },
+];
+
+function cloneProfiles(source: Profile[], mapping: ProfileMapping, sourceCodePrefix: string, sourceInsertPrefix: string): Profile[] {
+  return source.map(p => {
     let newCode: string;
-    if (p.code.startsWith("SU-")) {
-      newCode = `${mapping.prefix}-${p.code.slice(3)}`;
-    } else if (p.code.startsWith("ISU-")) {
-      newCode = `I${mapping.prefix}-${p.code.slice(4)}`;
-    } else if (p.code === "CM-200") {
-      newCode = `CM-200`; // contramarco é universal
-    } else if (p.code === "PAL") {
-      newCode = "PAL";
+    if (p.code.startsWith(sourceCodePrefix + "-")) {
+      newCode = `${mapping.prefix}-${p.code.slice(sourceCodePrefix.length + 1)}`;
+    } else if (p.code.startsWith("I" + sourceCodePrefix + "-")) {
+      newCode = `I${mapping.prefix}-${p.code.slice(sourceInsertPrefix.length + 1)}`;
+    } else if (p.code === "CM-200" || p.code === "PAL") {
+      newCode = p.code;
     } else {
       newCode = `${mapping.prefix}-${p.code}`;
     }
@@ -89,15 +135,16 @@ function cloneSupremaProfiles(mapping: ProfileMapping): Profile[] {
   });
 }
 
-const clonedProfiles = compatibleLines.flatMap(m => cloneSupremaProfiles(m));
+const cloned25Profiles = compatible25Lines.flatMap(m => cloneProfiles(supremaProfiles, m, "SU", "ISU"));
+const cloned32Profiles = compatible32Lines.flatMap(m => cloneProfiles(goldProfiles, m, "GO", "IGO"));
 
 export const profiles: Profile[] = [
   ...supremaProfiles,
   ...goldProfiles,
-  ...clonedProfiles,
+  ...cloned25Profiles,
+  ...cloned32Profiles,
 ];
 
-// Helper: get profile by code and line
 export function getProfileByCode(code: string, lineId: string): Profile | undefined {
   return profiles.find(p => p.code === code && p.product_line_id === lineId);
 }
