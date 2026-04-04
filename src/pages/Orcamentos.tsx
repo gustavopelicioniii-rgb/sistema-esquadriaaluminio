@@ -233,6 +233,7 @@ const Orcamentos = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </PullToRefresh>
   );
 };
 
