@@ -9,6 +9,7 @@ import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List } from "lucide-r
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
+import { useCreateOrcamento } from "@/hooks/use-orcamentos";
 import { FramePreview } from "@/components/frame-preview";
 import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
@@ -39,6 +40,7 @@ const ferragemColors = [
 
 const CriarOrcamento = () => {
   const navigate = useNavigate();
+  const createOrcamento = useCreateOrcamento();
   const [cliente, setCliente] = useState("");
   const [tipo, setTipo] = useState("janela_correr_2f");
   const [largura, setLargura] = useState(200);
@@ -69,9 +71,36 @@ const CriarOrcamento = () => {
     return { areaM2, custo, lucro, subtotal, acrescimo: acrescimoVal, total };
   }, [tipo, largura, altura, quantidade, margemPercent, temAcrescimo, acrescimo]);
 
-  const handleSalvar = () => {
-    toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
-    navigate("/orcamentos");
+  const handleSalvar = async () => {
+    if (!calculo || !produtoSelecionado || !cliente) return;
+    try {
+      await createOrcamento.mutateAsync({
+        cliente,
+        produto: produtoSelecionado.label,
+        valor: calculo.total,
+        itens: {
+          tipo,
+          largura_cm: largura,
+          altura_cm: altura,
+          quantidade,
+          area_m2: calculo.areaM2,
+          custo: calculo.custo,
+          lucro: calculo.lucro,
+          subtotal: calculo.subtotal,
+          acrescimo: calculo.acrescimo,
+          margem_percent: margemPercent,
+          cor_aluminio: colorId,
+          cor_ferragem: ferragemColorId,
+          vidro_tipo: vidroTipo,
+          ambiente,
+          observacoes,
+        },
+      });
+      toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+      navigate("/orcamentos");
+    } catch (err: any) {
+      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+    }
   };
 
   const handleLimpar = () => {
