@@ -44,6 +44,25 @@ const goldGlassRules: GlassRule[] = [
   { id: "gr-go-jc6f", typology_id: "typ-go-jc6f", glass_name: "Vidro Folha", width_reference: "L/6", width_constant_mm: -97, height_reference: "H", height_constant_mm: -155, quantity: 6 },
 ];
 
+// ============================================
+// GLASS RULES - TOP (40mm)
+// ============================================
+const topGlassRules: GlassRule[] = [
+  { id: "gr-tp-jc2f", typology_id: "typ-tp-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -115, height_reference: "H", height_constant_mm: -185, quantity: 2, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-tp-jc4f", typology_id: "typ-tp-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -115, height_reference: "H", height_constant_mm: -185, quantity: 4, glass_type: "temperado" },
+  { id: "gr-tp-jma1", typology_id: "typ-tp-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -200, height_reference: "H", height_constant_mm: -190, quantity: 1, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-tp-pc2f", typology_id: "typ-tp-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -115, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  { id: "gr-tp-pc4f", typology_id: "typ-tp-pc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -115, height_reference: "H", height_constant_mm: -160, quantity: 4, glass_type: "temperado" },
+  { id: "gr-tp-pg1f", typology_id: "typ-tp-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -168, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  { id: "gr-tp-pg2f", typology_id: "typ-tp-pg2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -168, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado" },
+  { id: "gr-tp-vfix", typology_id: "typ-tp-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -95, height_reference: "H", height_constant_mm: -95, quantity: 1, glass_type: "temperado", min_thickness_mm: 8, max_thickness_mm: 12 },
+  { id: "gr-tp-pint-f", typology_id: "typ-tp-pint", glass_name: "Vidro Folha Correr", width_reference: "L/3", width_constant_mm: -115, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado" },
+  { id: "gr-tp-pint-x", typology_id: "typ-tp-pint", glass_name: "Vidro Fixo", width_reference: "L/3", width_constant_mm: -115, height_reference: "H", height_constant_mm: -95, quantity: 1, glass_type: "temperado" },
+  { id: "gr-tp-jcam", typology_id: "typ-tp-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -115, height_reference: "H", height_constant_mm: -185, quantity: 4, glass_type: "temperado" },
+  { id: "gr-tp-jpiv", typology_id: "typ-tp-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -200, height_reference: "H", height_constant_mm: -190, quantity: 1, glass_type: "temperado" },
+  { id: "gr-tp-jgiro", typology_id: "typ-tp-jgiro", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -200, height_reference: "H", height_constant_mm: -190, quantity: 1, glass_type: "temperado" },
+];
+
 // Clone glass rules for compatible lines
 function cloneGlassRules(rules: GlassRule[], prefixFrom: string, prefixTo: string, idPrefixFrom: string, idPrefixTo: string): GlassRule[] {
   return rules.map(r => ({
@@ -71,11 +90,19 @@ const cloned32GlassRules = clone32GlassLines.flatMap(([p]) =>
   cloneGlassRules(goldGlassRules, "typ-go-", `typ-${p}-`, "gr-go-", `gr-${p}-`)
 );
 
+// All 40mm lines clone from Top
+const clone40GlassLines = [["h40"], ["m40"]];
+const cloned40GlassRules = clone40GlassLines.flatMap(([p]) =>
+  cloneGlassRules(topGlassRules, "typ-tp-", `typ-${p}-`, "gr-tp-", `gr-${p}-`)
+);
+
 export const glassRules: GlassRule[] = [
   ...supremaGlassRules,
   ...goldGlassRules,
+  ...topGlassRules,
   ...cloned25GlassRules,
   ...cloned32GlassRules,
+  ...cloned40GlassRules,
 ];
 
 // ============================================
@@ -200,6 +227,51 @@ const goldComponents: TypologyComponent[] = [
   { id: "tc-go-pcam-02", typology_id: "typ-go-pcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
 ];
 
+// ============================================
+// COMPONENTS - TOP (40mm)
+// ============================================
+const topComponents: TypologyComponent[] = [
+  // Janela 2F Correr Top
+  { id: "tc-tp-jc2f-01", typology_id: "typ-tp-jc2f", component_name: "Roldana reforçada 40mm", component_code: "ROL-440", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-jc2f-02", typology_id: "typ-tp-jc2f", component_name: "Guia deslizante 40mm", component_type: "guia", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-jc2f-03", typology_id: "typ-tp-jc2f", component_name: "Fecho concha s/ chave", component_code: "FEC-636", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Janela 4F Top
+  { id: "tc-tp-jc4f-01", typology_id: "typ-tp-jc4f", component_name: "Roldana reforçada 40mm", component_code: "ROL-440", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-tp-jc4f-02", typology_id: "typ-tp-jc4f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Maxim-Ar 1F Top
+  { id: "tc-tp-jma1-01", typology_id: "typ-tp-jma1", component_name: "Braço maxim-ar reforçado", component_code: "BRA-740", component_type: "braço", quantity_formula: "2", unit: "un" },
+  { id: "tc-tp-jma1-02", typology_id: "typ-tp-jma1", component_name: "Fecho esquerdo maxim", component_code: "FEC-009", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-tp-jma1-03", typology_id: "typ-tp-jma1", component_name: "Haste de comando", component_code: "FEC-011", component_type: "haste", quantity_formula: "1", unit: "un" },
+  // Porta Correr 2F Top
+  { id: "tc-tp-pc2f-01", typology_id: "typ-tp-pc2f", component_name: "Roldana Porta reforçada", component_code: "ROL-440P", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-pc2f-02", typology_id: "typ-tp-pc2f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-tp-pc2f-03", typology_id: "typ-tp-pc2f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "2", unit: "un" },
+  // Porta Correr 4F Top
+  { id: "tc-tp-pc4f-01", typology_id: "typ-tp-pc4f", component_name: "Roldana Porta reforçada", component_code: "ROL-440P", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-tp-pc4f-02", typology_id: "typ-tp-pc4f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-tp-pc4f-03", typology_id: "typ-tp-pc4f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "4", unit: "un" },
+  // Porta Giro 1F Top
+  { id: "tc-tp-pg1f-01", typology_id: "typ-tp-pg1f", component_name: "Dobradiça reforçada", component_code: "DOB-840", component_type: "dobradica", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-pg1f-02", typology_id: "typ-tp-pg1f", component_name: "Maçaneta c/ espelho", component_code: "MAC-927", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-tp-pg1f-03", typology_id: "typ-tp-pg1f", component_name: "Contratesta", component_code: "CON-295", component_type: "contrafecho", quantity_formula: "1", unit: "un" },
+  // Porta Giro 2F Top
+  { id: "tc-tp-pg2f-01", typology_id: "typ-tp-pg2f", component_name: "Dobradiça reforçada", component_code: "DOB-840", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-tp-pg2f-02", typology_id: "typ-tp-pg2f", component_name: "Maçaneta c/ espelho", component_code: "MAC-927", component_type: "macaneta", quantity_formula: "2", unit: "un" },
+  // Vitrô Fixo Top - sem componentes móveis
+  // Porta Integrada Top
+  { id: "tc-tp-pint-01", typology_id: "typ-tp-pint", component_name: "Roldana Porta reforçada", component_code: "ROL-440P", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-pint-02", typology_id: "typ-tp-pint", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Camarão Top
+  { id: "tc-tp-jcam-01", typology_id: "typ-tp-jcam", component_name: "Dobradiça Camarão reforçada", component_type: "dobradica", quantity_formula: "10", unit: "un" },
+  { id: "tc-tp-jcam-02", typology_id: "typ-tp-jcam", component_name: "Carrinho Camarão reforçado", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  // Pivotante Top
+  { id: "tc-tp-jpiv-01", typology_id: "typ-tp-jpiv", component_name: "Pivô central reforçado", component_type: "dobradica", quantity_formula: "2", unit: "un" },
+  { id: "tc-tp-jpiv-02", typology_id: "typ-tp-jpiv", component_name: "Freio hidráulico", component_type: "freio", quantity_formula: "1", unit: "un" },
+  // Giro-Tomba Top
+  { id: "tc-tp-jgiro-01", typology_id: "typ-tp-jgiro", component_name: "Dobradiça com regulagem", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-tp-jgiro-02", typology_id: "typ-tp-jgiro", component_name: "Maçaneta Giro-Tomba", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+];
+
 // Clone components for compatible lines
 function cloneComponents(source: TypologyComponent[], prefixFrom: string, prefixTo: string, idFrom: string, idTo: string): TypologyComponent[] {
   return source.map(c => ({
@@ -227,9 +299,17 @@ const cloned32Components = clone32CompLines.flatMap(([p]) =>
   cloneComponents(goldComponents, "typ-go-", `typ-${p}-`, "tc-go-", `tc-${p}-`)
 );
 
+// All 40mm lines clone from Top
+const clone40CompLines = [["h40"], ["m40"]];
+const cloned40Components = clone40CompLines.flatMap(([p]) =>
+  cloneComponents(topComponents, "typ-tp-", `typ-${p}-`, "tc-tp-", `tc-${p}-`)
+);
+
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
   ...goldComponents,
+  ...topComponents,
   ...cloned25Components,
   ...cloned32Components,
+  ...cloned40Components,
 ];
