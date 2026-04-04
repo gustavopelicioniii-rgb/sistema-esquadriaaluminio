@@ -341,7 +341,7 @@ const goldCutRules: CutRule[] = [
 ];
 
 // ============================================
-// CLONE CUT RULES FOR COMPATIBLE LINES (Mega25, Hyspex, Alumasa, DS)
+// CLONE CUT RULES FOR COMPATIBLE LINES
 // ============================================
 
 interface CloneMapping {
@@ -349,15 +349,15 @@ interface CloneMapping {
   typologyPrefix: string;
   idPrefix: string;
   profileCodeMap: (code: string) => string;
-  constantOffset: number; // ASA Mega has +1mm offset
+  constantOffset: number;
 }
 
-function makeMapping(lineId: string, prefix: string, typPrefix: string, idPrefix: string, offset: number): CloneMapping {
+function makeMapping(lineId: string, prefix: string, typPrefix: string, idPrefix: string, offset: number, sourceCodePrefix: string, sourceInsertPrefix: string): CloneMapping {
   return {
     lineId, typologyPrefix: typPrefix, idPrefix,
     profileCodeMap: (c) => {
-      if (c.startsWith("SU-")) return `${prefix}-${c.slice(3)}`;
-      if (c.startsWith("ISU-")) return `I${prefix}-${c.slice(4)}`;
+      if (c.startsWith(sourceCodePrefix + "-")) return `${prefix}-${c.slice(sourceCodePrefix.length + 1)}`;
+      if (c.startsWith("I" + sourceCodePrefix + "-")) return `I${prefix}-${c.slice(sourceInsertPrefix.length + 1)}`;
       if (c === "PAL" || c === "CM-200") return c;
       return `${prefix}-${c}`;
     },
@@ -365,32 +365,51 @@ function makeMapping(lineId: string, prefix: string, typPrefix: string, idPrefix
   };
 }
 
-const cloneMappings: CloneMapping[] = [
-  makeMapping("line-mega25", "25", "typ-mg25-", "mg25-", -1),
-  makeMapping("line-hyspex25su", "HY", "typ-hy-", "hy-", 0),
-  makeMapping("line-alumasa25", "AL", "typ-al-", "al-", 0),
-  makeMapping("line-ds-suprema", "DS", "typ-ds-", "ds-", 0),
-  makeMapping("line-brimetal25", "BR", "typ-br-", "br-", 0),
-  makeMapping("line-cba25", "CB", "typ-cb-", "cb-", 0),
-  makeMapping("line-real25", "RE", "typ-re-", "re-", 0),
-  makeMapping("line-lp25", "LP", "typ-lp-", "lp-", 0),
-  makeMapping("line-alux25", "AX", "typ-ax-", "ax-", 0),
-  makeMapping("line-albras25", "AB", "typ-ab-", "ab-", 0),
-  makeMapping("line-sm25", "SM", "typ-sm-", "sm-", 0),
-  makeMapping("line-prado25", "PR", "typ-pr-", "pr-", 0),
-  makeMapping("line-hydro25", "HB", "typ-hb-", "hb-", 0),
-  makeMapping("line-pin25", "PN", "typ-pn-", "pn-", 0),
-  makeMapping("line-suprema-plus", "SP", "typ-sp-", "sp-", 0),
+// 25mm lines clone from Suprema
+const clone25Mappings: CloneMapping[] = [
+  makeMapping("line-mega25", "25", "typ-mg25-", "mg25-", -1, "SU", "ISU"),
+  makeMapping("line-hyspex25su", "HY", "typ-hy-", "hy-", 0, "SU", "ISU"),
+  makeMapping("line-alumasa25", "AL", "typ-al-", "al-", 0, "SU", "ISU"),
+  makeMapping("line-ds-suprema", "DS", "typ-ds-", "ds-", 0, "SU", "ISU"),
+  makeMapping("line-brimetal25", "BR", "typ-br-", "br-", 0, "SU", "ISU"),
+  makeMapping("line-cba25", "CB", "typ-cb-", "cb-", 0, "SU", "ISU"),
+  makeMapping("line-real25", "RE", "typ-re-", "re-", 0, "SU", "ISU"),
+  makeMapping("line-lp25", "LP", "typ-lp-", "lp-", 0, "SU", "ISU"),
+  makeMapping("line-alux25", "AX", "typ-ax-", "ax-", 0, "SU", "ISU"),
+  makeMapping("line-albras25", "AB", "typ-ab-", "ab-", 0, "SU", "ISU"),
+  makeMapping("line-sm25", "SM", "typ-sm-", "sm-", 0, "SU", "ISU"),
+  makeMapping("line-prado25", "PR", "typ-pr-", "pr-", 0, "SU", "ISU"),
+  makeMapping("line-hydro25", "HB", "typ-hb-", "hb-", 0, "SU", "ISU"),
+  makeMapping("line-pin25", "PN", "typ-pn-", "pn-", 0, "SU", "ISU"),
+  makeMapping("line-suprema-plus", "SP", "typ-sp-", "sp-", 0, "SU", "ISU"),
 ];
 
-function cloneCutRules(source: CutRule[], mapping: CloneMapping): CutRule[] {
+// 32mm lines clone from Gold
+const clone32Mappings: CloneMapping[] = [
+  makeMapping("line-ds-gold", "DG", "typ-dg-", "dg-", 0, "GO", "IGO"),
+  makeMapping("line-brimetal32", "BG", "typ-bg-", "bg-", 0, "GO", "IGO"),
+  makeMapping("line-cba32", "C32", "typ-c32-", "c32-", 0, "GO", "IGO"),
+  makeMapping("line-real32", "R32", "typ-r32-", "r32-", 0, "GO", "IGO"),
+  makeMapping("line-lp32", "L32", "typ-l32-", "l32-", 0, "GO", "IGO"),
+  makeMapping("line-alux32", "X32", "typ-x32-", "x32-", 0, "GO", "IGO"),
+  makeMapping("line-albras32", "A32", "typ-a32-", "a32-", 0, "GO", "IGO"),
+  makeMapping("line-sm32", "S32", "typ-s32-", "s32-", 0, "GO", "IGO"),
+  makeMapping("line-prado32", "P32", "typ-p32-", "p32-", 0, "GO", "IGO"),
+  makeMapping("line-hydro32", "H32", "typ-h32-", "h32-", 0, "GO", "IGO"),
+  makeMapping("line-pin32", "N32", "typ-n32-", "n32-", 0, "GO", "IGO"),
+  makeMapping("line-hyspex32", "HX32", "typ-hx32-", "hx32-", 0, "GO", "IGO"),
+  makeMapping("line-mega32", "M32", "typ-m32-", "m32-", 0, "GO", "IGO"),
+  makeMapping("line-alumasa32", "AM32", "typ-am32-", "am32-", 0, "GO", "IGO"),
+];
+
+function cloneCutRules(source: CutRule[], mapping: CloneMapping, sourceIdPrefix: string, sourceTypPrefix: string): CutRule[] {
   return source.map(rule => {
     const newProfileCode = mapping.profileCodeMap(rule.profile_code ?? "");
     const profile = profiles.find(p => p.code === newProfileCode && p.product_line_id === mapping.lineId);
     return {
       ...rule,
-      id: rule.id.replace("su-", mapping.idPrefix),
-      typology_id: rule.typology_id.replace("typ-su-", mapping.typologyPrefix),
+      id: rule.id.replace(sourceIdPrefix, mapping.idPrefix),
+      typology_id: rule.typology_id.replace(sourceTypPrefix, mapping.typologyPrefix),
       profile_id: profile?.id ?? rule.profile_id,
       profile_code: newProfileCode,
       weight_per_meter: profile?.weight_per_meter ?? rule.weight_per_meter,
@@ -399,10 +418,12 @@ function cloneCutRules(source: CutRule[], mapping: CloneMapping): CutRule[] {
   });
 }
 
-const clonedCutRules = cloneMappings.flatMap(m => cloneCutRules(supremaCutRules, m));
+const cloned25CutRules = clone25Mappings.flatMap(m => cloneCutRules(supremaCutRules, m, "su-", "typ-su-"));
+const cloned32CutRules = clone32Mappings.flatMap(m => cloneCutRules(goldCutRules, m, "go-", "typ-go-"));
 
 export const cutRules: CutRule[] = [
   ...supremaCutRules,
   ...goldCutRules,
-  ...clonedCutRules,
+  ...cloned25CutRules,
+  ...cloned32CutRules,
 ];
