@@ -427,8 +427,8 @@ const CriarOrcamento = () => {
                 className="gap-2"
                 onClick={async () => {
                   if (!calculo || !produtoSelecionado) return;
-                  sonnerToast.info("Gerando PDF...");
-                  await generateBudgetPDF(
+                  sonnerToast.info("Gerando PDF profissional...");
+                  await generateProfessionalBudgetPDF(
                     {
                       cliente,
                       produto: produtoSelecionado.label,
@@ -439,6 +439,12 @@ const CriarOrcamento = () => {
                       custoTotal: calculo.custo,
                       margem: calculo.lucro,
                       valorFinal: calculo.total,
+                      corAluminio: getColorById(colorId).name,
+                      corFerragem: ferragemColors.find(c => c.id === ferragemColorId)?.name,
+                      tipoVidro: vidroTipo,
+                      ambiente,
+                      observacoes,
+                      validadeDias: 15,
                     },
                     "budget-frame-preview"
                   );
