@@ -21,6 +21,7 @@ const DEFAULT_LIMITS: Record<string, { minW: number; maxW: number; minH: number;
   camarao:    { minW: 800, maxW: 6000, minH: 400, maxH: 3000 },
   pivotante:  { minW: 600, maxW: 2000, minH: 1800, maxH: 3500 },
   basculante: { minW: 300, maxW: 2500, minH: 200, maxH: 1500 },
+  fachada:    { minW: 500, maxW: 12000, minH: 500, maxH: 6000 },
 };
 
 /**
