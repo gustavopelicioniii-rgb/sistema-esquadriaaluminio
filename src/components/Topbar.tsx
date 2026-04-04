@@ -188,7 +188,9 @@ export function Topbar() {
                         n.read ? "opacity-50" : ""
                       }`}
                     >
-                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full bg-muted flex items-center justify-center ${config.color}`}>
+                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full flex items-center justify-center ${
+                        n.severity === "critical" ? "bg-destructive/10" : n.severity === "warning" ? "bg-warning/10" : "bg-muted"
+                      } ${config.color}`}>
                         <Icon className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0 flex-1">
