@@ -3,17 +3,15 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Topbar } from "@/components/Topbar";
 import { AnimatedOutlet } from "@/components/AnimatedOutlet";
 import { BottomNav } from "@/components/BottomNav";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useSwipeNavigation } from "@/hooks/use-swipe-navigation";
 
 export function AppLayout() {
-  const isMobile = useIsMobile();
   const { onTouchStart, onTouchEnd } = useSwipeNavigation();
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full app-bg">
-        {!isMobile && <AppSidebar />}
+        <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <Topbar />
           <main
