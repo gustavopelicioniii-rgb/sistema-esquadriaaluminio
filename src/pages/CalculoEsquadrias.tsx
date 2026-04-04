@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye } from "lucide-react";
+import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { calculateTypology, validateDimensions } from "@/lib/calculation-engine";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -31,6 +34,7 @@ export default function CalculoEsquadrias() {
   const [selectedTypology, setSelectedTypology] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
+  const [fabricanteOpen, setFabricanteOpen] = useState(false);
   const [quantity, setQuantity] = useState("1");
   const [result, setResult] = useState<CalculationOutput | null>(null);
   const [barResults, setBarResults] = useState<OptimizationResult[]>([]);
@@ -165,20 +169,46 @@ export default function CalculoEsquadrias() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
               <Label>Fabricante</Label>
-              <Select
-                value={productLines.find(l => l.id === selectedLine)?.manufacturer_id ?? ""}
-                onValueChange={(mfgId) => {
-                  const firstLine = productLines.find(l => l.manufacturer_id === mfgId);
-                  if (firstLine) { setSelectedLine(firstLine.id); setSelectedTypology(""); setResult(null); }
-                }}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {manufacturers.map(m => (
-                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={fabricanteOpen} onOpenChange={setFabricanteOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={fabricanteOpen}
+                    className="w-full justify-between font-normal"
+                  >
+                    {manufacturers.find(m => m.id === (productLines.find(l => l.id === selectedLine)?.manufacturer_id))?.name ?? "Selecione..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[240px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Buscar fabricante..." />
+                    <CommandList>
+                      <CommandEmpty>Nenhum fabricante encontrado.</CommandEmpty>
+                      <CommandGroup>
+                        {manufacturers.filter(m => m.active).map(m => {
+                          const isSelected = m.id === (productLines.find(l => l.id === selectedLine)?.manufacturer_id);
+                          return (
+                            <CommandItem
+                              key={m.id}
+                              value={m.name}
+                              onSelect={() => {
+                                const firstLine = productLines.find(l => l.manufacturer_id === m.id);
+                                if (firstLine) { setSelectedLine(firstLine.id); setSelectedTypology(""); setResult(null); }
+                                setFabricanteOpen(false);
+                              }}
+                            >
+                              <Check className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")} />
+                              {m.name}
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label>Linha</Label>
