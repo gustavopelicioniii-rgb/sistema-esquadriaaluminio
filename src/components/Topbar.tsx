@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X } from "lucide-react";
+import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
@@ -46,6 +46,7 @@ const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color:
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
   pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
   producao: { icon: Wrench, color: "text-primary", route: "/producao" },
+  crm: { icon: Users, color: "text-accent-foreground", route: "/crm" },
 };
 
 const typeBadgeColors: Record<string, string> = {
@@ -187,7 +188,9 @@ export function Topbar() {
                         n.read ? "opacity-50" : ""
                       }`}
                     >
-                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full bg-muted flex items-center justify-center ${config.color}`}>
+                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full flex items-center justify-center ${
+                        n.severity === "critical" ? "bg-destructive/10" : n.severity === "warning" ? "bg-warning/10" : "bg-muted"
+                      } ${config.color}`}>
                         <Icon className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0 flex-1">

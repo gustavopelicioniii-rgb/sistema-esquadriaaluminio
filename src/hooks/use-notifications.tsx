@@ -1,14 +1,18 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
+
+export type NotificationType = "estoque" | "pagamento" | "producao" | "crm";
 
 export interface AppNotification {
   id: string;
-  type: "estoque" | "pagamento" | "producao";
+  type: NotificationType;
   msg: string;
   detail?: string;
   time: string;
   read: boolean;
+  severity: "info" | "warning" | "critical";
 }
 
 function timeAgo(dateStr: string): string {
@@ -21,76 +25,190 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)}d`;
 }
 
+function daysUntil(dateStr: string): number {
+  const target = new Date(dateStr + "T00:00:00");
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.ceil((target.getTime() - now.getTime()) / 86400000);
+}
+
 export function useNotifications() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
+  const prevCountRef = useRef(0);
+  const initialLoadRef = useRef(true);
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
 
     const now = new Date().toISOString().split("T")[0];
 
-    // Fetch low stock items
-    const { data: estoque } = await supabase
-      .from("estoque")
-      .select("id, produto, quantidade, minimo, updated_at")
-      .order("updated_at", { ascending: false });
+    const [estoqueRes, contasRes, pedidosRes, crmRes] = await Promise.all([
+      supabase.from("estoque").select("id, produto, quantidade, minimo, updated_at").order("updated_at", { ascending: false }),
+      supabase.from("contas_financeiras").select("id, cliente, valor, vencimento, updated_at, tipo").eq("status", "pendente").order("vencimento", { ascending: true }),
+      supabase.from("pedidos").select("id, pedido_num, cliente, etapa, status, previsao, updated_at").order("updated_at", { ascending: false }),
+      supabase.from("crm_leads").select("id, nome, status, follow_up_date, valor, updated_at").order("updated_at", { ascending: false }),
+    ]);
 
-    const lowStock: AppNotification[] = (estoque ?? [])
+    const allNotifs: AppNotification[] = [];
+
+    // === ESTOQUE BAIXO ===
+    (estoqueRes.data ?? [])
       .filter((e) => e.quantidade <= e.minimo)
-      .map((e) => ({
-        id: `est-${e.id}`,
-        type: "estoque" as const,
-        msg: `Estoque baixo: ${e.produto}`,
-        detail: `${e.quantidade}/${e.minimo} unid.`,
-        time: timeAgo(e.updated_at),
-        read: false,
-      }));
+      .forEach((e) => {
+        const ratio = e.minimo > 0 ? e.quantidade / e.minimo : 0;
+        allNotifs.push({
+          id: `est-${e.id}`,
+          type: "estoque",
+          msg: `Estoque baixo: ${e.produto}`,
+          detail: `${e.quantidade}/${e.minimo} unid.`,
+          time: timeAgo(e.updated_at),
+          read: false,
+          severity: ratio <= 0.25 ? "critical" : "warning",
+        });
+      });
 
-    // Fetch overdue payments
-    const { data: contas } = await supabase
-      .from("contas_financeiras")
-      .select("id, cliente, valor, vencimento, updated_at")
-      .eq("status", "pendente")
-      .lte("vencimento", now)
-      .order("vencimento", { ascending: true });
+    // === CONTAS VENCIDAS E PRÓXIMAS DO VENCIMENTO ===
+    (contasRes.data ?? []).forEach((c) => {
+      const days = daysUntil(c.vencimento);
+      const valor = `R$ ${Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      const tipoLabel = c.tipo === "receber" ? "A receber" : "A pagar";
 
-    const overdue: AppNotification[] = (contas ?? []).map((c) => ({
-      id: `fin-${c.id}`,
-      type: "pagamento" as const,
-      msg: `Pagamento vencido: ${c.cliente}`,
-      detail: `R$ ${Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
-      time: timeAgo(c.updated_at),
-      read: false,
-    }));
+      if (days < 0) {
+        allNotifs.push({
+          id: `fin-${c.id}`,
+          type: "pagamento",
+          msg: `${tipoLabel} vencido: ${c.cliente}`,
+          detail: `${valor} · venceu há ${Math.abs(days)} dia(s)`,
+          time: timeAgo(c.updated_at),
+          read: false,
+          severity: "critical",
+        });
+      } else if (days <= 3) {
+        allNotifs.push({
+          id: `fin-${c.id}`,
+          type: "pagamento",
+          msg: `${tipoLabel} vence em breve: ${c.cliente}`,
+          detail: `${valor} · vence em ${days} dia(s)`,
+          time: timeAgo(c.updated_at),
+          read: false,
+          severity: "warning",
+        });
+      }
+    });
 
-    // Fetch recent production updates (last 7 days)
+    // === PEDIDOS ATRASADOS ===
+    (pedidosRes.data ?? [])
+      .filter((p) => p.status === "em_andamento" && p.previsao)
+      .forEach((p) => {
+        const days = daysUntil(p.previsao!);
+        if (days < 0) {
+          allNotifs.push({
+            id: `ped-atraso-${p.id}`,
+            type: "producao",
+            msg: `Pedido #${p.pedido_num} atrasado`,
+            detail: `${p.cliente} · ${Math.abs(days)} dia(s) de atraso`,
+            time: timeAgo(p.updated_at),
+            read: false,
+            severity: "critical",
+          });
+        } else if (days <= 2) {
+          allNotifs.push({
+            id: `ped-prazo-${p.id}`,
+            type: "producao",
+            msg: `Pedido #${p.pedido_num} prazo próximo`,
+            detail: `${p.cliente} · entrega em ${days} dia(s)`,
+            time: timeAgo(p.updated_at),
+            read: false,
+            severity: "warning",
+          });
+        }
+      });
+
+    // === PRODUÇÃO RECENTE ===
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-    const { data: pedidos } = await supabase
-      .from("pedidos")
-      .select("id, pedido_num, cliente, etapa, updated_at")
-      .gte("updated_at", weekAgo)
-      .order("updated_at", { ascending: false })
-      .limit(10);
+    (pedidosRes.data ?? [])
+      .filter((p) => p.etapa && new Date(p.updated_at) >= new Date(weekAgo))
+      .slice(0, 5)
+      .forEach((p) => {
+        allNotifs.push({
+          id: `prod-${p.id}`,
+          type: "producao",
+          msg: `Pedido #${p.pedido_num} - ${p.cliente}`,
+          detail: `Etapa: ${p.etapa}`,
+          time: timeAgo(p.updated_at),
+          read: false,
+          severity: "info",
+        });
+      });
 
-    const production: AppNotification[] = (pedidos ?? [])
-      .filter((p) => p.etapa)
-      .map((p) => ({
-        id: `prod-${p.id}`,
-        type: "producao" as const,
-        msg: `Pedido #${p.pedido_num} - ${p.cliente}`,
-        detail: `Etapa: ${p.etapa}`,
-        time: timeAgo(p.updated_at),
-        read: false,
-      }));
+    // === CRM FOLLOW-UPS ===
+    (crmRes.data ?? []).forEach((lead) => {
+      if (!lead.follow_up_date) return;
+      const days = daysUntil(lead.follow_up_date);
+      const valor = Number(lead.valor) > 0
+        ? ` · R$ ${Number(lead.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+        : "";
 
-    setNotifications([...lowStock, ...overdue, ...production]);
+      if (days < 0) {
+        allNotifs.push({
+          id: `crm-${lead.id}`,
+          type: "crm",
+          msg: `Follow-up atrasado: ${lead.nome}`,
+          detail: `${Math.abs(days)} dia(s) de atraso${valor}`,
+          time: timeAgo(lead.updated_at),
+          read: false,
+          severity: "critical",
+        });
+      } else if (days <= 1) {
+        allNotifs.push({
+          id: `crm-${lead.id}`,
+          type: "crm",
+          msg: `Follow-up hoje: ${lead.nome}`,
+          detail: `Acompanhamento pendente${valor}`,
+          time: timeAgo(lead.updated_at),
+          read: false,
+          severity: "warning",
+        });
+      } else if (days <= 3) {
+        allNotifs.push({
+          id: `crm-${lead.id}`,
+          type: "crm",
+          msg: `Follow-up em ${days} dias: ${lead.nome}`,
+          detail: `Acompanhamento agendado${valor}`,
+          time: timeAgo(lead.updated_at),
+          read: false,
+          severity: "info",
+        });
+      }
+    });
+
+    // Sort: critical first, then warning, then info
+    const severityOrder = { critical: 0, warning: 1, info: 2 };
+    allNotifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
+    // Show toast for new critical notifications
+    const criticalCount = allNotifs.filter((n) => n.severity === "critical").length;
+    if (!initialLoadRef.current && criticalCount > prevCountRef.current) {
+      const newCritical = allNotifs.filter((n) => n.severity === "critical");
+      const newest = newCritical[0];
+      if (newest) {
+        toast.error(newest.msg, { description: newest.detail });
+      }
+    }
+    prevCountRef.current = criticalCount;
+    initialLoadRef.current = false;
+
+    setNotifications(allNotifs);
     setLoading(false);
   }, [user]);
 
   useEffect(() => {
     fetchNotifications();
+    // Auto-refresh every 5 minutes
+    const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [fetchNotifications]);
 
   // Realtime subscriptions
@@ -102,6 +220,7 @@ export function useNotifications() {
       .on("postgres_changes", { event: "*", schema: "public", table: "estoque" }, () => fetchNotifications())
       .on("postgres_changes", { event: "*", schema: "public", table: "contas_financeiras" }, () => fetchNotifications())
       .on("postgres_changes", { event: "*", schema: "public", table: "pedidos" }, () => fetchNotifications())
+      .on("postgres_changes", { event: "*", schema: "public", table: "crm_leads" }, () => fetchNotifications())
       .subscribe();
 
     return () => {
