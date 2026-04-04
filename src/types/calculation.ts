@@ -34,8 +34,8 @@ export interface Typology {
   id: string;
   product_line_id: string;
   name: string;
-  category: 'janela' | 'porta' | 'vitro' | 'veneziana' | 'maxim_ar' | 'camarao' | 'pivotante' | 'basculante';
-  subcategory?: 'correr' | 'giro' | 'maxim_ar' | 'camarao' | 'basculante' | 'pivotante' | 'fixo';
+  category: 'janela' | 'porta' | 'vitro' | 'veneziana' | 'maxim_ar' | 'camarao' | 'pivotante' | 'basculante' | 'fachada';
+  subcategory?: 'correr' | 'giro' | 'maxim_ar' | 'camarao' | 'basculante' | 'pivotante' | 'fixo' | 'curtain_wall' | 'muro_cortina';
   num_folhas: number;
   has_veneziana: boolean;
   has_bandeira: boolean;

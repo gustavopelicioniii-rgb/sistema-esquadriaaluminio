@@ -86,6 +86,12 @@ const topProfiles: Profile[] = [
   { id: "p-tp096", product_line_id: "line-top", code: "TP-096", name: "Travessa Pivotante Top", profile_type: "travessa", weight_per_meter: 0.640, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-tp292", product_line_id: "line-top", code: "TP-292", name: "Montante Central Top", profile_type: "montante", weight_per_meter: 0.920, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
   { id: "p-itp502", product_line_id: "line-top", code: "ITP-502", name: "Baguete Top", profile_type: "baguete", weight_per_meter: 0.170, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  // Perfis estruturais para Fachada (Curtain Wall / Muro Cortina)
+  { id: "p-tp601", product_line_id: "line-top", code: "TP-601", name: "Montante Estrutural Fachada", profile_type: "montante", weight_per_meter: 1.850, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp602", product_line_id: "line-top", code: "TP-602", name: "Travessa Estrutural Fachada", profile_type: "travessa", weight_per_meter: 1.420, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp603", product_line_id: "line-top", code: "TP-603", name: "Montante Intermediário Fachada", profile_type: "montante", weight_per_meter: 1.650, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp604", product_line_id: "line-top", code: "TP-604", name: "Perfil Pressão Vidro Fachada", profile_type: "baguete", weight_per_meter: 0.380, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp605", product_line_id: "line-top", code: "TP-605", name: "Travessa Intermediária Muro Cortina", profile_type: "travessa", weight_per_meter: 1.320, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
 ];
 
 // ============================================
