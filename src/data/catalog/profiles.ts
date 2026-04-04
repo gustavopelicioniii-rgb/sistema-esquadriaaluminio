@@ -67,7 +67,29 @@ const goldProfiles: Profile[] = [
 ];
 
 // ============================================
-// CLONAGEM PARA TODAS AS LINHAS 25mm E 32mm COMPATÍVEIS
+// PERFIS - LINHA TOP (40mm) — Fachadas
+// ============================================
+const topProfiles: Profile[] = [
+  { id: "p-tp010", product_line_id: "line-top", code: "TP-010", name: "Marco Superior Top", profile_type: "marco", weight_per_meter: 0.880, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp012", product_line_id: "line-top", code: "TP-012", name: "Marco Inferior / Trilho Top", profile_type: "trilho", weight_per_meter: 1.280, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp014", product_line_id: "line-top", code: "TP-014", name: "Marco Lateral Top", profile_type: "marco", weight_per_meter: 0.960, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp039", product_line_id: "line-top", code: "TP-039", name: "Montante Folha Top", profile_type: "montante", weight_per_meter: 0.750, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp053", product_line_id: "line-top", code: "TP-053", name: "Travessa Folha Top", profile_type: "travessa", weight_per_meter: 0.580, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp072", product_line_id: "line-top", code: "TP-072", name: "Montante Camarão Top", profile_type: "montante", weight_per_meter: 0.720, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp073", product_line_id: "line-top", code: "TP-073", name: "Travessa Camarão Top", profile_type: "travessa", weight_per_meter: 0.550, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp079", product_line_id: "line-top", code: "TP-079", name: "Montante Maxim-Ar Top", profile_type: "montante", weight_per_meter: 0.770, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp080", product_line_id: "line-top", code: "TP-080", name: "Travessa Maxim-Ar Top", profile_type: "travessa", weight_per_meter: 0.610, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp089", product_line_id: "line-top", code: "TP-089", name: "Marco Porta Giro Top", profile_type: "marco", weight_per_meter: 1.120, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp111", product_line_id: "line-top", code: "TP-111", name: "Montante Porta Giro Top", profile_type: "montante", weight_per_meter: 0.950, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp045", product_line_id: "line-top", code: "TP-045", name: "Montante Fixo Top", profile_type: "montante", weight_per_meter: 0.690, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp095", product_line_id: "line-top", code: "TP-095", name: "Montante Pivotante Top", profile_type: "montante", weight_per_meter: 0.830, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp096", product_line_id: "line-top", code: "TP-096", name: "Travessa Pivotante Top", profile_type: "travessa", weight_per_meter: 0.640, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-tp292", product_line_id: "line-top", code: "TP-292", name: "Montante Central Top", profile_type: "montante", weight_per_meter: 0.920, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-itp502", product_line_id: "line-top", code: "ITP-502", name: "Baguete Top", profile_type: "baguete", weight_per_meter: 0.170, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+];
+
+// ============================================
+// CLONAGEM PARA TODAS AS LINHAS COMPATÍVEIS
 // ============================================
 
 interface ProfileMapping {
@@ -113,6 +135,12 @@ const compatible32Lines: ProfileMapping[] = [
   { prefix: "AM32", lineId: "line-alumasa32", weightOffset: 1.0 },
 ];
 
+// Linhas 40mm compatíveis com Top
+const compatible40Lines: ProfileMapping[] = [
+  { prefix: "H40", lineId: "line-hydro40", weightOffset: 0.98 },
+  { prefix: "M40", lineId: "line-mega40", weightOffset: 1.0 },
+];
+
 function cloneProfiles(source: Profile[], mapping: ProfileMapping, sourceCodePrefix: string, sourceInsertPrefix: string): Profile[] {
   return source.map(p => {
     let newCode: string;
@@ -137,12 +165,15 @@ function cloneProfiles(source: Profile[], mapping: ProfileMapping, sourceCodePre
 
 const cloned25Profiles = compatible25Lines.flatMap(m => cloneProfiles(supremaProfiles, m, "SU", "ISU"));
 const cloned32Profiles = compatible32Lines.flatMap(m => cloneProfiles(goldProfiles, m, "GO", "IGO"));
+const cloned40Profiles = compatible40Lines.flatMap(m => cloneProfiles(topProfiles, m, "TP", "ITP"));
 
 export const profiles: Profile[] = [
   ...supremaProfiles,
   ...goldProfiles,
+  ...topProfiles,
   ...cloned25Profiles,
   ...cloned32Profiles,
+  ...cloned40Profiles,
 ];
 
 export function getProfileByCode(code: string, lineId: string): Profile | undefined {

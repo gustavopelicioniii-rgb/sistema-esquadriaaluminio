@@ -79,6 +79,33 @@ const goldTypologies: Typology[] = [
 ];
 
 // ============================================
+// 12 TIPOLOGIAS TOP (40mm) — Fachadas e alto padrão
+// ============================================
+const topTypologies: Typology[] = [
+  // Janelas de Correr
+  { id: "typ-tp-jc2f", product_line_id: "line-top", name: "Janela de Correr 2 Folhas", category: "janela", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 800, max_width_mm: 5000, min_height_mm: 500, max_height_mm: 3200 },
+  { id: "typ-tp-jc4f", product_line_id: "line-top", name: "Janela de Correr 4 Folhas", category: "janela", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1600, max_width_mm: 8000, min_height_mm: 500, max_height_mm: 3200 },
+  // Maxim-Ar
+  { id: "typ-tp-jma1", product_line_id: "line-top", name: "Janela Maxim-Ar 1 Folha", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 400, max_width_mm: 1800, min_height_mm: 400, max_height_mm: 1600 },
+  // Portas de Correr
+  { id: "typ-tp-pc2f", product_line_id: "line-top", name: "Porta de Correr 2 Folhas", category: "porta", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1200, max_width_mm: 6000, min_height_mm: 2000, max_height_mm: 3500 },
+  { id: "typ-tp-pc4f", product_line_id: "line-top", name: "Porta de Correr 4 Folhas", category: "porta", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 2400, max_width_mm: 8000, min_height_mm: 2000, max_height_mm: 3500 },
+  // Portas de Giro
+  { id: "typ-tp-pg1f", product_line_id: "line-top", name: "Porta de Giro 1 Folha", category: "porta", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 1400, min_height_mm: 2000, max_height_mm: 3500 },
+  { id: "typ-tp-pg2f", product_line_id: "line-top", name: "Porta de Giro 2 Folhas", category: "porta", subcategory: "giro", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1000, max_width_mm: 2800, min_height_mm: 2000, max_height_mm: 3500 },
+  // Vitrô Fixo (pano de vidro fachada)
+  { id: "typ-tp-vfix", product_line_id: "line-top", name: "Vitrô Fixo Fachada", category: "vitro", subcategory: "fixo", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 400, max_width_mm: 4000, min_height_mm: 400, max_height_mm: 4000 },
+  // Porta Integrada (Correr + Fixo)
+  { id: "typ-tp-pint", product_line_id: "line-top", name: "Porta Integrada (Correr + Fixo)", category: "porta", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, notes: "2 folhas de correr + 1 fixo", min_width_mm: 1800, max_width_mm: 8000, min_height_mm: 2000, max_height_mm: 3500 },
+  // Camarão
+  { id: "typ-tp-jcam", product_line_id: "line-top", name: "Porta Camarão Fachada", category: "camarao", subcategory: "camarao", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1200, max_width_mm: 6000, min_height_mm: 2000, max_height_mm: 3500 },
+  // Pivotante
+  { id: "typ-tp-jpiv", product_line_id: "line-top", name: "Janela Pivotante Fachada", category: "pivotante", subcategory: "pivotante", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1800, min_height_mm: 500, max_height_mm: 2500 },
+  // Giro (Abre e Tomba)
+  { id: "typ-tp-jgiro", product_line_id: "line-top", name: "Janela Giro-Tomba Fachada", category: "janela", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1600, min_height_mm: 500, max_height_mm: 2400 },
+];
+
+// ============================================
 // CLONE PARA TODAS AS LINHAS COMPATÍVEIS
 // ============================================
 interface LineClone {
@@ -123,6 +150,12 @@ const compatible32Lines: LineClone[] = [
   { lineId: "line-alumasa32", prefix: "am32" },
 ];
 
+// Linhas 40mm → clonam tipologias Top
+const compatible40Lines: LineClone[] = [
+  { lineId: "line-hydro40", prefix: "h40" },
+  { lineId: "line-mega40", prefix: "m40" },
+];
+
 function cloneTypologies(source: Typology[], clone: LineClone, sourcePrefix: string): Typology[] {
   return source.map(t => ({
     ...t,
@@ -133,10 +166,13 @@ function cloneTypologies(source: Typology[], clone: LineClone, sourcePrefix: str
 
 const cloned25Typologies = compatible25Lines.flatMap(c => cloneTypologies(supremaTypologies, c, "su"));
 const cloned32Typologies = compatible32Lines.flatMap(c => cloneTypologies(goldTypologies, c, "go"));
+const cloned40Typologies = compatible40Lines.flatMap(c => cloneTypologies(topTypologies, c, "tp"));
 
 export const typologies: Typology[] = [
   ...supremaTypologies,
   ...goldTypologies,
+  ...topTypologies,
   ...cloned25Typologies,
   ...cloned32Typologies,
+  ...cloned40Typologies,
 ];

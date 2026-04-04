@@ -341,6 +341,125 @@ const goldCutRules: CutRule[] = [
 ];
 
 // ============================================
+// TOP (40mm) - 12 TIPOLOGIAS FACHADA
+// ============================================
+const T = "line-top";
+
+const topCutRules: CutRule[] = [
+  // T1: Janela Correr 2F Top
+  cr("tp-jc2f-01","typ-tp-jc2f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jc2f-02","typ-tp-jc2f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jc2f-03","typ-tp-jc2f","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jc2f-04","typ-tp-jc2f","TP-039",T,"Montante Folha","montante","H",-168,90,90,"4",4),
+  cr("tp-jc2f-05","typ-tp-jc2f","TP-053",T,"Travessa Superior Folha","travessa_sup","L/2",-98,90,90,"2",5),
+  cr("tp-jc2f-06","typ-tp-jc2f","TP-053",T,"Travessa Inferior Folha","travessa_inf","L/2",-98,90,90,"2",6),
+  cr("tp-jc2f-07","typ-tp-jc2f","ITP-502",T,"Baguete Vertical","baguete_v","H",-185,90,90,"4",7),
+  cr("tp-jc2f-08","typ-tp-jc2f","ITP-502",T,"Baguete Horizontal","baguete_h","L/2",-115,90,90,"4",8),
+
+  // T2: Janela Correr 4F Top
+  cr("tp-jc4f-01","typ-tp-jc4f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jc4f-02","typ-tp-jc4f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jc4f-03","typ-tp-jc4f","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jc4f-04","typ-tp-jc4f","TP-039",T,"Montante Folha","montante","H",-168,90,90,"8",4),
+  cr("tp-jc4f-05","typ-tp-jc4f","TP-053",T,"Travessa Folha","travessa","L/4",-98,90,90,"8",5),
+  cr("tp-jc4f-06","typ-tp-jc4f","ITP-502",T,"Baguete V","baguete_v","H",-185,90,90,"8",6),
+  cr("tp-jc4f-07","typ-tp-jc4f","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"8",7),
+
+  // T3: Maxim-Ar 1F Top
+  cr("tp-jma1-01","typ-tp-jma1","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jma1-02","typ-tp-jma1","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jma1-03","typ-tp-jma1","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jma1-04","typ-tp-jma1","TP-079",T,"Montante Folha","montante","H",-168,90,90,"2",4),
+  cr("tp-jma1-05","typ-tp-jma1","TP-080",T,"Travessa Sup Folha","travessa_sup","L",-185,45,45,"1",5),
+  cr("tp-jma1-06","typ-tp-jma1","TP-080",T,"Travessa Inf Folha","travessa_inf","L",-185,45,45,"1",6),
+  cr("tp-jma1-07","typ-tp-jma1","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",7),
+  cr("tp-jma1-08","typ-tp-jma1","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",8),
+
+  // T4: Porta Correr 2F Top
+  cr("tp-pc2f-01","typ-tp-pc2f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-pc2f-02","typ-tp-pc2f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-pc2f-03","typ-tp-pc2f","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3),
+  cr("tp-pc2f-04","typ-tp-pc2f","TP-111",T,"Montante Folha Porta","montante","H",-145,90,90,"4",4),
+  cr("tp-pc2f-05","typ-tp-pc2f","TP-053",T,"Travessa Sup Folha","travessa_sup","L/2",-98,90,90,"2",5),
+  cr("tp-pc2f-06","typ-tp-pc2f","TP-053",T,"Travessa Inf Folha","travessa_inf","L/2",-98,90,90,"2",6),
+  cr("tp-pc2f-07","typ-tp-pc2f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"4",7),
+  cr("tp-pc2f-08","typ-tp-pc2f","ITP-502",T,"Baguete H","baguete_h","L/2",-115,90,90,"4",8),
+
+  // T5: Porta Correr 4F Top
+  cr("tp-pc4f-01","typ-tp-pc4f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-pc4f-02","typ-tp-pc4f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-pc4f-03","typ-tp-pc4f","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3),
+  cr("tp-pc4f-04","typ-tp-pc4f","TP-111",T,"Montante Folha Porta","montante","H",-145,90,90,"8",4),
+  cr("tp-pc4f-05","typ-tp-pc4f","TP-053",T,"Travessa Folha","travessa","L/4",-98,90,90,"8",5),
+  cr("tp-pc4f-06","typ-tp-pc4f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"8",6),
+  cr("tp-pc4f-07","typ-tp-pc4f","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"8",7),
+
+  // T6: Porta Giro 1F Top
+  cr("tp-pg1f-01","typ-tp-pg1f","TP-089",T,"Marco Superior","marco_sup","L",-12,90,90,"1",1),
+  cr("tp-pg1f-02","typ-tp-pg1f","TP-089",T,"Marco Lateral","marco_lat","H",-48,90,90,"2",2),
+  cr("tp-pg1f-03","typ-tp-pg1f","TP-111",T,"Montante Folha","montante","H",-140,45,45,"2",3),
+  cr("tp-pg1f-04","typ-tp-pg1f","TP-111",T,"Travessa Sup Folha","travessa_sup","L",-148,45,45,"1",4),
+  cr("tp-pg1f-05","typ-tp-pg1f","TP-111",T,"Travessa Inf Folha","travessa_inf","L",-148,45,45,"1",5),
+  cr("tp-pg1f-06","typ-tp-pg1f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"2",6),
+  cr("tp-pg1f-07","typ-tp-pg1f","ITP-502",T,"Baguete H","baguete_h","L",-168,90,90,"2",7),
+
+  // T7: Porta Giro 2F Top
+  cr("tp-pg2f-01","typ-tp-pg2f","TP-089",T,"Marco Superior","marco_sup","L",-12,90,90,"1",1),
+  cr("tp-pg2f-02","typ-tp-pg2f","TP-089",T,"Marco Lateral","marco_lat","H",-48,90,90,"2",2),
+  cr("tp-pg2f-03","typ-tp-pg2f","TP-111",T,"Montante Folha","montante","H",-140,45,45,"4",3),
+  cr("tp-pg2f-04","typ-tp-pg2f","TP-111",T,"Travessa Folha","travessa","L/2",-148,45,45,"4",4),
+  cr("tp-pg2f-05","typ-tp-pg2f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"4",5),
+  cr("tp-pg2f-06","typ-tp-pg2f","ITP-502",T,"Baguete H","baguete_h","L/2",-168,90,90,"4",6),
+
+  // T8: Vitrô Fixo Fachada Top
+  cr("tp-vfix-01","typ-tp-vfix","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-vfix-02","typ-tp-vfix","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-vfix-03","typ-tp-vfix","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-vfix-04","typ-tp-vfix","ITP-502",T,"Baguete V","baguete_v","H",-95,90,90,"2",4),
+  cr("tp-vfix-05","typ-tp-vfix","ITP-502",T,"Baguete H","baguete_h","L",-95,90,90,"2",5),
+
+  // T9: Porta Integrada Top
+  cr("tp-pint-01","typ-tp-pint","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-pint-02","typ-tp-pint","TP-012",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-pint-03","typ-tp-pint","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3),
+  cr("tp-pint-04","typ-tp-pint","TP-292",T,"Montante Fixo","montante_fixo","H",-78,90,90,"1",4),
+  cr("tp-pint-05","typ-tp-pint","TP-111",T,"Montante Folha","montante","H",-145,90,90,"4",5),
+  cr("tp-pint-06","typ-tp-pint","TP-053",T,"Travessa Folha","travessa","L/3",-98,90,90,"4",6),
+  cr("tp-pint-07","typ-tp-pint","ITP-502",T,"Baguete V Folha","baguete_v","H",-160,90,90,"4",7),
+  cr("tp-pint-08","typ-tp-pint","ITP-502",T,"Baguete H Folha","baguete_h","L/3",-115,90,90,"4",8),
+  cr("tp-pint-09","typ-tp-pint","ITP-502",T,"Baguete V Fixo","baguete_vf","H",-95,90,90,"2",9),
+  cr("tp-pint-10","typ-tp-pint","ITP-502",T,"Baguete H Fixo","baguete_hf","L/3",-115,90,90,"2",10),
+
+  // T10: Porta Camarão Fachada Top
+  cr("tp-jcam-01","typ-tp-jcam","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jcam-02","typ-tp-jcam","TP-012",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jcam-03","typ-tp-jcam","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jcam-04","typ-tp-jcam","TP-072",T,"Montante Camarão","montante","H",-168,90,90,"6",4),
+  cr("tp-jcam-05","typ-tp-jcam","TP-073",T,"Travessa Camarão","travessa","L/4",-98,90,90,"8",5),
+  cr("tp-jcam-06","typ-tp-jcam","ITP-502",T,"Baguete V","baguete_v","H",-185,90,90,"6",6),
+  cr("tp-jcam-07","typ-tp-jcam","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"6",7),
+
+  // T11: Janela Pivotante Fachada Top
+  cr("tp-jpiv-01","typ-tp-jpiv","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jpiv-02","typ-tp-jpiv","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jpiv-03","typ-tp-jpiv","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jpiv-04","typ-tp-jpiv","TP-095",T,"Montante Pivotante","montante","H",-168,90,90,"2",4),
+  cr("tp-jpiv-05","typ-tp-jpiv","TP-096",T,"Travessa Pivotante","travessa","L",-185,90,90,"2",5),
+  cr("tp-jpiv-06","typ-tp-jpiv","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",6),
+  cr("tp-jpiv-07","typ-tp-jpiv","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",7),
+
+  // T12: Janela Giro-Tomba Fachada Top
+  cr("tp-jgiro-01","typ-tp-jgiro","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1),
+  cr("tp-jgiro-02","typ-tp-jgiro","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2),
+  cr("tp-jgiro-03","typ-tp-jgiro","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3),
+  cr("tp-jgiro-04","typ-tp-jgiro","TP-111",T,"Montante Folha","montante","H",-168,45,45,"2",4),
+  cr("tp-jgiro-05","typ-tp-jgiro","TP-111",T,"Travessa Sup Folha","travessa_sup","L",-185,45,45,"1",5),
+  cr("tp-jgiro-06","typ-tp-jgiro","TP-111",T,"Travessa Inf Folha","travessa_inf","L",-185,45,45,"1",6),
+  cr("tp-jgiro-07","typ-tp-jgiro","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",7),
+  cr("tp-jgiro-08","typ-tp-jgiro","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",8),
+];
+
+// ============================================
 // CLONE CUT RULES FOR COMPATIBLE LINES
 // ============================================
 
@@ -402,6 +521,12 @@ const clone32Mappings: CloneMapping[] = [
   makeMapping("line-alumasa32", "AM32", "typ-am32-", "am32-", 0, "GO", "IGO"),
 ];
 
+// 40mm lines clone from Top
+const clone40Mappings: CloneMapping[] = [
+  makeMapping("line-hydro40", "H40", "typ-h40-", "h40-", 0, "TP", "ITP"),
+  makeMapping("line-mega40", "M40", "typ-m40-", "m40-", 0, "TP", "ITP"),
+];
+
 function cloneCutRules(source: CutRule[], mapping: CloneMapping, sourceIdPrefix: string, sourceTypPrefix: string): CutRule[] {
   return source.map(rule => {
     const newProfileCode = mapping.profileCodeMap(rule.profile_code ?? "");
@@ -420,10 +545,13 @@ function cloneCutRules(source: CutRule[], mapping: CloneMapping, sourceIdPrefix:
 
 const cloned25CutRules = clone25Mappings.flatMap(m => cloneCutRules(supremaCutRules, m, "su-", "typ-su-"));
 const cloned32CutRules = clone32Mappings.flatMap(m => cloneCutRules(goldCutRules, m, "go-", "typ-go-"));
+const cloned40CutRules = clone40Mappings.flatMap(m => cloneCutRules(topCutRules, m, "tp-", "typ-tp-"));
 
 export const cutRules: CutRule[] = [
   ...supremaCutRules,
   ...goldCutRules,
+  ...topCutRules,
   ...cloned25CutRules,
   ...cloned32CutRules,
+  ...cloned40CutRules,
 ];
