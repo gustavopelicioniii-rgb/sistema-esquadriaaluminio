@@ -20,6 +20,7 @@ import ContratoDialog from "@/components/producao/ContratoDialog";
 import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
+import EditarServicoDialog from "@/components/producao/EditarServicoDialog";
 import { ExportButtons } from "@/components/ExportButtons";
 
 export interface Pedido {
