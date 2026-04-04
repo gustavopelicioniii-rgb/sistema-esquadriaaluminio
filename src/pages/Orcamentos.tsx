@@ -32,7 +32,7 @@ const filterItems: { key: FilterStatus; label: string }[] = [
 ];
 
 const Orcamentos = () => {
-  const { data: orcamentos = [], isLoading } = useOrcamentos();
+  const { data: orcamentos = [], isLoading, refetch } = useOrcamentos();
   const deleteOrcamento = useDeleteOrcamento();
   const [selectedOrcamento, setSelectedOrcamento] = useState<any>(null);
   const [filter, setFilter] = useState<FilterStatus>("todos");
