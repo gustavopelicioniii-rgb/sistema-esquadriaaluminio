@@ -454,6 +454,35 @@ const CriarOrcamento = () => {
                 <FileDown className="h-4 w-4" />
                 PDF
               </Button>
+              <Button
+                variant="outline"
+                disabled={!cliente || !calculo}
+                className="gap-2 text-green-600 border-green-600/30 hover:bg-green-600/10"
+                onClick={() => {
+                  if (!calculo || !produtoSelecionado) return;
+                  const msg = [
+                    `Olá${cliente ? ` ${cliente}` : ""}! Segue seu orçamento:`,
+                    "",
+                    `📐 *${produtoSelecionado.label}*`,
+                    `📏 ${largura * 10} × ${altura * 10} mm`,
+                    `🔢 Quantidade: ${quantidade}`,
+                    `🎨 Cor: ${getColorById(colorId).name}`,
+                    vidroTipo !== "Nenhum" ? `🪟 Vidro: ${vidroTipo}` : "",
+                    ambiente ? `🏠 Ambiente: ${ambiente}` : "",
+                    "",
+                    `💰 *Valor: ${formatCurrency(calculo.total)}*`,
+                    "",
+                    observacoes ? `Obs: ${observacoes}\n` : "",
+                    "Válido por 15 dias.",
+                  ].filter(Boolean).join("\n");
+                  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                  window.open(url, "_blank");
+                  sonnerToast.success("WhatsApp aberto!");
+                }}
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
+              </Button>
             </div>
           </div>
         </div>
