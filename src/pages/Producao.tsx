@@ -62,6 +62,7 @@ const actionButtons = [
 const Producao = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterKey>("todos");
   const [search, setSearch] = useState("");
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
@@ -69,12 +70,19 @@ const Producao = () => {
   const [detailPedido, setDetailPedido] = useState<Pedido | null>(null);
 
   const fetchPedidos = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+
     const { data, error } = await supabase.from("pedidos").select("*").order("pedido_num", { ascending: true });
     if (error) {
+      setPedidos([]);
+      setLoadError(error.message);
+      setLoading(false);
       toast({ title: "Erro ao carregar pedidos", description: error.message, variant: "destructive" });
       return;
     }
-    setPedidos(data as Pedido[]);
+
+    setPedidos((data ?? []) as Pedido[]);
     setLoading(false);
   }, []);
 
@@ -235,6 +243,14 @@ const Producao = () => {
 
           {loading ? (
             <div className="text-center py-12 text-muted-foreground">Carregando pedidos...</div>
+          ) : loadError ? (
+            <div className="rounded-lg border border-dashed bg-card p-8 text-center">
+              <p className="font-medium">Não foi possível carregar os pedidos.</p>
+              <p className="mt-1 text-sm text-muted-foreground">{loadError}</p>
+              <Button variant="outline" size="sm" className="mt-4" onClick={fetchPedidos}>
+                Tentar novamente
+              </Button>
+            </div>
           ) : (
             <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               {filtered.map((op) => {

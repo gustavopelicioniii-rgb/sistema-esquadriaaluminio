@@ -5,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { AppSidebar } from "@/components/AppSidebar";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -59,13 +57,13 @@ const typeBadgeColors: Record<string, string> = {
 };
 
 export function Topbar() {
+  const { toggleSidebar } = useSidebar();
   const { theme, toggle } = useTheme();
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { results, loading: searchLoading } = useGlobalSearch(search);
@@ -89,21 +87,12 @@ export function Topbar() {
   return (
     <header className="topbar-glass sticky top-0 z-30 flex h-14 items-center gap-2 sm:gap-4 px-3 sm:px-4">
       {isMobile ? (
-        <Button variant="ghost" size="icon" className="-ml-1 h-9 w-9" onClick={() => setMobileMenuOpen(true)}>
+        <Button variant="ghost" size="icon" className="-ml-1 h-9 w-9" onClick={toggleSidebar}>
           <Menu className="h-5 w-5" />
         </Button>
       ) : (
         <SidebarTrigger className="-ml-1" />
       )}
-
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="p-0 w-72">
-          <SheetTitle className="sr-only">Menu</SheetTitle>
-          <div onClick={() => setMobileMenuOpen(false)}>
-            <AppSidebar />
-          </div>
-        </SheetContent>
-      </Sheet>
 
       {/* Mobile page title */}
       {isMobile && pageTitle && (

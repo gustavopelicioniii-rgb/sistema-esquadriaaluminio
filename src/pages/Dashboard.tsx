@@ -36,7 +36,7 @@ const Dashboard = () => {
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries();
   }, [queryClient]);
-  const { data: stats, isLoading } = useDashboardStats(period);
+  const { data: stats, isLoading, isError, refetch: refetchStats } = useDashboardStats(period);
   const { data: statusPedidos = [] } = usePedidosStatus(period);
   const { data: receitaMensal = [] } = useReceitaMensal();
   const { data: orcamentosStatus = [] } = useOrcamentosStatus(period);
@@ -49,11 +49,24 @@ const Dashboard = () => {
   const dataFormatada = now.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
   const capitalizedDia = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
 
-  if (isLoading || !stats) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (isError || !stats) {
+    return (
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-center">
+          <p className="text-sm font-medium">Não foi possível carregar o dashboard.</p>
+          <Button variant="outline" size="sm" onClick={() => void refetchStats()}>
+            Tentar novamente
+          </Button>
+        </div>
+      </PullToRefresh>
     );
   }
 
