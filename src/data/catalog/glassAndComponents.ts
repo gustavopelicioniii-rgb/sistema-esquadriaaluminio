@@ -142,6 +142,64 @@ const supremaComponents: TypologyComponent[] = [
   { id: "tc-su-jc2fv-02", typology_id: "typ-su-jc2fv", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
 ];
 
+// ============================================
+// COMPONENTS - GOLD
+// ============================================
+const goldComponents: TypologyComponent[] = [
+  // Janela 2F Correr Gold
+  { id: "tc-go-jc2f-01", typology_id: "typ-go-jc2f", component_name: "Roldana c/ regulagem", component_code: "ROL-426", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-go-jc2f-02", typology_id: "typ-go-jc2f", component_name: "Guia deslizante", component_code: "NYL-332", component_type: "guia", quantity_formula: "4", unit: "un" },
+  { id: "tc-go-jc2f-03", typology_id: "typ-go-jc2f", component_name: "Fecho concha s/ chave", component_code: "FEC-636", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-go-jc2f-04", typology_id: "typ-go-jc2f", component_name: "Concha simples", component_code: "CON-280", component_type: "concha", quantity_formula: "1", unit: "un" },
+  { id: "tc-go-jc2f-05", typology_id: "typ-go-jc2f", component_name: "Vedador de vento", component_code: "NYL-335", component_type: "vedador", quantity_formula: "4", unit: "un" },
+  // Janela 4F Gold
+  { id: "tc-go-jc4f-01", typology_id: "typ-go-jc4f", component_name: "Roldana c/ regulagem", component_code: "ROL-426", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-go-jc4f-02", typology_id: "typ-go-jc4f", component_name: "Fecho concha s/ chave", component_code: "FEC-636", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Janela 3F Gold
+  { id: "tc-go-jc3f-01", typology_id: "typ-go-jc3f", component_name: "Roldana c/ regulagem", component_code: "ROL-426", component_type: "roldana", quantity_formula: "6", unit: "un" },
+  { id: "tc-go-jc3f-02", typology_id: "typ-go-jc3f", component_name: "Fecho concha s/ chave", component_code: "FEC-636", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Maxim-Ar 1F Gold
+  { id: "tc-go-jma1-01", typology_id: "typ-go-jma1", component_name: "Braço maxim-ar", component_code: "BRA-702/703/705", component_type: "braço", quantity_formula: "2", unit: "un" },
+  { id: "tc-go-jma1-02", typology_id: "typ-go-jma1", component_name: "Fecho esquerdo maxim", component_code: "FEC-009", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-go-jma1-03", typology_id: "typ-go-jma1", component_name: "Haste de comando", component_code: "FEC-011", component_type: "haste", quantity_formula: "1", unit: "un" },
+  // Maxim-Ar 2F Gold
+  { id: "tc-go-jma2-01", typology_id: "typ-go-jma2", component_name: "Braço maxim-ar", component_code: "BRA-702/703/705", component_type: "braço", quantity_formula: "4", unit: "un" },
+  { id: "tc-go-jma2-02", typology_id: "typ-go-jma2", component_name: "Fecho esquerdo maxim", component_code: "FEC-009", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Porta Correr 2F Gold
+  { id: "tc-go-pc2f-01", typology_id: "typ-go-pc2f", component_name: "Roldana Porta GO", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-go-pc2f-02", typology_id: "typ-go-pc2f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-go-pc2f-03", typology_id: "typ-go-pc2f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "2", unit: "un" },
+  // Porta Correr 4F Gold
+  { id: "tc-go-pc4f-01", typology_id: "typ-go-pc4f", component_name: "Roldana Porta GO", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-go-pc4f-02", typology_id: "typ-go-pc4f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-go-pc4f-03", typology_id: "typ-go-pc4f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "4", unit: "un" },
+  // Porta Giro 1F Gold
+  { id: "tc-go-pg1f-01", typology_id: "typ-go-pg1f", component_name: "Dobradiça", component_code: "DOB-837", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-go-pg1f-02", typology_id: "typ-go-pg1f", component_name: "Maçaneta c/ espelho", component_code: "MAC-927", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-go-pg1f-03", typology_id: "typ-go-pg1f", component_name: "Contratesta", component_code: "CON-295", component_type: "contrafecho", quantity_formula: "1", unit: "un" },
+  // Porta Giro 2F Gold
+  { id: "tc-go-pg2f-01", typology_id: "typ-go-pg2f", component_name: "Dobradiça", component_code: "DOB-837", component_type: "dobradica", quantity_formula: "6", unit: "un" },
+  { id: "tc-go-pg2f-02", typology_id: "typ-go-pg2f", component_name: "Maçaneta c/ espelho", component_code: "MAC-927", component_type: "macaneta", quantity_formula: "2", unit: "un" },
+  // Camarão Gold
+  { id: "tc-go-jcam-01", typology_id: "typ-go-jcam", component_name: "Dobradiça Camarão", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-go-jcam-02", typology_id: "typ-go-jcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  // Janela 6F Gold
+  { id: "tc-go-jc6f-01", typology_id: "typ-go-jc6f", component_name: "Roldana c/ regulagem", component_type: "roldana", quantity_formula: "12", unit: "un" },
+  { id: "tc-go-jc6f-02", typology_id: "typ-go-jc6f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Veneziana 2F Gold
+  { id: "tc-go-jc2fv-01", typology_id: "typ-go-jc2fv", component_name: "Roldana c/ regulagem", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-go-jc2fv-02", typology_id: "typ-go-jc2fv", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Giro (Abre e Tomba) Gold
+  { id: "tc-go-jgiro-01", typology_id: "typ-go-jgiro", component_name: "Dobradiça com regulagem", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-go-jgiro-02", typology_id: "typ-go-jgiro", component_name: "Maçaneta Giro-Tomba", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  // Porta Integrada Gold
+  { id: "tc-go-pint-01", typology_id: "typ-go-pint", component_name: "Roldana Porta GO", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-go-pint-02", typology_id: "typ-go-pint", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Porta Camarão Gold
+  { id: "tc-go-pcam-01", typology_id: "typ-go-pcam", component_name: "Dobradiça Camarão", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-go-pcam-02", typology_id: "typ-go-pcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
+];
+
 // Clone components for compatible lines
 function cloneComponents(source: TypologyComponent[], prefixFrom: string, prefixTo: string, idFrom: string, idTo: string): TypologyComponent[] {
   return source.map(c => ({
@@ -160,7 +218,18 @@ const cloned25Components = clone25CompLines.flatMap(([p]) =>
   cloneComponents(supremaComponents, "typ-su-", `typ-${p}-`, "tc-su-", `tc-${p}-`)
 );
 
+// All 32mm lines clone from Gold
+const clone32CompLines = [
+  ["dg"], ["bg"], ["c32"], ["r32"], ["l32"], ["x32"], ["a32"],
+  ["s32"], ["p32"], ["h32"], ["n32"], ["hx32"], ["m32"], ["am32"],
+];
+const cloned32Components = clone32CompLines.flatMap(([p]) =>
+  cloneComponents(goldComponents, "typ-go-", `typ-${p}-`, "tc-go-", `tc-${p}-`)
+);
+
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
+  ...goldComponents,
   ...cloned25Components,
+  ...cloned32Components,
 ];
