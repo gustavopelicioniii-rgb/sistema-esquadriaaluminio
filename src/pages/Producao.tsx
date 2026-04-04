@@ -371,6 +371,7 @@ const Producao = () => {
           <ContratoDialog open={activeDialog === "contrato"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
           <ImpressoesDialog open={activeDialog === "impressoes"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
           <AlterarEtapaDialog open={activeDialog === "etapa"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
+          <EditarServicoDialog open={activeDialog === "editar"} onOpenChange={(v) => !v && closeDialog()} pedido={selectedPedido} />
         </>
       )}
 
