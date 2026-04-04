@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { Separator } from "@/components/ui/separator";
+import logoLight from "@/assets/logo-light.jpg";
 
 const features = [
   {
@@ -55,7 +56,7 @@ const stats = [
 ];
 
 const Login = () => {
-  usePageTitle("Login — AlumPRO");
+  usePageTitle("Login — AluFlow");
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,7 +78,6 @@ const Login = () => {
     <div className="min-h-screen bg-background">
       {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 app-bg" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/8 blur-3xl translate-y-1/2 -translate-x-1/3" />
@@ -86,10 +86,7 @@ const Login = () => {
           {/* Nav */}
           <nav className="flex items-center justify-between py-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-                <span className="text-primary-foreground font-extrabold text-sm">AP</span>
-              </div>
-              <span className="text-xl font-extrabold tracking-tight text-foreground">AlumPRO</span>
+              <img src={logoLight} alt="AluFlow" className="h-10 object-contain" />
             </div>
             <div className="flex items-center gap-2">
               <Link to="/cadastro">
@@ -251,7 +248,7 @@ const Login = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">
-                Por que escolher o AlumPRO?
+                Por que escolher o AluFlow?
               </h2>
               <div className="space-y-5">
                 {[
@@ -303,7 +300,7 @@ const Login = () => {
             Pronto para transformar sua vidraçaria?
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Junte-se a vidraçarias que já otimizaram seus processos com o AlumPRO. 
+            Junte-se a vidraçarias que já otimizaram seus processos com o AluFlow. 
             Comece gratuitamente — sem cartão de crédito.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -326,14 +323,11 @@ const Login = () => {
       <footer className="border-t border-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
-              <span className="text-primary-foreground font-extrabold text-[10px]">AP</span>
-            </div>
-            <span className="font-bold text-foreground text-sm">AlumPRO</span>
-            <span className="text-xs text-muted-foreground">— Gestão de Esquadrias</span>
+            <img src={logoLight} alt="AluFlow" className="h-7 object-contain" />
+            <span className="text-xs text-muted-foreground">— Gestão Inteligente de Esquadrias</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} AlumPRO. Todos os direitos reservados.
+            © {new Date().getFullYear()} AluFlow. Todos os direitos reservados.
           </p>
         </div>
       </footer>

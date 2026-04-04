@@ -9,6 +9,7 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import {
   UserPlus, CheckCircle2, Shield, Zap, Calculator, ArrowLeft,
 } from "lucide-react";
+import logoLight from "@/assets/logo-light.jpg";
 
 const benefits = [
   "Cálculo automático de esquadrias com precisão milimétrica",
@@ -20,7 +21,7 @@ const benefits = [
 ];
 
 const Cadastro = () => {
-  usePageTitle("Cadastro — AlumPRO");
+  usePageTitle("Cadastro — AluFlow");
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,19 +55,14 @@ const Cadastro = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute inset-0 app-bg" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl -translate-y-1/2 -translate-x-1/3" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/8 blur-3xl translate-y-1/2 translate-x-1/3" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Nav */}
         <nav className="flex items-center justify-between py-6">
           <Link to="/login" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <span className="text-primary-foreground font-extrabold text-sm">AP</span>
-            </div>
-            <span className="text-xl font-extrabold tracking-tight text-foreground">AlumPRO</span>
+            <img src={logoLight} alt="AluFlow" className="h-10 object-contain" />
           </Link>
           <Link to="/login">
             <Button variant="ghost" size="sm" className="gap-1.5">
@@ -76,9 +72,7 @@ const Cadastro = () => {
           </Link>
         </nav>
 
-        {/* Content */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-12 sm:py-20">
-          {/* Left — Benefits */}
           <div className="space-y-8">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -115,7 +109,6 @@ const Cadastro = () => {
             </div>
           </div>
 
-          {/* Right — Form */}
           <div>
             <div className="p-6 sm:p-8 rounded-2xl border border-border/60 bg-card shadow-xl">
               <div className="text-center space-y-2 mb-6">

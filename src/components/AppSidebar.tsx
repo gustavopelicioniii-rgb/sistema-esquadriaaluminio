@@ -11,6 +11,9 @@ import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useTheme } from "@/hooks/use-theme";
+import logoLight from "@/assets/logo-light.jpg";
+import logoDark from "@/assets/logo-dark.jpg";
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
@@ -40,6 +43,7 @@ export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { theme } = useTheme();
 
   const isActive = (url: string) =>
     location.pathname === url ||
@@ -54,18 +58,16 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="sidebar-glass border-r-0">
       <div className="flex h-16 items-center gap-3 px-4 sidebar-header-glass">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
-          <span className="text-sidebar-primary-foreground font-extrabold text-sm">AP</span>
-        </div>
-        {!collapsed && (
-          <div className="flex flex-col leading-tight">
-            <span className="text-base font-extrabold text-sidebar-foreground tracking-tight">
-              AlumPRO
-            </span>
-            <span className="text-[10px] text-sidebar-muted font-medium">
-              Gestão de Esquadrias
-            </span>
+        {collapsed ? (
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shrink-0">
+            <span className="text-primary-foreground font-extrabold text-sm">AF</span>
           </div>
+        ) : (
+          <img
+            src={logoDark}
+            alt="AluFlow"
+            className="h-9 object-contain"
+          />
         )}
       </div>
       <SidebarContent className="pt-2">
