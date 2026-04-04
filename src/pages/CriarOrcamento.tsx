@@ -71,9 +71,36 @@ const CriarOrcamento = () => {
     return { areaM2, custo, lucro, subtotal, acrescimo: acrescimoVal, total };
   }, [tipo, largura, altura, quantidade, margemPercent, temAcrescimo, acrescimo]);
 
-  const handleSalvar = () => {
-    toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
-    navigate("/orcamentos");
+  const handleSalvar = async () => {
+    if (!calculo || !produtoSelecionado || !cliente) return;
+    try {
+      await createOrcamento.mutateAsync({
+        cliente,
+        produto: produtoSelecionado.label,
+        valor: calculo.total,
+        itens: {
+          tipo,
+          largura_cm: largura,
+          altura_cm: altura,
+          quantidade,
+          area_m2: calculo.areaM2,
+          custo: calculo.custo,
+          lucro: calculo.lucro,
+          subtotal: calculo.subtotal,
+          acrescimo: calculo.acrescimo,
+          margem_percent: margemPercent,
+          cor_aluminio: colorId,
+          cor_ferragem: ferragemColorId,
+          vidro_tipo: vidroTipo,
+          ambiente,
+          observacoes,
+        },
+      });
+      toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+      navigate("/orcamentos");
+    } catch (err: any) {
+      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+    }
   };
 
   const handleLimpar = () => {
