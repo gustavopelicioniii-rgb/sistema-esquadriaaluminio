@@ -46,6 +46,7 @@ const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color:
   estoque: { icon: Package, color: "text-warning", route: "/estoque" },
   pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
   producao: { icon: Wrench, color: "text-primary", route: "/producao" },
+  crm: { icon: Users, color: "text-accent-foreground", route: "/crm" },
 };
 
 const typeBadgeColors: Record<string, string> = {
