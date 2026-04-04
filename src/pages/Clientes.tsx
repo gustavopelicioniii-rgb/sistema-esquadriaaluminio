@@ -155,11 +155,11 @@ const Clientes = () => {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   // ── Client logic ──
-  const fetchClientes = async () => {
+  const fetchClientes = useCallback(async () => {
     const { data, error } = await supabase.from("clientes").select("*").order("nome");
     if (!error && data) setClientes(data);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => { fetchClientes(); }, []);
 
