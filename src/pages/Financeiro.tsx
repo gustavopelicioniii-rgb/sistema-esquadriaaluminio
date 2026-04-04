@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { useContasFinanceiras, useCreateConta, useUpdateConta, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -147,7 +148,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
 }
 
 const Financeiro = () => {
-  const { data: contas = [], isLoading } = useContasFinanceiras();
+  const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
 
   const aReceber = contas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
@@ -164,6 +165,7 @@ const Financeiro = () => {
   }
 
   return (
+    <PullToRefresh onRefresh={async () => { await refetch(); }}>
     <div className="space-y-3 sm:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -252,6 +254,7 @@ const Financeiro = () => {
       {activeTab === "receber" && <ContasView tipo="receber" contas={contas} />}
       {activeTab === "pagar" && <ContasView tipo="pagar" contas={contas} />}
     </div>
+    </PullToRefresh>
   );
 };
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -154,11 +155,11 @@ const Clientes = () => {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   // ── Client logic ──
-  const fetchClientes = async () => {
+  const fetchClientes = useCallback(async () => {
     const { data, error } = await supabase.from("clientes").select("*").order("nome");
     if (!error && data) setClientes(data);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => { fetchClientes(); }, []);
 
@@ -255,6 +256,7 @@ const Clientes = () => {
   };
 
   return (
+    <PullToRefresh onRefresh={fetchClientes}>
     <div className="space-y-6">
       <div>
         <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clientes</h1>
@@ -492,6 +494,7 @@ const Clientes = () => {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </PullToRefresh>
   );
 };
 
