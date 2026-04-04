@@ -457,6 +457,63 @@ const topCutRules: CutRule[] = [
   cr("tp-jgiro-06","typ-tp-jgiro","TP-111",T,"Travessa Inf Folha","travessa_inf","L",-185,45,45,"1",6),
   cr("tp-jgiro-07","typ-tp-jgiro","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",7),
   cr("tp-jgiro-08","typ-tp-jgiro","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",8),
+
+  // ===== PELE DE VIDRO (CURTAIN WALL) =====
+
+  // CW1: Pele de Vidro 1 Módulo — 2 montantes + 2 travessas + 4 pressões
+  cr("tp-cw1-01","typ-tp-cw1","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1),
+  cr("tp-cw1-02","typ-tp-cw1","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2),
+  cr("tp-cw1-03","typ-tp-cw1","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",3),
+  cr("tp-cw1-04","typ-tp-cw1","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",4),
+  cr("tp-cw1-05","typ-tp-cw1","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"2",5),
+  cr("tp-cw1-06","typ-tp-cw1","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L",-50,90,90,"2",6),
+
+  // CW2: Pele de Vidro 2 Módulos
+  cr("tp-cw2-01","typ-tp-cw2","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1),
+  cr("tp-cw2-02","typ-tp-cw2","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2),
+  cr("tp-cw2-03","typ-tp-cw2","TP-603",T,"Montante Intermediário","montante_int","H",-20,90,90,"1",3),
+  cr("tp-cw2-04","typ-tp-cw2","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",4),
+  cr("tp-cw2-05","typ-tp-cw2","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",5),
+  cr("tp-cw2-06","typ-tp-cw2","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"4",6),
+  cr("tp-cw2-07","typ-tp-cw2","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L/2",-50,90,90,"4",7),
+
+  // CW3: Pele de Vidro 3 Módulos
+  cr("tp-cw3-01","typ-tp-cw3","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1),
+  cr("tp-cw3-02","typ-tp-cw3","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2),
+  cr("tp-cw3-03","typ-tp-cw3","TP-603",T,"Montante Intermediário","montante_int","H",-20,90,90,"2",3),
+  cr("tp-cw3-04","typ-tp-cw3","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",4),
+  cr("tp-cw3-05","typ-tp-cw3","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",5),
+  cr("tp-cw3-06","typ-tp-cw3","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"6",6),
+  cr("tp-cw3-07","typ-tp-cw3","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L/3",-50,90,90,"6",7),
+
+  // ===== MURO CORTINA =====
+
+  // MC1: Muro Cortina 1 Módulo — montantes contínuos piso-a-piso
+  cr("tp-mc1-01","typ-tp-mc1","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1),
+  cr("tp-mc1-02","typ-tp-mc1","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2),
+  cr("tp-mc1-03","typ-tp-mc1","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",3),
+  cr("tp-mc1-04","typ-tp-mc1","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",4),
+  cr("tp-mc1-05","typ-tp-mc1","TP-604",T,"Pressão Vidro V","pressao_v","H",-20,90,90,"2",5),
+  cr("tp-mc1-06","typ-tp-mc1","TP-604",T,"Pressão Vidro H","pressao_h","L",-40,90,90,"2",6),
+
+  // MC2: Muro Cortina 2 Módulos
+  cr("tp-mc2-01","typ-tp-mc2","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1),
+  cr("tp-mc2-02","typ-tp-mc2","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2),
+  cr("tp-mc2-03","typ-tp-mc2","TP-603",T,"Montante Central Estrutural","montante_central","H",-10,90,90,"1",3),
+  cr("tp-mc2-04","typ-tp-mc2","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",4),
+  cr("tp-mc2-05","typ-tp-mc2","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",5),
+  cr("tp-mc2-06","typ-tp-mc2","TP-604",T,"Pressão Vidro V","pressao_v","H",-20,90,90,"4",6),
+  cr("tp-mc2-07","typ-tp-mc2","TP-604",T,"Pressão Vidro H","pressao_h","L/2",-40,90,90,"4",7),
+
+  // MC2T: Muro Cortina 2 Módulos c/ Travessa Intermediária (4 panos de vidro)
+  cr("tp-mc2t-01","typ-tp-mc2t","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1),
+  cr("tp-mc2t-02","typ-tp-mc2t","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2),
+  cr("tp-mc2t-03","typ-tp-mc2t","TP-603",T,"Montante Central Estrutural","montante_central","H",-10,90,90,"1",3),
+  cr("tp-mc2t-04","typ-tp-mc2t","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",4),
+  cr("tp-mc2t-05","typ-tp-mc2t","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",5),
+  cr("tp-mc2t-06","typ-tp-mc2t","TP-605",T,"Travessa Intermediária","travessa_int","L",-30,90,90,"1",6),
+  cr("tp-mc2t-07","typ-tp-mc2t","TP-604",T,"Pressão Vidro V","pressao_v","H/2",-20,90,90,"8",7),
+  cr("tp-mc2t-08","typ-tp-mc2t","TP-604",T,"Pressão Vidro H","pressao_h","L/2",-40,90,90,"8",8),
 ];
 
 // ============================================
