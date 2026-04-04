@@ -40,6 +40,7 @@ const routeTitles: Record<string, string> = {
   "/administradores": "Administradores",
   "/funcionarios": "Funcionários",
   "/configuracoes": "Configurações",
+  "/notificacoes": "Notificações",
 };
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
