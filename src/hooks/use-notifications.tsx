@@ -266,8 +266,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
+    cleanupOldReads(); // Run cleanup on mount
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    const cleanupInterval = setInterval(cleanupOldReads, 24 * 60 * 60 * 1000); // Daily cleanup
+    return () => { clearInterval(interval); clearInterval(cleanupInterval); };
   }, [fetchNotifications]);
 
   // Single realtime subscription
