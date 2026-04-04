@@ -70,6 +70,17 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const prevCountRef = useRef(0);
   const initialLoadRef = useRef(true);
 
+  // Cleanup old read notifications (>30 days)
+  const cleanupOldReads = useCallback(async () => {
+    if (!user) return;
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+    await supabase
+      .from("notification_reads")
+      .delete()
+      .eq("user_id", user.id)
+      .lt("created_at", thirtyDaysAgo);
+  }, [user]);
+
   // Fetch read keys from DB
   const fetchReadKeys = useCallback(async () => {
     if (!user) return new Set<string>();
@@ -255,8 +266,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
+    cleanupOldReads(); // Run cleanup on mount
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    const cleanupInterval = setInterval(cleanupOldReads, 24 * 60 * 60 * 1000); // Daily cleanup
+    return () => { clearInterval(interval); clearInterval(cleanupInterval); };
   }, [fetchNotifications]);
 
   // Single realtime subscription
