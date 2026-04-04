@@ -148,7 +148,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
 }
 
 const Financeiro = () => {
-  const { data: contas = [], isLoading } = useContasFinanceiras();
+  const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
 
   const aReceber = contas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
