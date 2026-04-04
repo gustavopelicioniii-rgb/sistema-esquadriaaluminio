@@ -11,7 +11,7 @@ import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useTheme } from "@/hooks/use-theme";
+
 import logoLight from "@/assets/logo-light.jpg";
 import logoDark from "@/assets/logo-dark.jpg";
 
