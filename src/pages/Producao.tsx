@@ -322,8 +322,18 @@ const Producao = () => {
                             onClick={() => {
                               if (key === "tarefas") {
                                 setDetailPedido(op);
-                              } else if (["reagendar", "pagamentos", "contrato", "impressoes"].includes(key)) {
+                              } else if (["reagendar", "pagamentos", "contrato", "impressoes", "editar"].includes(key)) {
                                 openDialog(key as DialogType, op);
+                              } else if (key === "custos") {
+                                openDialog("pagamentos" as DialogType, op);
+                              } else if (key === "compartilhar") {
+                                const text = `Pedido ${op.pedido_num} - ${op.cliente} - ${op.etapa || ""}`;
+                                if (navigator.share) {
+                                  navigator.share({ title: `Pedido ${op.pedido_num}`, text });
+                                } else {
+                                  navigator.clipboard.writeText(text);
+                                  toast({ title: "Copiado!", description: "Informações do pedido copiadas." });
+                                }
                               } else {
                                 toast({ title: label, description: `Função "${label}" em desenvolvimento.` });
                               }
