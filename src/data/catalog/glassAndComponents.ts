@@ -53,17 +53,29 @@ function cloneGlassRules(rules: GlassRule[], prefixFrom: string, prefixTo: strin
   }));
 }
 
-const clonedGlassRules = [
-  ...cloneGlassRules(supremaGlassRules, "typ-su-", "typ-mg25-", "gr-su-", "gr-mg25-"),
-  ...cloneGlassRules(supremaGlassRules, "typ-su-", "typ-hy-", "gr-su-", "gr-hy-"),
-  ...cloneGlassRules(supremaGlassRules, "typ-su-", "typ-al-", "gr-su-", "gr-al-"),
-  ...cloneGlassRules(supremaGlassRules, "typ-su-", "typ-ds-", "gr-su-", "gr-ds-"),
+// All 25mm lines clone from Suprema
+const clone25GlassLines = [
+  ["mg25"], ["hy"], ["al"], ["ds"], ["br"], ["cb"], ["re"], ["lp"],
+  ["ax"], ["ab"], ["sm"], ["pr"], ["hb"], ["pn"], ["sp"],
 ];
+const cloned25GlassRules = clone25GlassLines.flatMap(([p]) =>
+  cloneGlassRules(supremaGlassRules, "typ-su-", `typ-${p}-`, "gr-su-", `gr-${p}-`)
+);
+
+// All 32mm lines clone from Gold
+const clone32GlassLines = [
+  ["dg"], ["bg"], ["c32"], ["r32"], ["l32"], ["x32"], ["a32"],
+  ["s32"], ["p32"], ["h32"], ["n32"], ["hx32"], ["m32"], ["am32"],
+];
+const cloned32GlassRules = clone32GlassLines.flatMap(([p]) =>
+  cloneGlassRules(goldGlassRules, "typ-go-", `typ-${p}-`, "gr-go-", `gr-${p}-`)
+);
 
 export const glassRules: GlassRule[] = [
   ...supremaGlassRules,
   ...goldGlassRules,
-  ...clonedGlassRules,
+  ...cloned25GlassRules,
+  ...cloned32GlassRules,
 ];
 
 // ============================================
@@ -139,14 +151,16 @@ function cloneComponents(source: TypologyComponent[], prefixFrom: string, prefix
   }));
 }
 
-const clonedComponents = [
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-mg25-", "tc-su-", "tc-mg25-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-hy-", "tc-su-", "tc-hy-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-al-", "tc-su-", "tc-al-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-ds-", "tc-su-", "tc-ds-"),
+// All 25mm lines clone from Suprema
+const clone25CompLines = [
+  ["mg25"], ["hy"], ["al"], ["ds"], ["br"], ["cb"], ["re"], ["lp"],
+  ["ax"], ["ab"], ["sm"], ["pr"], ["hb"], ["pn"], ["sp"],
 ];
+const cloned25Components = clone25CompLines.flatMap(([p]) =>
+  cloneComponents(supremaComponents, "typ-su-", `typ-${p}-`, "tc-su-", `tc-${p}-`)
+);
 
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
-  ...clonedComponents,
+  ...cloned25Components,
 ];
