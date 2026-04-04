@@ -188,13 +188,14 @@ export function useNotifications() {
     const severityOrder = { critical: 0, warning: 1, info: 2 };
     allNotifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
-    // Show toast for new critical notifications
+    // Show toast + play sound for new critical notifications
     const criticalCount = allNotifs.filter((n) => n.severity === "critical").length;
     if (!initialLoadRef.current && criticalCount > prevCountRef.current) {
       const newCritical = allNotifs.filter((n) => n.severity === "critical");
       const newest = newCritical[0];
       if (newest) {
         toast.error(newest.msg, { description: newest.detail });
+        playNotificationSound();
       }
     }
     prevCountRef.current = criticalCount;
