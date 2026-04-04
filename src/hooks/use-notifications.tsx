@@ -70,6 +70,17 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const prevCountRef = useRef(0);
   const initialLoadRef = useRef(true);
 
+  // Cleanup old read notifications (>30 days)
+  const cleanupOldReads = useCallback(async () => {
+    if (!user) return;
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+    await supabase
+      .from("notification_reads")
+      .delete()
+      .eq("user_id", user.id)
+      .lt("created_at", thirtyDaysAgo);
+  }, [user]);
+
   // Fetch read keys from DB
   const fetchReadKeys = useCallback(async () => {
     if (!user) return new Set<string>();
