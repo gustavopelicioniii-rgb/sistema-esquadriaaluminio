@@ -256,6 +256,7 @@ const Clientes = () => {
   };
 
   return (
+    <PullToRefresh onRefresh={fetchClientes}>
     <div className="space-y-6">
       <div>
         <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clientes</h1>
