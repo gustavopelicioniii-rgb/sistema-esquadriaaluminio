@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { PageLoading } from "@/components/LoadingSpinner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
+import { NotificationsProvider } from "@/hooks/use-notifications";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const Login = lazy(() => import("./pages/Login"));
@@ -68,8 +69,9 @@ const S = ({ children }: { children: React.ReactNode }) => (
 const App = () => (
   <ThemeProvider>
     <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
+      <NotificationsProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -115,9 +117,10 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </NotificationsProvider>
     </AuthProvider>
   </ThemeProvider>
 );
