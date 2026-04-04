@@ -41,7 +41,7 @@ export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  const { theme } = useTheme();
+  
 
   const isActive = (url: string) =>
     location.pathname === url ||
