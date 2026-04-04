@@ -262,5 +262,12 @@ export function useNotifications() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return { notifications, unreadCount, loading, markAsRead, markAllAsRead };
+  const badgeCounts = {
+    estoque: notifications.filter((n) => n.type === "estoque" && !n.read).length,
+    pagamento: notifications.filter((n) => n.type === "pagamento" && !n.read).length,
+    producao: notifications.filter((n) => n.type === "producao" && !n.read).length,
+    crm: notifications.filter((n) => n.type === "crm" && !n.read).length,
+  };
+
+  return { notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts };
 }
