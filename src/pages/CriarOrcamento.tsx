@@ -13,7 +13,7 @@ import { useCreateOrcamento } from "@/hooks/use-orcamentos";
 import { FramePreview } from "@/components/frame-preview";
 import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
-import { generateBudgetPDF } from "@/utils/pdfGenerator";
+import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import { cn } from "@/lib/utils";
 import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
 
