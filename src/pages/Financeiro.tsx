@@ -254,6 +254,7 @@ const Financeiro = () => {
       {activeTab === "receber" && <ContasView tipo="receber" contas={contas} />}
       {activeTab === "pagar" && <ContasView tipo="pagar" contas={contas} />}
     </div>
+    </PullToRefresh>
   );
 };
 
