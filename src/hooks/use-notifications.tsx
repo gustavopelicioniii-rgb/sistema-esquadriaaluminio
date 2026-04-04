@@ -237,8 +237,10 @@ export function useNotifications() {
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel("notifications-realtime")
+    const channelName = `notifications-realtime-${crypto.randomUUID()}`;
+    const channel = supabase.channel(channelName);
+
+    channel
       .on("postgres_changes", { event: "*", schema: "public", table: "estoque" }, () => fetchNotifications())
       .on("postgres_changes", { event: "*", schema: "public", table: "contas_financeiras" }, () => fetchNotifications())
       .on("postgres_changes", { event: "*", schema: "public", table: "pedidos" }, () => fetchNotifications())
