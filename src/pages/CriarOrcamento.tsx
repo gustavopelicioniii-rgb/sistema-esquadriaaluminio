@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/formatters";
-import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List } from "lucide-react";
+import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
