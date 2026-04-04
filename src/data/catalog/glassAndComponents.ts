@@ -151,14 +151,16 @@ function cloneComponents(source: TypologyComponent[], prefixFrom: string, prefix
   }));
 }
 
-const clonedComponents = [
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-mg25-", "tc-su-", "tc-mg25-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-hy-", "tc-su-", "tc-hy-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-al-", "tc-su-", "tc-al-"),
-  ...cloneComponents(supremaComponents, "typ-su-", "typ-ds-", "tc-su-", "tc-ds-"),
+// All 25mm lines clone from Suprema
+const clone25CompLines = [
+  ["mg25"], ["hy"], ["al"], ["ds"], ["br"], ["cb"], ["re"], ["lp"],
+  ["ax"], ["ab"], ["sm"], ["pr"], ["hb"], ["pn"], ["sp"],
 ];
+const cloned25Components = clone25CompLines.flatMap(([p]) =>
+  cloneComponents(supremaComponents, "typ-su-", `typ-${p}-`, "tc-su-", `tc-${p}-`)
+);
 
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
-  ...clonedComponents,
+  ...cloned25Components,
 ];
