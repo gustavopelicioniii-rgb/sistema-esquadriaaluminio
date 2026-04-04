@@ -40,6 +40,7 @@ const routeTitles: Record<string, string> = {
   "/administradores": "Administradores",
   "/funcionarios": "Funcionários",
   "/configuracoes": "Configurações",
+  "/notificacoes": "Notificações",
 };
 
 const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
@@ -208,6 +209,18 @@ export function Topbar() {
                 })
               )}
             </ScrollArea>
+            {notifications.length > 0 && (
+              <div className="px-4 py-2 border-t">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-xs text-primary"
+                  onClick={() => navigate("/notificacoes")}
+                >
+                  Ver todas as notificações
+                </Button>
+              </div>
+            )}
           </PopoverContent>
         </Popover>
 

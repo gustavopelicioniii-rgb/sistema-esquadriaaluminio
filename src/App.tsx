@@ -37,6 +37,7 @@ const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
 const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
+const Notificacoes = lazy(() => import("./pages/Notificacoes"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -101,6 +102,7 @@ const App = () => (
                   <Route path="/nota-fiscal" element={<S><NotaFiscal /></S>} />
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
+                  <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
                 </Route>
 
                 {/* Admin only - shared layout */}
