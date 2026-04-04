@@ -65,18 +65,32 @@ function playNotificationSound() {
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [readKeys, setReadKeys] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const prevCountRef = useRef(0);
   const initialLoadRef = useRef(true);
 
+  // Fetch read keys from DB
+  const fetchReadKeys = useCallback(async () => {
+    if (!user) return new Set<string>();
+    const { data } = await supabase
+      .from("notification_reads")
+      .select("notification_key")
+      .eq("user_id", user.id);
+    const keys = new Set((data ?? []).map((r) => r.notification_key));
+    setReadKeys(keys);
+    return keys;
+  }, [user]);
+
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
 
-    const [estoqueRes, contasRes, pedidosRes, crmRes] = await Promise.all([
+    const [estoqueRes, contasRes, pedidosRes, crmRes, currentReadKeys] = await Promise.all([
       supabase.from("estoque").select("id, produto, quantidade, minimo, updated_at").order("updated_at", { ascending: false }),
       supabase.from("contas_financeiras").select("id, cliente, valor, vencimento, updated_at, tipo").eq("status", "pendente").order("vencimento", { ascending: true }),
       supabase.from("pedidos").select("id, pedido_num, cliente, etapa, status, previsao, updated_at").order("updated_at", { ascending: false }),
       supabase.from("crm_leads").select("id, nome, status, follow_up_date, valor, updated_at").order("updated_at", { ascending: false }),
+      fetchReadKeys(),
     ]);
 
     const allNotifs: AppNotification[] = [];
@@ -86,13 +100,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .filter((e) => e.quantidade <= e.minimo)
       .forEach((e) => {
         const ratio = e.minimo > 0 ? e.quantidade / e.minimo : 0;
+        const id = `est-${e.id}`;
         allNotifs.push({
-          id: `est-${e.id}`,
+          id,
           type: "estoque",
           msg: `Estoque baixo: ${e.produto}`,
           detail: `${e.quantidade}/${e.minimo} unid.`,
           time: timeAgo(e.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: ratio <= 0.25 ? "critical" : "warning",
         });
       });
@@ -102,25 +117,26 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       const days = daysUntil(c.vencimento);
       const valor = `R$ ${Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
       const tipoLabel = c.tipo === "receber" ? "A receber" : "A pagar";
+      const id = `fin-${c.id}`;
 
       if (days < 0) {
         allNotifs.push({
-          id: `fin-${c.id}`,
+          id,
           type: "pagamento",
           msg: `${tipoLabel} vencido: ${c.cliente}`,
           detail: `${valor} · venceu há ${Math.abs(days)} dia(s)`,
           time: timeAgo(c.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "critical",
         });
       } else if (days <= 3) {
         allNotifs.push({
-          id: `fin-${c.id}`,
+          id,
           type: "pagamento",
           msg: `${tipoLabel} vence em breve: ${c.cliente}`,
           detail: `${valor} · vence em ${days} dia(s)`,
           time: timeAgo(c.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "warning",
         });
       }
@@ -132,23 +148,25 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .forEach((p) => {
         const days = daysUntil(p.previsao!);
         if (days < 0) {
+          const id = `ped-atraso-${p.id}`;
           allNotifs.push({
-            id: `ped-atraso-${p.id}`,
+            id,
             type: "producao",
             msg: `Pedido #${p.pedido_num} atrasado`,
             detail: `${p.cliente} · ${Math.abs(days)} dia(s) de atraso`,
             time: timeAgo(p.updated_at),
-            read: false,
+            read: currentReadKeys.has(id),
             severity: "critical",
           });
         } else if (days <= 2) {
+          const id = `ped-prazo-${p.id}`;
           allNotifs.push({
-            id: `ped-prazo-${p.id}`,
+            id,
             type: "producao",
             msg: `Pedido #${p.pedido_num} prazo próximo`,
             detail: `${p.cliente} · entrega em ${days} dia(s)`,
             time: timeAgo(p.updated_at),
-            read: false,
+            read: currentReadKeys.has(id),
             severity: "warning",
           });
         }
@@ -160,13 +178,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .filter((p) => p.etapa && new Date(p.updated_at) >= new Date(weekAgo))
       .slice(0, 5)
       .forEach((p) => {
+        const id = `prod-${p.id}`;
         allNotifs.push({
-          id: `prod-${p.id}`,
+          id,
           type: "producao",
           msg: `Pedido #${p.pedido_num} - ${p.cliente}`,
           detail: `Etapa: ${p.etapa}`,
           time: timeAgo(p.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "info",
         });
       });
@@ -178,35 +197,36 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       const valor = Number(lead.valor) > 0
         ? ` · R$ ${Number(lead.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
         : "";
+      const id = `crm-${lead.id}`;
 
       if (days < 0) {
         allNotifs.push({
-          id: `crm-${lead.id}`,
+          id,
           type: "crm",
           msg: `Follow-up atrasado: ${lead.nome}`,
           detail: `${Math.abs(days)} dia(s) de atraso${valor}`,
           time: timeAgo(lead.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "critical",
         });
       } else if (days <= 1) {
         allNotifs.push({
-          id: `crm-${lead.id}`,
+          id,
           type: "crm",
           msg: `Follow-up hoje: ${lead.nome}`,
           detail: `Acompanhamento pendente${valor}`,
           time: timeAgo(lead.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "warning",
         });
       } else if (days <= 3) {
         allNotifs.push({
-          id: `crm-${lead.id}`,
+          id,
           type: "crm",
           msg: `Follow-up em ${days} dias: ${lead.nome}`,
           detail: `Acompanhamento agendado${valor}`,
           time: timeAgo(lead.updated_at),
-          read: false,
+          read: currentReadKeys.has(id),
           severity: "info",
         });
       }
@@ -217,9 +237,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     allNotifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
     // Show toast + play sound for new critical notifications
-    const criticalCount = allNotifs.filter((n) => n.severity === "critical").length;
+    const criticalCount = allNotifs.filter((n) => n.severity === "critical" && !n.read).length;
     if (!initialLoadRef.current && criticalCount > prevCountRef.current) {
-      const newCritical = allNotifs.filter((n) => n.severity === "critical");
+      const newCritical = allNotifs.filter((n) => n.severity === "critical" && !n.read);
       const newest = newCritical[0];
       if (newest) {
         toast.error(newest.msg, { description: newest.detail });
@@ -231,7 +251,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     setNotifications(allNotifs);
     setLoading(false);
-  }, [user]);
+  }, [user, fetchReadKeys]);
 
   useEffect(() => {
     fetchNotifications();
@@ -257,15 +277,31 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
   }, [user, fetchNotifications]);
 
-  const markAsRead = (id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
+    if (!user) return;
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
-  };
+    setReadKeys((prev) => new Set(prev).add(id));
+    await supabase.from("notification_reads").upsert(
+      { user_id: user.id, notification_key: id },
+      { onConflict: "user_id,notification_key" }
+    );
+  }, [user]);
 
-  const markAllAsRead = () => {
+  const markAllAsRead = useCallback(async () => {
+    if (!user) return;
+    const unread = notifications.filter((n) => !n.read);
+    if (unread.length === 0) return;
+
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+    const newKeys = new Set(readKeys);
+    unread.forEach((n) => newKeys.add(n.id));
+    setReadKeys(newKeys);
+
+    const rows = unread.map((n) => ({ user_id: user.id, notification_key: n.id }));
+    await supabase.from("notification_reads").upsert(rows, { onConflict: "user_id,notification_key" });
+  }, [user, notifications, readKeys]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

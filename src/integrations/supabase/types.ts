@@ -218,6 +218,27 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_reads: {
+        Row: {
+          created_at: string
+          id: string
+          notification_key: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notification_key: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notification_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orcamentos: {
         Row: {
           cliente: string
