@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/formatters";
-import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List } from "lucide-react";
+import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
@@ -453,6 +453,35 @@ const CriarOrcamento = () => {
               >
                 <FileDown className="h-4 w-4" />
                 PDF
+              </Button>
+              <Button
+                variant="outline"
+                disabled={!cliente || !calculo}
+                className="gap-2 text-green-600 border-green-600/30 hover:bg-green-600/10"
+                onClick={() => {
+                  if (!calculo || !produtoSelecionado) return;
+                  const msg = [
+                    `Olá${cliente ? ` ${cliente}` : ""}! Segue seu orçamento:`,
+                    "",
+                    `📐 *${produtoSelecionado.label}*`,
+                    `📏 ${largura * 10} × ${altura * 10} mm`,
+                    `🔢 Quantidade: ${quantidade}`,
+                    `🎨 Cor: ${getColorById(colorId).name}`,
+                    vidroTipo !== "Nenhum" ? `🪟 Vidro: ${vidroTipo}` : "",
+                    ambiente ? `🏠 Ambiente: ${ambiente}` : "",
+                    "",
+                    `💰 *Valor: ${formatCurrency(calculo.total)}*`,
+                    "",
+                    observacoes ? `Obs: ${observacoes}\n` : "",
+                    "Válido por 15 dias.",
+                  ].filter(Boolean).join("\n");
+                  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                  window.open(url, "_blank");
+                  sonnerToast.success("WhatsApp aberto!");
+                }}
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
               </Button>
             </div>
           </div>
