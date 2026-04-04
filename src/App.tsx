@@ -102,6 +102,7 @@ const App = () => (
                   <Route path="/nota-fiscal" element={<S><NotaFiscal /></S>} />
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
+                  <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
                 </Route>
 
                 {/* Admin only - shared layout */}
