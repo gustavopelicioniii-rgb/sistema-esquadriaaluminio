@@ -279,6 +279,35 @@ const topComponents: TypologyComponent[] = [
   // Giro-Tomba Top
   { id: "tc-tp-jgiro-01", typology_id: "typ-tp-jgiro", component_name: "Dobradiça com regulagem", component_type: "dobradica", quantity_formula: "3", unit: "un" },
   { id: "tc-tp-jgiro-02", typology_id: "typ-tp-jgiro", component_name: "Maçaneta Giro-Tomba", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  // Pele de Vidro (Curtain Wall) — vedação e fixação
+  { id: "tc-tp-cw1-01", typology_id: "typ-tp-cw1", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -10 },
+  { id: "tc-tp-cw1-02", typology_id: "typ-tp-cw1", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -20 },
+  { id: "tc-tp-cw1-03", typology_id: "typ-tp-cw1", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "12", unit: "un" },
+  { id: "tc-tp-cw1-04", typology_id: "typ-tp-cw1", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-cw2-01", typology_id: "typ-tp-cw2", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -10 },
+  { id: "tc-tp-cw2-02", typology_id: "typ-tp-cw2", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -20 },
+  { id: "tc-tp-cw2-03", typology_id: "typ-tp-cw2", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "18", unit: "un" },
+  { id: "tc-tp-cw2-04", typology_id: "typ-tp-cw2", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "8", unit: "un" },
+  { id: "tc-tp-cw3-01", typology_id: "typ-tp-cw3", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -10 },
+  { id: "tc-tp-cw3-02", typology_id: "typ-tp-cw3", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -20 },
+  { id: "tc-tp-cw3-03", typology_id: "typ-tp-cw3", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "24", unit: "un" },
+  { id: "tc-tp-cw3-04", typology_id: "typ-tp-cw3", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "12", unit: "un" },
+  // Muro Cortina — vedação e fixação
+  { id: "tc-tp-mc1-01", typology_id: "typ-tp-mc1", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -5 },
+  { id: "tc-tp-mc1-02", typology_id: "typ-tp-mc1", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -15 },
+  { id: "tc-tp-mc1-03", typology_id: "typ-tp-mc1", component_name: "Âncora fixação laje", component_code: "ANC-400", component_type: "fixacao", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-mc1-04", typology_id: "typ-tp-mc1", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "16", unit: "un" },
+  { id: "tc-tp-mc1-05", typology_id: "typ-tp-mc1", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "4", unit: "un" },
+  { id: "tc-tp-mc2-01", typology_id: "typ-tp-mc2", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -5 },
+  { id: "tc-tp-mc2-02", typology_id: "typ-tp-mc2", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -15 },
+  { id: "tc-tp-mc2-03", typology_id: "typ-tp-mc2", component_name: "Âncora fixação laje", component_code: "ANC-400", component_type: "fixacao", quantity_formula: "6", unit: "un" },
+  { id: "tc-tp-mc2-04", typology_id: "typ-tp-mc2", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "24", unit: "un" },
+  { id: "tc-tp-mc2-05", typology_id: "typ-tp-mc2", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "8", unit: "un" },
+  { id: "tc-tp-mc2t-01", typology_id: "typ-tp-mc2t", component_name: "Gaxeta EPDM vertical", component_code: "GAX-601", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "H", length_constant_mm: -5 },
+  { id: "tc-tp-mc2t-02", typology_id: "typ-tp-mc2t", component_name: "Gaxeta EPDM horizontal", component_code: "GAX-602", component_type: "vedacao", quantity_formula: "1", unit: "un", length_reference: "L", length_constant_mm: -15 },
+  { id: "tc-tp-mc2t-03", typology_id: "typ-tp-mc2t", component_name: "Âncora fixação laje", component_code: "ANC-400", component_type: "fixacao", quantity_formula: "6", unit: "un" },
+  { id: "tc-tp-mc2t-04", typology_id: "typ-tp-mc2t", component_name: "Parafuso fixação estrutural", component_code: "PAR-810", component_type: "fixacao", quantity_formula: "32", unit: "un" },
+  { id: "tc-tp-mc2t-05", typology_id: "typ-tp-mc2t", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "16", unit: "un" },
 ];
 
 // Clone components for compatible lines
