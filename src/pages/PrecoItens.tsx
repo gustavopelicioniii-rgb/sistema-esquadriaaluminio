@@ -4,8 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown, FileText, Sheet } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
+import { generateExcel } from "@/utils/excelGenerator";
+import { exportPrecoItensPdf } from "@/utils/precoItensPdfGenerator";
 import perfilImg from "@/assets/items/perfil.png";
 import vidroImg from "@/assets/items/vidro.png";
 import ferragemImg from "@/assets/items/ferragem.png";
@@ -96,9 +99,26 @@ const PrecoItens = () => {
           <h1 className="text-2xl font-bold tracking-tight">Preço dos Itens</h1>
           <p className="text-muted-foreground text-sm">Tabela de preços de perfis, vidros e ferragens</p>
         </div>
-        <Button variant="outline" className="gap-2">
-          <FileDown className="h-4 w-4" /> Exportar
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <FileDown className="h-4 w-4" /> Exportar
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => exportPrecoItensPdf(filtered)}>
+              <FileText className="mr-2 h-4 w-4" /> Exportar PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => generateExcel({
+              title: "Tabela de Preços",
+              headers: ["Código", "Descrição", "Categoria", "Cor", "Preço", "Unidade"],
+              rows: filtered.map((i) => [i.codigo, i.descricao, i.categoria, i.cor, formatCurrency(i.preco), i.unidade]),
+              filename: "tabela-precos.xlsx",
+            })}>
+              <Sheet className="mr-2 h-4 w-4" /> Exportar Excel
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <Tabs value={category} onValueChange={setCategory}>
