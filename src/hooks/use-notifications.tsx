@@ -1,30 +1,17 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from "react";
+import { useContext, useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import {
+  NotificationsContext,
+  fallbackNotificationsContext,
+  type AppNotification,
+  type NotificationType,
+} from "@/hooks/notifications-context";
 
-export type NotificationType = "estoque" | "pagamento" | "producao" | "crm";
+export type { AppNotification, NotificationType } from "@/hooks/notifications-context";
 
-export interface AppNotification {
-  id: string;
-  type: NotificationType;
-  msg: string;
-  detail?: string;
-  time: string;
-  read: boolean;
-  severity: "info" | "warning" | "critical";
-}
-
-interface NotificationsContextValue {
-  notifications: AppNotification[];
-  unreadCount: number;
-  loading: boolean;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
-  badgeCounts: Record<NotificationType, number>;
-}
-
-const NotificationsContext = createContext<NotificationsContextValue | null>(null);
+let hasWarnedMissingProvider = false;
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -334,6 +321,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
 export function useNotifications() {
   const ctx = useContext(NotificationsContext);
-  if (!ctx) throw new Error("useNotifications must be used within NotificationsProvider");
-  return ctx;
+  if (ctx) return ctx;
+
+  if (import.meta.env.DEV && !hasWarnedMissingProvider) {
+    hasWarnedMissingProvider = true;
+    console.warn("useNotifications renderizado sem NotificationsProvider; usando fallback seguro.");
+  }
+
+  return fallbackNotificationsContext;
 }
