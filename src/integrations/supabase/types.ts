@@ -554,6 +554,45 @@ export type Database = {
         }
         Relationships: []
       }
+      planos_corte: {
+        Row: {
+          altura: number
+          created_at: string
+          id: string
+          largura: number
+          nome: string
+          quantidade: number
+          responsavel: string
+          typology_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          altura?: number
+          created_at?: string
+          id?: string
+          largura?: number
+          nome: string
+          quantidade?: number
+          responsavel?: string
+          typology_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          altura?: number
+          created_at?: string
+          id?: string
+          largura?: number
+          nome?: string
+          quantidade?: number
+          responsavel?: string
+          typology_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       produtos: {
         Row: {
           ativo: boolean
