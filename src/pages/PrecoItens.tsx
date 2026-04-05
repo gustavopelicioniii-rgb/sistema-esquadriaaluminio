@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown, FileText, Sheet } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
 import { generateExcel } from "@/utils/excelGenerator";
 import { exportPrecoItensPdf } from "@/utils/precoItensPdfGenerator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import perfilImg from "@/assets/items/perfil.png";
 import vidroImg from "@/assets/items/vidro.png";
 import ferragemImg from "@/assets/items/ferragem.png";
@@ -40,6 +42,9 @@ const categoryImage: Record<string, string> = {
   Ferragens: ferragemImg,
 };
 
+const corClass = (cor: string) =>
+  cor === "Amadeirado" ? "bg-amber-600" : cor === "Cromado" ? "bg-gray-400" : cor === "Preto" ? "bg-foreground" : "bg-blue-200";
+
 type SortKey = "codigo" | "descricao" | "preco" | "cor";
 type SortDir = "asc" | "desc";
 
@@ -48,6 +53,7 @@ const PrecoItens = () => {
   const [category, setCategory] = useState("Todos");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const isMobile = useIsMobile();
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -64,37 +70,27 @@ const PrecoItens = () => {
   };
 
   const filtered = useMemo(() => {
-    let list = itensMock;
-
-    if (category !== "Todos") {
-      list = list.filter((i) => i.categoria === category);
-    }
-
+    let list = itensMock as ItemPreco[];
+    if (category !== "Todos") list = list.filter((i) => i.categoria === category);
     if (search) {
       const s = search.toLowerCase();
-      list = list.filter(
-        (i) => i.descricao.toLowerCase().includes(s) || i.codigo.toLowerCase().includes(s) || i.categoria.toLowerCase().includes(s)
-      );
+      list = list.filter((i) => i.descricao.toLowerCase().includes(s) || i.codigo.toLowerCase().includes(s) || i.categoria.toLowerCase().includes(s));
     }
-
     if (sortKey) {
       list = [...list].sort((a, b) => {
         const aVal = a[sortKey];
         const bVal = b[sortKey];
-        if (typeof aVal === "number" && typeof bVal === "number") {
-          return sortDir === "asc" ? aVal - bVal : bVal - aVal;
-        }
+        if (typeof aVal === "number" && typeof bVal === "number") return sortDir === "asc" ? aVal - bVal : bVal - aVal;
         const cmp = String(aVal).localeCompare(String(bVal), "pt-BR");
         return sortDir === "asc" ? cmp : -cmp;
       });
     }
-
     return list;
   }, [search, category, sortKey, sortDir]);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Preço dos Itens</h1>
           <p className="text-muted-foreground text-sm">Tabela de preços de perfis, vidros e ferragens</p>
@@ -122,7 +118,7 @@ const PrecoItens = () => {
       </div>
 
       <Tabs value={category} onValueChange={setCategory}>
-        <TabsList>
+        <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="Todos">Todos</TabsTrigger>
           <TabsTrigger value="Perfis">Perfis</TabsTrigger>
           <TabsTrigger value="Vidros">Vidros</TabsTrigger>
@@ -135,65 +131,92 @@ const PrecoItens = () => {
         <Input placeholder="Buscar item..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
-      <div className="rounded-lg border bg-card shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-16">Imagem</TableHead>
-              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("codigo")}>
-                <span className="inline-flex items-center">Código <SortIcon col="codigo" /></span>
-              </TableHead>
-              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("descricao")}>
-                <span className="inline-flex items-center">Descrição <SortIcon col="descricao" /></span>
-              </TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("cor")}>
-                <span className="inline-flex items-center">Cor <SortIcon col="cor" /></span>
-              </TableHead>
-              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("preco")}>
-                <span className="inline-flex items-center">Preço <SortIcon col="preco" /></span>
-              </TableHead>
-              <TableHead>Unidade</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.length === 0 && (
+      {isMobile ? (
+        <div className="space-y-3">
+          {filtered.length === 0 && (
+            <p className="text-center text-muted-foreground py-8">Nenhum item encontrado</p>
+          )}
+          {filtered.map((item) => (
+            <Card key={item.id} className="shadow-sm border-border/50">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
+                    <img src={categoryImage[item.categoria]} alt={item.categoria} loading="lazy" width={48} height={48} className="h-10 w-10 object-contain" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-primary text-sm">{item.codigo}</span>
+                      <Badge variant="secondary" className="text-xs shrink-0">{item.categoria}</Badge>
+                    </div>
+                    <p className="font-medium text-sm mt-0.5 truncate">{item.descricao}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`h-2.5 w-2.5 rounded-full ${corClass(item.cor)}`} />
+                        <span className="text-xs text-muted-foreground">{item.cor}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-sm">{formatCurrency(item.preco)}</span>
+                        <span className="text-xs text-muted-foreground ml-1">/{item.unidade}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border bg-card shadow-sm">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                  Nenhum item encontrado
-                </TableCell>
+                <TableHead className="w-16">Imagem</TableHead>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("codigo")}>
+                  <span className="inline-flex items-center">Código <SortIcon col="codigo" /></span>
+                </TableHead>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("descricao")}>
+                  <span className="inline-flex items-center">Descrição <SortIcon col="descricao" /></span>
+                </TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("cor")}>
+                  <span className="inline-flex items-center">Cor <SortIcon col="cor" /></span>
+                </TableHead>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("preco")}>
+                  <span className="inline-flex items-center">Preço <SortIcon col="preco" /></span>
+                </TableHead>
+                <TableHead>Unidade</TableHead>
               </TableRow>
-            )}
-            {filtered.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                    <img
-                      src={categoryImage[item.categoria]}
-                      alt={item.categoria}
-                      loading="lazy"
-                      width={40}
-                      height={40}
-                      className="h-8 w-8 object-contain"
-                    />
-                  </div>
-                </TableCell>
-                <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
-                <TableCell className="font-medium">{item.descricao}</TableCell>
-                <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1.5">
-                    <span className={`h-3 w-3 rounded-full ${item.cor === "Amadeirado" ? "bg-amber-600" : item.cor === "Cromado" ? "bg-gray-400" : item.cor === "Preto" ? "bg-foreground" : "bg-blue-200"}`} />
-                    <span className="text-sm">{item.cor}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="font-bold">{formatCurrency(item.preco)}</TableCell>
-                <TableCell className="text-muted-foreground">{item.unidade}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {filtered.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum item encontrado</TableCell>
+                </TableRow>
+              )}
+              {filtered.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
+                      <img src={categoryImage[item.categoria]} alt={item.categoria} loading="lazy" width={40} height={40} className="h-8 w-8 object-contain" />
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
+                  <TableCell className="font-medium">{item.descricao}</TableCell>
+                  <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`h-3 w-3 rounded-full ${corClass(item.cor)}`} />
+                      <span className="text-sm">{item.cor}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-bold">{formatCurrency(item.preco)}</TableCell>
+                  <TableCell className="text-muted-foreground">{item.unidade}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };
