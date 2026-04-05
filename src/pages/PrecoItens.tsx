@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -6,35 +6,26 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown, FileText, Sheet } from "lucide-react";
+import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown, FileText, Sheet, Loader2, Check, X } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
 import { generateExcel } from "@/utils/excelGenerator";
 import { exportPrecoItensPdf } from "@/utils/precoItensPdfGenerator";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import perfilImg from "@/assets/items/perfil.png";
 import vidroImg from "@/assets/items/vidro.png";
 import ferragemImg from "@/assets/items/ferragem.png";
 
-interface ItemPreco {
+interface Produto {
   id: string;
   codigo: string;
-  descricao: string;
+  nome: string;
   categoria: string;
   preco: number;
   unidade: string;
-  cor: string;
+  ativo: boolean;
 }
-
-const itensMock: ItemPreco[] = [
-  { id: "1", codigo: "SU-001", descricao: "Perfil Montante 40x25", categoria: "Perfis", preco: 288.20, unidade: "barra", cor: "Amadeirado" },
-  { id: "2", codigo: "SU-002", descricao: "Perfil Trilho 50x30", categoria: "Perfis", preco: 276.36, unidade: "barra", cor: "Amadeirado" },
-  { id: "3", codigo: "SU-003", descricao: "Perfil Contramarco 75×35", categoria: "Perfis", preco: 208.00, unidade: "barra", cor: "Amadeirado" },
-  { id: "4", codigo: "SU-039", descricao: "Perfil Folha Móvel 60mm", categoria: "Perfis", preco: 190.00, unidade: "barra", cor: "Amadeirado" },
-  { id: "5", codigo: "VD-001", descricao: "Vidro 6mm Comum Incolor", categoria: "Vidros", preco: 106.25, unidade: "m²", cor: "Incolor" },
-  { id: "6", codigo: "VD-002", descricao: "Vidro 8mm Temperado", categoria: "Vidros", preco: 185.00, unidade: "m²", cor: "Incolor" },
-  { id: "7", codigo: "FR-001", descricao: "Fechadura Multiponto", categoria: "Ferragens", preco: 89.90, unidade: "pç", cor: "Cromado" },
-  { id: "8", codigo: "FR-002", descricao: "Roldana Dupla 30mm", categoria: "Ferragens", preco: 12.50, unidade: "pç", cor: "Preto" },
-];
 
 const categoryImage: Record<string, string> = {
   Perfis: perfilImg,
@@ -42,26 +33,40 @@ const categoryImage: Record<string, string> = {
   Ferragens: ferragemImg,
 };
 
-const corClass = (cor: string) =>
-  cor === "Amadeirado" ? "bg-amber-600" : cor === "Cromado" ? "bg-gray-400" : cor === "Preto" ? "bg-foreground" : "bg-blue-200";
-
-type SortKey = "codigo" | "descricao" | "preco" | "cor";
+type SortKey = "codigo" | "nome" | "preco" | "categoria";
 type SortDir = "asc" | "desc";
 
 const PrecoItens = () => {
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const [saving, setSaving] = useState(false);
   const isMobile = useIsMobile();
 
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+  const fetchProdutos = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("produtos")
+      .select("id, codigo, nome, categoria, preco, unidade, ativo")
+      .eq("ativo", true)
+      .order("codigo");
+    if (error) {
+      toast({ title: "Erro ao carregar produtos", description: error.message, variant: "destructive" });
     } else {
-      setSortKey(key);
-      setSortDir("asc");
+      setProdutos(data || []);
     }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchProdutos(); }, [fetchProdutos]);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
   };
 
   const SortIcon = ({ col }: { col: SortKey }) => {
@@ -69,31 +74,108 @@ const PrecoItens = () => {
     return sortDir === "asc" ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />;
   };
 
+  const startEdit = (item: Produto) => {
+    setEditingId(item.id);
+    setEditValue(item.preco.toString().replace(".", ","));
+  };
+
+  const cancelEdit = () => { setEditingId(null); setEditValue(""); };
+
+  const saveEdit = async (id: string) => {
+    const parsed = parseFloat(editValue.replace(",", "."));
+    if (isNaN(parsed) || parsed < 0) {
+      toast({ title: "Valor inválido", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("produtos").update({ preco: parsed }).eq("id", id);
+    if (error) {
+      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+    } else {
+      setProdutos((prev) => prev.map((p) => (p.id === id ? { ...p, preco: parsed } : p)));
+      toast({ title: "Preço atualizado" });
+    }
+    setSaving(false);
+    setEditingId(null);
+  };
+
+  const categories = useMemo(() => {
+    const cats = new Set(produtos.map((p) => p.categoria));
+    return ["Todos", ...Array.from(cats).sort()];
+  }, [produtos]);
+
   const filtered = useMemo(() => {
-    let list = itensMock as ItemPreco[];
+    let list = produtos;
     if (category !== "Todos") list = list.filter((i) => i.categoria === category);
     if (search) {
       const s = search.toLowerCase();
-      list = list.filter((i) => i.descricao.toLowerCase().includes(s) || i.codigo.toLowerCase().includes(s) || i.categoria.toLowerCase().includes(s));
+      list = list.filter((i) => i.nome.toLowerCase().includes(s) || i.codigo.toLowerCase().includes(s) || i.categoria.toLowerCase().includes(s));
     }
     if (sortKey) {
       list = [...list].sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
+        const aVal = a[sortKey]; const bVal = b[sortKey];
         if (typeof aVal === "number" && typeof bVal === "number") return sortDir === "asc" ? aVal - bVal : bVal - aVal;
         const cmp = String(aVal).localeCompare(String(bVal), "pt-BR");
         return sortDir === "asc" ? cmp : -cmp;
       });
     }
     return list;
-  }, [search, category, sortKey, sortDir]);
+  }, [search, category, sortKey, sortDir, produtos]);
+
+  const exportItems = filtered.map((i) => ({
+    codigo: i.codigo,
+    descricao: i.nome,
+    categoria: i.categoria,
+    preco: i.preco,
+    unidade: i.unidade,
+    cor: "",
+  }));
+
+  const PriceCell = ({ item }: { item: Produto }) => {
+    if (editingId === item.id) {
+      return (
+        <div className="flex items-center gap-1">
+          <span className="text-muted-foreground text-xs">R$</span>
+          <Input
+            className="h-7 w-24 text-sm"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") saveEdit(item.id); if (e.key === "Escape") cancelEdit(); }}
+            autoFocus
+            disabled={saving}
+          />
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => saveEdit(item.id)} disabled={saving}>
+            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3 text-green-600" />}
+          </Button>
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={cancelEdit} disabled={saving}>
+            <X className="h-3 w-3 text-destructive" />
+          </Button>
+        </div>
+      );
+    }
+    return (
+      <span className="font-bold cursor-pointer hover:text-primary transition-colors" onClick={() => startEdit(item)} title="Clique para editar">
+        {formatCurrency(item.preco)}
+      </span>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Preço dos Itens</h1>
-          <p className="text-muted-foreground text-sm">Tabela de preços de perfis, vidros e ferragens</p>
+          <p className="text-muted-foreground text-sm">
+            {produtos.length} produtos cadastrados — clique no preço para editar
+          </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -102,13 +184,13 @@ const PrecoItens = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => exportPrecoItensPdf(filtered)}>
+            <DropdownMenuItem onClick={() => exportPrecoItensPdf(exportItems)}>
               <FileText className="mr-2 h-4 w-4" /> Exportar PDF
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => generateExcel({
               title: "Tabela de Preços",
-              headers: ["Código", "Descrição", "Categoria", "Cor", "Preço", "Unidade"],
-              rows: filtered.map((i) => [i.codigo, i.descricao, i.categoria, i.cor, formatCurrency(i.preco), i.unidade]),
+              headers: ["Código", "Nome", "Categoria", "Preço", "Unidade"],
+              rows: filtered.map((i) => [i.codigo, i.nome, i.categoria, formatCurrency(i.preco), i.unidade]),
               filename: "tabela-precos.xlsx",
             })}>
               <Sheet className="mr-2 h-4 w-4" /> Exportar Excel
@@ -118,11 +200,10 @@ const PrecoItens = () => {
       </div>
 
       <Tabs value={category} onValueChange={setCategory}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="Todos">Todos</TabsTrigger>
-          <TabsTrigger value="Perfis">Perfis</TabsTrigger>
-          <TabsTrigger value="Vidros">Vidros</TabsTrigger>
-          <TabsTrigger value="Ferragens">Ferragens</TabsTrigger>
+        <TabsList className="w-full sm:w-auto flex-wrap">
+          {categories.map((cat) => (
+            <TabsTrigger key={cat} value={cat}>{cat}</TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
 
@@ -133,31 +214,23 @@ const PrecoItens = () => {
 
       {isMobile ? (
         <div className="space-y-3">
-          {filtered.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">Nenhum item encontrado</p>
-          )}
+          {filtered.length === 0 && <p className="text-center text-muted-foreground py-8">Nenhum produto encontrado</p>}
           {filtered.map((item) => (
             <Card key={item.id} className="shadow-sm border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                    <img src={categoryImage[item.categoria]} alt={item.categoria} loading="lazy" width={48} height={48} className="h-10 w-10 object-contain" />
+                    <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={48} height={48} className="h-10 w-10 object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold text-primary text-sm">{item.codigo}</span>
                       <Badge variant="secondary" className="text-xs shrink-0">{item.categoria}</Badge>
                     </div>
-                    <p className="font-medium text-sm mt-0.5 truncate">{item.descricao}</p>
+                    <p className="font-medium text-sm mt-0.5 truncate">{item.nome}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`h-2.5 w-2.5 rounded-full ${corClass(item.cor)}`} />
-                        <span className="text-xs text-muted-foreground">{item.cor}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-sm">{formatCurrency(item.preco)}</span>
-                        <span className="text-xs text-muted-foreground ml-1">/{item.unidade}</span>
-                      </div>
+                      <span className="text-xs text-muted-foreground">{item.unidade}</span>
+                      <PriceCell item={item} />
                     </div>
                   </div>
                 </div>
@@ -174,12 +247,11 @@ const PrecoItens = () => {
                 <TableHead className="cursor-pointer select-none" onClick={() => handleSort("codigo")}>
                   <span className="inline-flex items-center">Código <SortIcon col="codigo" /></span>
                 </TableHead>
-                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("descricao")}>
-                  <span className="inline-flex items-center">Descrição <SortIcon col="descricao" /></span>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("nome")}>
+                  <span className="inline-flex items-center">Nome <SortIcon col="nome" /></span>
                 </TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("cor")}>
-                  <span className="inline-flex items-center">Cor <SortIcon col="cor" /></span>
+                <TableHead className="cursor-pointer select-none" onClick={() => handleSort("categoria")}>
+                  <span className="inline-flex items-center">Categoria <SortIcon col="categoria" /></span>
                 </TableHead>
                 <TableHead className="cursor-pointer select-none" onClick={() => handleSort("preco")}>
                   <span className="inline-flex items-center">Preço <SortIcon col="preco" /></span>
@@ -189,27 +261,19 @@ const PrecoItens = () => {
             </TableHeader>
             <TableBody>
               {filtered.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum item encontrado</TableCell>
-                </TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhum produto encontrado</TableCell></TableRow>
               )}
               {filtered.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                      <img src={categoryImage[item.categoria]} alt={item.categoria} loading="lazy" width={40} height={40} className="h-8 w-8 object-contain" />
+                      <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={40} height={40} className="h-8 w-8 object-contain" />
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
-                  <TableCell className="font-medium">{item.descricao}</TableCell>
+                  <TableCell className="font-medium">{item.nome}</TableCell>
                   <TableCell><Badge variant="secondary" className="text-xs">{item.categoria}</Badge></TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <span className={`h-3 w-3 rounded-full ${corClass(item.cor)}`} />
-                      <span className="text-sm">{item.cor}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-bold">{formatCurrency(item.preco)}</TableCell>
+                  <TableCell><PriceCell item={item} /></TableCell>
                   <TableCell className="text-muted-foreground">{item.unidade}</TableCell>
                 </TableRow>
               ))}
