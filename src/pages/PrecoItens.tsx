@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, FileDown } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, FileDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
 import perfilImg from "@/assets/items/perfil.png";
 import vidroImg from "@/assets/items/vidro.png";
@@ -36,14 +37,57 @@ const categoryImage: Record<string, string> = {
   Ferragens: ferragemImg,
 };
 
+type SortKey = "codigo" | "descricao" | "preco" | "cor";
+type SortDir = "asc" | "desc";
+
 const PrecoItens = () => {
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Todos");
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
-  const filtered = itensMock.filter((item) => {
-    if (!search) return true;
-    const s = search.toLowerCase();
-    return item.descricao.toLowerCase().includes(s) || item.codigo.toLowerCase().includes(s) || item.categoria.toLowerCase().includes(s);
-  });
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const SortIcon = ({ col }: { col: SortKey }) => {
+    if (sortKey !== col) return <ArrowUpDown className="ml-1 h-3 w-3 opacity-40" />;
+    return sortDir === "asc" ? <ArrowUp className="ml-1 h-3 w-3" /> : <ArrowDown className="ml-1 h-3 w-3" />;
+  };
+
+  const filtered = useMemo(() => {
+    let list = itensMock;
+
+    if (category !== "Todos") {
+      list = list.filter((i) => i.categoria === category);
+    }
+
+    if (search) {
+      const s = search.toLowerCase();
+      list = list.filter(
+        (i) => i.descricao.toLowerCase().includes(s) || i.codigo.toLowerCase().includes(s) || i.categoria.toLowerCase().includes(s)
+      );
+    }
+
+    if (sortKey) {
+      list = [...list].sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+        if (typeof aVal === "number" && typeof bVal === "number") {
+          return sortDir === "asc" ? aVal - bVal : bVal - aVal;
+        }
+        const cmp = String(aVal).localeCompare(String(bVal), "pt-BR");
+        return sortDir === "asc" ? cmp : -cmp;
+      });
+    }
+
+    return list;
+  }, [search, category, sortKey, sortDir]);
 
   return (
     <div className="space-y-6">
@@ -57,6 +101,15 @@ const PrecoItens = () => {
         </Button>
       </div>
 
+      <Tabs value={category} onValueChange={setCategory}>
+        <TabsList>
+          <TabsTrigger value="Todos">Todos</TabsTrigger>
+          <TabsTrigger value="Perfis">Perfis</TabsTrigger>
+          <TabsTrigger value="Vidros">Vidros</TabsTrigger>
+          <TabsTrigger value="Ferragens">Ferragens</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input placeholder="Buscar item..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -67,15 +120,30 @@ const PrecoItens = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-16">Imagem</TableHead>
-              <TableHead>Código</TableHead>
-              <TableHead>Descrição</TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("codigo")}>
+                <span className="inline-flex items-center">Código <SortIcon col="codigo" /></span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("descricao")}>
+                <span className="inline-flex items-center">Descrição <SortIcon col="descricao" /></span>
+              </TableHead>
               <TableHead>Categoria</TableHead>
-              <TableHead>Cor</TableHead>
-              <TableHead>Preço</TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("cor")}>
+                <span className="inline-flex items-center">Cor <SortIcon col="cor" /></span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("preco")}>
+                <span className="inline-flex items-center">Preço <SortIcon col="preco" /></span>
+              </TableHead>
               <TableHead>Unidade</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
+            {filtered.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  Nenhum item encontrado
+                </TableCell>
+              </TableRow>
+            )}
             {filtered.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
