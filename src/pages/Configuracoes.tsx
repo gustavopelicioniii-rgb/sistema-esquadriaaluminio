@@ -66,26 +66,7 @@ interface ApiConfig {
   descricao: string;
 }
 
-// ─── Mock data (will be replaced by DB) ───
-const initialFuncionarios: Funcionario[] = [
-  { id: "1", nome: "Marcos Pereira", cargo: "Montador", telefone: "(11) 91111-4567", setor: "Produção", ativo: true },
-  { id: "2", nome: "José Almeida", cargo: "Cortador", telefone: "(11) 92222-3456", setor: "Produção", ativo: true },
-  { id: "3", nome: "Rafael Costa", cargo: "Instalador", telefone: "(11) 93333-2345", setor: "Instalação", ativo: true },
-  { id: "4", nome: "Fernando Lima", cargo: "Vendedor", telefone: "(11) 94444-1234", setor: "Comercial", ativo: true },
-  { id: "5", nome: "Lucas Rocha", cargo: "Auxiliar", telefone: "(11) 95555-0123", setor: "Produção", ativo: false },
-];
-
-const initialAdmins: Admin[] = [
-  { id: "1", nome: "Igor Soares de Souza", email: "igor@alumpro.com", role: "Super Admin", ativo: true },
-  { id: "2", nome: "Gabriel Martins", email: "gabriel@alumpro.com", role: "Admin", ativo: true },
-  { id: "3", nome: "Carlos Silva", email: "carlos@alumpro.com", role: "Admin", ativo: false },
-];
-
-const initialApis: ApiConfig[] = [
-  { id: "1", nome: "WhatsApp API", chave: "wh_sk_***************", ativa: true, descricao: "Integração com WhatsApp Business para envio de notificações" },
-  { id: "2", nome: "Google Maps", chave: "AIza***************", ativa: true, descricao: "API de mapas para localização de clientes e obras" },
-  { id: "3", nome: "Nota Fiscal (NFe)", chave: "", ativa: false, descricao: "Emissão de notas fiscais eletrônicas" },
-];
+// No more mock data — loaded from DB
 
 // ─── Component ───
 const Configuracoes = () => {
