@@ -256,8 +256,51 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
     </div>
   );
 }
+const MONTH_NAMES_SHORT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
-const Financeiro = () => {
+function ResumoChart({ contas }: { contas: ContaFinanceira[] }) {
+  const chartData = useMemo(() => {
+    const now = new Date();
+    const months: { month: string; receitas: number; despesas: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      const label = `${MONTH_NAMES_SHORT[m]}/${y.toString().slice(2)}`;
+      const receitas = contas
+        .filter(c => c.tipo === "receber" && new Date(c.vencimento).getMonth() === m && new Date(c.vencimento).getFullYear() === y)
+        .reduce((s, c) => s + Number(c.valor), 0);
+      const despesas = contas
+        .filter(c => c.tipo === "pagar" && new Date(c.vencimento).getMonth() === m && new Date(c.vencimento).getFullYear() === y)
+        .reduce((s, c) => s + Number(c.valor), 0);
+      months.push({ month: label, receitas, despesas });
+    }
+    return months;
+  }, [contas]);
+
+  return (
+    <Card>
+      <CardHeader className="px-3 sm:px-6">
+        <CardTitle className="text-xs sm:text-sm font-bold">Receitas vs Despesas — Últimos 6 Meses</CardTitle>
+      </CardHeader>
+      <CardContent className="px-1 sm:px-6">
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="month" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+            <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`} />
+            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="receitas" name="Receitas" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="despesas" name="Despesas" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+
   const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
   
