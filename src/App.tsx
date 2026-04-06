@@ -96,10 +96,6 @@ const App = () => (
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
                   <Route path="/tipologias" element={<S><Tipologias /></S>} />
-                </Route>
-
-                {/* Admin only - shared layout */}
-                <Route element={<AdminLayout />}>
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                 </Route>
 
