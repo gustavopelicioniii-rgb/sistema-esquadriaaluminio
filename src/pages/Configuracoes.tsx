@@ -66,26 +66,7 @@ interface ApiConfig {
   descricao: string;
 }
 
-// ─── Mock data (will be replaced by DB) ───
-const initialFuncionarios: Funcionario[] = [
-  { id: "1", nome: "Marcos Pereira", cargo: "Montador", telefone: "(11) 91111-4567", setor: "Produção", ativo: true },
-  { id: "2", nome: "José Almeida", cargo: "Cortador", telefone: "(11) 92222-3456", setor: "Produção", ativo: true },
-  { id: "3", nome: "Rafael Costa", cargo: "Instalador", telefone: "(11) 93333-2345", setor: "Instalação", ativo: true },
-  { id: "4", nome: "Fernando Lima", cargo: "Vendedor", telefone: "(11) 94444-1234", setor: "Comercial", ativo: true },
-  { id: "5", nome: "Lucas Rocha", cargo: "Auxiliar", telefone: "(11) 95555-0123", setor: "Produção", ativo: false },
-];
-
-const initialAdmins: Admin[] = [
-  { id: "1", nome: "Igor Soares de Souza", email: "igor@alumpro.com", role: "Super Admin", ativo: true },
-  { id: "2", nome: "Gabriel Martins", email: "gabriel@alumpro.com", role: "Admin", ativo: true },
-  { id: "3", nome: "Carlos Silva", email: "carlos@alumpro.com", role: "Admin", ativo: false },
-];
-
-const initialApis: ApiConfig[] = [
-  { id: "1", nome: "WhatsApp API", chave: "wh_sk_***************", ativa: true, descricao: "Integração com WhatsApp Business para envio de notificações" },
-  { id: "2", nome: "Google Maps", chave: "AIza***************", ativa: true, descricao: "API de mapas para localização de clientes e obras" },
-  { id: "3", nome: "Nota Fiscal (NFe)", chave: "", ativa: false, descricao: "Emissão de notas fiscais eletrônicas" },
-];
+// No more mock data — loaded from DB
 
 // ─── Component ───
 const Configuracoes = () => {
@@ -96,17 +77,17 @@ const Configuracoes = () => {
   const [activeTab, setActiveTab] = useState("empresa");
 
   // Funcionarios state
-  const [funcionarios, setFuncionarios] = useState<Funcionario[]>(initialFuncionarios);
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [showAddFunc, setShowAddFunc] = useState(false);
   const [newFunc, setNewFunc] = useState({ nome: "", cargo: "", telefone: "", setor: "Produção" });
 
   // Admins state
-  const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
+  const [admins, setAdmins] = useState<Admin[]>([]);
   const [showAddAdmin, setShowAddAdmin] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ nome: "", email: "", role: "Admin" });
 
   // APIs state
-  const [apis, setApis] = useState<ApiConfig[]>(initialApis);
+  const [apis, setApis] = useState<ApiConfig[]>([]);
   const [showAddApi, setShowAddApi] = useState(false);
   const [newApi, setNewApi] = useState({ nome: "", chave: "", descricao: "" });
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
@@ -130,10 +111,14 @@ const Configuracoes = () => {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const { data } = await supabase.from("configuracoes").select("chave, valor");
-      if (data && data.length > 0) {
+      const [configRes, funcRes, adminRes] = await Promise.all([
+        supabase.from("configuracoes").select("chave, valor"),
+        supabase.from("funcionarios").select("*").order("created_at"),
+        supabase.from("administradores").select("*").order("created_at"),
+      ]);
+      if (configRes.data && configRes.data.length > 0) {
         const map: Record<string, string> = {};
-        data.forEach((r) => { map[r.chave] = r.valor; });
+        configRes.data.forEach((r) => { map[r.chave] = r.valor; });
         setConfig((prev) => ({ ...prev, ...map }));
         if (map.folgas_global) {
           try {
@@ -142,6 +127,8 @@ const Configuracoes = () => {
           } catch { /* ignore */ }
         }
       }
+      if (funcRes.data) setFuncionarios(funcRes.data as unknown as Funcionario[]);
+      if (adminRes.data) setAdmins(adminRes.data as unknown as Admin[]);
       setLoading(false);
     };
     fetchAll();
@@ -167,40 +154,61 @@ const Configuracoes = () => {
   };
 
   // ─── Funcionarios handlers ───
-  const addFuncionario = () => {
+  const addFuncionario = async () => {
     if (!newFunc.nome) return;
-    const f: Funcionario = { id: Date.now().toString(), ...newFunc, ativo: true };
-    setFuncionarios((prev) => [...prev, f]);
+    const { error } = await supabase.from("funcionarios").insert({
+      nome: newFunc.nome,
+      cargo: newFunc.cargo,
+      telefone: newFunc.telefone,
+      setor: newFunc.setor,
+    });
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    const { data } = await supabase.from("funcionarios").select("*").order("created_at");
+    if (data) setFuncionarios(data as unknown as Funcionario[]);
     setNewFunc({ nome: "", cargo: "", telefone: "", setor: "Produção" });
     setShowAddFunc(false);
     toast({ title: "Funcionário adicionado" });
   };
 
-  const removeFuncionario = (id: string) => {
+  const removeFuncionario = async (id: string) => {
+    await supabase.from("funcionarios").delete().eq("id", id);
     setFuncionarios((prev) => prev.filter((f) => f.id !== id));
     toast({ title: "Funcionário removido", variant: "destructive" });
   };
 
-  const toggleFuncionario = (id: string) => {
+  const toggleFuncionario = async (id: string) => {
+    const f = funcionarios.find((f) => f.id === id);
+    if (!f) return;
+    await supabase.from("funcionarios").update({ ativo: !f.ativo }).eq("id", id);
     setFuncionarios((prev) => prev.map((f) => f.id === id ? { ...f, ativo: !f.ativo } : f));
   };
 
   // ─── Admin handlers ───
-  const addAdmin = () => {
+  const addAdmin = async () => {
     if (!newAdmin.nome || !newAdmin.email) return;
-    const a: Admin = { id: Date.now().toString(), ...newAdmin, ativo: true };
-    setAdmins((prev) => [...prev, a]);
+    const { error } = await supabase.from("administradores").insert({
+      nome: newAdmin.nome,
+      email: newAdmin.email,
+      role: newAdmin.role,
+    });
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    const { data } = await supabase.from("administradores").select("*").order("created_at");
+    if (data) setAdmins(data as unknown as Admin[]);
     setNewAdmin({ nome: "", email: "", role: "Admin" });
     setShowAddAdmin(false);
     toast({ title: "Administrador adicionado" });
   };
 
-  const removeAdmin = (id: string) => {
+  const removeAdmin = async (id: string) => {
+    await supabase.from("administradores").delete().eq("id", id);
     setAdmins((prev) => prev.filter((a) => a.id !== id));
     toast({ title: "Administrador removido", variant: "destructive" });
   };
 
-  const toggleAdmin = (id: string) => {
+  const toggleAdmin = async (id: string) => {
+    const a = admins.find((a) => a.id === id);
+    if (!a) return;
+    await supabase.from("administradores").update({ ativo: !a.ativo }).eq("id", id);
     setAdmins((prev) => prev.map((a) => a.id === id ? { ...a, ativo: !a.ativo } : a));
   };
 
