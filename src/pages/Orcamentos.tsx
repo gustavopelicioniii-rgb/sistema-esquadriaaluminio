@@ -63,7 +63,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           </div>
         </div>
 
-        <div className="px-6 pb-6 space-y-5">
+        <div className="px-6 pb-6 space-y-5 overflow-y-auto flex-1">
           {/* Info grid */}
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-xl border bg-muted/30 p-3.5 space-y-1">
