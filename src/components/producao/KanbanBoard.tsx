@@ -11,6 +11,7 @@ const columns: { key: string; label: string; color: string }[] = [
 
 interface Props {
   pedidos: Pedido[];
+  progressMap?: Record<string, number>;
   onStatusChange: (id: string, newStatus: string) => void;
   onOpenDetail: (p: Pedido) => void;
   onOpenDialog: (type: string, p: Pedido) => void;
