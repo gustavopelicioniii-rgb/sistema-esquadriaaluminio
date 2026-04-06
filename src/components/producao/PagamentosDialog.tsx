@@ -97,7 +97,15 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
             <div className="rounded-lg bg-destructive/10 p-3">
               <p className="text-xs text-muted-foreground">Restante</p>
               <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Progresso do pagamento</span>
+              <span className="font-medium">{percentPago.toFixed(0)}%</span>
             </div>
+            <Progress value={percentPago} className="h-2.5" />
+          </div>
           </div>
 
           {pagamentos.length > 0 && (
