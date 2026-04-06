@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/formatters";
@@ -45,6 +46,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
 
   const totalPago = pagamentos.reduce((s, p) => s + Number(p.valor), 0);
   const restante = pedido.valor - totalPago;
+  const percentPago = pedido.valor > 0 ? Math.min(100, (totalPago / pedido.valor) * 100) : 0;
 
   const handleAdd = async () => {
     const v = parseFloat(valor);
@@ -95,7 +97,15 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
             <div className="rounded-lg bg-destructive/10 p-3">
               <p className="text-xs text-muted-foreground">Restante</p>
               <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Progresso do pagamento</span>
+              <span className="font-medium">{percentPago.toFixed(0)}%</span>
             </div>
+            <Progress value={percentPago} className="h-2.5" />
+          </div>
           </div>
 
           {pagamentos.length > 0 && (
