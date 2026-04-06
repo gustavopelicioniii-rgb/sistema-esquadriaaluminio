@@ -761,6 +761,65 @@ export type Database = {
         }
         Relationships: []
       }
+      regras_componentes_customizadas: {
+        Row: {
+          component_code: string | null
+          component_name: string
+          component_type: string
+          created_at: string
+          id: string
+          length_constant_mm: number | null
+          length_reference: string | null
+          notes: string | null
+          quantity_formula: string
+          sort_order: number
+          typology_id: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          component_code?: string | null
+          component_name: string
+          component_type?: string
+          created_at?: string
+          id?: string
+          length_constant_mm?: number | null
+          length_reference?: string | null
+          notes?: string | null
+          quantity_formula?: string
+          sort_order?: number
+          typology_id: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          component_code?: string | null
+          component_name?: string
+          component_type?: string
+          created_at?: string
+          id?: string
+          length_constant_mm?: number | null
+          length_reference?: string | null
+          notes?: string | null
+          quantity_formula?: string
+          sort_order?: number
+          typology_id?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regras_componentes_customizadas_typology_id_fkey"
+            columns: ["typology_id"]
+            isOneToOne: false
+            referencedRelation: "tipologias_customizadas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regras_corte_customizadas: {
         Row: {
           coefficient: number
