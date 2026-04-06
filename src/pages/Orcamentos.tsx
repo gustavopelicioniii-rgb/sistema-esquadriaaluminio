@@ -42,6 +42,32 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
     });
   };
 
+  const handleDownloadPdf = async () => {
+    const itensData = orc.itens as Record<string, any> | null;
+    try {
+      await generateProfessionalBudgetPDF({
+        numero: orc.numero,
+        cliente: orc.cliente,
+        produto: orc.produto,
+        larguraCm: itensData?.largura_cm ?? 200,
+        alturaCm: itensData?.altura_cm ?? 120,
+        quantidade: itensData?.quantidade ?? 1,
+        areaM2: itensData?.area_m2 ?? 0,
+        custoTotal: itensData?.custo ?? 0,
+        margem: itensData?.margem_percent ?? 0,
+        valorFinal: orc.valor,
+        corAluminio: itensData?.cor_aluminio,
+        corFerragem: itensData?.cor_ferragem,
+        tipoVidro: itensData?.vidro_tipo,
+        ambiente: itensData?.ambiente,
+        observacoes: itensData?.observacoes,
+      });
+      toast({ title: "PDF gerado com sucesso!" });
+    } catch (err: any) {
+      toast({ title: "Erro ao gerar PDF", description: err.message, variant: "destructive" });
+    }
+  };
+
   if (!orc) return null;
 
   return (
