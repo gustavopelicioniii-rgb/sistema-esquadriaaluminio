@@ -1,0 +1,495 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import { usePageTitle } from "@/hooks/use-page-title";
+import { supabase } from "@/integrations/supabase/client";
+import { typologies as catalogTypologies } from "@/data/catalog/typologies";
+import { productLines } from "@/data/catalog/manufacturers";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy } from "lucide-react";
+
+const CATEGORIES = [
+  { value: "janela", label: "Janela" },
+  { value: "porta", label: "Porta" },
+  { value: "vitro", label: "Vitrô" },
+  { value: "veneziana", label: "Veneziana" },
+  { value: "maxim_ar", label: "Maxim-Ar" },
+  { value: "camarao", label: "Camarão" },
+  { value: "pivotante", label: "Pivotante" },
+  { value: "basculante", label: "Basculante" },
+  { value: "fachada", label: "Fachada" },
+];
+
+const SUBCATEGORIES = [
+  { value: "correr", label: "Correr" },
+  { value: "giro", label: "Giro" },
+  { value: "maxim_ar", label: "Maxim-Ar" },
+  { value: "camarao", label: "Camarão" },
+  { value: "basculante", label: "Basculante" },
+  { value: "pivotante", label: "Pivotante" },
+  { value: "fixo", label: "Fixo" },
+];
+
+interface CustomTypology {
+  id: string;
+  product_line_id: string;
+  name: string;
+  category: string;
+  subcategory: string | null;
+  num_folhas: number;
+  has_veneziana: boolean;
+  has_bandeira: boolean;
+  notes: string | null;
+  active: boolean;
+  min_width_mm: number | null;
+  max_width_mm: number | null;
+  min_height_mm: number | null;
+  max_height_mm: number | null;
+}
+
+const emptyForm = {
+  product_line_id: "line-suprema",
+  name: "",
+  category: "janela",
+  subcategory: "correr",
+  num_folhas: 2,
+  has_veneziana: false,
+  has_bandeira: false,
+  notes: "",
+  min_width_mm: 600,
+  max_width_mm: 4000,
+  min_height_mm: 400,
+  max_height_mm: 2500,
+};
+
+const Tipologias = () => {
+  usePageTitle("Tipologias");
+  const [tab, setTab] = useState("catalogo");
+  const [search, setSearch] = useState("");
+  const [filterLine, setFilterLine] = useState("all");
+
+  // Custom typologies
+  const [customs, setCustoms] = useState<CustomTypology[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyForm);
+
+  const fetchCustoms = async () => {
+    const { data } = await supabase.from("tipologias_customizadas").select("*").order("created_at", { ascending: false });
+    if (data) setCustoms(data as unknown as CustomTypology[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchCustoms(); }, []);
+
+  const getLineName = (lineId: string) => {
+    const line = productLines.find(l => l.id === lineId);
+    return line ? line.name : lineId;
+  };
+
+  const getCategoryLabel = (cat: string) => CATEGORIES.find(c => c.value === cat)?.label || cat;
+
+  // Filtered catalog typologies
+  const filteredCatalog = catalogTypologies.filter(t => {
+    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase());
+    const matchLine = filterLine === "all" || t.product_line_id === filterLine;
+    return matchSearch && matchLine;
+  });
+
+  // Filtered custom typologies
+  const filteredCustom = customs.filter(t => {
+    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase());
+    const matchLine = filterLine === "all" || t.product_line_id === filterLine;
+    return matchSearch && matchLine;
+  });
+
+  const handleSave = async () => {
+    if (!form.name.trim()) {
+      toast({ title: "Nome obrigatório", variant: "destructive" });
+      return;
+    }
+
+    if (editId) {
+      const { error } = await supabase.from("tipologias_customizadas").update({
+        product_line_id: form.product_line_id,
+        name: form.name,
+        category: form.category,
+        subcategory: form.subcategory,
+        num_folhas: form.num_folhas,
+        has_veneziana: form.has_veneziana,
+        has_bandeira: form.has_bandeira,
+        notes: form.notes,
+        min_width_mm: form.min_width_mm,
+        max_width_mm: form.max_width_mm,
+        min_height_mm: form.min_height_mm,
+        max_height_mm: form.max_height_mm,
+      }).eq("id", editId);
+      if (error) { toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Tipologia atualizada" });
+    } else {
+      const { error } = await supabase.from("tipologias_customizadas").insert({
+        product_line_id: form.product_line_id,
+        name: form.name,
+        category: form.category,
+        subcategory: form.subcategory,
+        num_folhas: form.num_folhas,
+        has_veneziana: form.has_veneziana,
+        has_bandeira: form.has_bandeira,
+        notes: form.notes,
+        min_width_mm: form.min_width_mm,
+        max_width_mm: form.max_width_mm,
+        min_height_mm: form.min_height_mm,
+        max_height_mm: form.max_height_mm,
+      });
+      if (error) { toast({ title: "Erro ao criar", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Tipologia criada" });
+    }
+
+    setForm(emptyForm);
+    setEditId(null);
+    setShowAdd(false);
+    fetchCustoms();
+  };
+
+  const handleEdit = (t: CustomTypology) => {
+    setForm({
+      product_line_id: t.product_line_id,
+      name: t.name,
+      category: t.category,
+      subcategory: t.subcategory || "correr",
+      num_folhas: t.num_folhas,
+      has_veneziana: t.has_veneziana,
+      has_bandeira: t.has_bandeira,
+      notes: t.notes || "",
+      min_width_mm: t.min_width_mm || 600,
+      max_width_mm: t.max_width_mm || 4000,
+      min_height_mm: t.min_height_mm || 400,
+      max_height_mm: t.max_height_mm || 2500,
+    });
+    setEditId(t.id);
+    setShowAdd(true);
+  };
+
+  const handleDuplicate = (t: CustomTypology) => {
+    setForm({
+      product_line_id: t.product_line_id,
+      name: t.name + " (Cópia)",
+      category: t.category,
+      subcategory: t.subcategory || "correr",
+      num_folhas: t.num_folhas,
+      has_veneziana: t.has_veneziana,
+      has_bandeira: t.has_bandeira,
+      notes: t.notes || "",
+      min_width_mm: t.min_width_mm || 600,
+      max_width_mm: t.max_width_mm || 4000,
+      min_height_mm: t.min_height_mm || 400,
+      max_height_mm: t.max_height_mm || 2500,
+    });
+    setEditId(null);
+    setShowAdd(true);
+  };
+
+  const handleCloneFromCatalog = (t: typeof catalogTypologies[0]) => {
+    setForm({
+      product_line_id: t.product_line_id,
+      name: t.name + " (Customizada)",
+      category: t.category,
+      subcategory: t.subcategory || "correr",
+      num_folhas: t.num_folhas,
+      has_veneziana: t.has_veneziana,
+      has_bandeira: t.has_bandeira,
+      notes: t.notes || "",
+      min_width_mm: t.min_width_mm || 600,
+      max_width_mm: t.max_width_mm || 4000,
+      min_height_mm: t.min_height_mm || 400,
+      max_height_mm: t.max_height_mm || 2500,
+    });
+    setEditId(null);
+    setShowAdd(true);
+    setTab("customizadas");
+  };
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("tipologias_customizadas").delete().eq("id", id);
+    toast({ title: "Tipologia removida", variant: "destructive" });
+    fetchCustoms();
+  };
+
+  const handleToggle = async (id: string, active: boolean) => {
+    await supabase.from("tipologias_customizadas").update({ active: !active }).eq("id", id);
+    fetchCustoms();
+  };
+
+  // Unique product lines from catalog for filter
+  const uniqueLines = [...new Set(catalogTypologies.map(t => t.product_line_id))].map(id => ({
+    id,
+    name: getLineName(id),
+  }));
+
+  const formDialog = (
+    <Dialog open={showAdd} onOpenChange={(o) => { setShowAdd(o); if (!o) { setEditId(null); setForm(emptyForm); } }}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{editId ? "Editar Tipologia" : "Nova Tipologia Customizada"}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <Label>Nome *</Label>
+            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ex: Janela de Correr 2F Especial" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Linha do Produto</Label>
+              <Select value={form.product_line_id} onValueChange={(v) => setForm({ ...form, product_line_id: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {productLines.filter(l => l.active).map(l => (
+                    <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Categoria</Label>
+              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Subcategoria</Label>
+              <Select value={form.subcategory} onValueChange={(v) => setForm({ ...form, subcategory: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {SUBCATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Nº de Folhas</Label>
+              <Input type="number" min={0} max={12} value={form.num_folhas} onChange={(e) => setForm({ ...form, num_folhas: Number(e.target.value) })} />
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="flex items-center gap-2">
+              <Switch checked={form.has_veneziana} onCheckedChange={(v) => setForm({ ...form, has_veneziana: v })} />
+              <Label className="text-sm">Veneziana</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={form.has_bandeira} onCheckedChange={(v) => setForm({ ...form, has_bandeira: v })} />
+              <Label className="text-sm">Bandeira</Label>
+            </div>
+          </div>
+
+          <Separator />
+
+          <h4 className="text-xs font-bold uppercase text-muted-foreground">Dimensões do Vão (mm)</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs">Largura Mín.</Label>
+              <Input type="number" value={form.min_width_mm} onChange={(e) => setForm({ ...form, min_width_mm: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Largura Máx.</Label>
+              <Input type="number" value={form.max_width_mm} onChange={(e) => setForm({ ...form, max_width_mm: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Altura Mín.</Label>
+              <Input type="number" value={form.min_height_mm} onChange={(e) => setForm({ ...form, min_height_mm: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Altura Máx.</Label>
+              <Input type="number" value={form.max_height_mm} onChange={(e) => setForm({ ...form, max_height_mm: Number(e.target.value) })} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Observações</Label>
+            <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Notas opcionais..." />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => { setShowAdd(false); setEditId(null); setForm(emptyForm); }}>Cancelar</Button>
+          <Button onClick={handleSave} className="gap-2">
+            {editId ? <Edit2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            {editId ? "Salvar" : "Criar Tipologia"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Tipologias</h1>
+          <p className="text-muted-foreground text-sm">
+            {catalogTypologies.length} do catálogo + {customs.length} customizadas
+          </p>
+        </div>
+        <Button className="gap-2" onClick={() => { setForm(emptyForm); setEditId(null); setShowAdd(true); setTab("customizadas"); }}>
+          <Plus className="h-4 w-4" /> Nova Tipologia
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input className="pl-9" placeholder="Buscar tipologia..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <Select value={filterLine} onValueChange={setFilterLine}>
+          <SelectTrigger className="w-full sm:w-[220px]"><SelectValue placeholder="Todas as linhas" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as linhas</SelectItem>
+            {uniqueLines.map(l => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList>
+          <TabsTrigger value="catalogo" className="gap-1.5">
+            <BookOpen className="h-4 w-4" /> Catálogo ({filteredCatalog.length})
+          </TabsTrigger>
+          <TabsTrigger value="customizadas" className="gap-1.5">
+            <Layers className="h-4 w-4" /> Customizadas ({filteredCustom.length})
+          </TabsTrigger>
+        </TabsList>
+
+        {/* CATALOG TAB */}
+        <TabsContent value="catalogo" className="mt-4">
+          <Card className="shadow-sm border-border/50">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Linha</TableHead>
+                    <TableHead>Categoria</TableHead>
+                    <TableHead className="hidden md:table-cell">Folhas</TableHead>
+                    <TableHead className="hidden lg:table-cell">Dimensões (mm)</TableHead>
+                    <TableHead className="text-right">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredCatalog.slice(0, 50).map((t) => (
+                    <TableRow key={t.id}>
+                      <TableCell className="font-medium text-sm">{t.name}</TableCell>
+                      <TableCell><Badge variant="secondary" className="text-[10px]">{getLineName(t.product_line_id)}</Badge></TableCell>
+                      <TableCell className="text-sm">{getCategoryLabel(t.category)}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">{t.num_folhas}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
+                        {t.min_width_mm}–{t.max_width_mm} × {t.min_height_mm}–{t.max_height_mm}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => handleCloneFromCatalog(t)}>
+                          <Copy className="h-3 w-3" /> Clonar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            {filteredCatalog.length > 50 && (
+              <div className="p-3 text-center text-xs text-muted-foreground border-t">
+                Mostrando 50 de {filteredCatalog.length} — use o filtro para refinar
+              </div>
+            )}
+          </Card>
+        </TabsContent>
+
+        {/* CUSTOM TAB */}
+        <TabsContent value="customizadas" className="mt-4">
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Carregando...
+            </div>
+          ) : filteredCustom.length === 0 ? (
+            <Card className="shadow-sm border-border/50">
+              <CardContent className="py-12 text-center">
+                <Layers className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
+                <p className="text-muted-foreground text-sm">Nenhuma tipologia customizada ainda.</p>
+                <p className="text-xs text-muted-foreground mt-1">Crie uma nova ou clone do catálogo.</p>
+                <Button className="mt-4 gap-2" onClick={() => { setForm(emptyForm); setEditId(null); setShowAdd(true); }}>
+                  <Plus className="h-4 w-4" /> Criar Tipologia
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-sm border-border/50">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Linha</TableHead>
+                      <TableHead>Categoria</TableHead>
+                      <TableHead className="hidden md:table-cell">Folhas</TableHead>
+                      <TableHead className="hidden lg:table-cell">Dimensões (mm)</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCustom.map((t) => (
+                      <TableRow key={t.id} className={!t.active ? "opacity-50" : ""}>
+                        <TableCell className="font-medium text-sm">{t.name}</TableCell>
+                        <TableCell><Badge variant="secondary" className="text-[10px]">{getLineName(t.product_line_id)}</Badge></TableCell>
+                        <TableCell className="text-sm">{getCategoryLabel(t.category)}</TableCell>
+                        <TableCell className="hidden md:table-cell text-sm">{t.num_folhas}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
+                          {t.min_width_mm}–{t.max_width_mm} × {t.min_height_mm}–{t.max_height_mm}
+                        </TableCell>
+                        <TableCell>
+                          <Switch checked={t.active} onCheckedChange={() => handleToggle(t.id, t.active)} />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(t)}>
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(t)}>
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(t.id)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {formDialog}
+    </div>
+  );
+};
+
+export default Tipologias;
