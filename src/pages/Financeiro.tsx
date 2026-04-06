@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useContasFinanceiras, useCreateConta, useUpdateConta, useDeleteConta, CATEGORIAS_FINANCEIRAS, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -255,6 +256,49 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
     </div>
   );
 }
+const MONTH_NAMES_SHORT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+function ResumoChart({ contas }: { contas: ContaFinanceira[] }) {
+  const chartData = useMemo(() => {
+    const now = new Date();
+    const months: { month: string; receitas: number; despesas: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      const label = `${MONTH_NAMES_SHORT[m]}/${y.toString().slice(2)}`;
+      const receitas = contas
+        .filter(c => c.tipo === "receber" && new Date(c.vencimento).getMonth() === m && new Date(c.vencimento).getFullYear() === y)
+        .reduce((s, c) => s + Number(c.valor), 0);
+      const despesas = contas
+        .filter(c => c.tipo === "pagar" && new Date(c.vencimento).getMonth() === m && new Date(c.vencimento).getFullYear() === y)
+        .reduce((s, c) => s + Number(c.valor), 0);
+      months.push({ month: label, receitas, despesas });
+    }
+    return months;
+  }, [contas]);
+
+  return (
+    <Card>
+      <CardHeader className="px-3 sm:px-6">
+        <CardTitle className="text-xs sm:text-sm font-bold">Receitas vs Despesas — Últimos 6 Meses</CardTitle>
+      </CardHeader>
+      <CardContent className="px-1 sm:px-6">
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="month" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+            <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`} />
+            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="receitas" name="Receitas" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="despesas" name="Despesas" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+}
 
 const Financeiro = () => {
   const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
@@ -375,39 +419,42 @@ const Financeiro = () => {
       </Tabs>
 
       {activeTab === "resumo" && (
-        <Card>
-          <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
-          <CardContent className="px-0 sm:px-6">
-            {filteredContas.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead className="hidden sm:table-cell">Descrição</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredContas.slice(0, 10).map(c => (
-                      <TableRow key={c.id}>
-                        <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
-                        <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
-                        <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" /> : <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />}</TableCell>
-                        <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(c.valor)}</TableCell>
-                        <TableCell><StatusBadge status={c.status} /></TableCell>
+        <div className="space-y-4">
+          <ResumoChart contas={contas} />
+          <Card>
+            <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
+            <CardContent className="px-0 sm:px-6">
+              {filteredContas.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Cliente</TableHead>
+                        <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground text-xs sm:text-sm py-8">Nenhuma movimentação financeira ainda.</p>
-            )}
-          </CardContent>
-        </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredContas.slice(0, 10).map(c => (
+                        <TableRow key={c.id}>
+                          <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
+                          <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
+                          <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" /> : <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />}</TableCell>
+                          <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(c.valor)}</TableCell>
+                          <TableCell><StatusBadge status={c.status} /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground text-xs sm:text-sm py-8">Nenhuma movimentação financeira ainda.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {activeTab === "receber" && <ContasView tipo="receber" contas={filteredContas} />}
