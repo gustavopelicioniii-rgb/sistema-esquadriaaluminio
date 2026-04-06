@@ -19,17 +19,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import {
-  typologies,
   productLines,
   manufacturers,
   getCutRulesForTypology,
   getGlassRulesForTypology,
   getComponentsForTypology,
-  getTypologyById,
 } from "@/data/catalog";
+import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 
 export default function CalculoEsquadrias() {
+  const { allTypologies, loading: typologiesLoading } = useAllTypologies();
   const [selectedLine, setSelectedLine] = useState("line-suprema");
   const [selectedTypology, setSelectedTypology] = useState("");
   const [width, setWidth] = useState("");
@@ -41,8 +41,8 @@ export default function CalculoEsquadrias() {
   const [selectedColor, setSelectedColor] = useState("natural");
 
   const filteredTypologies = useMemo(
-    () => typologies.filter(t => t.product_line_id === selectedLine && t.active),
-    [selectedLine]
+    () => allTypologies.filter(t => t.product_line_id === selectedLine && t.active),
+    [selectedLine, allTypologies]
   );
 
   const selectedTyp = useMemo(

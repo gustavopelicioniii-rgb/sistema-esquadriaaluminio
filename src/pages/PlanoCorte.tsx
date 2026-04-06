@@ -16,7 +16,7 @@ import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, 
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
-import { typologies } from "@/data/catalog";
+import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
@@ -25,10 +25,6 @@ import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
 import { usePlanosCorte, type PlanoCorte as PlanoCorteType } from "@/hooks/use-planos-corte";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-
-function getTypologyInfo(typologyId: string) {
-  return typologies.find(t => t.id === typologyId);
-}
 
 // ============ SUMMARY CARDS ============
 function SummaryCards({ result, barResults }: { result: CalculationOutput; barResults: OptimizationResult[] }) {
