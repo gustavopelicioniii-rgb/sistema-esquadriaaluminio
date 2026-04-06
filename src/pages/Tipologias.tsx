@@ -505,6 +505,7 @@ const Tipologias = () => {
           </DialogHeader>
           {rulesTypology && (
             <div className="space-y-6">
+              <RulesValidatorWrapper typology={rulesTypology} />
               <CutRulesManager typology={rulesTypology} />
               <GlassRulesManager typology={rulesTypology} />
               <ComponentRulesManager typology={rulesTypology} />
