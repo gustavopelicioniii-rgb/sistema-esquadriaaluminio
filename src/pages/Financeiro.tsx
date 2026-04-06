@@ -16,6 +16,7 @@ import {
   Search, Plus, CheckCircle2, Loader2,
   CreditCard, ArrowDownCircle, ArrowUpCircle,
   CalendarIcon, ChevronLeft, ChevronRight,
+  Pencil, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ExportButtons } from "@/components/ExportButtons";
