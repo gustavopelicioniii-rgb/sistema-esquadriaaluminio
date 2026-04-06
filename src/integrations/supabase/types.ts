@@ -172,6 +172,7 @@ export type Database = {
       }
       contas_financeiras: {
         Row: {
+          categoria: string
           cliente: string
           created_at: string
           descricao: string
@@ -183,6 +184,7 @@ export type Database = {
           vencimento: string
         }
         Insert: {
+          categoria?: string
           cliente: string
           created_at?: string
           descricao?: string
@@ -194,6 +196,7 @@ export type Database = {
           vencimento?: string
         }
         Update: {
+          categoria?: string
           cliente?: string
           created_at?: string
           descricao?: string
