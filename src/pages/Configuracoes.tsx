@@ -353,6 +353,54 @@ const Configuracoes = () => {
           </Card>
 
           <Card className="shadow-sm border-border/50">
+            <CardHeader><CardTitle className="text-base">Logo da Empresa</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-6">
+                {config.logo_url ? (
+                  <div className="relative group">
+                    <img
+                      src={config.logo_url}
+                      alt="Logo da empresa"
+                      className="h-24 w-24 object-contain rounded-lg border bg-muted p-2"
+                    />
+                    <button
+                      onClick={handleRemoveLogo}
+                      className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="h-24 w-24 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center bg-muted/50">
+                    <Building2 className="h-8 w-8 text-muted-foreground/50" />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Imagem usada em orçamentos, notas fiscais e relatórios.</p>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id="logo-upload"
+                      onChange={handleLogoUpload}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      disabled={logoUploading}
+                      onClick={() => document.getElementById("logo-upload")?.click()}
+                    >
+                      {logoUploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                      {logoUploading ? "Enviando..." : "Enviar logo"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+
+          <Card className="shadow-sm border-border/50">
             <CardHeader><CardTitle className="text-base">Margem Padrão</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
