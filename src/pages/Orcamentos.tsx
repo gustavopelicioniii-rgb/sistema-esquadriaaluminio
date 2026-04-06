@@ -142,7 +142,16 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 gap-1.5"
+              onClick={handleDownloadPdf}
+            >
+              <FileDown className="h-4 w-4" />
+              PDF
+            </Button>
             <Button
               size="sm"
               variant="outline"
@@ -153,6 +162,29 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
               Editar
             </Button>
             {orc.status === "pendente" && (
+              <>
+                <Button
+                  size="sm"
+                  className="flex-1 gap-1.5"
+                  onClick={() => handleStatusChange("aprovado")}
+                  disabled={updateStatus.isPending}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Aprovar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="flex-1 gap-1.5"
+                  onClick={() => handleStatusChange("recusado")}
+                  disabled={updateStatus.isPending}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Recusar
+                </Button>
+              </>
+            )}
+          </div>
               <>
                 <Button
                   size="sm"
