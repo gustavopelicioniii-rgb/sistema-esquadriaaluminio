@@ -291,8 +291,12 @@ const CRM = () => {
             );
           })}
         </div>
-        <DragOverlay>
-          {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} /></div> : null}
+        <DragOverlay dropAnimation={{ duration: 200, easing: "ease" }}>
+          {activeLead ? (
+            <div className="opacity-95 rotate-1 scale-105 shadow-2xl ring-2 ring-primary/30 rounded-lg">
+              <LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} />
+            </div>
+          ) : null}
         </DragOverlay>
       </DndContext>
 
