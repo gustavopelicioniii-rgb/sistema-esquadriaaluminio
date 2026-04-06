@@ -33,7 +33,6 @@ const PrecoItens = lazy(() => import("./pages/PrecoItens"));
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Mapa = lazy(() => import("./pages/Mapa"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
-const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
 const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
