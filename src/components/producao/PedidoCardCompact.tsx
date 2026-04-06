@@ -41,6 +41,7 @@ function getUrgencyBadge(op: Pedido) {
 
 interface Props {
   pedido: Pedido;
+  progress?: number;
   onOpenDetail: (p: Pedido) => void;
   onOpenDialog: (type: string, p: Pedido) => void;
   onConcluir: (p: Pedido) => void;
