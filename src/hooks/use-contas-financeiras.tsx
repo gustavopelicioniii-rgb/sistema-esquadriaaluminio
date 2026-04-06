@@ -1,6 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export const CATEGORIAS_FINANCEIRAS = [
+  "material", "mão de obra", "aluguel", "transporte", "energia", "impostos", "outros"
+] as const;
+
+export type CategoriaFinanceira = typeof CATEGORIAS_FINANCEIRAS[number];
+
 export interface ContaFinanceira {
   id: string;
   cliente: string;
@@ -9,6 +15,7 @@ export interface ContaFinanceira {
   vencimento: string;
   status: "pendente" | "pago" | "vencido";
   tipo: "receber" | "pagar";
+  categoria: CategoriaFinanceira;
   created_at: string;
 }
 
