@@ -109,8 +109,6 @@ const App = () => (
 
                 {/* Admin only - shared layout */}
                 <Route element={<AdminLayout />}>
-                  <Route path="/administradores" element={<S><Administradores /></S>} />
-                  <Route path="/funcionarios" element={<S><Funcionarios /></S>} />
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                 </Route>
 

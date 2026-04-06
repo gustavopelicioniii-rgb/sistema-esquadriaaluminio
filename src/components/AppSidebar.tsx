@@ -32,9 +32,8 @@ const menuItems = [
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
   { title: "Mapa", url: "/mapa", icon: MapPin },
-  { title: "Administradores", url: "/administradores", icon: UserCog },
-  { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
+  { title: "Configurações", url: "/configuracoes", icon: UserCog },
 ];
 
 export function AppSidebar() {
