@@ -77,17 +77,17 @@ const Configuracoes = () => {
   const [activeTab, setActiveTab] = useState("empresa");
 
   // Funcionarios state
-  const [funcionarios, setFuncionarios] = useState<Funcionario[]>(initialFuncionarios);
+  const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [showAddFunc, setShowAddFunc] = useState(false);
   const [newFunc, setNewFunc] = useState({ nome: "", cargo: "", telefone: "", setor: "Produção" });
 
   // Admins state
-  const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
+  const [admins, setAdmins] = useState<Admin[]>([]);
   const [showAddAdmin, setShowAddAdmin] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ nome: "", email: "", role: "Admin" });
 
   // APIs state
-  const [apis, setApis] = useState<ApiConfig[]>(initialApis);
+  const [apis, setApis] = useState<ApiConfig[]>([]);
   const [showAddApi, setShowAddApi] = useState(false);
   const [newApi, setNewApi] = useState({ nome: "", chave: "", descricao: "" });
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
