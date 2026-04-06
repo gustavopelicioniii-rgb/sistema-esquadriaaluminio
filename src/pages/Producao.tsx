@@ -76,19 +76,36 @@ const Producao = () => {
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
   const [detailPedido, setDetailPedido] = useState<Pedido | null>(null);
   const [cancelConfirm, setCancelConfirm] = useState<Pedido | null>(null);
+  const [progressMap, setProgressMap] = useState<Record<string, number>>({});
 
   const fetchPedidos = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
-    const { data, error } = await supabase.from("pedidos").select("*").order("pedido_num", { ascending: true });
-    if (error) {
+    const [pedidosRes, checklistRes] = await Promise.all([
+      supabase.from("pedidos").select("*").order("pedido_num", { ascending: true }),
+      supabase.from("pedido_checklists").select("pedido_id, checked"),
+    ]);
+    if (pedidosRes.error) {
       setPedidos([]);
-      setLoadError(error.message);
+      setLoadError(pedidosRes.error.message);
       setLoading(false);
-      toast({ title: "Erro ao carregar pedidos", description: error.message, variant: "destructive" });
+      toast({ title: "Erro ao carregar pedidos", description: pedidosRes.error.message, variant: "destructive" });
       return;
     }
-    setPedidos((data ?? []) as Pedido[]);
+    setPedidos((pedidosRes.data ?? []) as Pedido[]);
+
+    // Calculate progress per pedido
+    const map: Record<string, { total: number; checked: number }> = {};
+    for (const item of checklistRes.data ?? []) {
+      if (!map[item.pedido_id]) map[item.pedido_id] = { total: 0, checked: 0 };
+      map[item.pedido_id].total++;
+      if (item.checked) map[item.pedido_id].checked++;
+    }
+    const pMap: Record<string, number> = {};
+    for (const [id, val] of Object.entries(map)) {
+      pMap[id] = val.total > 0 ? Math.round((val.checked / val.total) * 100) : 0;
+    }
+    setProgressMap(pMap);
     setLoading(false);
   }, []);
 
@@ -361,6 +378,7 @@ const Producao = () => {
             ) : viewMode === "kanban" ? (
               <KanbanBoard
                 pedidos={filtered}
+                progressMap={progressMap}
                 onStatusChange={handleStatusChange}
                 onOpenDetail={setDetailPedido}
                 onOpenDialog={openDialog}
@@ -373,6 +391,7 @@ const Producao = () => {
                   <PedidoCardCompact
                     key={op.id}
                     pedido={op}
+                    progress={progressMap[op.id]}
                     onOpenDetail={setDetailPedido}
                     onOpenDialog={openDialog}
                     onConcluir={handleConcluir}

@@ -11,6 +11,7 @@ const columns: { key: string; label: string; color: string }[] = [
 
 interface Props {
   pedidos: Pedido[];
+  progressMap?: Record<string, number>;
   onStatusChange: (id: string, newStatus: string) => void;
   onOpenDetail: (p: Pedido) => void;
   onOpenDialog: (type: string, p: Pedido) => void;
@@ -18,7 +19,7 @@ interface Props {
   onCancelar: (p: Pedido) => void;
 }
 
-export default function KanbanBoard({ pedidos, onStatusChange, onOpenDetail, onOpenDialog, onConcluir, onCancelar }: Props) {
+export default function KanbanBoard({ pedidos, progressMap = {}, onStatusChange, onOpenDetail, onOpenDialog, onConcluir, onCancelar }: Props) {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const newStatus = result.destination.droppableId;
@@ -62,6 +63,7 @@ export default function KanbanBoard({ pedidos, onStatusChange, onOpenDetail, onO
                           >
                             <PedidoCardCompact
                               pedido={op}
+                              progress={progressMap[op.id]}
                               onOpenDetail={onOpenDetail}
                               onOpenDialog={onOpenDialog}
                               onConcluir={onConcluir}
