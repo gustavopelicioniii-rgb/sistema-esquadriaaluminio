@@ -244,7 +244,8 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                    ))}
                  </SelectContent>
                </Select>
-          </div>
+             </div>
+           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
             <Button onClick={handleEdit} disabled={updateConta.isPending}>Salvar</Button>
