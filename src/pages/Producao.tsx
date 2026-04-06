@@ -378,6 +378,7 @@ const Producao = () => {
             ) : viewMode === "kanban" ? (
               <KanbanBoard
                 pedidos={filtered}
+                progressMap={progressMap}
                 onStatusChange={handleStatusChange}
                 onOpenDetail={setDetailPedido}
                 onOpenDialog={openDialog}
@@ -390,6 +391,7 @@ const Producao = () => {
                   <PedidoCardCompact
                     key={op.id}
                     pedido={op}
+                    progress={progressMap[op.id]}
                     onOpenDetail={setDetailPedido}
                     onOpenDialog={openDialog}
                     onConcluir={handleConcluir}
