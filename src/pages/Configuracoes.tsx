@@ -111,10 +111,14 @@ const Configuracoes = () => {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const { data } = await supabase.from("configuracoes").select("chave, valor");
-      if (data && data.length > 0) {
+      const [configRes, funcRes, adminRes] = await Promise.all([
+        supabase.from("configuracoes").select("chave, valor"),
+        supabase.from("funcionarios").select("*").order("created_at"),
+        supabase.from("administradores").select("*").order("created_at"),
+      ]);
+      if (configRes.data && configRes.data.length > 0) {
         const map: Record<string, string> = {};
-        data.forEach((r) => { map[r.chave] = r.valor; });
+        configRes.data.forEach((r) => { map[r.chave] = r.valor; });
         setConfig((prev) => ({ ...prev, ...map }));
         if (map.folgas_global) {
           try {
@@ -123,6 +127,8 @@ const Configuracoes = () => {
           } catch { /* ignore */ }
         }
       }
+      if (funcRes.data) setFuncionarios(funcRes.data as unknown as Funcionario[]);
+      if (adminRes.data) setAdmins(adminRes.data as unknown as Admin[]);
       setLoading(false);
     };
     fetchAll();
