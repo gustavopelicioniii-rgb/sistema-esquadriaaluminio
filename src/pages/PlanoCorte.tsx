@@ -61,15 +61,16 @@ function SummaryCards({ result, barResults }: { result: CalculationOutput; barRe
 }
 
 // ============ DETAIL VIEW ============
-function PlanoDetalhe({ plano, onBack, onUpdate }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean> }) {
+function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean>; allTypologies: ExtendedTypology[] }) {
   const [largura, setLargura] = useState(plano.largura);
   const [altura, setAltura] = useState(plano.altura);
   const [quantidade, setQuantidade] = useState(plano.quantidade);
   const [folgasOpen, setFolgasOpen] = useState(false);
-  const typ = getTypologyInfo(plano.typology_id);
+  const typ = allTypologies.find(t => t.id === plano.typology_id) as ExtendedTypology | undefined;
+  const baseId = typ?._baseTypologyId;
 
-  const originalCutRules = useMemo(() => getCutRulesForTypology(plano.typology_id), [plano.typology_id]);
-  const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typology_id), [plano.typology_id]);
+  const originalCutRules = useMemo(() => getCutRulesForTypology(plano.typology_id, baseId), [plano.typology_id, baseId]);
+  const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typology_id, baseId), [plano.typology_id, baseId]);
 
   const defaultCutFolgas = useMemo(() => {
     const map: Record<string, number> = {};

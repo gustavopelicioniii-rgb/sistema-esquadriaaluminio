@@ -75,15 +75,16 @@ export default function CalculoEsquadrias() {
       return;
     }
 
-    const typology = getTypologyById(selectedTypology);
+    const typology = allTypologies.find(t => t.id === selectedTypology) as ExtendedTypology | undefined;
     if (!typology) {
       toast.error("Tipologia não encontrada");
       return;
     }
 
-    const cutRules = getCutRulesForTypology(selectedTypology);
-    const glassRules = getGlassRulesForTypology(selectedTypology);
-    const components = getComponentsForTypology(selectedTypology);
+    const baseId = typology._baseTypologyId;
+    const cutRules = getCutRulesForTypology(selectedTypology, baseId);
+    const glassRules = getGlassRulesForTypology(selectedTypology, baseId);
+    const components = getComponentsForTypology(selectedTypology, baseId);
 
     try {
       const output = calculateTypology(
