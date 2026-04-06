@@ -112,10 +112,11 @@ const Configuracoes = () => {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [configRes, funcRes, adminRes] = await Promise.all([
+      const [configRes, funcRes, adminRes, apisRes] = await Promise.all([
         supabase.from("configuracoes").select("chave, valor"),
         supabase.from("funcionarios").select("*").order("created_at"),
         supabase.from("administradores").select("*").order("created_at"),
+        supabase.from("api_integracoes").select("*").order("created_at"),
       ]);
       if (configRes.data && configRes.data.length > 0) {
         const map: Record<string, string> = {};
@@ -130,6 +131,7 @@ const Configuracoes = () => {
       }
       if (funcRes.data) setFuncionarios(funcRes.data as unknown as Funcionario[]);
       if (adminRes.data) setAdmins(adminRes.data as unknown as Admin[]);
+      if (apisRes.data) setApis(apisRes.data as unknown as ApiConfig[]);
       setLoading(false);
     };
     fetchAll();
@@ -253,20 +255,30 @@ const Configuracoes = () => {
   };
 
   // ─── API handlers ───
-  const addApi = () => {
+  const addApi = async () => {
     if (!newApi.nome) return;
-    const api: ApiConfig = { id: Date.now().toString(), ...newApi, ativa: true };
-    setApis((prev) => [...prev, api]);
+    const { data, error } = await supabase.from("api_integracoes").insert({
+      nome: newApi.nome,
+      chave: newApi.chave,
+      descricao: newApi.descricao,
+    }).select().single();
+    if (error) { toast({ title: "Erro ao adicionar API", description: error.message, variant: "destructive" }); return; }
+    setApis((prev) => [...prev, data as unknown as ApiConfig]);
     setNewApi({ nome: "", chave: "", descricao: "" });
     setShowAddApi(false);
     toast({ title: "API adicionada" });
   };
 
-  const toggleApi = (id: string) => {
-    setApis((prev) => prev.map((a) => a.id === id ? { ...a, ativa: !a.ativa } : a));
+  const toggleApi = async (id: string) => {
+    const api = apis.find(a => a.id === id);
+    if (!api) return;
+    const newStatus = !api.ativa;
+    await supabase.from("api_integracoes").update({ ativa: newStatus }).eq("id", id);
+    setApis((prev) => prev.map((a) => a.id === id ? { ...a, ativa: newStatus } : a));
   };
 
-  const removeApi = (id: string) => {
+  const removeApi = async (id: string) => {
+    await supabase.from("api_integracoes").delete().eq("id", id);
     setApis((prev) => prev.filter((a) => a.id !== id));
     toast({ title: "API removida", variant: "destructive" });
   };
