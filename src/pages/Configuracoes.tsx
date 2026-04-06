@@ -399,6 +399,7 @@ const Configuracoes = () => {
                 </div>
               </div>
             </CardContent>
+          </Card>
 
           <Card className="shadow-sm border-border/50">
             <CardHeader><CardTitle className="text-base">Margem Padrão</CardTitle></CardHeader>
