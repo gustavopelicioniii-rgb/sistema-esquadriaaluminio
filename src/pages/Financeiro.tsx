@@ -307,8 +307,8 @@ const Financeiro = () => {
         </Card>
       )}
 
-      {activeTab === "receber" && <ContasView tipo="receber" contas={contas} />}
-      {activeTab === "pagar" && <ContasView tipo="pagar" contas={contas} />}
+      {activeTab === "receber" && <ContasView tipo="receber" contas={filteredContas} />}
+      {activeTab === "pagar" && <ContasView tipo="pagar" contas={filteredContas} />}
     </div>
     </PullToRefresh>
   );
