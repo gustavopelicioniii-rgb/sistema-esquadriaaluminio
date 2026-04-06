@@ -15,16 +15,23 @@ export function getTypologyById(id: string): Typology | undefined {
   return typologies.find(t => t.id === id);
 }
 
-export function getCutRulesForTypology(typologyId: string): CutRule[] {
-  return cutRules.filter(r => r.typology_id === typologyId).sort((a, b) => a.sort_order - b.sort_order);
+/**
+ * Returns cut rules for a typology. For custom typologies, pass the
+ * resolved base typology ID from `findBaseTypologyId`.
+ */
+export function getCutRulesForTypology(typologyId: string, baseTypologyId?: string): CutRule[] {
+  const id = baseTypologyId ?? typologyId;
+  return cutRules.filter(r => r.typology_id === id).sort((a, b) => a.sort_order - b.sort_order);
 }
 
-export function getGlassRulesForTypology(typologyId: string): GlassRule[] {
-  return glassRules.filter(r => r.typology_id === typologyId);
+export function getGlassRulesForTypology(typologyId: string, baseTypologyId?: string): GlassRule[] {
+  const id = baseTypologyId ?? typologyId;
+  return glassRules.filter(r => r.typology_id === id);
 }
 
-export function getComponentsForTypology(typologyId: string): TypologyComponent[] {
-  return typologyComponents.filter(c => c.typology_id === typologyId);
+export function getComponentsForTypology(typologyId: string, baseTypologyId?: string): TypologyComponent[] {
+  const id = baseTypologyId ?? typologyId;
+  return typologyComponents.filter(c => c.typology_id === id);
 }
 
 export function getTypologiesByLine(lineId: string): Typology[] {

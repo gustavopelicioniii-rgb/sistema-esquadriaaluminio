@@ -19,17 +19,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import {
-  typologies,
   productLines,
   manufacturers,
   getCutRulesForTypology,
   getGlassRulesForTypology,
   getComponentsForTypology,
-  getTypologyById,
 } from "@/data/catalog";
+import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 
 export default function CalculoEsquadrias() {
+  const { allTypologies, loading: typologiesLoading } = useAllTypologies();
   const [selectedLine, setSelectedLine] = useState("line-suprema");
   const [selectedTypology, setSelectedTypology] = useState("");
   const [width, setWidth] = useState("");
@@ -41,8 +41,8 @@ export default function CalculoEsquadrias() {
   const [selectedColor, setSelectedColor] = useState("natural");
 
   const filteredTypologies = useMemo(
-    () => typologies.filter(t => t.product_line_id === selectedLine && t.active),
-    [selectedLine]
+    () => allTypologies.filter(t => t.product_line_id === selectedLine && t.active),
+    [selectedLine, allTypologies]
   );
 
   const selectedTyp = useMemo(
@@ -75,15 +75,16 @@ export default function CalculoEsquadrias() {
       return;
     }
 
-    const typology = getTypologyById(selectedTypology);
+    const typology = allTypologies.find(t => t.id === selectedTypology) as ExtendedTypology | undefined;
     if (!typology) {
       toast.error("Tipologia não encontrada");
       return;
     }
 
-    const cutRules = getCutRulesForTypology(selectedTypology);
-    const glassRules = getGlassRulesForTypology(selectedTypology);
-    const components = getComponentsForTypology(selectedTypology);
+    const baseId = typology._baseTypologyId;
+    const cutRules = getCutRulesForTypology(selectedTypology, baseId);
+    const glassRules = getGlassRulesForTypology(selectedTypology, baseId);
+    const components = getComponentsForTypology(selectedTypology, baseId);
 
     try {
       const output = calculateTypology(

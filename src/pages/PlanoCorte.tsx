@@ -16,7 +16,7 @@ import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, 
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
-import { typologies } from "@/data/catalog";
+import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
 import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
@@ -25,10 +25,6 @@ import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
 import { usePlanosCorte, type PlanoCorte as PlanoCorteType } from "@/hooks/use-planos-corte";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-
-function getTypologyInfo(typologyId: string) {
-  return typologies.find(t => t.id === typologyId);
-}
 
 // ============ SUMMARY CARDS ============
 function SummaryCards({ result, barResults }: { result: CalculationOutput; barResults: OptimizationResult[] }) {
@@ -65,15 +61,16 @@ function SummaryCards({ result, barResults }: { result: CalculationOutput; barRe
 }
 
 // ============ DETAIL VIEW ============
-function PlanoDetalhe({ plano, onBack, onUpdate }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean> }) {
+function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean>; allTypologies: ExtendedTypology[] }) {
   const [largura, setLargura] = useState(plano.largura);
   const [altura, setAltura] = useState(plano.altura);
   const [quantidade, setQuantidade] = useState(plano.quantidade);
   const [folgasOpen, setFolgasOpen] = useState(false);
-  const typ = getTypologyInfo(plano.typology_id);
+  const typ = allTypologies.find(t => t.id === plano.typology_id) as ExtendedTypology | undefined;
+  const baseId = typ?._baseTypologyId;
 
-  const originalCutRules = useMemo(() => getCutRulesForTypology(plano.typology_id), [plano.typology_id]);
-  const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typology_id), [plano.typology_id]);
+  const originalCutRules = useMemo(() => getCutRulesForTypology(plano.typology_id, baseId), [plano.typology_id, baseId]);
+  const originalGlassRules = useMemo(() => getGlassRulesForTypology(plano.typology_id, baseId), [plano.typology_id, baseId]);
 
   const defaultCutFolgas = useMemo(() => {
     const map: Record<string, number> = {};
@@ -169,7 +166,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate }: { plano: PlanoCorteType; onBa
         width_constant_mm: glassFolgas[r.id]?.w ?? r.width_constant_mm,
         height_constant_mm: glassFolgas[r.id]?.h ?? r.height_constant_mm,
       }));
-      const components = getComponentsForTypology(plano.typology_id);
+      const components = getComponentsForTypology(plano.typology_id, baseId);
       return calculateTypology(
         { typology_id: plano.typology_id, width_mm: largura, height_mm: altura, quantity: quantidade },
         adjustedCutRules, adjustedGlassRules, components, typ.name, typ.num_folhas
@@ -486,6 +483,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate }: { plano: PlanoCorteType; onBa
 // ============ GRID VIEW (main) ============
 const PlanoCorte = () => {
   const { planos, loading, addPlano, deletePlano, duplicatePlano, updatePlano } = usePlanosCorte();
+  const { allTypologies, loading: typLoading } = useAllTypologies();
   const [search, setSearch] = useState("");
   const [selectedPlano, setSelectedPlano] = useState<PlanoCorteType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -523,10 +521,10 @@ const PlanoCorte = () => {
   };
 
   if (selectedPlano) {
-    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} />;
+    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} allTypologies={allTypologies} />;
   }
 
-  if (loading) {
+  if (loading || typLoading) {
     return <div className="flex items-center justify-center py-20"><LoadingSpinner /></div>;
   }
 
@@ -549,7 +547,7 @@ const PlanoCorte = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {filtered.map(plano => {
-          const typ = getTypologyInfo(plano.typology_id);
+          const typ = allTypologies.find(t => t.id === plano.typology_id);
           return (
             <Card key={plano.id} className="group cursor-pointer hover:shadow-md hover:border-primary/30 transition-all relative"
               onClick={() => setSelectedPlano(plano)}>
@@ -615,7 +613,7 @@ const PlanoCorte = () => {
               <Select value={novoTypologyId} onValueChange={setNovoTypologyId}>
                 <SelectTrigger><SelectValue placeholder="Selecione a tipologia..." /></SelectTrigger>
                 <SelectContent>
-                  {typologies.map(t => (<SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>))}
+                  {allTypologies.filter(t => t.active).map(t => (<SelectItem key={t.id} value={t.id}>{t.name}{(t as ExtendedTypology)._isCustom ? " ★" : ""}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
