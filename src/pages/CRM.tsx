@@ -131,7 +131,10 @@ const CRM = () => {
   const [editObs, setEditObs] = useState("");
   const [editFollowUp, setEditFollowUp] = useState<Date | undefined>();
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+  );
 
   const filteredLeads = leads.filter((l) => {
     if (!searchQuery) return true;
