@@ -85,6 +85,7 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
           >
             PEDIDO {op.pedido_num}
           </h3>
+          <div className="shrink-0">
             <span className={cn("rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap", badge.className)}>
               {badge.label}
             </span>
