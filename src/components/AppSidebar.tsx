@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, Calculator, Receipt, Package, Upload, Kanban, Bell, Settings,
+  Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
