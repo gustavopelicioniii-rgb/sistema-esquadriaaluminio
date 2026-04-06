@@ -63,6 +63,7 @@ export default function KanbanBoard({ pedidos, progressMap = {}, onStatusChange,
                           >
                             <PedidoCardCompact
                               pedido={op}
+                              progress={progressMap[op.id]}
                               onOpenDetail={onOpenDetail}
                               onOpenDialog={onOpenDialog}
                               onConcluir={onConcluir}
