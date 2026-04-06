@@ -38,9 +38,13 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
   const [search, setSearch] = useState("");
   const updateConta = useUpdateConta();
+  const deleteConta = useDeleteConta();
   const [dialogOpen, setDialogOpen] = useState(false);
   const createConta = useCreateConta();
   const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "" });
+  const [editingConta, setEditingConta] = useState<ContaFinanceira | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", status: "pendente" as string });
 
   const filtered = contas
     .filter(c => c.tipo === tipo)
@@ -61,6 +65,25 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
         onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "" }); },
       }
     );
+  };
+
+  const openEdit = (conta: ContaFinanceira) => {
+    setEditingConta(conta);
+    setEditForm({ cliente: conta.cliente, descricao: conta.descricao, valor: conta.valor, vencimento: conta.vencimento, status: conta.status });
+    setEditDialogOpen(true);
+  };
+
+  const handleEdit = () => {
+    if (!editingConta || !editForm.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
+    updateConta.mutate(
+      { id: editingConta.id, cliente: editForm.cliente, descricao: editForm.descricao, valor: editForm.valor, vencimento: editForm.vencimento, status: editForm.status as any },
+      { onSuccess: () => { toast.success("Conta atualizada"); setEditDialogOpen(false); setEditingConta(null); } }
+    );
+  };
+
+  const handleDelete = (conta: ContaFinanceira) => {
+    if (!confirm(`Excluir conta de ${conta.cliente}?`)) return;
+    deleteConta.mutate(conta.id, { onSuccess: () => toast.success("Conta excluída") });
   };
 
   return (
@@ -95,7 +118,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                   <TableHead>Vencimento</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ação</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -107,18 +130,25 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                     <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(conta.valor)}</TableCell>
                     <TableCell><StatusBadge status={conta.status} /></TableCell>
                     <TableCell className="text-right">
-                      {conta.status !== "pago" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-1 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3"
-                          onClick={() => updateConta.mutate({ id: conta.id, status: "pago" }, { onSuccess: () => toast.success("Marcado como pago") })}
-                        >
-                          <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                          <span className="hidden sm:inline">Recebido</span>
-                          <span className="sm:hidden">Pago</span>
+                      <div className="flex items-center justify-end gap-1">
+                        {conta.status !== "pago" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3"
+                            onClick={() => updateConta.mutate({ id: conta.id, status: "pago" }, { onSuccess: () => toast.success("Marcado como pago") })}
+                          >
+                            <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            <span className="hidden sm:inline">Pago</span>
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => openEdit(conta)}>
+                          <Pencil className="h-3.5 w-3.5" />
                         </Button>
-                      )}
+                        <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(conta)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -133,6 +163,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
         </CardContent>
       </Card>
 
+      {/* Create Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>{tipo === "receber" ? "Nova Receita" : "Nova Despesa"}</DialogTitle></DialogHeader>
@@ -147,6 +178,36 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
             <Button onClick={handleCreate} disabled={createConta.isPending}>Criar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
+          <DialogHeader><DialogTitle>Editar Conta</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5"><Label>Cliente *</Label><Input value={editForm.cliente} onChange={e => setEditForm({ ...editForm, cliente: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Descrição</Label><Input value={editForm.descricao} onChange={e => setEditForm({ ...editForm, descricao: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={editForm.valor || ""} onChange={e => setEditForm({ ...editForm, valor: Number(e.target.value) })} /></div>
+              <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={editForm.vencimento} onChange={e => setEditForm({ ...editForm, vencimento: e.target.value })} /></div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Status</Label>
+              <Select value={editForm.status} onValueChange={v => setEditForm({ ...editForm, status: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pendente">Pendente</SelectItem>
+                  <SelectItem value="pago">Pago</SelectItem>
+                  <SelectItem value="vencido">Vencido</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleEdit} disabled={updateConta.isPending}>Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
