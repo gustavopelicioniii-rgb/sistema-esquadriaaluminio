@@ -54,6 +54,45 @@ export function useCreateOrcamento() {
   });
 }
 
+export function useUpdateOrcamento() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: CreateOrcamentoInput & { id: string }) => {
+      const { data, error } = await supabase
+        .from("orcamentos")
+        .update({
+          cliente: input.cliente,
+          produto: input.produto,
+          valor: input.valor,
+          itens: input.itens as any,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["orcamentos"] }),
+  });
+}
+
+export function useOrcamentoById(id: string | undefined) {
+  return useQuery({
+    queryKey: ["orcamentos", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data, error } = await supabase
+        .from("orcamentos")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
 export function useUpdateOrcamentoStatus() {
   const qc = useQueryClient();
   return useMutation({
