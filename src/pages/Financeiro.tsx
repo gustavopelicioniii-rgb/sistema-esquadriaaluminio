@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useContasFinanceiras, useCreateConta, useUpdateConta, useDeleteConta, CATEGORIAS_FINANCEIRAS, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -375,39 +376,42 @@ const Financeiro = () => {
       </Tabs>
 
       {activeTab === "resumo" && (
-        <Card>
-          <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
-          <CardContent className="px-0 sm:px-6">
-            {filteredContas.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead className="hidden sm:table-cell">Descrição</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredContas.slice(0, 10).map(c => (
-                      <TableRow key={c.id}>
-                        <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
-                        <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
-                        <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" /> : <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />}</TableCell>
-                        <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(c.valor)}</TableCell>
-                        <TableCell><StatusBadge status={c.status} /></TableCell>
+        <div className="space-y-4">
+          <ResumoChart contas={contas} />
+          <Card>
+            <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
+            <CardContent className="px-0 sm:px-6">
+              {filteredContas.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Cliente</TableHead>
+                        <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground text-xs sm:text-sm py-8">Nenhuma movimentação financeira ainda.</p>
-            )}
-          </CardContent>
-        </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredContas.slice(0, 10).map(c => (
+                        <TableRow key={c.id}>
+                          <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
+                          <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
+                          <TableCell>{c.tipo === "receber" ? <ArrowDownCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-success" /> : <ArrowUpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />}</TableCell>
+                          <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(c.valor)}</TableCell>
+                          <TableCell><StatusBadge status={c.status} /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground text-xs sm:text-sm py-8">Nenhuma movimentação financeira ainda.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {activeTab === "receber" && <ContasView tipo="receber" contas={filteredContas} />}
