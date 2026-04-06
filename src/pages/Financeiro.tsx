@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { PullToRefresh } from "@/components/PullToRefresh";
-import { useContasFinanceiras, useCreateConta, useUpdateConta, useDeleteConta, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
+import { useContasFinanceiras, useCreateConta, useUpdateConta, useDeleteConta, CATEGORIAS_FINANCEIRAS, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,23 +33,26 @@ const MONTH_NAMES = [
 ];
 
 type StatusFilter = "todos" | "pendente" | "pago" | "vencido";
+type CategoriaFilter = "todas" | typeof CATEGORIAS_FINANCEIRAS[number];
 
 function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: ContaFinanceira[] }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
+  const [categoriaFilter, setCategoriaFilter] = useState<CategoriaFilter>("todas");
   const [search, setSearch] = useState("");
   const updateConta = useUpdateConta();
   const deleteConta = useDeleteConta();
   const [dialogOpen, setDialogOpen] = useState(false);
   const createConta = useCreateConta();
-  const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "" });
+  const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", categoria: "outros" as string });
   const [editingConta, setEditingConta] = useState<ContaFinanceira | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editForm, setEditForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", status: "pendente" as string });
+  const [editForm, setEditForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", status: "pendente" as string, categoria: "outros" as string });
 
   const filtered = contas
     .filter(c => c.tipo === tipo)
     .filter(c => {
       if (statusFilter !== "todos" && c.status !== statusFilter) return false;
+      if (categoriaFilter !== "todas" && c.categoria !== categoriaFilter) return false;
       if (search) {
         const s = search.toLowerCase();
         return c.cliente.toLowerCase().includes(s) || c.descricao.toLowerCase().includes(s);
@@ -60,23 +63,23 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
   const handleCreate = () => {
     if (!form.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
     createConta.mutate(
-      { ...form, tipo, status: "pendente" },
+      { ...form, tipo, status: "pendente", categoria: form.categoria as any },
       {
-        onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "" }); },
+        onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "", categoria: "outros" }); },
       }
     );
   };
 
   const openEdit = (conta: ContaFinanceira) => {
     setEditingConta(conta);
-    setEditForm({ cliente: conta.cliente, descricao: conta.descricao, valor: conta.valor, vencimento: conta.vencimento, status: conta.status });
+    setEditForm({ cliente: conta.cliente, descricao: conta.descricao, valor: conta.valor, vencimento: conta.vencimento, status: conta.status, categoria: conta.categoria || "outros" });
     setEditDialogOpen(true);
   };
 
   const handleEdit = () => {
     if (!editingConta || !editForm.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
     updateConta.mutate(
-      { id: editingConta.id, cliente: editForm.cliente, descricao: editForm.descricao, valor: editForm.valor, vencimento: editForm.vencimento, status: editForm.status as any },
+      { id: editingConta.id, cliente: editForm.cliente, descricao: editForm.descricao, valor: editForm.valor, vencimento: editForm.vencimento, status: editForm.status as any, categoria: editForm.categoria as any },
       { onSuccess: () => { toast.success("Conta atualizada"); setEditDialogOpen(false); setEditingConta(null); } }
     );
   };
@@ -107,26 +110,42 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
         </TabsList>
       </Tabs>
 
+      <div className="flex items-center gap-2">
+        <Select value={categoriaFilter} onValueChange={v => setCategoriaFilter(v as CategoriaFilter)}>
+          <SelectTrigger className="w-[160px] h-8 sm:h-9 text-xs sm:text-sm">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todas">Todas categorias</SelectItem>
+            {CATEGORIAS_FINANCEIRAS.map(cat => (
+              <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead className="hidden sm:table-cell">Descrição</TableHead>
-                  <TableHead>Vencimento</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                   <TableHead>Cliente</TableHead>
+                   <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                   <TableHead className="hidden md:table-cell">Categoria</TableHead>
+                   <TableHead>Vencimento</TableHead>
+                   <TableHead>Valor</TableHead>
+                   <TableHead>Status</TableHead>
+                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(conta => (
                   <TableRow key={conta.id}>
                     <TableCell className="font-medium text-xs sm:text-sm">{conta.cliente}</TableCell>
-                    <TableCell className="text-muted-foreground hidden sm:table-cell">{conta.descricao}</TableCell>
-                    <TableCell className="text-xs sm:text-sm">{formatDate(conta.vencimento)}</TableCell>
+                     <TableCell className="text-muted-foreground hidden sm:table-cell">{conta.descricao}</TableCell>
+                     <TableCell className="hidden md:table-cell capitalize text-xs sm:text-sm">{conta.categoria || "outros"}</TableCell>
+                     <TableCell className="text-xs sm:text-sm">{formatDate(conta.vencimento)}</TableCell>
                     <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(conta.valor)}</TableCell>
                     <TableCell><StatusBadge status={conta.status} /></TableCell>
                     <TableCell className="text-right">
@@ -154,7 +173,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                 ))}
                 {filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum lançamento encontrado.</TableCell>
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum lançamento encontrado.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -170,10 +189,21 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Cliente *</Label><Input value={form.cliente} onChange={e => setForm({ ...form, cliente: e.target.value })} /></div>
             <div className="space-y-1.5"><Label>Descrição</Label><Input value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={form.valor || ""} onChange={e => setForm({ ...form, valor: Number(e.target.value) })} /></div>
-              <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={form.vencimento} onChange={e => setForm({ ...form, vencimento: e.target.value })} /></div>
-            </div>
+             <div className="grid grid-cols-2 gap-3">
+               <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={form.valor || ""} onChange={e => setForm({ ...form, valor: Number(e.target.value) })} /></div>
+               <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={form.vencimento} onChange={e => setForm({ ...form, vencimento: e.target.value })} /></div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Categoria</Label>
+               <Select value={form.categoria} onValueChange={v => setForm({ ...form, categoria: v })}>
+                 <SelectTrigger><SelectValue /></SelectTrigger>
+                 <SelectContent>
+                   {CATEGORIAS_FINANCEIRAS.map(cat => (
+                     <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
+             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
@@ -203,8 +233,19 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                   <SelectItem value="vencido">Vencido</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Categoria</Label>
+               <Select value={editForm.categoria} onValueChange={v => setEditForm({ ...editForm, categoria: v })}>
+                 <SelectTrigger><SelectValue /></SelectTrigger>
+                 <SelectContent>
+                   {CATEGORIAS_FINANCEIRAS.map(cat => (
+                     <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
+             </div>
+           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
             <Button onClick={handleEdit} disabled={updateConta.isPending}>Salvar</Button>
