@@ -154,6 +154,45 @@ const Configuracoes = () => {
     toast({ title: "Configurações salvas", description: "Suas alterações foram salvas." });
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Arquivo inválido", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    setLogoUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `logo.${ext}`;
+    // Remove old logo files
+    const { data: existingFiles } = await supabase.storage.from("company-assets").list("", { search: "logo" });
+    if (existingFiles && existingFiles.length > 0) {
+      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => f.name));
+    }
+    const { error: uploadErr } = await supabase.storage.from("company-assets").upload(path, file, { upsert: true });
+    if (uploadErr) {
+      toast({ title: "Erro no upload", description: uploadErr.message, variant: "destructive" });
+      setLogoUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("company-assets").getPublicUrl(path);
+    const logoUrl = urlData.publicUrl + "?t=" + Date.now();
+    update("logo_url", logoUrl);
+    await supabase.from("configuracoes").upsert({ chave: "logo_url", valor: logoUrl }, { onConflict: "chave" });
+    setLogoUploading(false);
+    toast({ title: "Logo atualizado!" });
+  };
+
+  const handleRemoveLogo = async () => {
+    const { data: existingFiles } = await supabase.storage.from("company-assets").list("", { search: "logo" });
+    if (existingFiles && existingFiles.length > 0) {
+      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => f.name));
+    }
+    update("logo_url", "");
+    await supabase.from("configuracoes").upsert({ chave: "logo_url", valor: "" }, { onConflict: "chave" });
+    toast({ title: "Logo removido" });
+  };
+
   // ─── Funcionarios handlers ───
   const addFuncionario = async () => {
     if (!newFunc.nome) return;
