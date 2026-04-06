@@ -16,7 +16,8 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors } from "lucide-react";
+import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
@@ -84,6 +85,7 @@ const Tipologias = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [rulesTypology, setRulesTypology] = useState<CustomTypology | null>(null);
 
   const fetchCustoms = async () => {
     const { data } = await supabase.from("tipologias_customizadas").select("*").order("created_at", { ascending: false });
@@ -466,10 +468,13 @@ const Tipologias = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(t)}>
-                              <Copy className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(t)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setRulesTypology(t)} title="Regras de Corte">
+                               <Scissors className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(t)}>
+                               <Copy className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(t)}>
                               <Edit2 className="h-3.5 w-3.5" />
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(t.id)}>
@@ -488,6 +493,16 @@ const Tipologias = () => {
       </Tabs>
 
       {formDialog}
+
+      {/* Cut Rules Dialog */}
+      <Dialog open={!!rulesTypology} onOpenChange={(o) => { if (!o) setRulesTypology(null); }}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Regras de Corte</DialogTitle>
+          </DialogHeader>
+          {rulesTypology && <CutRulesManager typology={rulesTypology} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

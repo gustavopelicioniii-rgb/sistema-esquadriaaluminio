@@ -728,6 +728,77 @@ export type Database = {
         }
         Relationships: []
       }
+      regras_corte_customizadas: {
+        Row: {
+          coefficient: number
+          constant_mm: number
+          created_at: string
+          cut_angle_left: number
+          cut_angle_right: number
+          fixed_value_mm: number | null
+          id: string
+          notes: string | null
+          piece_function: string
+          piece_name: string
+          profile_code: string
+          quantity_formula: string
+          reference_dimension: string
+          sort_order: number
+          typology_id: string
+          updated_at: string
+          user_id: string
+          weight_per_meter: number
+        }
+        Insert: {
+          coefficient?: number
+          constant_mm?: number
+          created_at?: string
+          cut_angle_left?: number
+          cut_angle_right?: number
+          fixed_value_mm?: number | null
+          id?: string
+          notes?: string | null
+          piece_function?: string
+          piece_name: string
+          profile_code: string
+          quantity_formula?: string
+          reference_dimension?: string
+          sort_order?: number
+          typology_id: string
+          updated_at?: string
+          user_id?: string
+          weight_per_meter?: number
+        }
+        Update: {
+          coefficient?: number
+          constant_mm?: number
+          created_at?: string
+          cut_angle_left?: number
+          cut_angle_right?: number
+          fixed_value_mm?: number | null
+          id?: string
+          notes?: string | null
+          piece_function?: string
+          piece_name?: string
+          profile_code?: string
+          quantity_formula?: string
+          reference_dimension?: string
+          sort_order?: number
+          typology_id?: string
+          updated_at?: string
+          user_id?: string
+          weight_per_meter?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regras_corte_customizadas_typology_id_fkey"
+            columns: ["typology_id"]
+            isOneToOne: false
+            referencedRelation: "tipologias_customizadas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tipologias_customizadas: {
         Row: {
           active: boolean
