@@ -46,6 +46,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
 
   const totalPago = pagamentos.reduce((s, p) => s + Number(p.valor), 0);
   const restante = pedido.valor - totalPago;
+  const percentPago = pedido.valor > 0 ? Math.min(100, (totalPago / pedido.valor) * 100) : 0;
 
   const handleAdd = async () => {
     const v = parseFloat(valor);
