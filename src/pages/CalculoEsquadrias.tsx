@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,10 +18,10 @@ import { calculateTypology, validateDimensions } from "@/lib/calculation-engine"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
+import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
 import {
   productLines,
   manufacturers,
-  getCutRulesForTypology,
   getGlassRulesForTypology,
   getComponentsForTypology,
 } from "@/data/catalog";
@@ -60,7 +60,9 @@ export default function CalculoEsquadrias() {
     return { min: selectedTyp.min_height_mm ?? 300, max: selectedTyp.max_height_mm ?? 3500 };
   }, [selectedTyp]);
 
-  const handleCalculate = () => {
+  const [calculating, setCalculating] = useState(false);
+
+  const handleCalculate = async () => {
     if (!selectedTypology || !width || !height) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
@@ -82,11 +84,13 @@ export default function CalculoEsquadrias() {
     }
 
     const baseId = typology._baseTypologyId;
-    const cutRules = getCutRulesForTypology(selectedTypology, baseId);
-    const glassRules = getGlassRulesForTypology(selectedTypology, baseId);
-    const components = getComponentsForTypology(selectedTypology, baseId);
+    const isCustom = typology._isCustom ?? false;
 
+    setCalculating(true);
     try {
+      const cutRules = await getEffectiveCutRules(selectedTypology, isCustom, baseId);
+      const glassRules = getGlassRulesForTypology(selectedTypology, baseId);
+      const components = getComponentsForTypology(selectedTypology, baseId);
       const output = calculateTypology(
         { typology_id: selectedTypology, width_mm: W, height_mm: H, quantity: qty },
         cutRules,
@@ -125,6 +129,8 @@ export default function CalculoEsquadrias() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro desconhecido";
       toast.error(message);
+    } finally {
+      setCalculating(false);
     }
   };
 
