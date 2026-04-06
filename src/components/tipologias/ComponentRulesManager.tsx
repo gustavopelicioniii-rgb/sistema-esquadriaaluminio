@@ -137,7 +137,7 @@ export function ComponentRulesManager({ typology }: Props) {
   };
 
   const handleInherit = async () => {
-    const baseId = findBaseTypologyId(typology);
+    const baseId = findBaseTypologyId(typology as any);
     if (!baseId) {
       toast({ title: "Tipologia base não encontrada", description: "Não foi possível identificar a tipologia de origem.", variant: "destructive" });
       return;
