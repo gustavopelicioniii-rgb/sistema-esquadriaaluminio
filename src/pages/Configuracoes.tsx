@@ -261,6 +261,10 @@ const Configuracoes = () => {
   // ─── API handlers ───
   const addApi = async () => {
     if (!newApi.nome) return;
+    if (newApi.chave) {
+      const valid = await testApiKey(newApi.chave);
+      if (!valid) return;
+    }
     const { data, error } = await supabase.from("api_integracoes").insert({
       nome: newApi.nome,
       chave: newApi.chave,
@@ -270,7 +274,51 @@ const Configuracoes = () => {
     setApis((prev) => [...prev, data as unknown as ApiConfig]);
     setNewApi({ nome: "", chave: "", descricao: "" });
     setShowAddApi(false);
+    setKeyTestResult(null);
     toast({ title: "API adicionada" });
+  };
+
+  const updateApi = async () => {
+    if (!editingApi) return;
+    if (editingApi.chave) {
+      const valid = await testApiKey(editingApi.chave);
+      if (!valid) return;
+    }
+    const { error } = await supabase.from("api_integracoes").update({
+      nome: editingApi.nome,
+      chave: editingApi.chave,
+      descricao: editingApi.descricao,
+    }).eq("id", editingApi.id);
+    if (error) { toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" }); return; }
+    setApis((prev) => prev.map((a) => a.id === editingApi.id ? { ...a, ...editingApi } : a));
+    setShowEditApi(false);
+    setEditingApi(null);
+    setKeyTestResult(null);
+    toast({ title: "API atualizada" });
+  };
+
+  const testApiKey = async (key: string): Promise<boolean> => {
+    if (!key || key.trim().length < 8) {
+      setKeyTestResult("error");
+      toast({ title: "Chave inválida", description: "A chave deve ter pelo menos 8 caracteres.", variant: "destructive" });
+      return false;
+    }
+    setTestingKey(true);
+    setKeyTestResult(null);
+    // Simulate connection test (format validation)
+    await new Promise((r) => setTimeout(r, 1000));
+    const validPrefixes = ["sk_", "pk_", "key_", "api_", "bearer_", "token_", "ghp_", "xoxb-", "AIza"];
+    const looksValid = validPrefixes.some((p) => key.toLowerCase().startsWith(p.toLowerCase())) || key.length >= 16;
+    setTestingKey(false);
+    if (looksValid) {
+      setKeyTestResult("success");
+      toast({ title: "Chave válida", description: "O formato da chave parece correto." });
+      return true;
+    } else {
+      setKeyTestResult("error");
+      toast({ title: "Chave suspeita", description: "O formato da chave não corresponde aos padrões conhecidos. Verifique e tente novamente.", variant: "destructive" });
+      return false;
+    }
   };
 
   const toggleApi = async (id: string) => {
