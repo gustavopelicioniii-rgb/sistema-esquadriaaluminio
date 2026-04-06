@@ -289,7 +289,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-      </div>
 
       {/* AI Insights */}
       <DashboardAiInsights
