@@ -110,26 +110,42 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
         </TabsList>
       </Tabs>
 
+      <div className="flex items-center gap-2">
+        <Select value={categoriaFilter} onValueChange={v => setCategoriaFilter(v as CategoriaFilter)}>
+          <SelectTrigger className="w-[160px] h-8 sm:h-9 text-xs sm:text-sm">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todas">Todas categorias</SelectItem>
+            {CATEGORIAS_FINANCEIRAS.map(cat => (
+              <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead className="hidden sm:table-cell">Descrição</TableHead>
-                  <TableHead>Vencimento</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                   <TableHead>Cliente</TableHead>
+                   <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                   <TableHead className="hidden md:table-cell">Categoria</TableHead>
+                   <TableHead>Vencimento</TableHead>
+                   <TableHead>Valor</TableHead>
+                   <TableHead>Status</TableHead>
+                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(conta => (
                   <TableRow key={conta.id}>
                     <TableCell className="font-medium text-xs sm:text-sm">{conta.cliente}</TableCell>
-                    <TableCell className="text-muted-foreground hidden sm:table-cell">{conta.descricao}</TableCell>
-                    <TableCell className="text-xs sm:text-sm">{formatDate(conta.vencimento)}</TableCell>
+                     <TableCell className="text-muted-foreground hidden sm:table-cell">{conta.descricao}</TableCell>
+                     <TableCell className="hidden md:table-cell capitalize text-xs sm:text-sm">{conta.categoria || "outros"}</TableCell>
+                     <TableCell className="text-xs sm:text-sm">{formatDate(conta.vencimento)}</TableCell>
                     <TableCell className="font-semibold text-xs sm:text-sm">{formatCurrency(conta.valor)}</TableCell>
                     <TableCell><StatusBadge status={conta.status} /></TableCell>
                     <TableCell className="text-right">
@@ -157,7 +173,7 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                 ))}
                 {filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum lançamento encontrado.</TableCell>
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground text-xs sm:text-sm">Nenhum lançamento encontrado.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -173,10 +189,21 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Cliente *</Label><Input value={form.cliente} onChange={e => setForm({ ...form, cliente: e.target.value })} /></div>
             <div className="space-y-1.5"><Label>Descrição</Label><Input value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={form.valor || ""} onChange={e => setForm({ ...form, valor: Number(e.target.value) })} /></div>
-              <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={form.vencimento} onChange={e => setForm({ ...form, vencimento: e.target.value })} /></div>
-            </div>
+             <div className="grid grid-cols-2 gap-3">
+               <div className="space-y-1.5"><Label>Valor</Label><Input type="number" value={form.valor || ""} onChange={e => setForm({ ...form, valor: Number(e.target.value) })} /></div>
+               <div className="space-y-1.5"><Label>Vencimento</Label><Input type="date" value={form.vencimento} onChange={e => setForm({ ...form, vencimento: e.target.value })} /></div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Categoria</Label>
+               <Select value={form.categoria} onValueChange={v => setForm({ ...form, categoria: v })}>
+                 <SelectTrigger><SelectValue /></SelectTrigger>
+                 <SelectContent>
+                   {CATEGORIAS_FINANCEIRAS.map(cat => (
+                     <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
+             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
@@ -206,7 +233,17 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
                   <SelectItem value="vencido">Vencido</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+             </div>
+             <div className="space-y-1.5">
+               <Label>Categoria</Label>
+               <Select value={editForm.categoria} onValueChange={v => setEditForm({ ...editForm, categoria: v })}>
+                 <SelectTrigger><SelectValue /></SelectTrigger>
+                 <SelectContent>
+                   {CATEGORIAS_FINANCEIRAS.map(cat => (
+                     <SelectItem key={cat} value={cat} className="capitalize">{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
