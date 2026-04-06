@@ -16,8 +16,9 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater } from "lucide-react";
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
+import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
@@ -498,9 +499,14 @@ const Tipologias = () => {
       <Dialog open={!!rulesTypology} onOpenChange={(o) => { if (!o) setRulesTypology(null); }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Regras de Corte</DialogTitle>
+            <DialogTitle>Regras — {rulesTypology?.name}</DialogTitle>
           </DialogHeader>
-          {rulesTypology && <CutRulesManager typology={rulesTypology} />}
+          {rulesTypology && (
+            <div className="space-y-6">
+              <CutRulesManager typology={rulesTypology} />
+              <GlassRulesManager typology={rulesTypology} />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
