@@ -32,8 +32,6 @@ const Produtos = lazy(() => import("./pages/Produtos"));
 const PrecoItens = lazy(() => import("./pages/PrecoItens"));
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Mapa = lazy(() => import("./pages/Mapa"));
-const Administradores = lazy(() => import("./pages/Administradores"));
-const Funcionarios = lazy(() => import("./pages/Funcionarios"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
@@ -109,8 +107,6 @@ const App = () => (
 
                 {/* Admin only - shared layout */}
                 <Route element={<AdminLayout />}>
-                  <Route path="/administradores" element={<S><Administradores /></S>} />
-                  <Route path="/funcionarios" element={<S><Funcionarios /></S>} />
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                 </Route>
 

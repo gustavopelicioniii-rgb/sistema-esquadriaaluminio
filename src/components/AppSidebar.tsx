@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, UserCheck, Calculator, Receipt, Package, Upload, Kanban, Bell,
+  UserCog, Calculator, Receipt, Package, Upload, Kanban, Bell, Settings,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -32,9 +32,8 @@ const menuItems = [
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
   { title: "Mapa", url: "/mapa", icon: MapPin },
-  { title: "Administradores", url: "/administradores", icon: UserCog },
-  { title: "Funcionários", url: "/funcionarios", icon: UserCheck },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
+  { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
 export function AppSidebar() {
