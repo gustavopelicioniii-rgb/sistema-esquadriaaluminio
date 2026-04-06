@@ -20,6 +20,7 @@ import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors,
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
+import { RulesValidatorWrapper } from "@/components/ai/RulesValidatorWrapper";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
