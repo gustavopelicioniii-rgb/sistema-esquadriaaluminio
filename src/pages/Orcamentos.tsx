@@ -10,7 +10,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus, Eye, Trash2, Search, Loader2, Calendar, User, Package, Hash, DollarSign, FileText, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Plus, Eye, Trash2, Search, Loader2, Calendar, User, Package, Hash, DollarSign, FileText, CheckCircle, XCircle, Clock, Pencil } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -30,7 +30,8 @@ const filterItems: { key: FilterStatus; label: string; icon: React.ReactNode }[]
   { key: "recusado", label: "Recusado", icon: <XCircle className="h-3.5 w-3.5" /> },
 ];
 
-const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean; onClose: () => void }) => {
+const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean; onClose: () => void; }) => {
+  const navigate = useNavigate();
   const updateStatus = useUpdateOrcamentoStatus();
   const itens = orc?.itens as Record<string, unknown> | null;
 
@@ -114,29 +115,40 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           </div>
 
           {/* Action buttons */}
-          {orc.status === "pendente" && (
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="flex-1 gap-1.5"
-                onClick={() => handleStatusChange("aprovado")}
-                disabled={updateStatus.isPending}
-              >
-                <CheckCircle className="h-4 w-4" />
-                Aprovar
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="flex-1 gap-1.5"
-                onClick={() => handleStatusChange("recusado")}
-                disabled={updateStatus.isPending}
-              >
-                <XCircle className="h-4 w-4" />
-                Recusar
-              </Button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 gap-1.5"
+              onClick={() => { onClose(); navigate(`/orcamentos/editar/${orc.id}`); }}
+            >
+              <Pencil className="h-4 w-4" />
+              Editar
+            </Button>
+            {orc.status === "pendente" && (
+              <>
+                <Button
+                  size="sm"
+                  className="flex-1 gap-1.5"
+                  onClick={() => handleStatusChange("aprovado")}
+                  disabled={updateStatus.isPending}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Aprovar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="flex-1 gap-1.5"
+                  onClick={() => handleStatusChange("recusado")}
+                  disabled={updateStatus.isPending}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Recusar
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
