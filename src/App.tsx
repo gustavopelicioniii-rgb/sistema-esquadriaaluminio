@@ -104,6 +104,7 @@ const App = () => (
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
+                  <Route path="/tipologias" element={<S><Tipologias /></S>} />
                 </Route>
 
                 {/* Admin only - shared layout */}
