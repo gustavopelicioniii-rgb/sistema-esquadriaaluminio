@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatters";
-import { formatCurrency } from "@/lib/formatters";
 import {
-  User, MoreVertical, CheckCircle2,
+  User, CheckCircle2,
   RefreshCcw, CreditCard, FileText, Printer,
   Eye, Pencil, ListChecks, Share2,
 } from "lucide-react";
