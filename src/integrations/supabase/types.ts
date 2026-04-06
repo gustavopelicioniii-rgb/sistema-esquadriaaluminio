@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      administradores: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nome: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       agenda: {
         Row: {
           created_at: string
@@ -214,6 +244,39 @@ export type Database = {
           produto?: string
           quantidade?: number
           unidade?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      funcionarios: {
+        Row: {
+          ativo: boolean
+          cargo: string
+          created_at: string
+          id: string
+          nome: string
+          setor: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          cargo?: string
+          created_at?: string
+          id?: string
+          nome: string
+          setor?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          cargo?: string
+          created_at?: string
+          id?: string
+          nome?: string
+          setor?: string
+          telefone?: string | null
           updated_at?: string
         }
         Relationships: []
