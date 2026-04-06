@@ -10,11 +10,12 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus, Eye, Trash2, Search, Loader2, Calendar, User, Package, Hash, DollarSign, FileText, CheckCircle, XCircle, Clock, Pencil } from "lucide-react";
+import { Plus, Eye, Trash2, Search, Loader2, Calendar, User, Package, Hash, DollarSign, FileText, CheckCircle, XCircle, Clock, Pencil, FileDown } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -39,6 +40,32 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
     updateStatus.mutate({ id: orc.id, status }, {
       onSuccess: () => toast({ title: `Status alterado para ${status}` }),
     });
+  };
+
+  const handleDownloadPdf = async () => {
+    const itensData = orc.itens as Record<string, any> | null;
+    try {
+      await generateProfessionalBudgetPDF({
+        numero: orc.numero,
+        cliente: orc.cliente,
+        produto: orc.produto,
+        larguraCm: itensData?.largura_cm ?? 200,
+        alturaCm: itensData?.altura_cm ?? 120,
+        quantidade: itensData?.quantidade ?? 1,
+        areaM2: itensData?.area_m2 ?? 0,
+        custoTotal: itensData?.custo ?? 0,
+        margem: itensData?.margem_percent ?? 0,
+        valorFinal: orc.valor,
+        corAluminio: itensData?.cor_aluminio,
+        corFerragem: itensData?.cor_ferragem,
+        tipoVidro: itensData?.vidro_tipo,
+        ambiente: itensData?.ambiente,
+        observacoes: itensData?.observacoes,
+      });
+      toast({ title: "PDF gerado com sucesso!" });
+    } catch (err: any) {
+      toast({ title: "Erro ao gerar PDF", description: err.message, variant: "destructive" });
+    }
   };
 
   if (!orc) return null;
@@ -115,7 +142,16 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 gap-1.5"
+              onClick={handleDownloadPdf}
+            >
+              <FileDown className="h-4 w-4" />
+              PDF
+            </Button>
             <Button
               size="sm"
               variant="outline"
