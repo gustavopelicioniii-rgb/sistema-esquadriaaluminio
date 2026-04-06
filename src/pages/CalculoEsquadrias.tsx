@@ -19,10 +19,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
+import { getEffectiveGlassRules } from "@/hooks/use-custom-glass-rules";
 import {
   productLines,
   manufacturers,
-  getGlassRulesForTypology,
   getComponentsForTypology,
 } from "@/data/catalog";
 import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
@@ -88,8 +88,10 @@ export default function CalculoEsquadrias() {
 
     setCalculating(true);
     try {
-      const cutRules = await getEffectiveCutRules(selectedTypology, isCustom, baseId);
-      const glassRules = getGlassRulesForTypology(selectedTypology, baseId);
+      const [cutRules, glassRules] = await Promise.all([
+        getEffectiveCutRules(selectedTypology, isCustom, baseId),
+        getEffectiveGlassRules(selectedTypology, isCustom, baseId),
+      ]);
       const components = getComponentsForTypology(selectedTypology, baseId);
       const output = calculateTypology(
         { typology_id: selectedTypology, width_mm: W, height_mm: H, quantity: qty },
