@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable,
+  DndContext, DragOverlay, closestCorners, PointerSensor, TouchSensor, useSensor, useSensors, useDraggable,
   useDroppable,
   type DragStartEvent, type DragEndEvent,
 } from "@dnd-kit/core";
