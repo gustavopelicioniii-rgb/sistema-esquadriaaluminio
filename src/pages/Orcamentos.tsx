@@ -44,7 +44,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 overflow-hidden">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header gradient */}
         <div className="bg-gradient-to-r from-primary/10 via-accent/30 to-primary/5 px-6 pt-6 pb-4">
           <DialogHeader>
@@ -63,7 +63,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           </div>
         </div>
 
-        <div className="px-6 pb-6 space-y-5">
+        <div className="px-6 pb-6 space-y-5 overflow-y-auto flex-1">
           {/* Info grid */}
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-xl border bg-muted/30 p-3.5 space-y-1">
