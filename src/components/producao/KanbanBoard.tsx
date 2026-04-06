@@ -19,7 +19,7 @@ interface Props {
   onCancelar: (p: Pedido) => void;
 }
 
-export default function KanbanBoard({ pedidos, onStatusChange, onOpenDetail, onOpenDialog, onConcluir, onCancelar }: Props) {
+export default function KanbanBoard({ pedidos, progressMap = {}, onStatusChange, onOpenDetail, onOpenDialog, onConcluir, onCancelar }: Props) {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const newStatus = result.destination.droppableId;
