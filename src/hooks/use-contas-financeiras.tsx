@@ -47,3 +47,14 @@ export function useUpdateConta() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["contas_financeiras"] }),
   });
 }
+
+export function useDeleteConta() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("contas_financeiras").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["contas_financeiras"] }),
+  });
+}
