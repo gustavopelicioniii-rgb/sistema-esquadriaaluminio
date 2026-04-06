@@ -673,13 +673,48 @@ const Configuracoes = () => {
                 <DialogHeader><DialogTitle>Adicionar Integração</DialogTitle></DialogHeader>
                 <div className="space-y-4 py-2">
                   <div className="space-y-2"><Label>Nome da API</Label><Input placeholder="Ex: WhatsApp, Google Maps..." value={newApi.nome} onChange={(e) => setNewApi({ ...newApi, nome: e.target.value })} /></div>
-                  <div className="space-y-2"><Label>Chave da API</Label><Input placeholder="sk_live_..." value={newApi.chave} onChange={(e) => setNewApi({ ...newApi, chave: e.target.value })} /></div>
+                  <div className="space-y-2">
+                    <Label>Chave da API</Label>
+                    <Input placeholder="sk_live_..." value={newApi.chave} onChange={(e) => { setNewApi({ ...newApi, chave: e.target.value }); setKeyTestResult(null); }} />
+                    {keyTestResult === "success" && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Formato válido</p>}
+                    {keyTestResult === "error" && <p className="text-xs text-destructive flex items-center gap-1"><AlertCircle className="h-3 w-3" /> Formato inválido</p>}
+                  </div>
                   <div className="space-y-2"><Label>Descrição</Label><Textarea placeholder="Para que serve esta integração?" value={newApi.descricao} onChange={(e) => setNewApi({ ...newApi, descricao: e.target.value })} /></div>
                 </div>
-                <DialogFooter><Button onClick={addApi} className="gap-2"><Plug className="h-4 w-4" /> Adicionar</Button></DialogFooter>
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" disabled={testingKey || !newApi.chave} onClick={() => testApiKey(newApi.chave)} className="gap-2">
+                    {testingKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />} Testar Chave
+                  </Button>
+                  <Button onClick={addApi} className="gap-2"><Plug className="h-4 w-4" /> Adicionar</Button>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           </div>
+
+          {/* Edit API Dialog */}
+          <Dialog open={showEditApi} onOpenChange={(open) => { setShowEditApi(open); if (!open) { setEditingApi(null); setKeyTestResult(null); } }}>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Editar Integração</DialogTitle></DialogHeader>
+              {editingApi && (
+                <div className="space-y-4 py-2">
+                  <div className="space-y-2"><Label>Nome da API</Label><Input value={editingApi.nome} onChange={(e) => setEditingApi({ ...editingApi, nome: e.target.value })} /></div>
+                  <div className="space-y-2">
+                    <Label>Chave da API</Label>
+                    <Input value={editingApi.chave} onChange={(e) => { setEditingApi({ ...editingApi, chave: e.target.value }); setKeyTestResult(null); }} />
+                    {keyTestResult === "success" && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Formato válido</p>}
+                    {keyTestResult === "error" && <p className="text-xs text-destructive flex items-center gap-1"><AlertCircle className="h-3 w-3" /> Formato inválido</p>}
+                  </div>
+                  <div className="space-y-2"><Label>Descrição</Label><Textarea value={editingApi.descricao} onChange={(e) => setEditingApi({ ...editingApi, descricao: e.target.value })} /></div>
+                </div>
+              )}
+              <DialogFooter className="gap-2">
+                <Button variant="outline" disabled={testingKey || !editingApi?.chave} onClick={() => editingApi && testApiKey(editingApi.chave)} className="gap-2">
+                  {testingKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />} Testar Chave
+                </Button>
+                <Button onClick={updateApi} className="gap-2"><Save className="h-4 w-4" /> Salvar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
           <div className="grid gap-4">
             {apis.map((api) => (
@@ -713,6 +748,9 @@ const Configuracoes = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingApi(api); setShowEditApi(true); }}>
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
                       <Switch checked={api.ativa} onCheckedChange={() => toggleApi(api.id)} />
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeApi(api.id)}>
                         <Trash2 className="h-4 w-4" />
