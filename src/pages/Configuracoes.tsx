@@ -108,6 +108,7 @@ const Configuracoes = () => {
     usaWhatsapp: false,
   });
   const [setupLoading, setSetupLoading] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
 
   useEffect(() => {
     const fetchAll = async () => {
