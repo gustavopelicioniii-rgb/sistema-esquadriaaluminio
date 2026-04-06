@@ -4,6 +4,7 @@ import { Topbar } from "@/components/Topbar";
 import { AnimatedOutlet } from "@/components/AnimatedOutlet";
 import { BottomNav } from "@/components/BottomNav";
 import { useSwipeNavigation } from "@/hooks/use-swipe-navigation";
+import { AiChatButton } from "@/components/ai/AiChatButton";
 
 export function AppLayout() {
   const { onTouchStart, onTouchEnd } = useSwipeNavigation();
@@ -23,6 +24,7 @@ export function AppLayout() {
           </main>
         </div>
         <BottomNav />
+        <AiChatButton />
       </div>
     </SidebarProvider>
   );

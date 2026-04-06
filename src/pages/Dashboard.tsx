@@ -14,6 +14,7 @@ import {
   PieChart, Pie, Cell, Legend,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { DashboardAiInsights } from "@/components/ai/DashboardAiInsights";
 
 const periodOptions: { key: PeriodFilter; label: string }[] = [
   { key: "semana", label: "7d" },
@@ -288,6 +289,18 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Insights */}
+      <DashboardAiInsights
+        stats={{
+          totalOrcamentos: stats.orcamentosCount,
+          totalPedidos: stats.vendasCount,
+          receitaTotal: stats.vendas,
+          pedidosAtrasados: stats.producaoAndamento,
+        }}
+        receitaMensal={receitaMensal.map(r => ({ mes: r.mes, total: r.valor }))}
+        statusPedidos={statusPedidos.map(s => ({ status: s.name, count: s.value }))}
+      />
     </div>
     </PullToRefresh>
   );

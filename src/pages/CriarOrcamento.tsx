@@ -16,6 +16,7 @@ import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import { cn } from "@/lib/utils";
 import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
+import { OrcamentoAiHelper } from "@/components/ai/OrcamentoAiHelper";
 
 const tiposProduto = [
   { value: "janela_correr_2f", label: "Janela de Correr 2F", precoM2: 850, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-jc2f" },
@@ -130,6 +131,7 @@ const CriarOrcamento = () => {
           <span className="text-sm font-medium text-muted-foreground">Orçamentos</span>
         </div>
         <div className="flex items-center gap-2">
+          <OrcamentoAiHelper />
           <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>
           <Button size="sm" onClick={handleSalvar} className="bg-primary">Salvar</Button>
         </div>
