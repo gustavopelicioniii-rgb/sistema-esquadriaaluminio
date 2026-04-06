@@ -167,8 +167,10 @@ const CriarOrcamento = () => {
         </div>
         <div className="flex items-center gap-2">
           <OrcamentoAiHelper />
-          <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>
-          <Button size="sm" onClick={handleSalvar} className="bg-primary">Salvar</Button>
+          {!isEditing && <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>}
+          <Button size="sm" onClick={handleSalvar} className="bg-primary">
+            {isEditing ? "Atualizar" : "Salvar"}
+          </Button>
         </div>
       </div>
 
