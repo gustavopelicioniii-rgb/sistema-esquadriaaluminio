@@ -291,6 +291,9 @@ const Orcamentos = () => {
                     <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => setSelectedOrcamento(orc)} title="Visualizar">
                       <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => navigate(`/orcamentos/editar/${orc.id}`)} title="Editar">
+                      <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(orc)} title="Excluir">
                       <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </Button>
