@@ -85,25 +85,9 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
           >
             PEDIDO {op.pedido_num}
           </h3>
-          <div className="flex items-center gap-1.5 shrink-0">
             <span className={cn("rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap", badge.className)}>
               {badge.label}
             </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                {actionItems.map(({ key, icon: Icon, label }) => (
-                  <DropdownMenuItem key={key} onClick={() => handleAction(key)} className="gap-2 text-xs">
-                    <Icon className="h-3.5 w-3.5" />
-                    {label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
