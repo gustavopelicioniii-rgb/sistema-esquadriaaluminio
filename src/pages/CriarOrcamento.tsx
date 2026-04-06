@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,10 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/formatters";
 import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List, MessageCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
-import { useCreateOrcamento } from "@/hooks/use-orcamentos";
+import { useCreateOrcamento, useUpdateOrcamento, useOrcamentoById } from "@/hooks/use-orcamentos";
 import { FramePreview } from "@/components/frame-preview";
 import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
@@ -41,7 +41,12 @@ const ferragemColors = [
 
 const CriarOrcamento = () => {
   const navigate = useNavigate();
+  const { id: editId } = useParams<{ id: string }>();
+  const isEditing = !!editId;
   const createOrcamento = useCreateOrcamento();
+  const updateOrcamento = useUpdateOrcamento();
+  const { data: existingOrc } = useOrcamentoById(editId);
+
   const [cliente, setCliente] = useState("");
   const [tipo, setTipo] = useState("janela_correr_2f");
   const [largura, setLargura] = useState(200);
@@ -55,6 +60,30 @@ const CriarOrcamento = () => {
   const [temAcrescimo, setTemAcrescimo] = useState(false);
   const [ambiente, setAmbiente] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  // Load existing orcamento data when editing
+  useEffect(() => {
+    if (existingOrc && !loaded) {
+      setCliente(existingOrc.cliente);
+      const itens = existingOrc.itens as Record<string, any> | null;
+      if (itens) {
+        setTipo(itens.tipo ?? "janela_correr_2f");
+        setLargura(itens.largura_cm ?? 200);
+        setAltura(itens.altura_cm ?? 120);
+        setQuantidade(itens.quantidade ?? 1);
+        setColorId(itens.cor_aluminio ?? "natural");
+        setFerragemColorId(itens.cor_ferragem ?? "preto");
+        setVidroTipo(itens.vidro_tipo ?? "Nenhum");
+        setMargemPercent(itens.margem_percent ?? 100);
+        setAcrescimo(itens.acrescimo ?? 0);
+        setTemAcrescimo((itens.acrescimo ?? 0) > 0);
+        setAmbiente(itens.ambiente ?? "");
+        setObservacoes(itens.observacoes ?? "");
+      }
+      setLoaded(true);
+    }
+  }, [existingOrc, loaded]);
 
   const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
 
@@ -74,30 +103,36 @@ const CriarOrcamento = () => {
 
   const handleSalvar = async () => {
     if (!calculo || !produtoSelecionado || !cliente) return;
+    const payload = {
+      cliente,
+      produto: produtoSelecionado.label,
+      valor: calculo.total,
+      itens: {
+        tipo,
+        largura_cm: largura,
+        altura_cm: altura,
+        quantidade,
+        area_m2: calculo.areaM2,
+        custo: calculo.custo,
+        lucro: calculo.lucro,
+        subtotal: calculo.subtotal,
+        acrescimo: calculo.acrescimo,
+        margem_percent: margemPercent,
+        cor_aluminio: colorId,
+        cor_ferragem: ferragemColorId,
+        vidro_tipo: vidroTipo,
+        ambiente,
+        observacoes,
+      },
+    };
     try {
-      await createOrcamento.mutateAsync({
-        cliente,
-        produto: produtoSelecionado.label,
-        valor: calculo.total,
-        itens: {
-          tipo,
-          largura_cm: largura,
-          altura_cm: altura,
-          quantidade,
-          area_m2: calculo.areaM2,
-          custo: calculo.custo,
-          lucro: calculo.lucro,
-          subtotal: calculo.subtotal,
-          acrescimo: calculo.acrescimo,
-          margem_percent: margemPercent,
-          cor_aluminio: colorId,
-          cor_ferragem: ferragemColorId,
-          vidro_tipo: vidroTipo,
-          ambiente,
-          observacoes,
-        },
-      });
-      toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+      if (isEditing && editId) {
+        await updateOrcamento.mutateAsync({ ...payload, id: editId });
+        toast({ title: "Orçamento atualizado!", description: `Orçamento para ${cliente} atualizado.` });
+      } else {
+        await createOrcamento.mutateAsync(payload);
+        toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+      }
       navigate("/orcamentos");
     } catch (err: any) {
       toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
@@ -132,8 +167,10 @@ const CriarOrcamento = () => {
         </div>
         <div className="flex items-center gap-2">
           <OrcamentoAiHelper />
-          <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>
-          <Button size="sm" onClick={handleSalvar} className="bg-primary">Salvar</Button>
+          {!isEditing && <Button variant="ghost" size="sm" onClick={handleLimpar}>Limpar</Button>}
+          <Button size="sm" onClick={handleSalvar} className="bg-primary">
+            {isEditing ? "Atualizar" : "Salvar"}
+          </Button>
         </div>
       </div>
 
