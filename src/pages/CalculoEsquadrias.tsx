@@ -489,7 +489,7 @@ export default function CalculoEsquadrias() {
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="text-xs capitalize">
-                              {getGlassRulesForTypology(selectedTypology).find(r => r.id === glass.glass_rule_id)?.glass_type ?? "—"}
+                              {glass.glass_name}
                             </Badge>
                           </TableCell>
                         </TableRow>
