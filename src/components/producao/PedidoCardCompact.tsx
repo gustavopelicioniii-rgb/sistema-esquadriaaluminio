@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/formatters";
 import { formatCurrency } from "@/lib/formatters";
 import {
   User, MoreVertical, CheckCircle2,
