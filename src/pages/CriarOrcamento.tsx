@@ -41,7 +41,12 @@ const ferragemColors = [
 
 const CriarOrcamento = () => {
   const navigate = useNavigate();
+  const { id: editId } = useParams<{ id: string }>();
+  const isEditing = !!editId;
   const createOrcamento = useCreateOrcamento();
+  const updateOrcamento = useUpdateOrcamento();
+  const { data: existingOrc } = useOrcamentoById(editId);
+
   const [cliente, setCliente] = useState("");
   const [tipo, setTipo] = useState("janela_correr_2f");
   const [largura, setLargura] = useState(200);
@@ -55,6 +60,30 @@ const CriarOrcamento = () => {
   const [temAcrescimo, setTemAcrescimo] = useState(false);
   const [ambiente, setAmbiente] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  // Load existing orcamento data when editing
+  useEffect(() => {
+    if (existingOrc && !loaded) {
+      setCliente(existingOrc.cliente);
+      const itens = existingOrc.itens as Record<string, any> | null;
+      if (itens) {
+        setTipo(itens.tipo ?? "janela_correr_2f");
+        setLargura(itens.largura_cm ?? 200);
+        setAltura(itens.altura_cm ?? 120);
+        setQuantidade(itens.quantidade ?? 1);
+        setColorId(itens.cor_aluminio ?? "natural");
+        setFerragemColorId(itens.cor_ferragem ?? "preto");
+        setVidroTipo(itens.vidro_tipo ?? "Nenhum");
+        setMargemPercent(itens.margem_percent ?? 100);
+        setAcrescimo(itens.acrescimo ?? 0);
+        setTemAcrescimo((itens.acrescimo ?? 0) > 0);
+        setAmbiente(itens.ambiente ?? "");
+        setObservacoes(itens.observacoes ?? "");
+      }
+      setLoaded(true);
+    }
+  }, [existingOrc, loaded]);
 
   const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
 
