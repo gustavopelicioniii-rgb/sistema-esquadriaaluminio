@@ -300,7 +300,7 @@ function ResumoChart({ contas }: { contas: ContaFinanceira[] }) {
   );
 }
 
-
+const Financeiro = () => {
   const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
   
