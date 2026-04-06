@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors, useDraggable,
+  DndContext, DragOverlay, closestCorners, PointerSensor, TouchSensor, useSensor, useSensors, useDraggable,
   useDroppable,
   type DragStartEvent, type DragEndEvent,
 } from "@dnd-kit/core";
@@ -42,8 +42,10 @@ function DroppableColumn({ id, children }: { id: string; children: React.ReactNo
     <div
       ref={setNodeRef}
       className={cn(
-        "flex-1 min-h-[300px] sm:min-h-[400px] rounded-xl border-2 border-dashed p-2 sm:p-3 transition-colors duration-200 flex flex-col gap-2",
-        isOver ? "border-primary/40 bg-primary/5" : "border-border/40 bg-muted/20"
+        "flex-1 min-h-[300px] sm:min-h-[400px] rounded-xl border-2 border-dashed p-2 sm:p-3 transition-all duration-200 flex flex-col gap-2",
+        isOver
+          ? "border-primary bg-primary/10 scale-[1.02] shadow-lg"
+          : "border-border/40 bg-muted/20"
       )}
     >
       {children}
@@ -131,7 +133,10 @@ const CRM = () => {
   const [editObs, setEditObs] = useState("");
   const [editFollowUp, setEditFollowUp] = useState<Date | undefined>();
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+  );
 
   const filteredLeads = leads.filter((l) => {
     if (!searchQuery) return true;
@@ -253,7 +258,7 @@ const CRM = () => {
           {columns.map((col) => {
             const colLeads = getLeadsByStatus(col.id);
             return (
-              <div key={col.id} className="flex flex-col min-w-[140px] sm:min-w-[200px] flex-1">
+              <div key={col.id} className="flex flex-col min-w-[180px] sm:min-w-[200px] flex-1">
                 {/* Column Header */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", col.badgeBg, col.badgeText)}>
@@ -286,8 +291,12 @@ const CRM = () => {
             );
           })}
         </div>
-        <DragOverlay>
-          {activeLead ? <div className="opacity-90 rotate-2 scale-105"><LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} /></div> : null}
+        <DragOverlay dropAnimation={{ duration: 200, easing: "ease" }}>
+          {activeLead ? (
+            <div className="opacity-95 rotate-1 scale-105 shadow-2xl ring-2 ring-primary/30 rounded-lg">
+              <LeadCard lead={activeLead} onDelete={() => {}} onView={() => {}} />
+            </div>
+          ) : null}
         </DragOverlay>
       </DndContext>
 
