@@ -33,23 +33,26 @@ const MONTH_NAMES = [
 ];
 
 type StatusFilter = "todos" | "pendente" | "pago" | "vencido";
+type CategoriaFilter = "todas" | typeof CATEGORIAS_FINANCEIRAS[number];
 
 function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: ContaFinanceira[] }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
+  const [categoriaFilter, setCategoriaFilter] = useState<CategoriaFilter>("todas");
   const [search, setSearch] = useState("");
   const updateConta = useUpdateConta();
   const deleteConta = useDeleteConta();
   const [dialogOpen, setDialogOpen] = useState(false);
   const createConta = useCreateConta();
-  const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "" });
+  const [form, setForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", categoria: "outros" as string });
   const [editingConta, setEditingConta] = useState<ContaFinanceira | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editForm, setEditForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", status: "pendente" as string });
+  const [editForm, setEditForm] = useState({ cliente: "", descricao: "", valor: 0, vencimento: "", status: "pendente" as string, categoria: "outros" as string });
 
   const filtered = contas
     .filter(c => c.tipo === tipo)
     .filter(c => {
       if (statusFilter !== "todos" && c.status !== statusFilter) return false;
+      if (categoriaFilter !== "todas" && c.categoria !== categoriaFilter) return false;
       if (search) {
         const s = search.toLowerCase();
         return c.cliente.toLowerCase().includes(s) || c.descricao.toLowerCase().includes(s);
@@ -60,23 +63,23 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
   const handleCreate = () => {
     if (!form.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
     createConta.mutate(
-      { ...form, tipo, status: "pendente" },
+      { ...form, tipo, status: "pendente", categoria: form.categoria as any },
       {
-        onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "" }); },
+        onSuccess: () => { toast.success("Conta criada"); setDialogOpen(false); setForm({ cliente: "", descricao: "", valor: 0, vencimento: "", categoria: "outros" }); },
       }
     );
   };
 
   const openEdit = (conta: ContaFinanceira) => {
     setEditingConta(conta);
-    setEditForm({ cliente: conta.cliente, descricao: conta.descricao, valor: conta.valor, vencimento: conta.vencimento, status: conta.status });
+    setEditForm({ cliente: conta.cliente, descricao: conta.descricao, valor: conta.valor, vencimento: conta.vencimento, status: conta.status, categoria: conta.categoria || "outros" });
     setEditDialogOpen(true);
   };
 
   const handleEdit = () => {
     if (!editingConta || !editForm.cliente.trim()) { toast.error("Cliente obrigatório"); return; }
     updateConta.mutate(
-      { id: editingConta.id, cliente: editForm.cliente, descricao: editForm.descricao, valor: editForm.valor, vencimento: editForm.vencimento, status: editForm.status as any },
+      { id: editingConta.id, cliente: editForm.cliente, descricao: editForm.descricao, valor: editForm.valor, vencimento: editForm.vencimento, status: editForm.status as any, categoria: editForm.categoria as any },
       { onSuccess: () => { toast.success("Conta atualizada"); setEditDialogOpen(false); setEditingConta(null); } }
     );
   };
