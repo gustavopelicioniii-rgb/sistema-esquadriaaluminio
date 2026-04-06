@@ -275,7 +275,7 @@ const Financeiro = () => {
         <Card>
           <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
           <CardContent className="px-0 sm:px-6">
-            {contas.length > 0 ? (
+            {filteredContas.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -288,7 +288,7 @@ const Financeiro = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {contas.slice(0, 10).map(c => (
+                    {filteredContas.slice(0, 10).map(c => (
                       <TableRow key={c.id}>
                         <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
                         <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
