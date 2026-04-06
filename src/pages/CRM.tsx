@@ -22,6 +22,7 @@ import {
   useCrmLeads, useUpdateLeadStatus, useUpdateLead, useCreateLead, useDeleteLead,
   type CrmLead, type CrmLeadStatus,
 } from "@/hooks/use-crm-leads";
+import { CrmAiPanel } from "@/components/ai/CrmAiPanel";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -240,6 +241,11 @@ const CRM = () => {
             <p className="text-sm sm:text-xl font-bold">{formatCurrency(leads.filter(l => l.status === "negociacao" || l.status === "em_orcamento").reduce((s, l) => s + l.valor, 0))}</p>
           </div>
         </div>
+      )}
+
+      {/* AI Analysis */}
+      {!isLoading && leads.length > 0 && (
+        <CrmAiPanel leads={leads.map(l => ({ nome: l.nome, status: l.status, valor: l.valor, follow_up_date: l.follow_up_date, observacao: l.observacao }))} />
       )}
 
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
