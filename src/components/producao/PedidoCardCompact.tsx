@@ -134,6 +134,23 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
           </div>
         </div>
 
+        {/* Action buttons row */}
+        <div className="flex flex-wrap gap-1 pt-0.5">
+          {actionItems.map(({ key, icon: Icon, label }) => (
+            <Button
+              key={key}
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[10px] sm:text-xs gap-1 text-muted-foreground hover:text-foreground"
+              onClick={() => handleAction(key)}
+              title={label}
+            >
+              <Icon className="h-3 w-3 shrink-0" />
+              <span className="hidden sm:inline">{label}</span>
+            </Button>
+          ))}
+        </div>
+
         {/* Quick actions row */}
         <div className="flex gap-1.5 pt-0.5">
           <Button variant="outline" size="sm" className="flex-1 text-[10px] sm:text-xs h-7" onClick={() => onCancelar(op)}>
