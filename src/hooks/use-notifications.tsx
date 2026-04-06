@@ -140,7 +140,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // === PEDIDOS ATRASADOS ===
+    // === PEDIDOS ATRASADOS E PRÓXIMOS DO VENCIMENTO ===
     (pedidosRes.data ?? [])
       .filter((p) => p.status === "em_andamento" && p.previsao)
       .forEach((p) => {
@@ -156,16 +156,38 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
             read: currentReadKeys.has(id),
             severity: "critical",
           });
-        } else if (days <= 2) {
+        } else if (days <= 3) {
           const id = `ped-prazo-${p.id}`;
           allNotifs.push({
             id,
             type: "producao",
-            msg: `Pedido #${p.pedido_num} prazo próximo`,
+            msg: `Pedido #${p.pedido_num} prazo em ${days}d`,
             detail: `${p.cliente} · entrega em ${days} dia(s)`,
             time: timeAgo(p.updated_at),
             read: currentReadKeys.has(id),
+            severity: "critical",
+          });
+        } else if (days <= 7) {
+          const id = `ped-prazo7-${p.id}`;
+          allNotifs.push({
+            id,
+            type: "producao",
+            msg: `Pedido #${p.pedido_num} vence em ${days}d`,
+            detail: `${p.cliente} · atenção ao prazo`,
+            time: timeAgo(p.updated_at),
+            read: currentReadKeys.has(id),
             severity: "warning",
+          });
+        } else if (days <= 15) {
+          const id = `ped-prazo15-${p.id}`;
+          allNotifs.push({
+            id,
+            type: "producao",
+            msg: `Pedido #${p.pedido_num} vence em ${days}d`,
+            detail: `${p.cliente} · planeje a entrega`,
+            time: timeAgo(p.updated_at),
+            read: currentReadKeys.has(id),
+            severity: "info",
           });
         }
       });
