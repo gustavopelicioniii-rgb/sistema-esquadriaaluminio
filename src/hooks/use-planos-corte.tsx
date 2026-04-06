@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { ExtendedTypology } from "@/hooks/use-all-typologies";
 
 export interface PlanoCorte {
   id: string;
@@ -109,5 +110,43 @@ export function usePlanosCorte() {
     });
   }, [addPlano]);
 
-  return { planos, loading, addPlano, updatePlano, deletePlano, duplicatePlano, refetch: fetchPlanos };
+  /**
+   * Syncs planos_corte with all available typologies.
+   * Creates a default plano for any typology that doesn't have one yet.
+   */
+  const syncWithTypologies = useCallback(async (allTypologies: ExtendedTypology[]) => {
+    // Fetch current planos to get existing typology_ids
+    const { data: existingPlanos } = await supabase
+      .from("planos_corte")
+      .select("typology_id");
+
+    const existingIds = new Set((existingPlanos ?? []).map((p: any) => p.typology_id));
+
+    const activeTypologies = allTypologies.filter(t => t.active);
+    const missing = activeTypologies.filter(t => !existingIds.has(t.id));
+
+    if (missing.length === 0) return;
+
+    const inserts = missing.map(t => ({
+      typology_id: t.id,
+      nome: t.name,
+      responsavel: "",
+      largura: 1000,
+      altura: 1000,
+      quantidade: 1,
+    }));
+
+    const { error } = await supabase
+      .from("planos_corte")
+      .insert(inserts);
+
+    if (error) {
+      console.error("Erro ao sincronizar planos:", error);
+    } else if (missing.length > 0) {
+      toast.success(`${missing.length} plano(s) de corte criado(s) automaticamente`);
+      await fetchPlanos();
+    }
+  }, [fetchPlanos]);
+
+  return { planos, loading, addPlano, updatePlano, deletePlano, duplicatePlano, refetch: fetchPlanos, syncWithTypologies };
 }
