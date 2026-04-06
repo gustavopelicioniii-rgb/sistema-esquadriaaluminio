@@ -832,6 +832,68 @@ export type Database = {
           },
         ]
       }
+      regras_vidro_customizadas: {
+        Row: {
+          created_at: string
+          glass_name: string
+          glass_type: string | null
+          height_constant_mm: number
+          height_reference: string
+          id: string
+          max_thickness_mm: number | null
+          min_thickness_mm: number | null
+          notes: string | null
+          quantity: number
+          typology_id: string
+          updated_at: string
+          user_id: string
+          width_constant_mm: number
+          width_reference: string
+        }
+        Insert: {
+          created_at?: string
+          glass_name: string
+          glass_type?: string | null
+          height_constant_mm?: number
+          height_reference?: string
+          id?: string
+          max_thickness_mm?: number | null
+          min_thickness_mm?: number | null
+          notes?: string | null
+          quantity?: number
+          typology_id: string
+          updated_at?: string
+          user_id?: string
+          width_constant_mm?: number
+          width_reference?: string
+        }
+        Update: {
+          created_at?: string
+          glass_name?: string
+          glass_type?: string | null
+          height_constant_mm?: number
+          height_reference?: string
+          id?: string
+          max_thickness_mm?: number | null
+          min_thickness_mm?: number | null
+          notes?: string | null
+          quantity?: number
+          typology_id?: string
+          updated_at?: string
+          user_id?: string
+          width_constant_mm?: number
+          width_reference?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regras_vidro_customizadas_typology_id_fkey"
+            columns: ["typology_id"]
+            isOneToOne: false
+            referencedRelation: "tipologias_customizadas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tipologias_customizadas: {
         Row: {
           active: boolean
