@@ -33,6 +33,7 @@ const PrecoItens = lazy(() => import("./pages/PrecoItens"));
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Mapa = lazy(() => import("./pages/Mapa"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
+const Tipologias = lazy(() => import("./pages/Tipologias"));
 const CalculoEsquadrias = lazy(() => import("./pages/CalculoEsquadrias"));
 const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
 const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
@@ -103,6 +104,7 @@ const App = () => (
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
+                  <Route path="/tipologias" element={<S><Tipologias /></S>} />
                 </Route>
 
                 {/* Admin only - shared layout */}

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  UserCog, Calculator, Receipt, Package, Upload, Kanban, Bell, Settings,
+  Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -33,6 +33,7 @@ const menuItems = [
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
+  { title: "Tipologias", url: "/tipologias", icon: Layers },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
