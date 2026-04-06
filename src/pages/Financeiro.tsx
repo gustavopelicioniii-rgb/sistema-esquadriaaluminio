@@ -156,10 +156,34 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
 const Financeiro = () => {
   const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
+  
+  const now = new Date();
+  const [filterMonth, setFilterMonth] = useState(now.getMonth()); // 0-11
+  const [filterYear, setFilterYear] = useState(now.getFullYear());
+  const [filterAll, setFilterAll] = useState(false);
 
-  const aReceber = contas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
-  const aPagar = contas.filter(c => c.tipo === "pagar").reduce((s, c) => s + Number(c.valor), 0);
-  const totalPago = contas.filter(c => c.status === "pago").reduce((s, c) => s + Number(c.valor), 0);
+  const filteredContas = useMemo(() => {
+    if (filterAll) return contas;
+    return contas.filter(c => {
+      const d = new Date(c.vencimento);
+      return d.getMonth() === filterMonth && d.getFullYear() === filterYear;
+    });
+  }, [contas, filterMonth, filterYear, filterAll]);
+
+  const prevMonth = () => {
+    if (filterMonth === 0) { setFilterMonth(11); setFilterYear(y => y - 1); }
+    else setFilterMonth(m => m - 1);
+    setFilterAll(false);
+  };
+  const nextMonth = () => {
+    if (filterMonth === 11) { setFilterMonth(0); setFilterYear(y => y + 1); }
+    else setFilterMonth(m => m + 1);
+    setFilterAll(false);
+  };
+
+  const aReceber = filteredContas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
+  const aPagar = filteredContas.filter(c => c.tipo === "pagar").reduce((s, c) => s + Number(c.valor), 0);
+  const totalPago = filteredContas.filter(c => c.status === "pago").reduce((s, c) => s + Number(c.valor), 0);
   const saldo = aReceber - aPagar;
 
   if (isLoading) {
