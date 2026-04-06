@@ -43,21 +43,12 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const P = ({ children }: { children: React.ReactNode }) => <ProtectedRoute>{children}</ProtectedRoute>;
-const Admin = ({ children }: { children: React.ReactNode }) => <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>;
 
 function ProtectedLayout() {
   return (
     <P>
       <AppLayout />
     </P>
-  );
-}
-
-function AdminLayout() {
-  return (
-    <Admin>
-      <AppLayout />
-    </Admin>
   );
 }
 
@@ -105,10 +96,6 @@ const App = () => (
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
                   <Route path="/tipologias" element={<S><Tipologias /></S>} />
-                </Route>
-
-                {/* Admin only - shared layout */}
-                <Route element={<AdminLayout />}>
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                 </Route>
 
