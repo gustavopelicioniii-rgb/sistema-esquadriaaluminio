@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useContasFinanceiras, useCreateConta, useUpdateConta, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -15,6 +15,7 @@ import {
   TrendingUp, TrendingDown, Wallet, DollarSign,
   Search, Plus, CheckCircle2, Loader2,
   CreditCard, ArrowDownCircle, ArrowUpCircle,
+  CalendarIcon, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ExportButtons } from "@/components/ExportButtons";
@@ -24,6 +25,11 @@ const formatCurrency = (value: number) =>
 
 const formatDate = (dateStr: string) =>
   new Intl.DateTimeFormat("pt-BR").format(new Date(dateStr));
+
+const MONTH_NAMES = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
 
 type StatusFilter = "todos" | "pendente" | "pago" | "vencido";
 
@@ -150,10 +156,34 @@ function ContasView({ tipo, contas }: { tipo: "receber" | "pagar"; contas: Conta
 const Financeiro = () => {
   const { data: contas = [], isLoading, refetch } = useContasFinanceiras();
   const [activeTab, setActiveTab] = useState<"resumo" | "receber" | "pagar">("resumo");
+  
+  const now = new Date();
+  const [filterMonth, setFilterMonth] = useState(now.getMonth()); // 0-11
+  const [filterYear, setFilterYear] = useState(now.getFullYear());
+  const [filterAll, setFilterAll] = useState(false);
 
-  const aReceber = contas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
-  const aPagar = contas.filter(c => c.tipo === "pagar").reduce((s, c) => s + Number(c.valor), 0);
-  const totalPago = contas.filter(c => c.status === "pago").reduce((s, c) => s + Number(c.valor), 0);
+  const filteredContas = useMemo(() => {
+    if (filterAll) return contas;
+    return contas.filter(c => {
+      const d = new Date(c.vencimento);
+      return d.getMonth() === filterMonth && d.getFullYear() === filterYear;
+    });
+  }, [contas, filterMonth, filterYear, filterAll]);
+
+  const prevMonth = () => {
+    if (filterMonth === 0) { setFilterMonth(11); setFilterYear(y => y - 1); }
+    else setFilterMonth(m => m - 1);
+    setFilterAll(false);
+  };
+  const nextMonth = () => {
+    if (filterMonth === 11) { setFilterMonth(0); setFilterYear(y => y + 1); }
+    else setFilterMonth(m => m + 1);
+    setFilterAll(false);
+  };
+
+  const aReceber = filteredContas.filter(c => c.tipo === "receber").reduce((s, c) => s + Number(c.valor), 0);
+  const aPagar = filteredContas.filter(c => c.tipo === "pagar").reduce((s, c) => s + Number(c.valor), 0);
+  const totalPago = filteredContas.filter(c => c.status === "pago").reduce((s, c) => s + Number(c.valor), 0);
   const saldo = aReceber - aPagar;
 
   if (isLoading) {
@@ -181,11 +211,37 @@ const Financeiro = () => {
             { label: "A Pagar", value: formatCurrency(aPagar) },
             { label: "Saldo", value: formatCurrency(saldo) },
           ],
-          rows: contas.map((c) => [
+          rows: filteredContas.map((c) => [
             c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(c.valor), c.vencimento, c.status,
           ]),
           filename: "financeiro",
         })} />
+      </div>
+
+      {/* Period Filter */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="outline" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={prevMonth}>
+            <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </Button>
+          <div className="flex items-center gap-1.5 min-w-[140px] sm:min-w-[180px] justify-center">
+            <CalendarIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+            <span className="text-xs sm:text-sm font-medium">
+              {filterAll ? "Todos os períodos" : `${MONTH_NAMES[filterMonth]} ${filterYear}`}
+            </span>
+          </div>
+          <Button variant="outline" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={nextMonth}>
+            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </Button>
+        </div>
+        <Button
+          variant={filterAll ? "default" : "outline"}
+          size="sm"
+          className="text-[10px] sm:text-xs h-7 sm:h-8"
+          onClick={() => setFilterAll(!filterAll)}
+        >
+          {filterAll ? "Filtrando: Todos" : "Ver Todos"}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
@@ -219,7 +275,7 @@ const Financeiro = () => {
         <Card>
           <CardHeader className="px-3 sm:px-6"><CardTitle className="text-xs sm:text-sm font-bold">Últimas Contas</CardTitle></CardHeader>
           <CardContent className="px-0 sm:px-6">
-            {contas.length > 0 ? (
+            {filteredContas.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -232,7 +288,7 @@ const Financeiro = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {contas.slice(0, 10).map(c => (
+                    {filteredContas.slice(0, 10).map(c => (
                       <TableRow key={c.id}>
                         <TableCell className="font-medium text-xs sm:text-sm">{c.cliente}</TableCell>
                         <TableCell className="text-muted-foreground hidden sm:table-cell">{c.descricao}</TableCell>
@@ -251,8 +307,8 @@ const Financeiro = () => {
         </Card>
       )}
 
-      {activeTab === "receber" && <ContasView tipo="receber" contas={contas} />}
-      {activeTab === "pagar" && <ContasView tipo="pagar" contas={contas} />}
+      {activeTab === "receber" && <ContasView tipo="receber" contas={filteredContas} />}
+      {activeTab === "pagar" && <ContasView tipo="pagar" contas={filteredContas} />}
     </div>
     </PullToRefresh>
   );
