@@ -482,10 +482,19 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
 
 // ============ GRID VIEW (main) ============
 const PlanoCorte = () => {
-  const { planos, loading, addPlano, deletePlano, duplicatePlano, updatePlano } = usePlanosCorte();
+  const { planos, loading, addPlano, deletePlano, duplicatePlano, updatePlano, syncWithTypologies } = usePlanosCorte();
   const { allTypologies, loading: typLoading } = useAllTypologies();
   const [search, setSearch] = useState("");
   const [selectedPlano, setSelectedPlano] = useState<PlanoCorteType | null>(null);
+  const [synced, setSynced] = useState(false);
+
+  // Auto-sync: create planos for all typologies that don't have one yet
+  useEffect(() => {
+    if (!loading && !typLoading && allTypologies.length > 0 && !synced) {
+      setSynced(true);
+      syncWithTypologies(allTypologies);
+    }
+  }, [loading, typLoading, allTypologies, synced, syncWithTypologies]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [novoNome, setNovoNome] = useState("");
   const [novoResponsavel, setNovoResponsavel] = useState("");
