@@ -43,21 +43,12 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const P = ({ children }: { children: React.ReactNode }) => <ProtectedRoute>{children}</ProtectedRoute>;
-const Admin = ({ children }: { children: React.ReactNode }) => <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>;
 
 function ProtectedLayout() {
   return (
     <P>
       <AppLayout />
     </P>
-  );
-}
-
-function AdminLayout() {
-  return (
-    <Admin>
-      <AppLayout />
-    </Admin>
   );
 }
 
