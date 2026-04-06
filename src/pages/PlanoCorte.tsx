@@ -483,6 +483,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
 // ============ GRID VIEW (main) ============
 const PlanoCorte = () => {
   const { planos, loading, addPlano, deletePlano, duplicatePlano, updatePlano } = usePlanosCorte();
+  const { allTypologies, loading: typLoading } = useAllTypologies();
   const [search, setSearch] = useState("");
   const [selectedPlano, setSelectedPlano] = useState<PlanoCorteType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -520,10 +521,10 @@ const PlanoCorte = () => {
   };
 
   if (selectedPlano) {
-    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} />;
+    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} allTypologies={allTypologies} />;
   }
 
-  if (loading) {
+  if (loading || typLoading) {
     return <div className="flex items-center justify-center py-20"><LoadingSpinner /></div>;
   }
 
@@ -546,7 +547,7 @@ const PlanoCorte = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {filtered.map(plano => {
-          const typ = getTypologyInfo(plano.typology_id);
+          const typ = allTypologies.find(t => t.id === plano.typology_id);
           return (
             <Card key={plano.id} className="group cursor-pointer hover:shadow-md hover:border-primary/30 transition-all relative"
               onClick={() => setSelectedPlano(plano)}>
@@ -612,7 +613,7 @@ const PlanoCorte = () => {
               <Select value={novoTypologyId} onValueChange={setNovoTypologyId}>
                 <SelectTrigger><SelectValue placeholder="Selecione a tipologia..." /></SelectTrigger>
                 <SelectContent>
-                  {typologies.map(t => (<SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>))}
+                  {allTypologies.filter(t => t.active).map(t => (<SelectItem key={t.id} value={t.id}>{t.name}{(t as ExtendedTypology)._isCustom ? " ★" : ""}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
