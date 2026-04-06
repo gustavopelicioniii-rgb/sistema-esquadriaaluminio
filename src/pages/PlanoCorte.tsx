@@ -545,51 +545,53 @@ const PlanoCorte = () => {
         <Input placeholder="Buscar por produto ou responsável..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filtered.map(plano => {
           const typ = allTypologies.find(t => t.id === plano.typology_id);
           return (
-            <Card key={plano.id} className="group cursor-pointer hover:shadow-md hover:border-primary/30 transition-all relative"
+            <Card key={plano.id} className="group cursor-pointer hover:shadow-lg hover:border-primary/40 transition-all relative overflow-hidden"
               onClick={() => setSelectedPlano(plano)}>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-20 h-16 bg-muted/30 rounded-lg flex items-center justify-center shrink-0">
-                  {typ && (
-                    <FramePreview width_mm={plano.largura} height_mm={plano.altura} category={typ.category}
-                      subcategory={typ.subcategory} num_folhas={typ.num_folhas} has_veneziana={typ.has_veneziana}
-                      has_bandeira={typ.has_bandeira} notes={typ.notes} maxWidth={60} maxHeight={50} showDimensions={false} />
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-sm truncate">{plano.nome}</h3>
-                  <p className="text-xs text-primary">{plano.responsavel} • {new Date(plano.created_at).toLocaleDateString("pt-BR")}</p>
-                  <p className="text-xs text-muted-foreground">L: {plano.largura} × A: {plano.altura} • Qtd: {plano.quantidade}</p>
-                </div>
-                {/* Quick actions */}
-                <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => duplicatePlano(plano)} title="Duplicar">
-                    <Copy className="h-3.5 w-3.5" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" title="Excluir">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
-                        <AlertDialogDescription>Esta ação não pode ser desfeita. O plano "{plano.nome}" será excluído permanentemente.</AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => deletePlano(plano.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                          Excluir
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+              {/* Large Preview Area */}
+              <div className="bg-muted/20 border-b flex items-center justify-center p-4 min-h-[140px]">
+                {typ ? (
+                  <FramePreview width_mm={plano.largura} height_mm={plano.altura} category={typ.category}
+                    subcategory={typ.subcategory} num_folhas={typ.num_folhas} has_veneziana={typ.has_veneziana}
+                    has_bandeira={typ.has_bandeira} notes={typ.notes} maxWidth={140} maxHeight={110} showDimensions={false} />
+                ) : (
+                  <div className="text-muted-foreground text-xs">Sem preview</div>
+                )}
+              </div>
+              {/* Info Below */}
+              <CardContent className="p-3 space-y-1">
+                <h3 className="font-bold text-sm truncate">{plano.nome}</h3>
+                <p className="text-xs text-primary font-medium">{plano.responsavel} <span className="text-muted-foreground font-normal">{new Date(plano.created_at).toLocaleDateString("pt-BR")}</span></p>
+                <p className="text-xs text-muted-foreground font-mono">L: {plano.largura} × A: {plano.altura} &bull; Qtd: {plano.quantidade}</p>
               </CardContent>
+              {/* Quick actions overlay */}
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+                <Button variant="secondary" size="icon" className="h-7 w-7 shadow-sm" onClick={() => duplicatePlano(plano)} title="Duplicar">
+                  <Copy className="h-3.5 w-3.5" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="secondary" size="icon" className="h-7 w-7 shadow-sm text-destructive hover:text-destructive" title="Excluir">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+                      <AlertDialogDescription>Esta ação não pode ser desfeita. O plano "{plano.nome}" será excluído permanentemente.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deletePlano(plano.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </Card>
           );
         })}
