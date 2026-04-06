@@ -49,9 +49,9 @@ interface Props {
   isDragging?: boolean;
 }
 
-export default function PedidoCardCompact({ pedido: op, onOpenDetail, onOpenDialog, onConcluir, onCancelar, isDragging }: Props) {
+export default function PedidoCardCompact({ pedido: op, progress: progressProp, onOpenDetail, onOpenDialog, onConcluir, onCancelar, isDragging }: Props) {
   const badge = getUrgencyBadge(op);
-  const progress = op.status === "concluido" ? 100 : 0; // placeholder
+  const progress = progressProp ?? (op.status === "concluido" ? 100 : 0);
 
   const handleAction = (key: DialogType) => {
     if (key === "tarefas") {
