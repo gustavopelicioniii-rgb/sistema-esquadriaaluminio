@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useContasFinanceiras, useCreateConta, useUpdateConta, type ContaFinanceira } from "@/hooks/use-contas-financeiras";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -15,6 +15,7 @@ import {
   TrendingUp, TrendingDown, Wallet, DollarSign,
   Search, Plus, CheckCircle2, Loader2,
   CreditCard, ArrowDownCircle, ArrowUpCircle,
+  CalendarIcon, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ExportButtons } from "@/components/ExportButtons";
@@ -24,6 +25,11 @@ const formatCurrency = (value: number) =>
 
 const formatDate = (dateStr: string) =>
   new Intl.DateTimeFormat("pt-BR").format(new Date(dateStr));
+
+const MONTH_NAMES = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
 
 type StatusFilter = "todos" | "pendente" | "pago" | "vencido";
 
