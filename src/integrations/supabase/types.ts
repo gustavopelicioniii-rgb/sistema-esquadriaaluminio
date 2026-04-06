@@ -77,6 +77,39 @@ export type Database = {
         }
         Relationships: []
       }
+      api_integracoes: {
+        Row: {
+          ativa: boolean
+          chave: string
+          created_at: string
+          descricao: string
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ativa?: boolean
+          chave?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          ativa?: boolean
+          chave?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           cidade: string | null
