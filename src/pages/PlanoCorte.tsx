@@ -166,7 +166,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
         width_constant_mm: glassFolgas[r.id]?.w ?? r.width_constant_mm,
         height_constant_mm: glassFolgas[r.id]?.h ?? r.height_constant_mm,
       }));
-      const components = getComponentsForTypology(plano.typology_id);
+      const components = getComponentsForTypology(plano.typology_id, baseId);
       return calculateTypology(
         { typology_id: plano.typology_id, width_mm: largura, height_mm: altura, quantity: quantidade },
         adjustedCutRules, adjustedGlassRules, components, typ.name, typ.num_folhas
