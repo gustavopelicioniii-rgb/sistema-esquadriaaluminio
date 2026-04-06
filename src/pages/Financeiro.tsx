@@ -211,11 +211,37 @@ const Financeiro = () => {
             { label: "A Pagar", value: formatCurrency(aPagar) },
             { label: "Saldo", value: formatCurrency(saldo) },
           ],
-          rows: contas.map((c) => [
+          rows: filteredContas.map((c) => [
             c.tipo === "receber" ? "Receita" : "Despesa", c.cliente, c.descricao, formatCurrency(c.valor), c.vencimento, c.status,
           ]),
           filename: "financeiro",
         })} />
+      </div>
+
+      {/* Period Filter */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button variant="outline" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={prevMonth}>
+            <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </Button>
+          <div className="flex items-center gap-1.5 min-w-[140px] sm:min-w-[180px] justify-center">
+            <CalendarIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+            <span className="text-xs sm:text-sm font-medium">
+              {filterAll ? "Todos os períodos" : `${MONTH_NAMES[filterMonth]} ${filterYear}`}
+            </span>
+          </div>
+          <Button variant="outline" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={nextMonth}>
+            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </Button>
+        </div>
+        <Button
+          variant={filterAll ? "default" : "outline"}
+          size="sm"
+          className="text-[10px] sm:text-xs h-7 sm:h-8"
+          onClick={() => setFilterAll(!filterAll)}
+        >
+          {filterAll ? "Filtrando: Todos" : "Ver Todos"}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
