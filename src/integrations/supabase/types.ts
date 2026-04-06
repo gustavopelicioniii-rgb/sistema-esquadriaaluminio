@@ -665,6 +665,66 @@ export type Database = {
         }
         Relationships: []
       }
+      tipologias_customizadas: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          has_bandeira: boolean
+          has_veneziana: boolean
+          id: string
+          max_height_mm: number | null
+          max_width_mm: number | null
+          min_height_mm: number | null
+          min_width_mm: number | null
+          name: string
+          notes: string | null
+          num_folhas: number
+          product_line_id: string
+          subcategory: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          has_bandeira?: boolean
+          has_veneziana?: boolean
+          id?: string
+          max_height_mm?: number | null
+          max_width_mm?: number | null
+          min_height_mm?: number | null
+          min_width_mm?: number | null
+          name: string
+          notes?: string | null
+          num_folhas?: number
+          product_line_id: string
+          subcategory?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          has_bandeira?: boolean
+          has_veneziana?: boolean
+          id?: string
+          max_height_mm?: number | null
+          max_width_mm?: number | null
+          min_height_mm?: number | null
+          min_width_mm?: number | null
+          name?: string
+          notes?: string | null
+          num_folhas?: number
+          product_line_id?: string
+          subcategory?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
