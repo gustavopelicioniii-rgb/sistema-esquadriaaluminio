@@ -1,14 +1,10 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatters";
 import {
-  User, MoreVertical, CheckCircle2,
+  User, CheckCircle2,
   RefreshCcw, CreditCard, FileText, Printer,
   Eye, Pencil, ListChecks, Share2,
 } from "lucide-react";
@@ -85,25 +81,10 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
           >
             PEDIDO {op.pedido_num}
           </h3>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="shrink-0">
             <span className={cn("rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap", badge.className)}>
               {badge.label}
             </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                {actionItems.map(({ key, icon: Icon, label }) => (
-                  <DropdownMenuItem key={key} onClick={() => handleAction(key)} className="gap-2 text-xs">
-                    <Icon className="h-3.5 w-3.5" />
-                    {label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
@@ -132,6 +113,23 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
             <Progress value={progress} className="h-1.5 flex-1" />
             <span className="text-[10px] text-muted-foreground font-medium">{progress}%</span>
           </div>
+        </div>
+
+        {/* Action buttons row */}
+        <div className="flex flex-wrap gap-1 pt-0.5">
+          {actionItems.map(({ key, icon: Icon, label }) => (
+            <Button
+              key={key}
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[10px] sm:text-xs gap-1 text-muted-foreground hover:text-foreground"
+              onClick={() => handleAction(key)}
+              title={label}
+            >
+              <Icon className="h-3 w-3 shrink-0" />
+              <span className="hidden sm:inline">{label}</span>
+            </Button>
+          ))}
         </div>
 
         {/* Quick actions row */}
