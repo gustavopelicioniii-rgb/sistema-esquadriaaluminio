@@ -91,6 +91,10 @@ const Configuracoes = () => {
   const [showAddApi, setShowAddApi] = useState(false);
   const [newApi, setNewApi] = useState({ nome: "", chave: "", descricao: "" });
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
+  const [editingApi, setEditingApi] = useState<ApiConfig | null>(null);
+  const [showEditApi, setShowEditApi] = useState(false);
+  const [testingKey, setTestingKey] = useState(false);
+  const [keyTestResult, setKeyTestResult] = useState<"success" | "error" | null>(null);
 
   // Setup wizard state
   const [setupStep, setSetupStep] = useState(0);
