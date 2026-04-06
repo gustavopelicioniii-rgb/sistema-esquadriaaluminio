@@ -154,40 +154,61 @@ const Configuracoes = () => {
   };
 
   // ─── Funcionarios handlers ───
-  const addFuncionario = () => {
+  const addFuncionario = async () => {
     if (!newFunc.nome) return;
-    const f: Funcionario = { id: Date.now().toString(), ...newFunc, ativo: true };
-    setFuncionarios((prev) => [...prev, f]);
+    const { error } = await supabase.from("funcionarios").insert({
+      nome: newFunc.nome,
+      cargo: newFunc.cargo,
+      telefone: newFunc.telefone,
+      setor: newFunc.setor,
+    });
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    const { data } = await supabase.from("funcionarios").select("*").order("created_at");
+    if (data) setFuncionarios(data as unknown as Funcionario[]);
     setNewFunc({ nome: "", cargo: "", telefone: "", setor: "Produção" });
     setShowAddFunc(false);
     toast({ title: "Funcionário adicionado" });
   };
 
-  const removeFuncionario = (id: string) => {
+  const removeFuncionario = async (id: string) => {
+    await supabase.from("funcionarios").delete().eq("id", id);
     setFuncionarios((prev) => prev.filter((f) => f.id !== id));
     toast({ title: "Funcionário removido", variant: "destructive" });
   };
 
-  const toggleFuncionario = (id: string) => {
+  const toggleFuncionario = async (id: string) => {
+    const f = funcionarios.find((f) => f.id === id);
+    if (!f) return;
+    await supabase.from("funcionarios").update({ ativo: !f.ativo }).eq("id", id);
     setFuncionarios((prev) => prev.map((f) => f.id === id ? { ...f, ativo: !f.ativo } : f));
   };
 
   // ─── Admin handlers ───
-  const addAdmin = () => {
+  const addAdmin = async () => {
     if (!newAdmin.nome || !newAdmin.email) return;
-    const a: Admin = { id: Date.now().toString(), ...newAdmin, ativo: true };
-    setAdmins((prev) => [...prev, a]);
+    const { error } = await supabase.from("administradores").insert({
+      nome: newAdmin.nome,
+      email: newAdmin.email,
+      role: newAdmin.role,
+    });
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    const { data } = await supabase.from("administradores").select("*").order("created_at");
+    if (data) setAdmins(data as unknown as Admin[]);
     setNewAdmin({ nome: "", email: "", role: "Admin" });
     setShowAddAdmin(false);
     toast({ title: "Administrador adicionado" });
   };
 
-  const removeAdmin = (id: string) => {
+  const removeAdmin = async (id: string) => {
+    await supabase.from("administradores").delete().eq("id", id);
     setAdmins((prev) => prev.filter((a) => a.id !== id));
     toast({ title: "Administrador removido", variant: "destructive" });
   };
 
-  const toggleAdmin = (id: string) => {
+  const toggleAdmin = async (id: string) => {
+    const a = admins.find((a) => a.id === id);
+    if (!a) return;
+    await supabase.from("administradores").update({ ativo: !a.ativo }).eq("id", id);
     setAdmins((prev) => prev.map((a) => a.id === id ? { ...a, ativo: !a.ativo } : a));
   };
 
