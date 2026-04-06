@@ -16,9 +16,10 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package } from "lucide-react";
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
+import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
@@ -505,6 +506,7 @@ const Tipologias = () => {
             <div className="space-y-6">
               <CutRulesManager typology={rulesTypology} />
               <GlassRulesManager typology={rulesTypology} />
+              <ComponentRulesManager typology={rulesTypology} />
             </div>
           )}
         </DialogContent>

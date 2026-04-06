@@ -20,10 +20,10 @@ import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
 import { getEffectiveGlassRules } from "@/hooks/use-custom-glass-rules";
+import { getEffectiveComponents } from "@/hooks/use-custom-component-rules";
 import {
   productLines,
   manufacturers,
-  getComponentsForTypology,
 } from "@/data/catalog";
 import { useAllTypologies, type ExtendedTypology } from "@/hooks/use-all-typologies";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
@@ -88,11 +88,11 @@ export default function CalculoEsquadrias() {
 
     setCalculating(true);
     try {
-      const [cutRules, glassRules] = await Promise.all([
+      const [cutRules, glassRules, components] = await Promise.all([
         getEffectiveCutRules(selectedTypology, isCustom, baseId),
         getEffectiveGlassRules(selectedTypology, isCustom, baseId),
+        getEffectiveComponents(selectedTypology, isCustom, baseId),
       ]);
-      const components = getComponentsForTypology(selectedTypology, baseId);
       const output = calculateTypology(
         { typology_id: selectedTypology, width_mm: W, height_mm: H, quantity: qty },
         cutRules,
