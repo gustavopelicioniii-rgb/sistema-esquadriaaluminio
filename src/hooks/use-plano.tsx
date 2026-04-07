@@ -14,6 +14,7 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
     "/orcamentos/editar",
     "/configuracoes",
     "/notificacoes",
+    "/planos",
   ],
   profissional: [
     "/",
@@ -102,6 +103,12 @@ export function usePlano() {
 
       if (!error && data) {
         setPlano(data.plano as PlanTier);
+      } else if (!error && !data) {
+        // No subscription exists — create a basic one
+        await supabase
+          .from("assinaturas")
+          .insert({ user_id: user.id, plano: "basico", ativo: true } as any);
+        setPlano("basico");
       }
       setIsLoading(false);
     };
