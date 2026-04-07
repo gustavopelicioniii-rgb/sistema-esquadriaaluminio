@@ -243,12 +243,28 @@ const Configuracoes = () => {
     setNewAdmin({ nome: "", email: "", role: "Admin" });
     setShowAddAdmin(false);
     toast({ title: "Administrador adicionado" });
+
+    // Sync: grant admin role in user_roles
+    const { data: syncResult } = await supabase.functions.invoke("sync-admin-role", {
+      body: { action: "grant", email: newAdmin.email },
+    });
+    if (syncResult?.message) {
+      toast({ title: "Permissão", description: syncResult.message });
+    }
   };
 
   const removeAdmin = async (id: string) => {
+    const adminToRemove = admins.find((a) => a.id === id);
     await supabase.from("administradores").delete().eq("id", id);
     setAdmins((prev) => prev.filter((a) => a.id !== id));
     toast({ title: "Administrador removido", variant: "destructive" });
+
+    // Sync: revoke admin role in user_roles
+    if (adminToRemove?.email) {
+      await supabase.functions.invoke("sync-admin-role", {
+        body: { action: "revoke", email: adminToRemove.email },
+      });
+    }
   };
 
   const toggleAdmin = async (id: string) => {
@@ -256,6 +272,13 @@ const Configuracoes = () => {
     if (!a) return;
     await supabase.from("administradores").update({ ativo: !a.ativo }).eq("id", id);
     setAdmins((prev) => prev.map((a) => a.id === id ? { ...a, ativo: !a.ativo } : a));
+
+    // Sync: grant or revoke based on new ativo state
+    if (a.email) {
+      await supabase.functions.invoke("sync-admin-role", {
+        body: { action: a.ativo ? "revoke" : "grant", email: a.email },
+      });
+    }
   };
 
   // ─── API handlers ───
