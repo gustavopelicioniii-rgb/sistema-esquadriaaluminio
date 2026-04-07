@@ -492,6 +492,7 @@ import { profilesCentenarioMaxima } from "./profilesCentenarioMaxima";
 import { profilesCentenarioPerfetta } from "./profilesCentenarioPerfetta";
 import { profilesCentenarioAmadeirado } from "./profilesCentenarioAmadeirado";
 import { profilesCentenarioPadronizado } from "./profilesCentenarioPadronizado";
+import { profilesGeralCentenario } from "./profilesGeralCentenario";
 
 export const profiles: Profile[] = [
   ...supremaProfiles,
@@ -504,6 +505,7 @@ export const profiles: Profile[] = [
   ...profilesCentenarioPerfetta,
   ...profilesCentenarioAmadeirado,
   ...profilesCentenarioPadronizado,
+  ...profilesGeralCentenario,
 ];
 
 export function getProfileByCode(code: string, lineId: string): Profile | undefined {
