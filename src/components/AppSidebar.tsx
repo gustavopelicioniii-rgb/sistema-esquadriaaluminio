@@ -3,7 +3,7 @@ import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
   Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
-  Lock, Crown, UserCog, Shield,
+  Lock, Crown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
