@@ -86,7 +86,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => {
+              {visibleItems.map((item) => {
                 const count = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
                 const locked = !hasAccess(item.url);
                 const requiredPlan = locked ? getRequiredPlan(item.url) : null;
