@@ -200,10 +200,10 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(37, 99, 235);
   headers.forEach((h, i) => {
-    const align = i >= 3 ? "right" : "left";
-    const x = i >= 3 ? colX[i + 1] : colX[i];
-    if (align === "right") {
-      safeText(h, x, y, { align: "right" });
+    const x = colX[Math.min(i, colX.length - 1)];
+    if (i >= 3) {
+      const rx = colX[Math.min(i + 1, colX.length - 1)];
+      safeText(h, rx, y, { align: "right" });
     } else {
       safeText(h, x, y);
     }
