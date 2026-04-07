@@ -84,11 +84,16 @@ export async function generateProfessionalBudgetPDF(
 
   // Safe text wrapper to prevent "Invalid arguments" errors
   const safeText = (text: any, x: number, yPos: number, options?: any) => {
-    const str = text == null ? "" : String(text);
-    if (options) {
-      safeText(str, x, yPos, options);
+    let str: string | string[];
+    if (Array.isArray(text)) {
+      str = text.map((t: any) => (t == null ? "" : String(t)));
     } else {
-      safeText(str, x, yPos);
+      str = text == null ? "" : String(text);
+    }
+    if (options) {
+      pdf.text(str, x, yPos, options);
+    } else {
+      pdf.text(str, x, yPos);
     }
   };
 
