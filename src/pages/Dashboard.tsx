@@ -1,13 +1,16 @@
 import { useState, useCallback } from "react";
-import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
+import { DollarSign, TrendingUp, Package, Loader2, CalendarDays, Crown, ArrowRight } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   useDashboardStats, usePedidosStatus, useReceitaMensal,
   useOrcamentosStatus, useProducaoEtapas, type PeriodFilter,
 } from "@/hooks/use-dashboard-data";
+import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
 import { formatCurrency } from "@/lib/formatters";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -32,7 +35,9 @@ const chartTooltipStyle = {
 };
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { plano, isLoading: planoLoading } = usePlano();
   const [period, setPeriod] = useState<PeriodFilter>("todos");
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries();
@@ -99,6 +104,51 @@ const Dashboard = () => {
           ))}
         </div>
       </div>
+
+      {/* Plan Banner */}
+      {!planoLoading && (
+        <Card className={cn(
+          "border-0 shadow-md overflow-hidden",
+          plano === "premium"
+            ? "bg-gradient-to-r from-amber-500/10 to-yellow-400/10"
+            : plano === "profissional"
+            ? "bg-gradient-to-r from-primary/10 to-primary/5"
+            : "bg-gradient-to-r from-muted to-muted/60"
+        )}>
+          <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className={cn(
+                "flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full",
+                plano === "premium" ? "bg-amber-500/20 text-amber-600" :
+                plano === "profissional" ? "bg-primary/20 text-primary" :
+                "bg-muted-foreground/10 text-muted-foreground"
+              )}>
+                <Crown className="h-4 w-4 sm:h-5 sm:w-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-semibold truncate">Plano {PLAN_LABELS[plano]}</span>
+                  <Badge variant="secondary" className="text-[10px] shrink-0">
+                    {plano === "basico" ? "10 dias" : "Ativo"}
+                  </Badge>
+                </div>
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                  {plano === "premium"
+                    ? "Acesso completo a todos os recursos"
+                    : plano === "profissional"
+                    ? "Faça upgrade para acessar financeiro e relatórios"
+                    : "Faça upgrade para desbloquear mais recursos"}
+                </p>
+              </div>
+            </div>
+            {plano !== "premium" && (
+              <Button size="sm" className="gap-1.5 shrink-0 text-xs" onClick={() => navigate("/planos")}>
+                Upgrade <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Top stats row */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
