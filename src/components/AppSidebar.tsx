@@ -51,6 +51,9 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { badgeCounts, unreadCount } = useNotifications();
   const { hasAccess, getRequiredPlan } = usePlano();
+  const { role } = useAuth();
+
+  const visibleItems = menuItems.filter((item) => !item.adminOnly || role === "admin");
 
   const isActive = (url: string) =>
     location.pathname === url ||
