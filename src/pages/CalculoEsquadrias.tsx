@@ -18,6 +18,7 @@ import { calculateTypology, validateDimensions } from "@/lib/calculation-engine"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
+import { generateComponentesObraPDF } from "@/utils/componentesObraPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
 import { getEffectiveGlassRules } from "@/hooks/use-custom-glass-rules";
@@ -417,6 +418,14 @@ export default function CalculoEsquadrias() {
                     }}>
                       <FileDown className="h-4 w-4" />
                       Padrões Corte
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={() => {
+                      toast.info("Gerando Componentes da Obra...");
+                      generateComponentesObraPDF(result);
+                      toast.success("PDF exportado!");
+                    }}>
+                      <FileDown className="h-4 w-4" />
+                      Componentes
                     </Button>
                   </div>
                 </div>
