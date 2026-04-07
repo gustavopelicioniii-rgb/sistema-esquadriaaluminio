@@ -14,6 +14,7 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
     "/orcamentos/editar",
     "/configuracoes",
     "/notificacoes",
+    "/planos",
   ],
   profissional: [
     "/",
