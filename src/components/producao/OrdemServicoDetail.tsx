@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Plus, CheckCircle2, Circle } from "lucide-react";
+import { ChevronLeft, Plus, CheckCircle2, Circle, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
@@ -9,6 +9,8 @@ import { defaultEtapasConfig, type Etapa } from "./checklist/etapasConfig";
 import EtapaCard from "./checklist/EtapaCard";
 import AddEtapaDialog from "./checklist/AddEtapaDialog";
 import EditEtapaDialog from "./checklist/EditEtapaDialog";
+import CalculoFilters from "./CalculoFilters";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface Props {
   pedido: Pedido;
@@ -256,6 +258,19 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
           })}
         </div>
       </div>
+
+      {/* Configuração de Cálculo */}
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
+            <Settings2 className="h-3.5 w-3.5" />
+            Configuração de Cálculo da Obra
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pt-3">
+          <CalculoFilters />
+        </CollapsibleContent>
+      </Collapsible>
 
       {/* Etapas with drag and drop */}
       {etapas.map((etapa, idx) => (
