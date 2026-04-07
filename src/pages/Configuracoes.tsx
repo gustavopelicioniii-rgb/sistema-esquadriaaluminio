@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Save, Settings2, RotateCcw, Building2, Users, UserCog, Key, Wand2,
   Plus, Trash2, Phone, Mail, Edit2, Shield, Plug, Copy, Eye, EyeOff,
