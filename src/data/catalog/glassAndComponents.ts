@@ -129,11 +129,48 @@ const decampL45GlassRules: GlassRule[] = [
   { id: "gr-dc-pbal", typology_id: "typ-dc-pbal", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
 ];
 
+// ============================================
+// GLASS RULES - DECAMP PRATIC 20 (20mm)
+// ============================================
+const pratic20GlassRules: GlassRule[] = [
+  { id: "gr-p20-jc2f", typology_id: "typ-p20-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -65, height_reference: "H", height_constant_mm: -105, quantity: 2, glass_type: "comum", min_thickness_mm: 3, max_thickness_mm: 5 },
+  { id: "gr-p20-jc4f", typology_id: "typ-p20-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -65, height_reference: "H", height_constant_mm: -105, quantity: 4 },
+  { id: "gr-p20-jma1", typology_id: "typ-p20-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -115, height_reference: "H", height_constant_mm: -110, quantity: 1, glass_type: "temperado", min_thickness_mm: 3, max_thickness_mm: 5 },
+  { id: "gr-p20-jma2", typology_id: "typ-p20-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -115, height_reference: "H", height_constant_mm: -110, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p20-jbas1", typology_id: "typ-p20-jbas1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -115, height_reference: "H", height_constant_mm: -105, quantity: 1, glass_type: "comum" },
+  { id: "gr-p20-vfix", typology_id: "typ-p20-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -50, height_reference: "H", height_constant_mm: -50, quantity: 1, glass_type: "comum", min_thickness_mm: 3, max_thickness_mm: 6 },
+  { id: "gr-p20-pg1f", typology_id: "typ-p20-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -90, height_reference: "H", height_constant_mm: -85, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 6 },
+  { id: "gr-p20-pc2f", typology_id: "typ-p20-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -65, height_reference: "H", height_constant_mm: -88, quantity: 2, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 6 },
+];
+
+// ============================================
+// GLASS RULES - DECAMP PRATIC 32 (32mm)
+// ============================================
+const pratic32GlassRules: GlassRule[] = [
+  { id: "gr-p32-jc2f", typology_id: "typ-p32-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-p32-jc3f", typology_id: "typ-p32-jc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 3 },
+  { id: "gr-p32-jc4f", typology_id: "typ-p32-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
+  { id: "gr-p32-jma1", typology_id: "typ-p32-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-p32-jma2", typology_id: "typ-p32-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p32-jcam", typology_id: "typ-p32-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
+  { id: "gr-p32-pc2f", typology_id: "typ-p32-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-p32-pc3f", typology_id: "typ-p32-pc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 3, glass_type: "temperado" },
+  { id: "gr-p32-pc4f", typology_id: "typ-p32-pc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 4, glass_type: "temperado" },
+  { id: "gr-p32-pg1f", typology_id: "typ-p32-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 1, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-p32-pg2f", typology_id: "typ-p32-pg2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p32-jc2fv", typology_id: "typ-p32-jc2fv", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum" },
+  { id: "gr-p32-jbas1", typology_id: "typ-p32-jbas1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -152, quantity: 1, glass_type: "comum" },
+  { id: "gr-p32-vfix", typology_id: "typ-p32-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -78, height_reference: "H", height_constant_mm: -78, quantity: 1, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 10 },
+  { id: "gr-p32-jpiv", typology_id: "typ-p32-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado" },
+];
+
 export const glassRules: GlassRule[] = [
   ...supremaGlassRules,
   ...goldGlassRules,
   ...topGlassRules,
   ...decampL45GlassRules,
+  ...pratic20GlassRules,
+  ...pratic32GlassRules,
   ...cloned25GlassRules,
   ...cloned32GlassRules,
   ...cloned40GlassRules,
@@ -397,11 +434,69 @@ const decampL45Components: TypologyComponent[] = [
   { id: "tc-dc-jpiv-03", typology_id: "typ-dc-jpiv", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
 ];
 
+// ============================================
+// COMPONENTS - DECAMP PRATIC 20
+// ============================================
+const pratic20Components: TypologyComponent[] = [
+  { id: "tc-p20-jc2f-01", typology_id: "typ-p20-jc2f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-jc2f-02", typology_id: "typ-p20-jc2f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-jc4f-01", typology_id: "typ-p20-jc4f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p20-jc4f-02", typology_id: "typ-p20-jc4f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jma1-01", typology_id: "typ-p20-jma1", component_name: "Braço maxim-ar", component_type: "braco", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jma1-02", typology_id: "typ-p20-jma1", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-jma2-01", typology_id: "typ-p20-jma2", component_name: "Braço maxim-ar", component_type: "braco", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-jma2-02", typology_id: "typ-p20-jma2", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jbas1-01", typology_id: "typ-p20-jbas1", component_name: "Trinco basculante", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-pg1f-01", typology_id: "typ-p20-pg1f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-p20-pg1f-02", typology_id: "typ-p20-pg1f", component_name: "Maçaneta", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-pc2f-01", typology_id: "typ-p20-pc2f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-pc2f-02", typology_id: "typ-p20-pc2f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+];
+
+// ============================================
+// COMPONENTS - DECAMP PRATIC 32
+// ============================================
+const pratic32Components: TypologyComponent[] = [
+  { id: "tc-p32-jc2f-01", typology_id: "typ-p32-jc2f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc2f-02", typology_id: "typ-p32-jc2f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jc2f-03", typology_id: "typ-p32-jc2f", component_name: "Vedador de vento", component_type: "vedador", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc3f-01", typology_id: "typ-p32-jc3f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-jc3f-02", typology_id: "typ-p32-jc3f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jc4f-01", typology_id: "typ-p32-jc4f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-jc4f-02", typology_id: "typ-p32-jc4f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jma1-01", typology_id: "typ-p32-jma1", component_name: "Braço articulado", component_type: "braco", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jma1-02", typology_id: "typ-p32-jma1", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jma2-01", typology_id: "typ-p32-jma2", component_name: "Braço articulado", component_type: "braco", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jma2-02", typology_id: "typ-p32-jma2", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jcam-01", typology_id: "typ-p32-jcam", component_name: "Dobradiça Camarão", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-jcam-02", typology_id: "typ-p32-jcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-pc2f-01", typology_id: "typ-p32-pc2f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-pc2f-02", typology_id: "typ-p32-pc2f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pc2f-03", typology_id: "typ-p32-pc2f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-pc3f-01", typology_id: "typ-p32-pc3f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-pc3f-02", typology_id: "typ-p32-pc3f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pc4f-01", typology_id: "typ-p32-pc4f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-pc4f-02", typology_id: "typ-p32-pc4f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-pg1f-01", typology_id: "typ-p32-pg1f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-p32-pg1f-02", typology_id: "typ-p32-pg1f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pg1f-03", typology_id: "typ-p32-pg1f", component_name: "Contratesta", component_type: "contrafecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pg2f-01", typology_id: "typ-p32-pg2f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-pg2f-02", typology_id: "typ-p32-pg2f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jc2fv-01", typology_id: "typ-p32-jc2fv", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc2fv-02", typology_id: "typ-p32-jc2fv", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jbas1-01", typology_id: "typ-p32-jbas1", component_name: "Trinco basculante", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-01", typology_id: "typ-p32-jpiv", component_name: "Pivô superior", component_type: "pivo", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-02", typology_id: "typ-p32-jpiv", component_name: "Pivô inferior", component_type: "pivo", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-03", typology_id: "typ-p32-jpiv", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+];
+
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
   ...goldComponents,
   ...topComponents,
   ...decampL45Components,
+  ...pratic20Components,
+  ...pratic32Components,
   ...cloned25Components,
   ...cloned32Components,
   ...cloned40Components,
