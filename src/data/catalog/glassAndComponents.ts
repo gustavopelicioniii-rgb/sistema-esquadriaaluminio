@@ -434,11 +434,69 @@ const decampL45Components: TypologyComponent[] = [
   { id: "tc-dc-jpiv-03", typology_id: "typ-dc-jpiv", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
 ];
 
+// ============================================
+// COMPONENTS - DECAMP PRATIC 20
+// ============================================
+const pratic20Components: TypologyComponent[] = [
+  { id: "tc-p20-jc2f-01", typology_id: "typ-p20-jc2f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-jc2f-02", typology_id: "typ-p20-jc2f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-jc4f-01", typology_id: "typ-p20-jc4f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p20-jc4f-02", typology_id: "typ-p20-jc4f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jma1-01", typology_id: "typ-p20-jma1", component_name: "Braço maxim-ar", component_type: "braco", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jma1-02", typology_id: "typ-p20-jma1", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-jma2-01", typology_id: "typ-p20-jma2", component_name: "Braço maxim-ar", component_type: "braco", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-jma2-02", typology_id: "typ-p20-jma2", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "2", unit: "un" },
+  { id: "tc-p20-jbas1-01", typology_id: "typ-p20-jbas1", component_name: "Trinco basculante", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-pg1f-01", typology_id: "typ-p20-pg1f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-p20-pg1f-02", typology_id: "typ-p20-pg1f", component_name: "Maçaneta", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-p20-pc2f-01", typology_id: "typ-p20-pc2f", component_name: "Roldana 20mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p20-pc2f-02", typology_id: "typ-p20-pc2f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+];
+
+// ============================================
+// COMPONENTS - DECAMP PRATIC 32
+// ============================================
+const pratic32Components: TypologyComponent[] = [
+  { id: "tc-p32-jc2f-01", typology_id: "typ-p32-jc2f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc2f-02", typology_id: "typ-p32-jc2f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jc2f-03", typology_id: "typ-p32-jc2f", component_name: "Vedador de vento", component_type: "vedador", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc3f-01", typology_id: "typ-p32-jc3f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-jc3f-02", typology_id: "typ-p32-jc3f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jc4f-01", typology_id: "typ-p32-jc4f", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-jc4f-02", typology_id: "typ-p32-jc4f", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jma1-01", typology_id: "typ-p32-jma1", component_name: "Braço articulado", component_type: "braco", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jma1-02", typology_id: "typ-p32-jma1", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jma2-01", typology_id: "typ-p32-jma2", component_name: "Braço articulado", component_type: "braco", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jma2-02", typology_id: "typ-p32-jma2", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jcam-01", typology_id: "typ-p32-jcam", component_name: "Dobradiça Camarão", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-jcam-02", typology_id: "typ-p32-jcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-pc2f-01", typology_id: "typ-p32-pc2f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-pc2f-02", typology_id: "typ-p32-pc2f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pc2f-03", typology_id: "typ-p32-pc2f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-pc3f-01", typology_id: "typ-p32-pc3f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-pc3f-02", typology_id: "typ-p32-pc3f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pc4f-01", typology_id: "typ-p32-pc4f", component_name: "Roldana Porta 32mm", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-p32-pc4f-02", typology_id: "typ-p32-pc4f", component_name: "Trinco Concha Porta", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-pg1f-01", typology_id: "typ-p32-pg1f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-p32-pg1f-02", typology_id: "typ-p32-pg1f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pg1f-03", typology_id: "typ-p32-pg1f", component_name: "Contratesta", component_type: "contrafecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-pg2f-01", typology_id: "typ-p32-pg2f", component_name: "Dobradiça", component_type: "dobradica", quantity_formula: "6", unit: "un" },
+  { id: "tc-p32-pg2f-02", typology_id: "typ-p32-pg2f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "2", unit: "un" },
+  { id: "tc-p32-jc2fv-01", typology_id: "typ-p32-jc2fv", component_name: "Roldana 32mm", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-p32-jc2fv-02", typology_id: "typ-p32-jc2fv", component_name: "Fecho concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jbas1-01", typology_id: "typ-p32-jbas1", component_name: "Trinco basculante", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-01", typology_id: "typ-p32-jpiv", component_name: "Pivô superior", component_type: "pivo", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-02", typology_id: "typ-p32-jpiv", component_name: "Pivô inferior", component_type: "pivo", quantity_formula: "1", unit: "un" },
+  { id: "tc-p32-jpiv-03", typology_id: "typ-p32-jpiv", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+];
+
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
   ...goldComponents,
   ...topComponents,
   ...decampL45Components,
+  ...pratic20Components,
+  ...pratic32Components,
   ...cloned25Components,
   ...cloned32Components,
   ...cloned40Components,
