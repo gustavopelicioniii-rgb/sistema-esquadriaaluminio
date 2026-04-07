@@ -186,6 +186,7 @@
 }
 
 /* Dialogs / Popovers / Dropdowns */
+[role="dialog"],
 [role="dialog"] > div,
 [data-radix-popper-content-wrapper] [role="listbox"],
 [data-radix-popper-content-wrapper] [data-radix-menu-content],
@@ -206,6 +207,7 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
 }
 
+.dark [role="dialog"],
 .dark [role="dialog"] > div,
 .dark [data-radix-popper-content-wrapper] [role="listbox"],
 .dark [data-radix-popper-content-wrapper] [data-radix-menu-content],
