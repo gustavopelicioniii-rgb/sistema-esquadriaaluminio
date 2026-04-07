@@ -3,7 +3,7 @@ import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
   Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
-  Lock, Crown,
+  Lock, Crown, UserCog, Shield,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useNotifications } from "@/hooks/use-notifications";
 import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -37,6 +38,8 @@ const menuItems = [
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
   { title: "Tipologias", url: "/tipologias", icon: Layers },
+  { title: "Funcionários", url: "/funcionarios", icon: UserCog, adminOnly: true },
+  { title: "Administradores", url: "/administradores", icon: Shield, adminOnly: true },
   { title: "Planos", url: "/planos", icon: Crown },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
@@ -48,6 +51,9 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { badgeCounts, unreadCount } = useNotifications();
   const { hasAccess, getRequiredPlan } = usePlano();
+  const { role } = useAuth();
+
+  const visibleItems = menuItems.filter((item) => !item.adminOnly || role === "admin");
 
   const isActive = (url: string) =>
     location.pathname === url ||
@@ -80,7 +86,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => {
+              {visibleItems.map((item) => {
                 const count = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
                 const locked = !hasAccess(item.url);
                 const requiredPlan = locked ? getRequiredPlan(item.url) : null;

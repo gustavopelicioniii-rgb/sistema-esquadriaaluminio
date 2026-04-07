@@ -39,6 +39,8 @@ const NotaFiscal = lazy(() => import("./pages/NotaFiscal"));
 const ImportarCSV = lazy(() => import("./pages/ImportarCSV"));
 const Notificacoes = lazy(() => import("./pages/Notificacoes"));
 const Planos = lazy(() => import("./pages/Planos"));
+const Funcionarios = lazy(() => import("./pages/Funcionarios"));
+const Administradores = lazy(() => import("./pages/Administradores"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -100,6 +102,8 @@ const App = () => (
                   <Route path="/tipologias" element={<S><Tipologias /></S>} />
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                   <Route path="/planos" element={<S><Planos /></S>} />
+                  <Route path="/funcionarios" element={<S><ProtectedRoute requiredRole="admin"><Funcionarios /></ProtectedRoute></S>} />
+                  <Route path="/administradores" element={<S><ProtectedRoute requiredRole="admin"><Administradores /></ProtectedRoute></S>} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
