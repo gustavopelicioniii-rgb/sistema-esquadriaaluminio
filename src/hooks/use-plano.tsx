@@ -59,6 +59,8 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
     "/mapa",
     "/importar-csv",
     "/tipologias",
+    "/funcionarios",
+    "/administradores",
   ],
 };
 
