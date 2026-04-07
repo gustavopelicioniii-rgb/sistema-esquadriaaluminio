@@ -102,8 +102,6 @@ const App = () => (
                   <Route path="/tipologias" element={<S><Tipologias /></S>} />
                   <Route path="/configuracoes" element={<S><Configuracoes /></S>} />
                   <Route path="/planos" element={<S><Planos /></S>} />
-                  <Route path="/funcionarios" element={<S><ProtectedRoute requiredRole="admin"><Funcionarios /></ProtectedRoute></S>} />
-                  <Route path="/administradores" element={<S><ProtectedRoute requiredRole="admin"><Administradores /></ProtectedRoute></S>} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
