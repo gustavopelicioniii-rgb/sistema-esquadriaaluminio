@@ -9,7 +9,7 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import {
   UserPlus, CheckCircle2, Shield, Zap, Calculator, ArrowLeft,
 } from "lucide-react";
-import logoLight from "@/assets/logo-light.jpg";
+import logoLight from "@/assets/aluflow-logo.png";
 
 const benefits = [
   "Cálculo automático de esquadrias com precisão milimétrica",
