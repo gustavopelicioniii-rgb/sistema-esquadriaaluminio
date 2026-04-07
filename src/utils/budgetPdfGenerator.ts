@@ -75,7 +75,6 @@ export async function generateProfessionalBudgetPDF(
   config: BudgetPdfConfig,
   svgElementId?: string
 ) {
-  console.log("PDF config:", JSON.stringify(config, null, 2));
   const pdf = new jsPDF("p", "mm", "a4");
   const W = 210;
   const H = 297;
@@ -193,7 +192,7 @@ export async function generateProfessionalBudgetPDF(
 
   // Table header
   const colX = [M, M + 55, M + 95, M + 115, M + 140, M + CW];
-  const headers = ["Produto", "Dimensões", "Qtd", "Área m²", "Unit.", "Total"];
+  const headers = ["Produto", "Dimensoes", "Qtd", "Area m2", "Unit.", "Total"];
 
   pdf.setFillColor(240, 244, 255);
   pdf.rect(M, y - 3, CW, 8, "F");
@@ -326,11 +325,11 @@ export async function generateProfessionalBudgetPDF(
   // ─── CONDIÇÕES COMERCIAIS ───
   const condicoes = config.condicoesComerciais ?? [
     "Validade da proposta: 15 dias.",
-    "Prazo de entrega: a combinar após aprovação.",
-    "Pagamento: 50% na aprovação, 50% na entrega.",
-    "Garantia de 5 anos contra defeitos de fabricação.",
-    "Instalação não inclusa, salvo acordo prévio.",
-    "Cores e dimensões conforme especificação acima.",
+    "Prazo de entrega: a combinar apos aprovacao.",
+    "Pagamento: 50% na aprovacao, 50% na entrega.",
+    "Garantia de 5 anos contra defeitos de fabricacao.",
+    "Instalacao nao inclusa, salvo acordo previo.",
+    "Cores e dimensoes conforme especificacao acima.",
   ];
 
   if (y + condicoes.length * 5 + 30 > H - 50) {
