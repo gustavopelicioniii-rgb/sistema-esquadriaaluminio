@@ -152,11 +152,11 @@ const Dashboard = () => {
 
       {/* Top stats row */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
-        <Card className="bg-foreground text-background border-0 shadow-lg col-span-2 sm:col-span-1">
+        <Card className="bg-card text-card-foreground border-border/50 shadow-sm col-span-2 sm:col-span-1">
           <CardContent className="p-3 sm:p-5">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">VENDAS</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">VENDAS</span>
             <p className="text-lg sm:text-2xl font-bold mt-1">{formatCurrency(stats.vendas)}</p>
-            <div className="mt-2 sm:mt-3 flex gap-4 sm:gap-6 text-[10px] sm:text-xs opacity-70">
+            <div className="mt-2 sm:mt-3 flex gap-4 sm:gap-6 text-[10px] sm:text-xs text-muted-foreground">
               <div>
                 <span className="block">Ticket-médio</span>
                 <span className="font-semibold">{formatCurrency(stats.ticketMedio)}</span>
@@ -185,11 +185,11 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
+        <Card className="shadow-sm border-border/50">
           <CardContent className="p-3 sm:p-5">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">PRODUÇÃO</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">PRODUÇÃO</span>
             <p className="text-xl sm:text-3xl font-bold mt-1 sm:mt-2">{stats.producaoAndamento}</p>
-            <p className="text-[10px] sm:text-xs opacity-80">em andamento</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">em andamento</p>
           </CardContent>
         </Card>
       </div>
