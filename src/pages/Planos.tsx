@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { Check, Crown, Rocket, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Crown, Rocket, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { usePlano, PlanTier, PLAN_LABELS, PLAN_PRICES, PLAN_DESCRIPTIONS } from "@/hooks/use-plano";
+import { usePlano, PlanTier, PLAN_LABELS, PLAN_PRICES, PLAN_DESCRIPTIONS, STRIPE_TIERS } from "@/hooks/use-plano";
+import { useSearchParams } from "react-router-dom";
 
 const PLAN_ICONS: Record<PlanTier, React.ReactNode> = {
   basico: <Sparkles className="h-6 w-6" />,
@@ -54,33 +55,56 @@ const PLAN_COLORS: Record<PlanTier, string> = {
 
 const Planos = () => {
   const { user } = useAuth();
-  const { plano: currentPlan, isLoading } = usePlano();
-  const [upgrading, setUpgrading] = useState(false);
+  const { plano: currentPlan, isLoading, subscriptionEnd, refreshSubscription } = usePlano();
+  const [checkingOut, setCheckingOut] = useState<PlanTier | null>(null);
+  const [managingPortal, setManagingPortal] = useState(false);
+  const [searchParams] = useSearchParams();
 
-  const handleSelectPlan = async (tier: PlanTier) => {
-    if (!user || tier === currentPlan) return;
+  // Handle return from Stripe
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      toast({ title: "Pagamento realizado com sucesso!", description: "Seu plano foi atualizado." });
+      refreshSubscription();
+    } else if (searchParams.get("canceled") === "true") {
+      toast({ title: "Pagamento cancelado", variant: "destructive" });
+    }
+  }, [searchParams, refreshSubscription]);
 
-    setUpgrading(true);
+  const handleCheckout = async (tier: PlanTier) => {
+    if (!user || tier === "basico") return;
+
+    const stripeInfo = STRIPE_TIERS[tier as keyof typeof STRIPE_TIERS];
+    if (!stripeInfo) return;
+
+    setCheckingOut(tier);
     try {
-      // Deactivate current plan
-      await supabase
-        .from("assinaturas")
-        .update({ ativo: false } as any)
-        .eq("user_id", user.id)
-        .eq("ativo", true);
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: stripeInfo.price_id },
+      });
 
-      // Create new subscription
-      await supabase
-        .from("assinaturas")
-        .insert({ user_id: user.id, plano: tier, ativo: true } as any);
-
-      toast({ title: `Plano alterado para ${PLAN_LABELS[tier]}!`, description: "As novas funcoes ja estao disponiveis." });
-      // Reload to refresh plan state
-      window.location.reload();
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
     } catch {
-      toast({ title: "Erro ao alterar plano", variant: "destructive" });
+      toast({ title: "Erro ao iniciar checkout", variant: "destructive" });
     } finally {
-      setUpgrading(false);
+      setCheckingOut(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setManagingPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch {
+      toast({ title: "Erro ao abrir portal", description: "Voce precisa ter uma assinatura ativa.", variant: "destructive" });
+    } finally {
+      setManagingPortal(false);
     }
   };
 
@@ -93,12 +117,33 @@ const Planos = () => {
         <p className="text-muted-foreground text-sm mt-1">
           Escolha o plano ideal para o seu negocio
         </p>
+        {currentPlan !== "basico" && subscriptionEnd && (
+          <p className="text-xs text-muted-foreground mt-2">
+            Assinatura ativa ate {new Date(subscriptionEnd).toLocaleDateString("pt-BR")}
+          </p>
+        )}
       </div>
+
+      {currentPlan !== "basico" && (
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleManageSubscription}
+            disabled={managingPortal}
+          >
+            <ExternalLink className="h-4 w-4" />
+            {managingPortal ? "Abrindo..." : "Gerenciar assinatura"}
+          </Button>
+        </div>
+      )}
 
       <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
         {tiers.map((tier) => {
           const isCurrent = tier === currentPlan;
           const isPremium = tier === "premium";
+          const isBasico = tier === "basico";
+          const isCheckingOut = checkingOut === tier;
 
           return (
             <Card
@@ -149,10 +194,16 @@ const Planos = () => {
                 <Button
                   className="w-full"
                   variant={isCurrent ? "outline" : isPremium ? "default" : "secondary"}
-                  disabled={isCurrent || upgrading || isLoading}
-                  onClick={() => handleSelectPlan(tier)}
+                  disabled={isCurrent || isCheckingOut || isLoading || isBasico}
+                  onClick={() => handleCheckout(tier)}
                 >
-                  {isCurrent ? "Plano atual" : upgrading ? "Alterando..." : "Selecionar plano"}
+                  {isCurrent
+                    ? "Plano atual"
+                    : isBasico
+                    ? "Plano gratuito"
+                    : isCheckingOut
+                    ? "Redirecionando..."
+                    : "Assinar agora"}
                 </Button>
               </CardFooter>
             </Card>
