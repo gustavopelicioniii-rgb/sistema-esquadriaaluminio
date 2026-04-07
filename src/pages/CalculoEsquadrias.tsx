@@ -419,6 +419,14 @@ export default function CalculoEsquadrias() {
                       <FileDown className="h-4 w-4" />
                       Padrões Corte
                     </Button>
+                    <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
+                      toast.info("Gerando Impressão da Obra...");
+                      await generateImpressaoObraPDF(result, barResults);
+                      toast.success("PDF exportado!");
+                    }}>
+                      <FileDown className="h-4 w-4" />
+                      Impressão
+                    </Button>
                   </div>
                 </div>
                 <div className="mt-3 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
