@@ -166,7 +166,7 @@ export async function generateProfessionalBudgetPDF(
   ];
   if (config.clienteTelefone) clientRows.push(["Telefone", config.clienteTelefone]);
   if (config.clienteEmail) clientRows.push(["E-mail", config.clienteEmail]);
-  if (config.clienteEndereco) clientRows.push(["Endereço", config.clienteEndereco]);
+  if (config.clienteEndereco) clientRows.push(["Endereco", config.clienteEndereco]);
 
   for (const [label, value] of clientRows) {
     pdf.setTextColor(120, 120, 120);
@@ -340,7 +340,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(37, 99, 235);
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
-  safeText("CONDIÇÕES COMERCIAIS", M, y);
+  safeText("CONDICOES COMERCIAIS", M, y);
   y += 2;
   pdf.setDrawColor(37, 99, 235);
   pdf.line(M, y, M + CW, y);
@@ -361,7 +361,7 @@ export async function generateProfessionalBudgetPDF(
     pdf.setTextColor(37, 99, 235);
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "bold");
-    safeText("OBSERVAÇÕES", M, y);
+    safeText("OBSERVACOES", M, y);
     y += 5;
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
@@ -391,7 +391,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(7);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(120, 120, 120);
-  safeText("Responsável", M + sigW / 2, sigY + 9, { align: "center" });
+  safeText("Responsavel", M + sigW / 2, sigY + 9, { align: "center" });
 
   // Right signature (client)
   const sigX2 = M + CW / 2 + 10;
