@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { Separator } from "@/components/ui/separator";
-import logoLight from "@/assets/logo-light.jpg";
+import logoLight from "@/assets/aluflow-logo.png";
 
 const features = [
   {
