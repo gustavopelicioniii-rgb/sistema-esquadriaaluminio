@@ -369,30 +369,6 @@ const cloned40Components = clone40CompLines.flatMap(([p]) =>
 );
 
 // ============================================
-// GLASS RULES - DECAMP LINHA 45
-// ============================================
-const decampL45GlassRules: GlassRule[] = [
-  { id: "gr-dc-jc2f", typology_id: "typ-dc-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 8 },
-  { id: "gr-dc-jc3f", typology_id: "typ-dc-jc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 3 },
-  { id: "gr-dc-jc4f", typology_id: "typ-dc-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
-  { id: "gr-dc-jc6f", typology_id: "typ-dc-jc6f", glass_name: "Vidro Folha", width_reference: "L/6", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 6 },
-  { id: "gr-dc-jma1", typology_id: "typ-dc-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 8 },
-  { id: "gr-dc-jma2", typology_id: "typ-dc-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado" },
-  { id: "gr-dc-jcam", typology_id: "typ-dc-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
-  { id: "gr-dc-pc2f", typology_id: "typ-dc-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
-  { id: "gr-dc-pc3f", typology_id: "typ-dc-pc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 3, glass_type: "temperado" },
-  { id: "gr-dc-pc4f", typology_id: "typ-dc-pc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 4, glass_type: "temperado" },
-  { id: "gr-dc-pg1f", typology_id: "typ-dc-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 1, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
-  { id: "gr-dc-pg2f", typology_id: "typ-dc-pg2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
-  { id: "gr-dc-jc2fv", typology_id: "typ-dc-jc2fv", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum" },
-  { id: "gr-dc-jc4fv", typology_id: "typ-dc-jc4fv", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4, glass_type: "comum" },
-  { id: "gr-dc-jbas1", typology_id: "typ-dc-jbas1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -152, quantity: 1, glass_type: "comum" },
-  { id: "gr-dc-vfix", typology_id: "typ-dc-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -20, height_reference: "H", height_constant_mm: -77, quantity: 1, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 10 },
-  { id: "gr-dc-jpiv", typology_id: "typ-dc-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado" },
-  { id: "gr-dc-pbal", typology_id: "typ-dc-pbal", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
-];
-
-// ============================================
 // COMPONENTS - DECAMP LINHA 45
 // ============================================
 const decampL45Components: TypologyComponent[] = [
