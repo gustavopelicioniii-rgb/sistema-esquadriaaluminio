@@ -1,0 +1,197 @@
+import type { Profile } from "@/types/calculation";
+
+/**
+ * Perfis extraídos do Catálogo de Perfis Padronizados - Metal Centenário Alumínio
+ * Tabela de equivalência Alcan/Tamboré. Cantoneiras, barras, tubos, perfis U, T, vergalhões.
+ * ~400 perfis padronizados para construção civil.
+ */
+export const profilesCentenarioPadronizado: Profile[] = [
+  // ===== TABELA DE EQUIVALÊNCIA - ESQUADRIAS =====
+  { id: "cent-pd-A022", product_line_id: "line-cent-padronizado", code: "A-022", name: "Box Liso Montante", profile_type: "montante", weight_per_meter: 0.314, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A026", product_line_id: "line-cent-padronizado", code: "A-026", name: "Linha 30 Folha", profile_type: "montante", weight_per_meter: 0.680, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A030", product_line_id: "line-cent-padronizado", code: "A-030", name: "Linha 30 Montante/Folha", profile_type: "montante", weight_per_meter: 0.524, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A034", product_line_id: "line-cent-padronizado", code: "A-034", name: "Linha 25 Travessa", profile_type: "travessa", weight_per_meter: 0.439, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A041", product_line_id: "line-cent-padronizado", code: "A-041", name: "Linha 30 Folha", profile_type: "montante", weight_per_meter: 0.683, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A046", product_line_id: "line-cent-padronizado", code: "A-046", name: "Linha 30 Travessa Inferior", profile_type: "travessa", weight_per_meter: 0.937, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A047", product_line_id: "line-cent-padronizado", code: "A-047", name: "Linha 25 Montante/Folha", profile_type: "montante", weight_per_meter: 0.503, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A048", product_line_id: "line-cent-padronizado", code: "A-048", name: "Linha 25 Folha", profile_type: "montante", weight_per_meter: 0.645, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A055", product_line_id: "line-cent-padronizado", code: "A-055", name: "Linha 25 Folha", profile_type: "montante", weight_per_meter: 0.463, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A056", product_line_id: "line-cent-padronizado", code: "A-056", name: "Linha 25 Folha", profile_type: "montante", weight_per_meter: 0.361, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A058", product_line_id: "line-cent-padronizado", code: "A-058", name: "Linha 25 Tela Mosquiteira", profile_type: "arremate", weight_per_meter: 0.203, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A072", product_line_id: "line-cent-padronizado", code: "A-072", name: "Coluna", profile_type: "montante", weight_per_meter: 1.150, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A081", product_line_id: "line-cent-padronizado", code: "A-081", name: "Linha 30 Folha", profile_type: "montante", weight_per_meter: 1.163, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A082", product_line_id: "line-cent-padronizado", code: "A-082", name: "Brise", profile_type: "arremate", weight_per_meter: 1.531, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A084", product_line_id: "line-cent-padronizado", code: "A-084", name: "Linha 25 Travessa", profile_type: "travessa", weight_per_meter: 0.587, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A087", product_line_id: "line-cent-padronizado", code: "A-087", name: "Box Frizado Montante", profile_type: "montante", weight_per_meter: 0.301, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A090", product_line_id: "line-cent-padronizado", code: "A-090", name: "Linha 30 Montante", profile_type: "montante", weight_per_meter: 0.705, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A103", product_line_id: "line-cent-padronizado", code: "A-103", name: "142 Travessa Inferior", profile_type: "travessa", weight_per_meter: 1.619, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A124", product_line_id: "line-cent-padronizado", code: "A-124", name: "Tubo Chuveiro", profile_type: "montante", weight_per_meter: 0.238, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A144", product_line_id: "line-cent-padronizado", code: "A-144", name: "Linha 30 Folha", profile_type: "montante", weight_per_meter: 0.810, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A152", product_line_id: "line-cent-padronizado", code: "A-152", name: "Linha 25", profile_type: "montante", weight_per_meter: 0.517, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A176", product_line_id: "line-cent-padronizado", code: "A-176", name: "Linha 28", profile_type: "montante", weight_per_meter: 0.509, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A194", product_line_id: "line-cent-padronizado", code: "A-194", name: "Linha 25 Montante", profile_type: "montante", weight_per_meter: 0.577, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A195", product_line_id: "line-cent-padronizado", code: "A-195", name: "Linha 25 Travessa Inf./Folha", profile_type: "travessa", weight_per_meter: 0.627, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A201", product_line_id: "line-cent-padronizado", code: "A-201", name: "Linha 25 Montante/Folha", profile_type: "montante", weight_per_meter: 0.444, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A205", product_line_id: "line-cent-padronizado", code: "A-205", name: "Coluna", profile_type: "montante", weight_per_meter: 2.063, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A207", product_line_id: "line-cent-padronizado", code: "A-207", name: "Linha 25 Montante", profile_type: "montante", weight_per_meter: 0.595, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A209", product_line_id: "line-cent-padronizado", code: "A-209", name: "Linha 30 Montante/Travessa", profile_type: "montante", weight_per_meter: 0.458, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A210", product_line_id: "line-cent-padronizado", code: "A-210", name: "Linha 30 Montante", profile_type: "montante", weight_per_meter: 0.585, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-A1058", product_line_id: "line-cent-padronizado", code: "A-1058", name: "Linha 25 Tela Mosquiteira", profile_type: "arremate", weight_per_meter: 0.199, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== BOX =====
+  { id: "cent-pd-BX020", product_line_id: "line-cent-padronizado", code: "BX-020", name: "Box Liso", profile_type: "montante", weight_per_meter: 0.284, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX021", product_line_id: "line-cent-padronizado", code: "BX-021", name: "Box Liso", profile_type: "montante", weight_per_meter: 0.273, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX022", product_line_id: "line-cent-padronizado", code: "BX-022", name: "Box Liso", profile_type: "montante", weight_per_meter: 0.157, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX023", product_line_id: "line-cent-padronizado", code: "BX-023", name: "Box Liso", profile_type: "montante", weight_per_meter: 0.204, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX024", product_line_id: "line-cent-padronizado", code: "BX-024", name: "Box Liso", profile_type: "montante", weight_per_meter: 0.236, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX025", product_line_id: "line-cent-padronizado", code: "BX-025", name: "Box Liso Trilho Inferior", profile_type: "trilho", weight_per_meter: 0.172, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX084", product_line_id: "line-cent-padronizado", code: "BX-084", name: "Box Temperado Arredondado", profile_type: "montante", weight_per_meter: 0.789, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX086", product_line_id: "line-cent-padronizado", code: "BX-086", name: "Box", profile_type: "montante", weight_per_meter: 0.309, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX245", product_line_id: "line-cent-padronizado", code: "BX-245", name: "Box Liso Lateral", profile_type: "montante", weight_per_meter: 0.188, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX246", product_line_id: "line-cent-padronizado", code: "BX-246", name: "Box Liso Travessa", profile_type: "travessa", weight_per_meter: 0.200, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX248", product_line_id: "line-cent-padronizado", code: "BX-248", name: "Box Liso Trilho Superior", profile_type: "trilho", weight_per_meter: 0.508, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX249", product_line_id: "line-cent-padronizado", code: "BX-249", name: "Box Liso Trilho Inferior", profile_type: "trilho", weight_per_meter: 0.257, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX250", product_line_id: "line-cent-padronizado", code: "BX-250", name: "Box Liso Montante", profile_type: "montante", weight_per_meter: 0.163, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX345", product_line_id: "line-cent-padronizado", code: "BX-345", name: "Box Frizado Lateral", profile_type: "montante", weight_per_meter: 0.181, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX346", product_line_id: "line-cent-padronizado", code: "BX-346", name: "Box Frizado Travessa", profile_type: "travessa", weight_per_meter: 0.211, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX348", product_line_id: "line-cent-padronizado", code: "BX-348", name: "Box Frizado Trilho Superior", profile_type: "trilho", weight_per_meter: 0.498, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX349", product_line_id: "line-cent-padronizado", code: "BX-349", name: "Box Frizado Trilho Inferior", profile_type: "trilho", weight_per_meter: 0.247, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BX350", product_line_id: "line-cent-padronizado", code: "BX-350", name: "Box Frizado Montante", profile_type: "montante", weight_per_meter: 0.148, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== CONTRA-MARCOS =====
+  { id: "cent-pd-CM047", product_line_id: "line-cent-padronizado", code: "CM-047", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.303, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-CM048", product_line_id: "line-cent-padronizado", code: "CM-048", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.163, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-CM060", product_line_id: "line-cent-padronizado", code: "CM-060", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.276, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-CM063", product_line_id: "line-cent-padronizado", code: "CM-063", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.203, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== MARCOS E ESQUADRIAS DIVERSAS =====
+  { id: "cent-pd-E168", product_line_id: "line-cent-padronizado", code: "E-168", name: "Linha 25 Trilho", profile_type: "trilho", weight_per_meter: 0.222, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E184", product_line_id: "line-cent-padronizado", code: "E-184", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.499, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E186", product_line_id: "line-cent-padronizado", code: "E-186", name: "Linha 25 Marco Superior", profile_type: "marco", weight_per_meter: 0.970, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E189", product_line_id: "line-cent-padronizado", code: "E-189", name: "Contra-Marco", profile_type: "contramarco", weight_per_meter: 0.482, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E276", product_line_id: "line-cent-padronizado", code: "E-276", name: "Linha 25 Marco", profile_type: "marco", weight_per_meter: 1.214, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E277", product_line_id: "line-cent-padronizado", code: "E-277", name: "Linha 25 Marco Lateral", profile_type: "marco", weight_per_meter: 0.453, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E290", product_line_id: "line-cent-padronizado", code: "E-290", name: "Linha 25 Marco", profile_type: "marco", weight_per_meter: 0.900, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E291", product_line_id: "line-cent-padronizado", code: "E-291", name: "Linha 30", profile_type: "marco", weight_per_meter: 1.095, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E293", product_line_id: "line-cent-padronizado", code: "E-293", name: "Linha 25 Marco", profile_type: "marco", weight_per_meter: 1.259, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E294", product_line_id: "line-cent-padronizado", code: "E-294", name: "Linha 30 Marco Superior", profile_type: "marco", weight_per_meter: 1.114, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E482", product_line_id: "line-cent-padronizado", code: "E-482", name: "Linha 25 Marco", profile_type: "marco", weight_per_meter: 0.851, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E483", product_line_id: "line-cent-padronizado", code: "E-483", name: "Linha 25 Marco Superior", profile_type: "marco", weight_per_meter: 1.170, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E484", product_line_id: "line-cent-padronizado", code: "E-484", name: "Linha 25 Marco Lateral", profile_type: "marco", weight_per_meter: 0.650, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E487", product_line_id: "line-cent-padronizado", code: "E-487", name: "Linha 30 Trilho Inferior", profile_type: "trilho", weight_per_meter: 0.557, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E491", product_line_id: "line-cent-padronizado", code: "E-491", name: "Linha 30 Marco Superior", profile_type: "marco", weight_per_meter: 0.960, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-E504", product_line_id: "line-cent-padronizado", code: "E-504", name: "Arremate", profile_type: "arremate", weight_per_meter: 0.172, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== PORTÕES =====
+  { id: "cent-pd-D053", product_line_id: "line-cent-padronizado", code: "D-053", name: "Brise", profile_type: "arremate", weight_per_meter: 1.230, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D055", product_line_id: "line-cent-padronizado", code: "D-055", name: "Balaustrada", profile_type: "montante", weight_per_meter: 0.501, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D069", product_line_id: "line-cent-padronizado", code: "D-069", name: "Portão Montante", profile_type: "montante", weight_per_meter: 0.924, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D072", product_line_id: "line-cent-padronizado", code: "D-072", name: "Brise", profile_type: "arremate", weight_per_meter: 1.283, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D078", product_line_id: "line-cent-padronizado", code: "D-078", name: "Portão Travessa", profile_type: "travessa", weight_per_meter: 0.677, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D079", product_line_id: "line-cent-padronizado", code: "D-079", name: "Portão Folha", profile_type: "montante", weight_per_meter: 0.523, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D102", product_line_id: "line-cent-padronizado", code: "D-102", name: "Portão Travessa", profile_type: "travessa", weight_per_meter: 0.560, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D103", product_line_id: "line-cent-padronizado", code: "D-103", name: "Portão Travessa", profile_type: "travessa", weight_per_meter: 0.780, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-D141", product_line_id: "line-cent-padronizado", code: "D-141", name: "Portão Montante", profile_type: "montante", weight_per_meter: 0.970, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== CANTONEIRAS DE ABAS IGUAIS =====
+  { id: "cent-pd-L002", product_line_id: "line-cent-padronizado", code: "L-002", name: "Cantoneira 1/2\" x 1/16\"", profile_type: "arremate", weight_per_meter: 0.102, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L005", product_line_id: "line-cent-padronizado", code: "L-005", name: "Cantoneira 1/2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.190, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L405", product_line_id: "line-cent-padronizado", code: "L-405", name: "Cantoneira 5/8\" x 1/16\"", profile_type: "arremate", weight_per_meter: 0.130, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L009", product_line_id: "line-cent-padronizado", code: "L-009", name: "Cantoneira 3/4\" x 1/16\"", profile_type: "arremate", weight_per_meter: 0.150, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L011", product_line_id: "line-cent-padronizado", code: "L-011", name: "Cantoneira 3/4\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.300, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L012", product_line_id: "line-cent-padronizado", code: "L-012", name: "Cantoneira 7/8\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.350, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L013", product_line_id: "line-cent-padronizado", code: "L-013", name: "Cantoneira 1\" x 1/16\"", profile_type: "arremate", weight_per_meter: 0.211, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L014", product_line_id: "line-cent-padronizado", code: "L-014", name: "Cantoneira 1\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.409, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L018", product_line_id: "line-cent-padronizado", code: "L-018", name: "Cantoneira 1-1/4\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.515, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L019", product_line_id: "line-cent-padronizado", code: "L-019", name: "Cantoneira 1-1/4\" x 3/16\"", profile_type: "arremate", weight_per_meter: 0.750, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L022", product_line_id: "line-cent-padronizado", code: "L-022", name: "Cantoneira 1-1/2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.620, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L023", product_line_id: "line-cent-padronizado", code: "L-023", name: "Cantoneira 1-1/2\" x 3/16\"", profile_type: "arremate", weight_per_meter: 0.915, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L024", product_line_id: "line-cent-padronizado", code: "L-024", name: "Cantoneira 1-1/2\" x 1/4\"", profile_type: "arremate", weight_per_meter: 1.197, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L025", product_line_id: "line-cent-padronizado", code: "L-025", name: "Cantoneira 2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.840, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L026", product_line_id: "line-cent-padronizado", code: "L-026", name: "Cantoneira 2\" x 3/16\"", profile_type: "arremate", weight_per_meter: 1.248, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L027", product_line_id: "line-cent-padronizado", code: "L-027", name: "Cantoneira 2\" x 1/4\"", profile_type: "arremate", weight_per_meter: 1.620, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L145", product_line_id: "line-cent-padronizado", code: "L-145", name: "Cantoneira 2-1/2\" x 1/4\"", profile_type: "arremate", weight_per_meter: 2.076, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-L149", product_line_id: "line-cent-padronizado", code: "L-149", name: "Cantoneira 3\" x 1/4\"", profile_type: "arremate", weight_per_meter: 2.512, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== TUBOS QUADRADOS =====
+  { id: "cent-pd-TUB4000", product_line_id: "line-cent-padronizado", code: "TUB-4000", name: "Tubo Quadrado 3/8\" (9,5mm)", profile_type: "montante", weight_per_meter: 0.111, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4001", product_line_id: "line-cent-padronizado", code: "TUB-4001", name: "Tubo Quadrado 1/2\" (12,7mm)", profile_type: "montante", weight_per_meter: 0.160, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4002", product_line_id: "line-cent-padronizado", code: "TUB-4002", name: "Tubo Quadrado 5/8\" (15,9mm)", profile_type: "montante", weight_per_meter: 0.233, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4003", product_line_id: "line-cent-padronizado", code: "TUB-4003", name: "Tubo Quadrado 3/4\" (19mm)", profile_type: "montante", weight_per_meter: 0.285, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4008", product_line_id: "line-cent-padronizado", code: "TUB-4008", name: "Tubo Quadrado 1\" (25,4mm)", profile_type: "montante", weight_per_meter: 0.386, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4011", product_line_id: "line-cent-padronizado", code: "TUB-4011", name: "Tubo Quadrado 1-1/4\" (31,8mm)", profile_type: "montante", weight_per_meter: 0.491, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4014", product_line_id: "line-cent-padronizado", code: "TUB-4014", name: "Tubo Quadrado 1-1/2\" (38,1mm)", profile_type: "montante", weight_per_meter: 0.595, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4020", product_line_id: "line-cent-padronizado", code: "TUB-4020", name: "Tubo Quadrado 2\" (50,8mm)", profile_type: "montante", weight_per_meter: 1.011, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4034", product_line_id: "line-cent-padronizado", code: "TUB-4034", name: "Tubo Quadrado 80mm", profile_type: "montante", weight_per_meter: 1.525, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4054", product_line_id: "line-cent-padronizado", code: "TUB-4054", name: "Tubo Quadrado 4\" (101,6mm)", profile_type: "montante", weight_per_meter: 2.685, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== TUBOS RETANGULARES =====
+  { id: "cent-pd-TUB4501", product_line_id: "line-cent-padronizado", code: "TUB-4501", name: "Tubo Retang. 1\"x1/2\" (25x12mm)", profile_type: "montante", weight_per_meter: 0.311, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4536", product_line_id: "line-cent-padronizado", code: "TUB-4536", name: "Tubo Retang. 2\"x1/2\" (50x12mm)", profile_type: "montante", weight_per_meter: 0.428, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4563", product_line_id: "line-cent-padronizado", code: "TUB-4563", name: "Tubo Retang. 2\"x1\" (50x25mm)", profile_type: "montante", weight_per_meter: 0.482, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4504", product_line_id: "line-cent-padronizado", code: "TUB-4504", name: "Tubo Retang. 2\"x1\" (50x25mm) Pesado", profile_type: "montante", weight_per_meter: 0.784, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4517", product_line_id: "line-cent-padronizado", code: "TUB-4517", name: "Tubo Retang. 3\"x1-1/2\" (76x38mm)", profile_type: "montante", weight_per_meter: 1.190, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4528", product_line_id: "line-cent-padronizado", code: "TUB-4528", name: "Tubo Retang. 3\"x2\" (76x50mm)", profile_type: "montante", weight_per_meter: 1.333, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4537", product_line_id: "line-cent-padronizado", code: "TUB-4537", name: "Tubo Retang. 4\"x1-1/2\" (101x38mm)", profile_type: "montante", weight_per_meter: 1.827, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4599", product_line_id: "line-cent-padronizado", code: "TUB-4599", name: "Tubo Retang. 4\"x2\" (101x50mm)", profile_type: "montante", weight_per_meter: 1.920, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB4559", product_line_id: "line-cent-padronizado", code: "TUB-4559", name: "Tubo Retang. 6\"x2\" (152x50mm)", profile_type: "montante", weight_per_meter: 3.206, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== TUBOS REDONDOS =====
+  { id: "cent-pd-TUB003", product_line_id: "line-cent-padronizado", code: "TUB-003", name: "Tubo Redondo 3/8\" (9,5mm)", profile_type: "montante", weight_per_meter: 0.108, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB009", product_line_id: "line-cent-padronizado", code: "TUB-009", name: "Tubo Redondo 1/2\" (12,7mm)", profile_type: "montante", weight_per_meter: 0.117, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB018", product_line_id: "line-cent-padronizado", code: "TUB-018", name: "Tubo Redondo 5/8\" (15,9mm)", profile_type: "montante", weight_per_meter: 0.154, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB027", product_line_id: "line-cent-padronizado", code: "TUB-027", name: "Tubo Redondo 3/4\" (19mm)", profile_type: "montante", weight_per_meter: 0.188, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB037", product_line_id: "line-cent-padronizado", code: "TUB-037", name: "Tubo Redondo 7/8\" (22,2mm)", profile_type: "montante", weight_per_meter: 0.222, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB045", product_line_id: "line-cent-padronizado", code: "TUB-045", name: "Tubo Redondo 1\" (25,4mm)", profile_type: "montante", weight_per_meter: 0.254, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB058", product_line_id: "line-cent-padronizado", code: "TUB-058", name: "Tubo Redondo 1-1/4\" (31,8mm)", profile_type: "montante", weight_per_meter: 0.406, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB069", product_line_id: "line-cent-padronizado", code: "TUB-069", name: "Tubo Redondo 1-1/2\" (38,1mm)", profile_type: "montante", weight_per_meter: 0.467, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB610", product_line_id: "line-cent-padronizado", code: "TUB-610", name: "Tubo Redondo 2\" (50,8mm)", profile_type: "montante", weight_per_meter: 0.664, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB503", product_line_id: "line-cent-padronizado", code: "TUB-503", name: "Tubo Redondo 3\" (76,2mm)", profile_type: "montante", weight_per_meter: 0.810, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-TUB504", product_line_id: "line-cent-padronizado", code: "TUB-504", name: "Tubo Redondo 4\" (101,6mm)", profile_type: "montante", weight_per_meter: 1.085, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== BARRAS RETANGULARES =====
+  { id: "cent-pd-BAR010", product_line_id: "line-cent-padronizado", code: "BAR-010", name: "Barra 3/8\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.082, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR012", product_line_id: "line-cent-padronizado", code: "BAR-012", name: "Barra 1/2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.108, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR013", product_line_id: "line-cent-padronizado", code: "BAR-013", name: "Barra 5/8\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.136, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR014", product_line_id: "line-cent-padronizado", code: "BAR-014", name: "Barra 3/4\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.163, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR016", product_line_id: "line-cent-padronizado", code: "BAR-016", name: "Barra 1\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.218, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR019", product_line_id: "line-cent-padronizado", code: "BAR-019", name: "Barra 1-1/4\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.273, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR022", product_line_id: "line-cent-padronizado", code: "BAR-022", name: "Barra 1-1/2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.327, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR027", product_line_id: "line-cent-padronizado", code: "BAR-027", name: "Barra 2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.436, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR036", product_line_id: "line-cent-padronizado", code: "BAR-036", name: "Barra 4\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.875, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-BAR100", product_line_id: "line-cent-padronizado", code: "BAR-100", name: "Barra 2\" x 1/4\"", profile_type: "arremate", weight_per_meter: 0.870, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== VERGALHÕES =====
+  { id: "cent-pd-VER4001", product_line_id: "line-cent-padronizado", code: "VER-4001", name: "Vergalhão Quadrado 6mm", profile_type: "arremate", weight_per_meter: 0.097, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER4008", product_line_id: "line-cent-padronizado", code: "VER-4008", name: "Vergalhão Quadrado 1/2\" (12,7mm)", profile_type: "arremate", weight_per_meter: 0.435, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER4013", product_line_id: "line-cent-padronizado", code: "VER-4013", name: "Vergalhão Quadrado 3/4\" (19mm)", profile_type: "arremate", weight_per_meter: 0.980, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER002", product_line_id: "line-cent-padronizado", code: "VER-002", name: "Vergalhão Redondo 1/4\" (6,4mm)", profile_type: "arremate", weight_per_meter: 0.086, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER010", product_line_id: "line-cent-padronizado", code: "VER-010", name: "Vergalhão Redondo 1/2\" (12,7mm)", profile_type: "arremate", weight_per_meter: 0.342, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== PERFIS U =====
+  { id: "cent-pd-U036", product_line_id: "line-cent-padronizado", code: "U-036", name: "Perfil U 3/8\" (9,5mm)", profile_type: "guia", weight_per_meter: 0.108, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-U044", product_line_id: "line-cent-padronizado", code: "U-044", name: "Perfil U 1/2\" (12,7mm)", profile_type: "guia", weight_per_meter: 0.151, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-U509", product_line_id: "line-cent-padronizado", code: "U-509", name: "Perfil U 5/8\" (15,9mm)", profile_type: "guia", weight_per_meter: 0.192, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-U555", product_line_id: "line-cent-padronizado", code: "U-555", name: "Perfil U 1\" (25mm)", profile_type: "guia", weight_per_meter: 0.270, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== PERFIS T =====
+  { id: "cent-pd-T076", product_line_id: "line-cent-padronizado", code: "T-076", name: "Perfil T 1\" x 1/16\"", profile_type: "arremate", weight_per_meter: 0.213, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-T012", product_line_id: "line-cent-padronizado", code: "T-012", name: "Perfil T 1\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.405, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-T021", product_line_id: "line-cent-padronizado", code: "T-021", name: "Perfil T 1-1/2\" x 1/8\"", profile_type: "arremate", weight_per_meter: 0.628, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== ARREMATES =====
+  { id: "cent-pd-T095", product_line_id: "line-cent-padronizado", code: "T-095", name: "Arremate", profile_type: "arremate", weight_per_meter: 0.190, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-T102", product_line_id: "line-cent-padronizado", code: "T-102", name: "Arremate", profile_type: "arremate", weight_per_meter: 0.192, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-T122", product_line_id: "line-cent-padronizado", code: "T-122", name: "Arremate", profile_type: "arremate", weight_per_meter: 0.157, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-T124", product_line_id: "line-cent-padronizado", code: "T-124", name: "Arremate", profile_type: "arremate", weight_per_meter: 0.168, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== PALHETAS =====
+  { id: "cent-pd-VZ014", product_line_id: "line-cent-padronizado", code: "VZ-014", name: "Palheta Veneziana", profile_type: "arremate", weight_per_meter: 0.160, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VZ016", product_line_id: "line-cent-padronizado", code: "VZ-016", name: "Palheta Veneziana", profile_type: "arremate", weight_per_meter: 0.268, bar_length_mm: 6000, material: "alumínio", active: true },
+
+  // ===== VERGALHÕES SEXTAVADOS =====
+  { id: "cent-pd-VER6003", product_line_id: "line-cent-padronizado", code: "VER-6003", name: "Vergalhão Sextavado 3/8\" (9,5mm)", profile_type: "arremate", weight_per_meter: 0.212, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER6009", product_line_id: "line-cent-padronizado", code: "VER-6009", name: "Vergalhão Sextavado 3/4\" (19mm)", profile_type: "arremate", weight_per_meter: 0.851, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER6015", product_line_id: "line-cent-padronizado", code: "VER-6015", name: "Vergalhão Sextavado 1-1/8\" (28,6mm)", profile_type: "arremate", weight_per_meter: 1.916, bar_length_mm: 6000, material: "alumínio", active: true },
+  { id: "cent-pd-VER6021", product_line_id: "line-cent-padronizado", code: "VER-6021", name: "Vergalhão Sextavado 1-1/2\" (38,1mm)", profile_type: "arremate", weight_per_meter: 3.407, bar_length_mm: 6000, material: "alumínio", active: true },
+];
