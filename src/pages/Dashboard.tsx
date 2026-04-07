@@ -1,13 +1,16 @@
 import { useState, useCallback } from "react";
-import { DollarSign, TrendingUp, Package, Loader2, CalendarDays } from "lucide-react";
+import { DollarSign, TrendingUp, Package, Loader2, CalendarDays, Crown, ArrowRight } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   useDashboardStats, usePedidosStatus, useReceitaMensal,
   useOrcamentosStatus, useProducaoEtapas, type PeriodFilter,
 } from "@/hooks/use-dashboard-data";
+import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
 import { formatCurrency } from "@/lib/formatters";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
