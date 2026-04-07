@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlano, PlanTier, PLAN_LABELS, PLAN_PRICES, PLAN_DESCRIPTIONS, STRIPE_TIERS } from "@/hooks/use-plano";
 import { useSearchParams } from "react-router-dom";
+import { BILLING_DISABLED_MESSAGE, BILLING_ENABLED } from "@/lib/billing";
 
 const PLAN_ICONS: Record<PlanTier, React.ReactNode> = {
   basico: <Sparkles className="h-6 w-6" />,
@@ -60,9 +61,12 @@ const Planos = () => {
   const [checkingOut, setCheckingOut] = useState<PlanTier | null>(null);
   const [managingPortal, setManagingPortal] = useState(false);
   const [searchParams] = useSearchParams();
+  const billingDisabled = !BILLING_ENABLED;
 
   // Handle return from Stripe
   useEffect(() => {
+    if (!BILLING_ENABLED) return;
+
     if (searchParams.get("success") === "true") {
       toast({ title: "Pagamento realizado com sucesso!", description: "Seu plano foi atualizado." });
       refreshSubscription();
@@ -73,6 +77,11 @@ const Planos = () => {
 
   const handleCheckout = async (tier: PlanTier) => {
     if (!user || tier === "basico") return;
+
+    if (!BILLING_ENABLED) {
+      toast({ title: "Stripe temporariamente desativado", description: BILLING_DISABLED_MESSAGE });
+      return;
+    }
 
     const stripeInfo = STRIPE_TIERS[tier as keyof typeof STRIPE_TIERS];
     if (!stripeInfo) return;
@@ -95,6 +104,11 @@ const Planos = () => {
   };
 
   const handleManageSubscription = async () => {
+    if (!BILLING_ENABLED) {
+      toast({ title: "Stripe temporariamente desativado", description: BILLING_DISABLED_MESSAGE });
+      return;
+    }
+
     setManagingPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke("customer-portal");
@@ -125,7 +139,15 @@ const Planos = () => {
         )}
       </div>
 
-      {currentPlan !== "basico" && (
+      {billingDisabled && (
+        <Card className="mx-auto max-w-3xl border-border/60 bg-muted/30">
+          <CardContent className="pt-6 text-center text-sm text-muted-foreground">
+            {BILLING_DISABLED_MESSAGE}
+          </CardContent>
+        </Card>
+      )}
+
+      {currentPlan !== "basico" && !billingDisabled && (
         <div className="flex justify-center">
           <Button
             variant="outline"
@@ -195,10 +217,12 @@ const Planos = () => {
                 <Button
                   className="w-full"
                   variant={isCurrent ? "outline" : isPremium ? "default" : "secondary"}
-                  disabled={isCurrent || isCheckingOut || isLoading || isBasico}
+                  disabled={billingDisabled || isCurrent || isCheckingOut || isLoading || isBasico}
                   onClick={() => handleCheckout(tier)}
                 >
-                  {isCurrent
+                  {billingDisabled
+                    ? "Temporariamente indisponivel"
+                    : isCurrent
                     ? "Plano atual"
                     : isBasico
                     ? "Período de teste"
