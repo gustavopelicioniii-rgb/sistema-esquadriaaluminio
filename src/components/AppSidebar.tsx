@@ -45,7 +45,9 @@ export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
   const { badgeCounts, unreadCount } = useNotifications();
+  const { hasAccess, getRequiredPlan } = usePlano();
 
   const isActive = (url: string) =>
     location.pathname === url ||
