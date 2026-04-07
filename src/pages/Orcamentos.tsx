@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOrcamentos, useDeleteOrcamento, useUpdateOrcamentoStatus } from "@/hooks/use-orcamentos";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -35,6 +35,21 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
   const navigate = useNavigate();
   const updateStatus = useUpdateOrcamentoStatus();
   const itens = orc?.itens as Record<string, unknown> | null;
+  const [empresaData, setEmpresaData] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!open) return;
+    const loadEmpresa = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.from("configuracoes").select("chave, valor");
+      if (data) {
+        const map: Record<string, string> = {};
+        data.forEach((r) => { map[r.chave] = r.valor; });
+        setEmpresaData(map);
+      }
+    };
+    loadEmpresa();
+  }, [open]);
 
   const handleStatusChange = (status: string) => {
     updateStatus.mutate({ id: orc.id, status }, {
@@ -61,6 +76,14 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
         tipoVidro: itensData?.vidro_tipo,
         ambiente: itensData?.ambiente,
         observacoes: itensData?.observacoes,
+        empresa: {
+          nome: empresaData.nome || "AluFlow",
+          cnpj: empresaData.cnpj || "",
+          telefone: empresaData.telefone || "",
+          email: empresaData.email || "",
+          endereco: empresaData.endereco || "",
+          logoUrl: empresaData.logo_url || "",
+        },
       });
       toast({ title: "PDF gerado com sucesso!" });
     } catch (err: any) {
