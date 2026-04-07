@@ -147,7 +147,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(30, 30, 30);
 
   const clientRows: [string, string][] = [
-    ["Cliente", config.cliente || "—"],
+    ["Cliente", config.cliente || "-"],
   ];
   if (config.clienteTelefone) clientRows.push(["Telefone", config.clienteTelefone]);
   if (config.clienteEmail) clientRows.push(["E-mail", config.clienteEmail]);
@@ -335,7 +335,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(60, 60, 60);
   condicoes.forEach((cond) => {
-    pdf.text(`•  ${cond}`, M + 2, y);
+    pdf.text(`-  ${cond}`, M + 2, y);
     y += 5;
   });
 
