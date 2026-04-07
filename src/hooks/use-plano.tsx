@@ -104,7 +104,7 @@ function productIdToTier(productId: string | null): PlanTier {
 }
 
 export function usePlano() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [plano, setPlano] = useState<PlanTier>("basico");
   const [isLoading, setIsLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
@@ -198,7 +198,10 @@ export function usePlano() {
     return () => clearInterval(interval);
   }, [user, checkSubscription]);
 
+  const isAdmin = role === "admin";
+
   const hasAccess = (route: string): boolean => {
+    if (isAdmin) return true;
     const allowedRoutes = PLAN_FEATURES[plano] ?? PLAN_FEATURES.basico;
     return allowedRoutes.some(
       (r) => route === r || (r !== "/" && route.startsWith(r))
@@ -216,5 +219,5 @@ export function usePlano() {
     return null;
   };
 
-  return { plano, isLoading, hasAccess, getRequiredPlan, subscriptionEnd, refreshSubscription: checkSubscription };
+  return { plano, isLoading, hasAccess, getRequiredPlan, subscriptionEnd, refreshSubscription: checkSubscription, isAdmin };
 }
