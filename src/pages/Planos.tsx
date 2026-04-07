@@ -196,11 +196,11 @@ const Planos = () => {
 
               <CardContent className="flex-1">
                 <div className="text-center mb-4">
-                  <span className="text-3xl font-extrabold">
+                  <span className="text-3xl font-extrabold blur-md select-none">
                     {PLAN_PRICES[tier] === 0 ? "Grátis por 10 dias" : `R$ ${PLAN_PRICES[tier].toFixed(2).replace(".", ",")}`}
                   </span>
                   {PLAN_PRICES[tier] > 0 && (
-                    <span className="text-muted-foreground text-sm">/mes</span>
+                    <span className="text-muted-foreground text-sm blur-md select-none">/mes</span>
                   )}
                 </div>
                 <ul className="space-y-2">
