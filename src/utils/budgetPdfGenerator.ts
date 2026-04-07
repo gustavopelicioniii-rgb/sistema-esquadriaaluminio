@@ -43,8 +43,10 @@ interface BudgetPdfConfig {
   validadeDias?: number;
 }
 
-const formatBRL = (v: number) =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const formatBRL = (v: number) => {
+  const num = typeof v === "number" && !isNaN(v) ? v : 0;
+  return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+};
 
 const formatDateBR = () =>
   new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
