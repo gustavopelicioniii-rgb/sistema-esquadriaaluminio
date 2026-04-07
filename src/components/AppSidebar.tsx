@@ -51,7 +51,7 @@ export function AppSidebar() {
   const { hasAccess, getRequiredPlan } = usePlano();
   const { role } = useAuth();
 
-  const visibleItems = menuItems.filter((item) => !item.adminOnly || role === "admin");
+  const visibleItems = menuItems;
 
   const isActive = (url: string) =>
     location.pathname === url ||
