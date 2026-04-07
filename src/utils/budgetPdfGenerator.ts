@@ -416,7 +416,7 @@ export async function generateProfessionalBudgetPDF(
   safeText("Página 1 de 1", M + CW, footY, { align: "right" });
 
   // Save
-  const safeName = config.cliente.replace(/\s+/g, "-").toLowerCase() || "novo";
+  const safeName = (config.cliente || "novo").replace(/\s+/g, "-").toLowerCase();
   const numSuffix = config.numero ? `-${config.numero}` : "";
   pdf.save(`orcamento-${safeName}${numSuffix}.pdf`);
 }
