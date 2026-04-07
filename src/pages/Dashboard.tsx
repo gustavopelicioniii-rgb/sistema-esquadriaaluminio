@@ -35,7 +35,9 @@ const chartTooltipStyle = {
 };
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { plano, isLoading: planoLoading } = usePlano();
   const [period, setPeriod] = useState<PeriodFilter>("todos");
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries();
