@@ -382,7 +382,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(30, 30, 30);
-  pdf.text(config.cliente, sigX2 + sigW / 2, sigY + 5, { align: "center" });
+  pdf.text(config.cliente || "Cliente", sigX2 + sigW / 2, sigY + 5, { align: "center" });
   pdf.setFontSize(7);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(120, 120, 120);
