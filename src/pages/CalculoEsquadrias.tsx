@@ -18,6 +18,7 @@ import { calculateTypology, validateDimensions } from "@/lib/calculation-engine"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
+import { generateImpressaoObraPDF } from "@/utils/impressaoObraPdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
 import { getEffectiveGlassRules } from "@/hooks/use-custom-glass-rules";
