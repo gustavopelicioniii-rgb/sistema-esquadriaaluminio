@@ -17,11 +17,12 @@ const PLAN_ICONS: Record<PlanTier, React.ReactNode> = {
 
 const PLAN_FEATURES_LIST: Record<PlanTier, string[]> = {
   basico: [
+    "10 dias grátis",
     "Dashboard",
     "Cadastro de clientes",
-    "Orcamentos (criar/editar)",
-    "Configuracoes",
-    "Notificacoes",
+    "Orçamentos (criar/editar)",
+    "Configurações",
+    "Notificações",
   ],
   profissional: [
     "Tudo do Basico +",
@@ -174,7 +175,7 @@ const Planos = () => {
               <CardContent className="flex-1">
                 <div className="text-center mb-4">
                   <span className="text-3xl font-extrabold">
-                    {PLAN_PRICES[tier] === 0 ? "Gratis" : `R$ ${PLAN_PRICES[tier].toFixed(2).replace(".", ",")}`}
+                    {PLAN_PRICES[tier] === 0 ? "Grátis por 10 dias" : `R$ ${PLAN_PRICES[tier].toFixed(2).replace(".", ",")}`}
                   </span>
                   {PLAN_PRICES[tier] > 0 && (
                     <span className="text-muted-foreground text-sm">/mes</span>
@@ -200,7 +201,7 @@ const Planos = () => {
                   {isCurrent
                     ? "Plano atual"
                     : isBasico
-                    ? "Plano gratuito"
+                    ? "Período de teste"
                     : isCheckingOut
                     ? "Redirecionando..."
                     : "Assinar agora"}
