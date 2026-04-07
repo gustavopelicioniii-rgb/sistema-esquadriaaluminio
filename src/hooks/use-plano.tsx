@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { BILLING_ENABLED } from "@/lib/billing";
 
 export type PlanTier = "basico" | "profissional" | "premium";
 
@@ -115,6 +116,16 @@ export function usePlano() {
       return;
     }
 
+    if (!BILLING_ENABLED) {
+      setIsLoading(true);
+      try {
+        await fallbackToDb();
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     try {
       setIsLoading(true);
       const { data, error } = await supabase.functions.invoke("check-subscription");
@@ -182,7 +193,7 @@ export function usePlano() {
 
   // Auto-refresh every 60s
   useEffect(() => {
-    if (!user) return;
+    if (!user || !BILLING_ENABLED) return;
     const interval = setInterval(checkSubscription, 60_000);
     return () => clearInterval(interval);
   }, [user, checkSubscription]);
