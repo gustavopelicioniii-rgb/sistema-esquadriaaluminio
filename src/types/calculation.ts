@@ -28,6 +28,7 @@ export interface Profile {
   bar_length_mm: number;
   material: string;
   active: boolean;
+  notes?: string;
 }
 
 export interface Typology {
