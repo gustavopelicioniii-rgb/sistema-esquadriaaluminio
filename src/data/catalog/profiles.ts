@@ -488,6 +488,10 @@ const decampEstufasProfiles: Profile[] = [
 // ============================================
 
 import { allDecampGeralProfiles } from "./profilesGeralDecamp";
+import { profilesCentenarioMaxima } from "./profilesCentenarioMaxima";
+import { profilesCentenarioPerfetta } from "./profilesCentenarioPerfetta";
+import { profilesCentenarioAmadeirado } from "./profilesCentenarioAmadeirado";
+import { profilesCentenarioPadronizado } from "./profilesCentenarioPadronizado";
 
 export const profiles: Profile[] = [
   ...supremaProfiles,
@@ -496,6 +500,10 @@ export const profiles: Profile[] = [
   ...decampLinha45Profiles,
   ...decampEstufasProfiles,
   ...allDecampGeralProfiles,
+  ...profilesCentenarioMaxima,
+  ...profilesCentenarioPerfetta,
+  ...profilesCentenarioAmadeirado,
+  ...profilesCentenarioPadronizado,
 ];
 
 export function getProfileByCode(code: string, lineId: string): Profile | undefined {
