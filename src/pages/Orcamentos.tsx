@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOrcamentos, useDeleteOrcamento, useUpdateOrcamentoStatus } from "@/hooks/use-orcamentos";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { StatusBadge } from "@/components/StatusBadge";
