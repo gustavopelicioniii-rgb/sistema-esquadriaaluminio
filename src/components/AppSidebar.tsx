@@ -82,18 +82,40 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => {
                 const count = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
+                const locked = !hasAccess(item.url);
+                const requiredPlan = locked ? getRequiredPlan(item.url) : null;
+
+                const handleLockedClick = (e: React.MouseEvent) => {
+                  if (locked) {
+                    e.preventDefault();
+                    toast({
+                      title: "Funcao bloqueada",
+                      description: `Disponivel no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.`,
+                    });
+                    navigate("/planos");
+                  }
+                };
+
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                    <SidebarMenuButton asChild isActive={!locked && isActive(item.url)}>
                       <NavLink
-                        to={item.url}
+                        to={locked ? "#" : item.url}
                         end={item.url === "/"}
-                        className="hover:bg-sidebar-accent/50 transition-colors"
-                        activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+                        className={cn(
+                          "hover:bg-sidebar-accent/50 transition-colors",
+                          locked && "opacity-50 cursor-not-allowed"
+                        )}
+                        activeClassName={locked ? "" : "bg-sidebar-accent text-sidebar-primary font-medium"}
+                        onClick={handleLockedClick}
                       >
                         <div className="relative">
-                          <item.icon className="h-4 w-4" />
-                          {count > 0 && collapsed && (
+                          {locked ? (
+                            <Lock className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <item.icon className="h-4 w-4" />
+                          )}
+                          {count > 0 && !locked && collapsed && (
                             <span className="absolute -top-1.5 -right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground flex items-center justify-center">
                               {count > 9 ? "9+" : count}
                             </span>
@@ -102,7 +124,10 @@ export function AppSidebar() {
                         {!collapsed && (
                           <>
                             <span className="flex-1">{item.title}</span>
-                            {count > 0 && (
+                            {locked && (
+                              <Lock className="h-3 w-3 text-muted-foreground ml-auto" />
+                            )}
+                            {!locked && count > 0 && (
                               <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive/15 text-destructive text-[10px] font-bold px-1">
                                 {count}
                               </span>
