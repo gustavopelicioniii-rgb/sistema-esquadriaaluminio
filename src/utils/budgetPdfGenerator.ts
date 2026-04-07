@@ -109,9 +109,11 @@ export async function generateProfessionalBudgetPDF(
   if (config.empresa?.telefone) contactLines.push(config.empresa.telefone);
   if (config.empresa?.email) contactLines.push(config.empresa.email);
   if (config.empresa?.endereco) contactLines.push(config.empresa.endereco);
-  contactLines.forEach((line, i) => {
-    pdf.text(line, W - M, 10 + i * 4, { align: "right" });
-  });
+  if (contactLines.length > 0) {
+    contactLines.forEach((line, i) => {
+      pdf.text(line, W - M, 10 + i * 4, { align: "right" });
+    });
+  }
 
   // Doc title + number
   pdf.setFontSize(11);
