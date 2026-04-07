@@ -93,83 +93,235 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
 
   if (!orc) return null;
 
+  // Organize itens into meaningful groups
+  const dimensionKeys = ["largura_cm", "altura_cm", "quantidade", "area_m2"];
+  const financialKeys = ["custo", "lucro", "subtotal", "acrescimo", "margem_percent"];
+  const styleKeys = ["cor_aluminio", "cor_ferragem", "vidro_tipo"];
+  const otherKeys = itens ? Object.keys(itens).filter(k => 
+    !dimensionKeys.includes(k) && !financialKeys.includes(k) && !styleKeys.includes(k) && k !== "tipo" && k !== "ambiente" && k !== "observacoes"
+  ) : [];
+
+  const labelMap: Record<string, string> = {
+    tipo: "Tipologia",
+    custo: "Custo Material",
+    lucro: "Margem de Lucro",
+    subtotal: "Subtotal",
+    acrescimo: "Acréscimo",
+    margem_percent: "Margem %",
+    area_m2: "Área Total",
+    largura_cm: "Largura",
+    altura_cm: "Altura",
+    quantidade: "Quantidade",
+    cor_aluminio: "Cor Alumínio",
+    cor_ferragem: "Cor Ferragem",
+    vidro_tipo: "Tipo de Vidro",
+    ambiente: "Ambiente",
+    observacoes: "Observações",
+  };
+
+  const formatItemValue = (key: string, value: unknown) => {
+    if (value === null || value === undefined || value === "") return "—";
+    if (typeof value === "number") {
+      if (key.includes("valor") || key.includes("preco") || key === "custo" || key === "lucro" || key === "subtotal" || key === "acrescimo") 
+        return formatCurrency(value);
+      if (key === "area_m2") return `${value} m²`;
+      if (key === "largura_cm" || key === "altura_cm") return `${value} cm`;
+      if (key === "margem_percent") return `${value}%`;
+      return String(value);
+    }
+    return String(value);
+  };
+
+  const ItemRow = ({ label, value, icon, accent }: { label: string; value: string; icon?: React.ReactNode; accent?: boolean }) => (
+    <div className="flex justify-between items-center py-3 px-4 group hover:bg-primary/[0.03] transition-colors">
+      <div className="flex items-center gap-2.5">
+        {icon && <span className="text-muted-foreground/60">{icon}</span>}
+        <span className="text-sm text-muted-foreground">{label}</span>
+      </div>
+      <span className={cn("text-sm font-semibold tabular-nums", accent && "text-primary")}>{value}</span>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 overflow-hidden max-h-[90vh] flex flex-col">
-        {/* Header gradient */}
-        <div className="bg-gradient-to-r from-primary/10 via-accent/30 to-primary/5 px-6 pt-6 pb-4">
-          <DialogHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <Hash className="h-5 w-5 text-primary" />
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 overflow-hidden max-h-[90vh] flex flex-col border-0 shadow-2xl shadow-primary/5">
+        {/* Premium header with layered gradient */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/20" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.1),transparent_60%)]" />
+          <div className="relative px-6 pt-7 pb-5">
+            <DialogHeader>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20 backdrop-blur-sm">
+                    <Hash className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-primary/20 ring-2 ring-background flex items-center justify-center">
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  </div>
+                </div>
+                <div className="space-y-0.5">
+                  <DialogTitle className="text-xl font-bold tracking-tight">{orc.numero}</DialogTitle>
+                  <DialogDescription className="text-xs flex items-center gap-1.5">
+                    <Calendar className="h-3 w-3" />
+                    Criado em {formatDate(orc.created_at)}
+                  </DialogDescription>
+                </div>
               </div>
-              <div>
-                <DialogTitle className="text-lg font-bold">{orc.numero}</DialogTitle>
-                <DialogDescription className="text-xs">Criado em {formatDate(orc.created_at)}</DialogDescription>
-              </div>
+            </DialogHeader>
+            <div className="mt-4 flex items-center gap-3">
+              <StatusBadge status={orc.status} />
+              {itens?.tipo && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-accent/60 text-accent-foreground border border-accent-foreground/10">
+                  <Package className="h-3 w-3" />
+                  {String(itens.tipo).replace(/_/g, " ")}
+                </span>
+              )}
             </div>
-          </DialogHeader>
-          <div className="mt-3">
-            <StatusBadge status={orc.status} />
           </div>
+          {/* Decorative separator */}
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         </div>
 
         <div className="px-6 pb-6 space-y-5 overflow-y-auto flex-1">
-          {/* Info grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl border bg-muted/30 p-3.5 space-y-1">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <User className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-semibold uppercase tracking-wider">Cliente</span>
+          {/* Client & Product cards */}
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="group rounded-2xl border border-border/50 bg-gradient-to-b from-muted/40 to-muted/10 p-4 space-y-2 transition-all hover:border-primary/20 hover:shadow-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+                  <User className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Cliente</span>
               </div>
-              <p className="font-semibold text-sm">{orc.cliente}</p>
+              <p className="font-bold text-sm leading-tight">{orc.cliente}</p>
             </div>
-            <div className="rounded-xl border bg-muted/30 p-3.5 space-y-1">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Calendar className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-semibold uppercase tracking-wider">Data</span>
+            <div className="group rounded-2xl border border-border/50 bg-gradient-to-b from-muted/40 to-muted/10 p-4 space-y-2 transition-all hover:border-primary/20 hover:shadow-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Data</span>
               </div>
-              <p className="font-semibold text-sm">{formatDate(orc.data)}</p>
+              <p className="font-bold text-sm">{formatDate(orc.data)}</p>
             </div>
-            <div className="rounded-xl border bg-muted/30 p-3.5 space-y-1 col-span-2">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Package className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-semibold uppercase tracking-wider">Produto</span>
+            <div className="group rounded-2xl border border-border/50 bg-gradient-to-b from-muted/40 to-muted/10 p-4 space-y-2 col-span-2 transition-all hover:border-primary/20 hover:shadow-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+                  <Package className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Produto</span>
               </div>
-              <p className="font-semibold text-sm">{orc.produto}</p>
+              <p className="font-bold text-sm">{orc.produto}</p>
             </div>
           </div>
 
-          {/* Itens details if available */}
-          {itens && Object.keys(itens).length > 0 && (
+          {/* Dimensions section */}
+          {itens && dimensionKeys.some(k => itens[k] !== undefined) && (
             <div className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do Item</p>
-              <div className="rounded-xl border bg-muted/20 divide-y">
-                {Object.entries(itens).map(([key, value]) => (
-                  <div key={key} className="flex justify-between items-center px-4 py-2.5 text-sm">
-                    <span className="text-muted-foreground capitalize">{key.replace(/_/g, " ")}</span>
-                    <span className="font-medium">{typeof value === "number" ? (key.toLowerCase().includes("valor") || key.toLowerCase().includes("preco") ? formatCurrency(value) : value) : String(value ?? "-")}</span>
-                  </div>
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Dimensões</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 overflow-hidden bg-card divide-y divide-border/40">
+                {dimensionKeys.filter(k => itens[k] !== undefined).map(k => (
+                  <ItemRow key={k} label={labelMap[k] || k} value={formatItemValue(k, itens[k])} />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Total */}
-          <div className="rounded-xl bg-gradient-to-r from-primary/5 to-accent/20 border border-primary/10 p-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-sm">Valor Total</span>
+          {/* Financial section */}
+          {itens && financialKeys.some(k => itens[k] !== undefined) && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Financeiro</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 overflow-hidden bg-card divide-y divide-border/40">
+                {financialKeys.filter(k => itens[k] !== undefined).map(k => (
+                  <ItemRow key={k} label={labelMap[k] || k} value={formatItemValue(k, itens[k])} icon={<DollarSign className="h-3.5 w-3.5" />} accent={k === "subtotal"} />
+                ))}
+              </div>
             </div>
-            <span className="text-xl font-bold text-primary">{formatCurrency(orc.valor)}</span>
+          )}
+
+          {/* Style & materials section */}
+          {itens && styleKeys.some(k => itens[k] !== undefined && itens[k] !== "" && itens[k] !== "Nenhum") && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Acabamento</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 overflow-hidden bg-card divide-y divide-border/40">
+                {styleKeys.filter(k => itens[k] !== undefined && itens[k] !== "").map(k => (
+                  <ItemRow key={k} label={labelMap[k] || k} value={formatItemValue(k, itens[k])} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Other fields */}
+          {itens?.ambiente && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Ambiente</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 bg-card px-4 py-3">
+                <p className="text-sm font-medium">{String(itens.ambiente)}</p>
+              </div>
+            </div>
+          )}
+
+          {itens?.observacoes && String(itens.observacoes).trim() && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Observações</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 bg-card px-4 py-3">
+                <p className="text-sm text-muted-foreground italic">{String(itens.observacoes)}</p>
+              </div>
+            </div>
+          )}
+
+          {otherKeys.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Outros</p>
+              </div>
+              <div className="rounded-2xl border border-border/50 overflow-hidden bg-card divide-y divide-border/40">
+                {otherKeys.map(k => (
+                  <ItemRow key={k} label={labelMap[k] || k.replace(/_/g, " ")} value={formatItemValue(k, itens![k])} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Premium total card */}
+          <div className="relative overflow-hidden rounded-2xl border border-primary/20 p-5">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/4 to-accent/10" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="relative flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/20">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Valor Total</span>
+                  <p className="text-2xl font-black tracking-tight text-primary">{formatCurrency(orc.valor)}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Action buttons */}
-          <div className="flex gap-2 flex-wrap">
+          {/* Premium action buttons */}
+          <div className="flex gap-2 flex-wrap pt-1">
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 gap-1.5"
+              className="flex-1 gap-2 rounded-xl h-10 border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all"
               onClick={handleDownloadPdf}
             >
               <FileDown className="h-4 w-4" />
@@ -178,7 +330,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 gap-1.5"
+              className="flex-1 gap-2 rounded-xl h-10 border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all"
               onClick={() => { onClose(); navigate(`/orcamentos/editar/${orc.id}`); }}
             >
               <Pencil className="h-4 w-4" />
@@ -188,7 +340,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
               <>
                 <Button
                   size="sm"
-                  className="flex-1 gap-1.5"
+                  className="flex-1 gap-2 rounded-xl h-10 bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 transition-all"
                   onClick={() => handleStatusChange("aprovado")}
                   disabled={updateStatus.isPending}
                 >
@@ -198,7 +350,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
                 <Button
                   size="sm"
                   variant="destructive"
-                  className="flex-1 gap-1.5"
+                  className="flex-1 gap-2 rounded-xl h-10 shadow-md shadow-destructive/20 transition-all"
                   onClick={() => handleStatusChange("recusado")}
                   disabled={updateStatus.isPending}
                 >
