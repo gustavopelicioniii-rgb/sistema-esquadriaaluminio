@@ -145,7 +145,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(30, 30, 30);
 
   const clientRows: [string, string][] = [
-    ["Cliente", config.cliente],
+    ["Cliente", config.cliente || "—"],
   ];
   if (config.clienteTelefone) clientRows.push(["Telefone", config.clienteTelefone]);
   if (config.clienteEmail) clientRows.push(["E-mail", config.clienteEmail]);
@@ -205,13 +205,13 @@ export async function generateProfessionalBudgetPDF(
   if (config.ambiente) specs.push(`Amb: ${config.ambiente}`);
   const specsLine = specs.join(" | ");
 
-  pdf.text(config.produto, colX[0], y);
-  pdf.text(`${config.larguraCm}×${config.alturaCm} cm`, colX[1], y);
-  pdf.text(String(config.quantidade), colX[2], y);
-  pdf.text(config.areaM2.toFixed(2), colX[4], y, { align: "right" });
-  const unitPrice = config.valorFinal / config.quantidade;
+  pdf.text(config.produto || "—", colX[0], y);
+  pdf.text(`${config.larguraCm ?? 0}×${config.alturaCm ?? 0} cm`, colX[1], y);
+  pdf.text(String(config.quantidade ?? 1), colX[2], y);
+  pdf.text((config.areaM2 ?? 0).toFixed(2), colX[4], y, { align: "right" });
+  const unitPrice = (config.valorFinal ?? 0) / (config.quantidade || 1);
   pdf.text(formatBRL(unitPrice), colX[5] - (CW - 140), y, { align: "right" });
-  pdf.text(formatBRL(config.valorFinal), colX[5], y, { align: "right" });
+  pdf.text(formatBRL(config.valorFinal ?? 0), colX[5], y, { align: "right" });
   y += 5;
 
   if (specsLine) {
