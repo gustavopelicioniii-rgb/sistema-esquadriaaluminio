@@ -86,9 +86,9 @@ export async function generateProfessionalBudgetPDF(
   const safeText = (text: any, x: number, yPos: number, options?: any) => {
     const str = text == null ? "" : String(text);
     if (options) {
-      pdf.text(str, x, yPos, options);
+      safeText(str, x, yPos, options);
     } else {
-      pdf.text(str, x, yPos);
+      safeText(str, x, yPos);
     }
   };
 
@@ -111,7 +111,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(20);
   pdf.setFont("helvetica", "bold");
-  pdf.text(config.empresa?.nome || "ORÇAMENTO", logoEndX, 20);
+  safeText(config.empresa?.nome || "ORÇAMENTO", logoEndX, 20);
 
   // Company subtitle info
   pdf.setFontSize(8);
@@ -123,7 +123,7 @@ export async function generateProfessionalBudgetPDF(
   if (config.empresa?.endereco) contactLines.push(config.empresa.endereco);
   if (contactLines.length > 0) {
     contactLines.forEach((line, i) => {
-      pdf.text(line, W - M, 10 + i * 4, { align: "right" });
+      safeText(line, W - M, 10 + i * 4, { align: "right" });
     });
   }
 
@@ -131,12 +131,12 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   const docTitle = config.numero ? `ORÇAMENTO ${config.numero}` : "ORÇAMENTO";
-  pdf.text(docTitle, logoEndX, 32);
+  safeText(docTitle, logoEndX, 32);
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
-  pdf.text(`Data: ${formatDateBR()}`, logoEndX, 38);
+  safeText(`Data: ${formatDateBR()}`, logoEndX, 38);
   if (config.validadeDias) {
-    pdf.text(`Validade: ${config.validadeDias} dias`, logoEndX, 43);
+    safeText(`Validade: ${config.validadeDias} dias`, logoEndX, 43);
   }
 
   y = 56;
@@ -145,7 +145,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(37, 99, 235);
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
-  pdf.text("DADOS DO CLIENTE", M, y);
+  safeText("DADOS DO CLIENTE", M, y);
   y += 2;
   pdf.setDrawColor(37, 99, 235);
   pdf.setLineWidth(0.5);
@@ -165,10 +165,10 @@ export async function generateProfessionalBudgetPDF(
 
   for (const [label, value] of clientRows) {
     pdf.setTextColor(120, 120, 120);
-    pdf.text(`${label}:`, M, y);
+    safeText(`${label}:`, M, y);
     pdf.setTextColor(30, 30, 30);
     pdf.setFont("helvetica", "bold");
-    pdf.text(value, M + 30, y);
+    safeText(value, M + 30, y);
     pdf.setFont("helvetica", "normal");
     y += 6;
   }
@@ -179,7 +179,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(37, 99, 235);
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
-  pdf.text("ITENS DO ORÇAMENTO", M, y);
+  safeText("ITENS DO ORÇAMENTO", M, y);
   y += 2;
   pdf.setDrawColor(37, 99, 235);
   pdf.line(M, y, M + CW, y);
@@ -198,9 +198,9 @@ export async function generateProfessionalBudgetPDF(
     const align = i >= 3 ? "right" : "left";
     const x = i >= 3 ? colX[i + 1] : colX[i];
     if (align === "right") {
-      pdf.text(h, x, y, { align: "right" });
+      safeText(h, x, y, { align: "right" });
     } else {
-      pdf.text(h, x, y);
+      safeText(h, x, y);
     }
   });
   y += 7;
@@ -217,19 +217,19 @@ export async function generateProfessionalBudgetPDF(
   if (config.ambiente) specs.push(`Amb: ${config.ambiente}`);
   const specsLine = specs.join(" | ");
 
-  pdf.text(config.produto || "-", colX[0], y);
-  pdf.text(`${config.larguraCm ?? 0}x${config.alturaCm ?? 0} cm`, colX[1], y);
-  pdf.text(String(config.quantidade ?? 1), colX[2], y);
-  pdf.text((config.areaM2 ?? 0).toFixed(2), colX[4], y, { align: "right" });
+  safeText(config.produto || "-", colX[0], y);
+  safeText(`${config.larguraCm ?? 0}x${config.alturaCm ?? 0} cm`, colX[1], y);
+  safeText(String(config.quantidade ?? 1), colX[2], y);
+  safeText((config.areaM2 ?? 0).toFixed(2), colX[4], y, { align: "right" });
   const unitPrice = (config.valorFinal ?? 0) / (config.quantidade || 1);
-  pdf.text(formatBRL(unitPrice), colX[5] - (CW - 140), y, { align: "right" });
-  pdf.text(formatBRL(config.valorFinal ?? 0), colX[5], y, { align: "right" });
+  safeText(formatBRL(unitPrice), colX[5] - (CW - 140), y, { align: "right" });
+  safeText(formatBRL(config.valorFinal ?? 0), colX[5], y, { align: "right" });
   y += 5;
 
   if (specsLine) {
     pdf.setFontSize(7);
     pdf.setTextColor(120, 120, 120);
-    pdf.text(specsLine, colX[0] + 2, y);
+    safeText(specsLine, colX[0] + 2, y);
     y += 5;
   }
 
@@ -242,7 +242,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(37, 99, 235);
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
-  pdf.text("RESUMO FINANCEIRO", M, y);
+  safeText("RESUMO FINANCEIRO", M, y);
   y += 2;
   pdf.setDrawColor(37, 99, 235);
   pdf.line(M, y, M + CW, y);
@@ -257,9 +257,9 @@ export async function generateProfessionalBudgetPDF(
   for (const [label, value] of summaryRows) {
     pdf.setTextColor(100, 100, 100);
     pdf.setFont("helvetica", "normal");
-    pdf.text(label, M, y);
+    safeText(label, M, y);
     pdf.setTextColor(30, 30, 30);
-    pdf.text(value, M + CW, y, { align: "right" });
+    safeText(value, M + CW, y, { align: "right" });
     y += 7;
   }
 
@@ -270,8 +270,8 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
-  pdf.text("VALOR TOTAL", M + 5, y + 3);
-  pdf.text(formatBRL(config.valorFinal), M + CW - 5, y + 3, { align: "right" });
+  safeText("VALOR TOTAL", M + 5, y + 3);
+  safeText(formatBRL(config.valorFinal), M + CW - 5, y + 3, { align: "right" });
   y += 16;
 
   // ─── SVG PREVIEW ───
@@ -299,7 +299,7 @@ export async function generateProfessionalBudgetPDF(
         pdf.setTextColor(37, 99, 235);
         pdf.setFontSize(12);
         pdf.setFont("helvetica", "bold");
-        pdf.text("VISUALIZAÇÃO DO PRODUTO", M, y);
+        safeText("VISUALIZAÇÃO DO PRODUTO", M, y);
         y += 2;
         pdf.setDrawColor(37, 99, 235);
         pdf.line(M, y, M + CW, y);
@@ -335,7 +335,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setTextColor(37, 99, 235);
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
-  pdf.text("CONDIÇÕES COMERCIAIS", M, y);
+  safeText("CONDIÇÕES COMERCIAIS", M, y);
   y += 2;
   pdf.setDrawColor(37, 99, 235);
   pdf.line(M, y, M + CW, y);
@@ -345,7 +345,7 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(60, 60, 60);
   condicoes.forEach((cond) => {
-    pdf.text(`-  ${cond}`, M + 2, y);
+    safeText(`-  ${cond}`, M + 2, y);
     y += 5;
   });
 
@@ -356,13 +356,13 @@ export async function generateProfessionalBudgetPDF(
     pdf.setTextColor(37, 99, 235);
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "bold");
-    pdf.text("OBSERVAÇÕES", M, y);
+    safeText("OBSERVAÇÕES", M, y);
     y += 5;
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(60, 60, 60);
     const lines = pdf.splitTextToSize(config.observacoes, CW - 4);
-    pdf.text(lines, M + 2, y);
+    safeText(lines, M + 2, y);
     y += lines.length * 4 + 6;
   }
 
@@ -382,11 +382,11 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(30, 30, 30);
-  pdf.text(config.empresa?.nome || "Empresa", M + sigW / 2, sigY + 5, { align: "center" });
+  safeText(config.empresa?.nome || "Empresa", M + sigW / 2, sigY + 5, { align: "center" });
   pdf.setFontSize(7);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(120, 120, 120);
-  pdf.text("Responsável", M + sigW / 2, sigY + 9, { align: "center" });
+  safeText("Responsável", M + sigW / 2, sigY + 9, { align: "center" });
 
   // Right signature (client)
   const sigX2 = M + CW / 2 + 10;
@@ -394,11 +394,11 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(30, 30, 30);
-  pdf.text(config.cliente || "Cliente", sigX2 + sigW / 2, sigY + 5, { align: "center" });
+  safeText(config.cliente || "Cliente", sigX2 + sigW / 2, sigY + 5, { align: "center" });
   pdf.setFontSize(7);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(120, 120, 120);
-  pdf.text("Cliente", sigX2 + sigW / 2, sigY + 9, { align: "center" });
+  safeText("Cliente", sigX2 + sigW / 2, sigY + 9, { align: "center" });
 
   // ─── FOOTER ───
   const footY = H - 8;
@@ -407,8 +407,8 @@ export async function generateProfessionalBudgetPDF(
   pdf.setFontSize(7);
   pdf.setTextColor(160, 160, 160);
   pdf.setFont("helvetica", "normal");
-  pdf.text(`Documento gerado em ${formatDateBR()}`, M, footY);
-  pdf.text("Página 1 de 1", M + CW, footY, { align: "right" });
+  safeText(`Documento gerado em ${formatDateBR()}`, M, footY);
+  safeText("Página 1 de 1", M + CW, footY, { align: "right" });
 
   // Save
   const safeName = config.cliente.replace(/\s+/g, "-").toLowerCase() || "novo";
