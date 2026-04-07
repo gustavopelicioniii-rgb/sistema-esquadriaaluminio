@@ -16,6 +16,7 @@ interface EmpresaData {
   email?: string;
   endereco?: string;
   cnpj?: string;
+  fax?: string;
   logoUrl?: string;
 }
 
@@ -41,6 +42,33 @@ interface BudgetPdfConfig {
   empresa?: EmpresaData;
   condicoesComerciais?: string[];
   validadeDias?: number;
+  vendedor?: string;
+  obra?: string;
+  bairro?: string;
+  cidade?: string;
+  tratamento?: string;
+  linha?: string;
+  tipo?: string;
+  servicosExtras?: { descricao: string; valor: number }[];
+  condicaoPagamento?: string;
+  formaPagamento?: string;
+  responsavel?: string;
+
+  /** Multiple items support */
+  itensMultiplos?: Array<{
+    produto: string;
+    tipo?: string;
+    linha?: string;
+    tratamento?: string;
+    larguraCm: number;
+    alturaCm: number;
+    quantidade: number;
+    valorUnitario: number;
+    valorTotal: number;
+    localizacao?: string;
+    descricaoCompleta?: string;
+    svgDataUrl?: string;
+  }>;
 }
 
 const formatBRL = (v: number) => {
@@ -48,8 +76,15 @@ const formatBRL = (v: number) => {
   return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 };
 
-const formatDateBR = () =>
-  new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+const formatDateBR = () => {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear());
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}.${mm}.${yy}  ${hh}:${mi} hrs`;
+};
 
 async function loadImage(url: string): Promise<string | null> {
   try {
@@ -78,11 +113,11 @@ export async function generateProfessionalBudgetPDF(
   const pdf = new jsPDF("p", "mm", "a4");
   const W = 210;
   const H = 297;
-  const M = 15;
-  const CW = W - M * 2;
+  const ML = 8; // left margin
+  const MR = 8; // right margin
+  const CW = W - ML - MR;
   let y = 0;
 
-  // Safe text wrapper to prevent "Invalid arguments" errors
   const safeText = (text: any, x: number, yPos: number, options?: any) => {
     let str: string | string[];
     if (Array.isArray(text)) {
@@ -90,197 +125,130 @@ export async function generateProfessionalBudgetPDF(
     } else {
       str = text == null ? "" : String(text);
     }
-    if (options) {
-      pdf.text(str, x, yPos, options);
-    } else {
-      pdf.text(str, x, yPos);
-    }
+    if (options) pdf.text(str, x, yPos, options);
+    else pdf.text(str, x, yPos);
   };
 
-  // ─── HEADER BAR ───
-  pdf.setFillColor(37, 99, 235);
-  pdf.rect(0, 0, W, 48, "F");
+  // Colors
+  const BLACK = [0, 0, 0] as const;
+  const DARK_GRAY = [50, 50, 50] as const;
+  const MID_GRAY = [100, 100, 100] as const;
+  const LIGHT_GRAY = [180, 180, 180] as const;
+  const HEADER_BG = [60, 60, 60] as const;
+  const SECTION_BG = [35, 35, 35] as const;
 
-  let logoEndX = M;
+  // ─── HEADER ───
+  // Logo area (left)
+  let logoEndX = ML;
   if (config.empresa?.logoUrl) {
     const logoData = await loadImage(config.empresa.logoUrl);
     if (logoData) {
-      const logoH = 18;
-      const logoW = logoH; // square fallback
-      pdf.addImage(logoData, "PNG", M, 6, logoW, logoH);
-      logoEndX = M + logoW + 5;
+      pdf.addImage(logoData, "PNG", ML, 5, 40, 15);
+      logoEndX = ML + 42;
     }
   }
-
-  // Company name
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(20);
-  pdf.setFont("helvetica", "bold");
-  safeText(config.empresa?.nome || "ORÇAMENTO", logoEndX, 20);
-
-  // Company subtitle info
-  pdf.setFontSize(8);
-  pdf.setFont("helvetica", "normal");
-  const contactLines: string[] = [];
-  if (config.empresa?.cnpj) contactLines.push(`CNPJ: ${config.empresa.cnpj}`);
-  if (config.empresa?.telefone) contactLines.push(config.empresa.telefone);
-  if (config.empresa?.email) contactLines.push(config.empresa.email);
-  if (config.empresa?.endereco) contactLines.push(config.empresa.endereco);
-  if (contactLines.length > 0) {
-    contactLines.forEach((line, i) => {
-      safeText(line, W - M, 10 + i * 4, { align: "right" });
-    });
-  }
-
-  // Doc title + number
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica", "bold");
-  const docTitle = config.numero ? `ORÇAMENTO ${config.numero}` : "ORÇAMENTO";
-  safeText(docTitle, logoEndX, 32);
-  pdf.setFontSize(9);
-  pdf.setFont("helvetica", "normal");
-  safeText(`Data: ${formatDateBR()}`, logoEndX, 38);
-  if (config.validadeDias) {
-    safeText(`Validade: ${config.validadeDias} dias`, logoEndX, 43);
-  }
-
-  y = 56;
-
-  // ─── CLIENT INFO ───
-  pdf.setTextColor(37, 99, 235);
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-  safeText("DADOS DO CLIENTE", M, y);
-  y += 2;
-  pdf.setDrawColor(37, 99, 235);
-  pdf.setLineWidth(0.5);
-  pdf.line(M, y, M + CW, y);
-  y += 6;
-
-  pdf.setFontSize(10);
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(30, 30, 30);
-
-  const clientRows: [string, string][] = [
-    ["Cliente", config.cliente || "-"],
-  ];
-  if (config.clienteTelefone) clientRows.push(["Telefone", config.clienteTelefone]);
-  if (config.clienteEmail) clientRows.push(["E-mail", config.clienteEmail]);
-  if (config.clienteEndereco) clientRows.push(["Endereco", config.clienteEndereco]);
-
-  for (const [label, value] of clientRows) {
-    pdf.setTextColor(120, 120, 120);
-    safeText(`${label}:`, M, y);
-    pdf.setTextColor(30, 30, 30);
+  if (!config.empresa?.logoUrl || logoEndX === ML) {
+    pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    safeText(value, M + 30, y);
-    pdf.setFont("helvetica", "normal");
-    y += 6;
+    pdf.setTextColor(...BLACK);
+    safeText(config.empresa?.nome || "EMPRESA", ML, 15);
+    logoEndX = ML + 45;
   }
 
-  y += 4;
-
-  // ─── ITEMS TABLE ───
-  pdf.setTextColor(37, 99, 235);
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-  safeText("ITENS DO ORÇAMENTO", M, y);
-  y += 2;
-  pdf.setDrawColor(37, 99, 235);
-  pdf.line(M, y, M + CW, y);
-  y += 4;
-
-  // Table header
-  const colX = [M, M + 55, M + 95, M + 115, M + 140, M + CW];
-  const headers = ["Produto", "Dimensoes", "Qtd", "Area m2", "Unit.", "Total"];
-
-  pdf.setFillColor(240, 244, 255);
-  pdf.rect(M, y - 3, CW, 8, "F");
-  pdf.setFontSize(8);
-  pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(37, 99, 235);
-  headers.forEach((h, i) => {
-    const x = colX[Math.min(i, colX.length - 1)];
-    if (i >= 3) {
-      const rx = colX[Math.min(i + 1, colX.length - 1)];
-      safeText(h, rx, y, { align: "right" });
-    } else {
-      safeText(h, x, y);
-    }
-  });
-  y += 7;
-
-  // Table row
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(30, 30, 30);
-  pdf.setFontSize(9);
-
-  const specs: string[] = [];
-  if (config.corAluminio) specs.push(`Cor: ${config.corAluminio}`);
-  if (config.tipoVidro && config.tipoVidro !== "Nenhum") specs.push(`Vidro: ${config.tipoVidro}`);
-  if (config.corFerragem) specs.push(`Ferragem: ${config.corFerragem}`);
-  if (config.ambiente) specs.push(`Amb: ${config.ambiente}`);
-  const specsLine = specs.join(" | ");
-
-  safeText(config.produto || "-", colX[0], y);
-  safeText(`${config.larguraCm ?? 0}x${config.alturaCm ?? 0} cm`, colX[1], y);
-  safeText(String(config.quantidade ?? 1), colX[2], y);
-  safeText((config.areaM2 ?? 0).toFixed(2), colX[4], y, { align: "right" });
-  const unitPrice = (config.valorFinal ?? 0) / (config.quantidade || 1);
-  safeText(formatBRL(unitPrice), colX[5] - (CW - 140), y, { align: "right" });
-  safeText(formatBRL(config.valorFinal ?? 0), colX[5], y, { align: "right" });
-  y += 5;
-
-  if (specsLine) {
-    pdf.setFontSize(7);
-    pdf.setTextColor(120, 120, 120);
-    safeText(specsLine, colX[0] + 2, y);
-    y += 5;
-  }
-
-  // Separator
-  pdf.setDrawColor(220, 220, 220);
-  pdf.line(M, y, M + CW, y);
-  y += 6;
-
-  // ─── PRICING SUMMARY ───
-  pdf.setTextColor(37, 99, 235);
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-  safeText("RESUMO FINANCEIRO", M, y);
-  y += 2;
-  pdf.setDrawColor(37, 99, 235);
-  pdf.line(M, y, M + CW, y);
-  y += 7;
-
-  pdf.setFontSize(10);
-  const summaryRows: [string, string, string?][] = [
-    ["Custo estimado", formatBRL(config.custoTotal)],
-    ["Margem de lucro", formatBRL(config.margem)],
-  ];
-
-  for (const [label, value] of summaryRows) {
-    pdf.setTextColor(100, 100, 100);
-    pdf.setFont("helvetica", "normal");
-    safeText(label, M, y);
-    pdf.setTextColor(30, 30, 30);
-    safeText(value, M + CW, y, { align: "right" });
-    y += 7;
-  }
-
-  // Total highlight
-  y += 2;
-  pdf.setFillColor(37, 99, 235);
-  pdf.roundedRect(M, y - 5, CW, 14, 2, 2, "F");
+  // Title box (right) - dark background
+  const titleBoxW = 70;
+  const titleBoxX = W - MR - titleBoxW;
+  pdf.setFillColor(...HEADER_BG);
+  pdf.rect(titleBoxX, 3, titleBoxW, 16, "F");
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(13);
+  pdf.setFontSize(14);
   pdf.setFont("helvetica", "bold");
-  safeText("VALOR TOTAL", M + 5, y + 3);
-  safeText(formatBRL(config.valorFinal), M + CW - 5, y + 3, { align: "right" });
-  y += 16;
+  safeText("Proposta de Orçamento", titleBoxX + 4, 13);
 
-  // ─── SVG PREVIEW ───
-  if (svgElementId) {
+  // Emitido por + data
+  y = 24;
+  pdf.setFontSize(7);
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(...MID_GRAY);
+  safeText(`Emitido por:`, titleBoxX, y);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...BLACK);
+  safeText(config.vendedor || "ADMINISTRADOR", titleBoxX + 22, y);
+  safeText(formatDateBR(), W - MR, y, { align: "right" });
+
+  y = 30;
+  // Separator line
+  pdf.setDrawColor(...LIGHT_GRAY);
+  pdf.setLineWidth(0.3);
+  pdf.line(ML, y, W - MR, y);
+  y += 3;
+
+  // ─── CLIENT / VENDOR INFO ───
+  const leftColX = ML;
+  const rightColX = W / 2 + 5;
+  const labelW = 22;
+
+  pdf.setFontSize(7);
+
+  const drawInfoRow = (label: string, value: string, x: number, rowY: number, labelWidth = labelW) => {
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(...MID_GRAY);
+    safeText(`${label}:`, x, rowY);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...DARK_GRAY);
+    safeText(value || "-", x + labelWidth, rowY);
+  };
+
+  // Left column
+  drawInfoRow("Cliente", config.cliente, leftColX, y);
+  drawInfoRow("Vendedor", config.vendedor || "-", rightColX, y);
+  y += 4;
+  drawInfoRow("Tel.", config.clienteTelefone || "-", leftColX, y);
+  drawInfoRow("Fax", config.empresa?.fax || "-", rightColX, y, 14);
+  y += 4;
+  drawInfoRow("Código", config.empresa?.cnpj || "-", leftColX, y);
+  drawInfoRow("E-mail", config.empresa?.email || config.clienteEmail || "-", rightColX, y, 14);
+  y += 4;
+  drawInfoRow("End. física", config.clienteEndereco || "-", leftColX, y, 22);
+  drawInfoRow("Obra", config.obra || "-", rightColX, y, 14);
+  y += 4;
+  drawInfoRow("Bairro", config.bairro || "-", rightColX, y, 14);
+  drawInfoRow("Trat.", config.tratamento || config.corAluminio || "-", leftColX, y, 12);
+  y += 4;
+  drawInfoRow("Cidade", config.cidade || "-", rightColX, y, 14);
+  y += 3;
+
+  // ─── ELEVAÇÃO / DESCRIÇÃO HEADER ───
+  pdf.setFillColor(...SECTION_BG);
+  pdf.rect(ML, y, CW, 7, "F");
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "bold");
+  safeText("ELEVAÇÃO", ML + 20, y + 5);
+  safeText("DESCRIÇÃO", W / 2 + 10, y + 5);
+  y += 9;
+
+  // ─── ITEMS ───
+  // Build items array from config
+  const items = config.itensMultiplos && config.itensMultiplos.length > 0
+    ? config.itensMultiplos
+    : [{
+        produto: config.produto,
+        tipo: config.tipo || "-",
+        linha: config.linha || "-",
+        tratamento: config.tratamento || config.corAluminio || "-",
+        larguraCm: config.larguraCm,
+        alturaCm: config.alturaCm,
+        quantidade: config.quantidade,
+        valorUnitario: config.valorFinal / (config.quantidade || 1),
+        valorTotal: config.valorFinal,
+        localizacao: config.ambiente || "-",
+        descricaoCompleta: config.produto,
+        svgDataUrl: undefined as string | undefined,
+      }];
+
+  // Try to capture the SVG preview if available
+  if (svgElementId && items.length === 1 && !items[0].svgDataUrl) {
     const svgElement = document.getElementById(svgElementId);
     if (svgElement) {
       try {
@@ -290,133 +258,267 @@ export async function generateProfessionalBudgetPDF(
           logging: false,
           backgroundColor: "#ffffff",
         });
-        const imgData = canvas.toDataURL("image/png");
-        const imgAspect = canvas.width / canvas.height;
-        const maxImgW = CW * 0.5;
-        const imgW = maxImgW;
-        const imgH = imgW / imgAspect;
-
-        if (y + imgH + 20 > H - 60) {
-          pdf.addPage();
-          y = M;
-        }
-
-        pdf.setTextColor(37, 99, 235);
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "bold");
-        safeText("VISUALIZAÇÃO DO PRODUTO", M, y);
-        y += 2;
-        pdf.setDrawColor(37, 99, 235);
-        pdf.line(M, y, M + CW, y);
-        y += 6;
-
-        const imgX = M + (CW - imgW) / 2;
-        pdf.setDrawColor(230, 230, 230);
-        pdf.setLineWidth(0.3);
-        pdf.rect(imgX - 2, y - 2, imgW + 4, imgH + 4);
-        pdf.addImage(imgData, "PNG", imgX, y, imgW, imgH);
-        y += imgH + 10;
+        items[0].svgDataUrl = canvas.toDataURL("image/png");
       } catch {
-        // skip preview
+        // skip
       }
     }
   }
 
-  // ─── CONDIÇÕES COMERCIAIS ───
-  const condicoes = config.condicoesComerciais ?? [
-    "Validade da proposta: 15 dias.",
-    "Prazo de entrega: a combinar apos aprovacao.",
-    "Pagamento: 50% na aprovacao, 50% na entrega.",
-    "Garantia de 5 anos contra defeitos de fabricacao.",
-    "Instalacao nao inclusa, salvo acordo previo.",
-    "Cores e dimensoes conforme especificacao acima.",
-  ];
+  const elevationW = (CW / 2) - 5;
+  const descriptionX = ML + elevationW + 10;
+  const descriptionW = CW - elevationW - 10;
 
-  if (y + condicoes.length * 5 + 30 > H - 50) {
-    pdf.addPage();
-    y = M;
+  let totalGeral = 0;
+
+  for (let idx = 0; idx < items.length; idx++) {
+    const item = items[idx];
+    const itemStartY = y;
+
+    // Check if we need a new page
+    if (y + 65 > H - 50) {
+      pdf.addPage();
+      y = 10;
+    }
+
+    // Light separator line at top of item
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.2);
+    pdf.line(ML, y, W - MR, y);
+    y += 2;
+
+    // ─ ELEVATION (Left side) ─
+    const elevBoxY = y;
+    const elevBoxH = 50;
+
+    // Draw frame placeholder or SVG
+    if (item.svgDataUrl) {
+      const imgAspect = 1;
+      const maxW = elevationW - 10;
+      const maxH = elevBoxH - 6;
+      const imgW = Math.min(maxW, maxH * imgAspect);
+      const imgH = imgW / imgAspect;
+      const imgX = ML + (elevationW - imgW) / 2;
+      pdf.addImage(item.svgDataUrl, "PNG", imgX, elevBoxY + 3, imgW, imgH);
+    } else {
+      // Draw a simple placeholder frame
+      const frameW = 35;
+      const frameH = 40;
+      const frameX = ML + (elevationW - frameW) / 2;
+      const frameY = elevBoxY + 5;
+      pdf.setDrawColor(150, 150, 150);
+      pdf.setLineWidth(0.5);
+      pdf.rect(frameX, frameY, frameW, frameH);
+      // Cross lines to indicate window
+      pdf.setLineWidth(0.2);
+      pdf.line(frameX + frameW / 2, frameY, frameX + frameW / 2, frameY + frameH);
+      pdf.line(frameX, frameY + frameH / 2, frameX + frameW, frameY + frameH / 2);
+    }
+
+    // ─ DESCRIPTION (Right side) ─
+    let dy = elevBoxY;
+
+    // Item number + Treatment
+    pdf.setFontSize(7);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(...BLACK);
+    safeText(`Item:`, descriptionX, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(`${idx + 1}`, descriptionX + 12, dy + 3);
+
+    pdf.setFont("helvetica", "bold");
+    safeText(`Tratamento:`, descriptionX + 50, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(item.tratamento || config.corAluminio || "-", descriptionX + 75, dy + 3);
+    dy += 5;
+
+    // Type + Line
+    pdf.setFont("helvetica", "bold");
+    safeText(`Tipo:`, descriptionX, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(item.tipo || "-", descriptionX + 12, dy + 3);
+
+    pdf.setFont("helvetica", "bold");
+    safeText(`Linha:`, descriptionX + 50, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(item.linha || "-", descriptionX + 65, dy + 3);
+    dy += 5;
+
+    // Location
+    pdf.setFont("helvetica", "bold");
+    safeText(`Localização:`, descriptionX, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(item.localizacao || "-", descriptionX + 25, dy + 3);
+    dy += 6;
+
+    // L / H / Qty row
+    pdf.setFont("helvetica", "bold");
+    safeText(`L:`, descriptionX, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(`${item.larguraCm * 10}`, descriptionX + 7, dy + 3);
+
+    pdf.setFont("helvetica", "bold");
+    safeText(`H:`, descriptionX + 30, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(`${item.alturaCm * 10}`, descriptionX + 37, dy + 3);
+
+    pdf.setFont("helvetica", "bold");
+    safeText(`Qtd:`, descriptionX + 60, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(`${item.quantidade}`, descriptionX + 72, dy + 3);
+    dy += 6;
+
+    // Valor unitário / Valor total
+    pdf.setFont("helvetica", "bold");
+    safeText(`Valor unit.:`, descriptionX, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(formatBRL(item.valorUnitario), descriptionX + 25, dy + 3);
+
+    pdf.setFont("helvetica", "bold");
+    safeText(`Valor total:`, descriptionX + 60, dy + 3);
+    pdf.setFont("helvetica", "normal");
+    safeText(formatBRL(item.valorTotal), descriptionX + 82, dy + 3);
+    dy += 6;
+
+    // Description text
+    pdf.setFontSize(6.5);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...MID_GRAY);
+    const descText = item.descricaoCompleta || item.produto || "-";
+    const descLines = pdf.splitTextToSize(descText.toUpperCase(), descriptionW);
+    safeText(descLines, descriptionX, dy + 3);
+
+    totalGeral += item.valorTotal;
+    y = Math.max(elevBoxY + elevBoxH + 2, dy + 8);
   }
 
-  pdf.setTextColor(37, 99, 235);
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "bold");
-  safeText("CONDICOES COMERCIAIS", M, y);
+  // ─── OBSERVAÇÃO ───
   y += 2;
-  pdf.setDrawColor(37, 99, 235);
-  pdf.line(M, y, M + CW, y);
+  pdf.setFontSize(7);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...BLACK);
+  safeText("Observação:", ML, y);
+  y += 4;
+  if (config.observacoes) {
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...DARK_GRAY);
+    pdf.setFontSize(7);
+    const obsLines = pdf.splitTextToSize(config.observacoes, CW - 4);
+    safeText(obsLines, ML + 2, y);
+    y += obsLines.length * 3.5 + 2;
+  }
+  y += 2;
+
+  // ─── SERVIÇOS EXTRAS ───
+  pdf.setFillColor(...SECTION_BG);
+  pdf.rect(ML, y, CW, 7, "F");
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "bold");
+  safeText("SERVIÇOS EXTRAS", ML + 4, y + 5);
+  y += 9;
+
+  const extras = config.servicosExtras || [];
+  let totalExtras = 0;
+
+  if (extras.length > 0) {
+    for (const extra of extras) {
+      pdf.setFontSize(7);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(...BLACK);
+      safeText(extra.descricao, ML + 2, y + 3);
+      safeText(formatBRL(extra.valor), W - MR, y + 3, { align: "right" });
+      totalExtras += extra.valor;
+      y += 5;
+    }
+  } else {
+    // Empty row placeholder
+    pdf.setFontSize(7);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...MID_GRAY);
+    safeText("-", ML + 2, y + 3);
+    y += 5;
+  }
+
+  // Extras total row
+  pdf.setDrawColor(200, 200, 200);
+  pdf.line(ML, y, W - MR, y);
+  y += 1;
+  pdf.setFontSize(8);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...BLACK);
+  safeText("R$", W - MR - 30, y + 4);
+  safeText(formatBRL(totalExtras), W - MR, y + 4, { align: "right" });
+  y += 8;
+
+  // ─── PAYMENT CONDITIONS FOOTER ───
+  // Separator
+  pdf.setDrawColor(150, 150, 150);
+  pdf.setLineWidth(0.3);
+  pdf.line(ML, y, W - MR, y);
+  y += 2;
+
+  // Table with 4 columns: Condições | Forma | Total | Total + Extras
+  const colW = CW / 4;
+  const footHeaders = ["Condições de pagamento", "Forma de pagamento", "Total", "Total + Extras"];
+  const totalComExtras = totalGeral + totalExtras;
+
+  // Header row
+  pdf.setFillColor(240, 240, 240);
+  pdf.rect(ML, y, CW, 6, "F");
+  pdf.setFontSize(6.5);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...DARK_GRAY);
+  footHeaders.forEach((h, i) => {
+    safeText(h, ML + colW * i + 2, y + 4);
+  });
+  y += 7;
+
+  // Values row
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(7);
+  pdf.setTextColor(...BLACK);
+  safeText(config.condicaoPagamento || "À vista / 30 dias", ML + 2, y + 3);
+  safeText(config.formaPagamento || "Boleto", ML + colW + 2, y + 3);
+  safeText(formatBRL(totalGeral), ML + colW * 2 + 2, y + 3);
+  pdf.setFont("helvetica", "bold");
+  safeText(formatBRL(totalComExtras), ML + colW * 3 + 2, y + 3);
+  y += 8;
+
+  // ─── SIGNATURE & FOOTER ───
+  // Separator
+  pdf.setDrawColor(200, 200, 200);
+  pdf.setLineWidth(0.2);
+  pdf.line(ML, y, W - MR, y);
   y += 6;
 
+  // Responsible name
   pdf.setFontSize(8);
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(60, 60, 60);
-  condicoes.forEach((cond) => {
-    safeText(`-  ${cond}`, M + 2, y);
-    y += 5;
-  });
-
-  y += 4;
-
-  // ─── OBSERVAÇÕES ───
-  if (config.observacoes) {
-    pdf.setTextColor(37, 99, 235);
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "bold");
-    safeText("OBSERVACOES", M, y);
-    y += 5;
-    pdf.setFontSize(8);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(60, 60, 60);
-    const lines = pdf.splitTextToSize(config.observacoes, CW - 4);
-    safeText(lines, M + 2, y);
-    y += lines.length * 4 + 6;
-  }
-
-  // ─── ASSINATURA ───
-  if (y + 50 > H - M) {
-    pdf.addPage();
-    y = M + 20;
-  }
-
-  const sigY = Math.max(y + 10, H - 55);
-  pdf.setDrawColor(180, 180, 180);
-  pdf.setLineWidth(0.3);
-
-  // Left signature (company)
-  const sigW = CW / 2 - 10;
-  pdf.line(M, sigY, M + sigW, sigY);
-  pdf.setFontSize(9);
   pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(30, 30, 30);
-  safeText(config.empresa?.nome || "Empresa", M + sigW / 2, sigY + 5, { align: "center" });
-  pdf.setFontSize(7);
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(120, 120, 120);
-  safeText("Responsavel", M + sigW / 2, sigY + 9, { align: "center" });
+  pdf.setTextColor(...BLACK);
+  safeText(config.responsavel || config.vendedor || config.empresa?.nome || "", ML, y);
+  y += 8;
 
-  // Right signature (client)
-  const sigX2 = M + CW / 2 + 10;
-  pdf.line(sigX2, sigY, sigX2 + sigW, sigY);
-  pdf.setFontSize(9);
-  pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(30, 30, 30);
-  safeText(config.cliente || "Cliente", sigX2 + sigW / 2, sigY + 5, { align: "center" });
-  pdf.setFontSize(7);
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(120, 120, 120);
-  safeText("Cliente", sigX2 + sigW / 2, sigY + 9, { align: "center" });
-
-  // ─── FOOTER ───
+  // Page number
   const footY = H - 8;
-  pdf.setDrawColor(220, 220, 220);
-  pdf.line(M, footY - 4, M + CW, footY - 4);
+  pdf.setFillColor(240, 240, 240);
+  pdf.rect(0, footY - 5, W, 15, "F");
+  pdf.setDrawColor(200, 200, 200);
+  pdf.line(ML, footY - 5, W - MR, footY - 5);
+
   pdf.setFontSize(7);
-  pdf.setTextColor(160, 160, 160);
   pdf.setFont("helvetica", "normal");
-  safeText(`Documento gerado em ${formatDateBR()}`, M, footY);
-  safeText("Página 1 de 1", M + CW, footY, { align: "right" });
+  pdf.setTextColor(...MID_GRAY);
+  const totalPages = (pdf as any).internal.getNumberOfPages();
+  safeText(`${totalPages} / ${totalPages}`, W - MR, footY, { align: "right" });
+
+  // System credit
+  pdf.setFontSize(6);
+  pdf.setTextColor(...LIGHT_GRAY);
+  safeText("Sistema AluFlow - Alumínio® Sistemas", W / 2, footY, { align: "center" });
 
   // Save
   const safeName = (config.cliente || "novo").replace(/\s+/g, "-").toLowerCase();
   const numSuffix = config.numero ? `-${config.numero}` : "";
-  pdf.save(`orcamento-${safeName}${numSuffix}.pdf`);
+  pdf.save(`proposta-orcamento-${safeName}${numSuffix}.pdf`);
 }
