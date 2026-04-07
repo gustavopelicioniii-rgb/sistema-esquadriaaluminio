@@ -75,6 +75,7 @@ export async function generateProfessionalBudgetPDF(
   config: BudgetPdfConfig,
   svgElementId?: string
 ) {
+  console.log("PDF config:", JSON.stringify(config, null, 2));
   const pdf = new jsPDF("p", "mm", "a4");
   const W = 210;
   const H = 297;
