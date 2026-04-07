@@ -79,7 +79,7 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
 };
 
 export const PLAN_LABELS: Record<PlanTier, string> = {
-  basico: "Básico",
+  basico: "Teste",
   profissional: "Profissional",
   premium: "Premium",
 };
@@ -91,7 +91,7 @@ export const PLAN_PRICES: Record<PlanTier, number> = {
 };
 
 export const PLAN_DESCRIPTIONS: Record<PlanTier, string> = {
-  basico: "Clientes, orçamentos e configurações básicas",
+  basico: "Teste gratuito de 10 dias com clientes, orçamentos e configurações",
   profissional: "CRM, produção, cálculos, estoque e agenda",
   premium: "Financeiro, relatórios, mapa, importação e tipologias",
 };
