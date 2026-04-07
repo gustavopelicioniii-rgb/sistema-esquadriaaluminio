@@ -214,6 +214,7 @@ export const typologies: Typology[] = [
   ...supremaTypologies,
   ...goldTypologies,
   ...topTypologies,
+  ...decampL45Typologies,
   ...cloned25Typologies,
   ...cloned32Typologies,
   ...cloned40Typologies,
