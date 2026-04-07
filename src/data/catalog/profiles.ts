@@ -487,12 +487,15 @@ const decampEstufasProfiles: Profile[] = [
 // EXPORTAÇÃO
 // ============================================
 
+import { allDecampGeralProfiles } from "./profilesGeralDecamp";
+
 export const profiles: Profile[] = [
   ...supremaProfiles,
   ...goldProfiles,
   ...topProfiles,
   ...decampLinha45Profiles,
   ...decampEstufasProfiles,
+  ...allDecampGeralProfiles,
 ];
 
 export function getProfileByCode(code: string, lineId: string): Profile | undefined {

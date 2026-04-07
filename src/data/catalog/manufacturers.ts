@@ -53,6 +53,14 @@ export const productLines: ProductLine[] = [
   // ===================== Decamp Alumínio =====================
   // Fonte: Catálogos oficiais Decamp Edição 01/2026
   { id: "line-decamp45", manufacturer_id: "fab-decamp", name: "Decamp Linha 45", bitola_mm: 45, description: "Linha principal Decamp 45mm. Marcos, janelas, portas, venezianas. Catálogo Geral 2026.", active: true },
+  { id: "line-decamp-pratic20", manufacturer_id: "fab-decamp", name: "Decamp Pratic 20", bitola_mm: 20, description: "Linha Pratic 20mm para portas e janelas econômicas.", active: true },
+  { id: "line-decamp-pratic25", manufacturer_id: "fab-decamp", name: "Decamp Pratic 25", bitola_mm: 25, description: "Linha Pratic 25mm padrão.", active: true },
+  { id: "line-decamp-pratic30", manufacturer_id: "fab-decamp", name: "Decamp Pratic 30", bitola_mm: 30, description: "Linha Pratic 30mm intermediária.", active: true },
+  { id: "line-decamp-pratic32", manufacturer_id: "fab-decamp", name: "Decamp Pratic 32", bitola_mm: 32, description: "Linha Pratic 32mm para grandes vãos.", active: true },
+  { id: "line-decamp-pratic42", manufacturer_id: "fab-decamp", name: "Decamp Pratic 42", bitola_mm: 42, description: "Linha Pratic 42mm premium.", active: true },
+  { id: "line-decamp-fachada", manufacturer_id: "fab-decamp", name: "Decamp Pratic Fachada", bitola_mm: 0, description: "Perfis para fachadas (PRF, PFG, TMF). Catálogo Geral 2026.", active: true },
+  { id: "line-decamp-perfetta-fachada", manufacturer_id: "fab-decamp", name: "Decamp Perfetta Fachada", bitola_mm: 0, description: "Perfis Perfetta para fachadas (PFF). Catálogo Geral 2026.", active: true },
   { id: "line-decamp-estufas", manufacturer_id: "fab-decamp", name: "Decamp Estufas", bitola_mm: 0, description: "Perfis exclusivos para estufas e coberturas. Catálogo Estufas 2021.", active: true },
   { id: "line-decamp-muxarabi", manufacturer_id: "fab-decamp", name: "Decamp Muxarabi", bitola_mm: 0, description: "Perfis para painéis muxarabi, portas camarão e divisores. Catálogo Muxarabi 2026.", active: true },
+  { id: "line-decamp-geral", manufacturer_id: "fab-decamp", name: "Decamp Geral", bitola_mm: 0, description: "Tubos, barras, cantoneiras, box, guarda-corpo, moveleiro e acessórios diversos.", active: true },
 ];
