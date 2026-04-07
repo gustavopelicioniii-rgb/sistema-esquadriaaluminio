@@ -22,6 +22,7 @@ import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypol
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
+import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
 import { usePlanosCorte, type PlanoCorte as PlanoCorteType } from "@/hooks/use-planos-corte";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -193,9 +194,22 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
 
   const handleExportPDF = useCallback(async () => {
     if (!result) return;
-    toast.loading("Gerando PDF...");
+    toast.loading("Gerando Relação de Barras...");
     try {
       await generateCutListPDF(result, barResults, "frame-preview-svg");
+      toast.dismiss();
+      toast.success("PDF exportado com sucesso!");
+    } catch {
+      toast.dismiss();
+      toast.error("Erro ao gerar PDF");
+    }
+  }, [result, barResults]);
+
+  const handleExportPadroes = useCallback(async () => {
+    if (!result) return;
+    toast.loading("Gerando Padrões de Cortes...");
+    try {
+      await generatePadroesCortesPDF(result, barResults);
       toast.dismiss();
       toast.success("PDF exportado com sucesso!");
     } catch {
