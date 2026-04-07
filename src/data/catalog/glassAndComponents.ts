@@ -109,6 +109,7 @@ export const glassRules: GlassRule[] = [
   ...supremaGlassRules,
   ...goldGlassRules,
   ...topGlassRules,
+  ...decampL45GlassRules,
   ...cloned25GlassRules,
   ...cloned32GlassRules,
   ...cloned40GlassRules,
