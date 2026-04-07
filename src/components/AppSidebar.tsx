@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useNotifications } from "@/hooks/use-notifications";
 import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
