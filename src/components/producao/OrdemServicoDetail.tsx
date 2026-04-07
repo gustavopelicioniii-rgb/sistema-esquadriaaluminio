@@ -259,6 +259,19 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
         </div>
       </div>
 
+      {/* Configuração de Cálculo */}
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
+            <Settings2 className="h-3.5 w-3.5" />
+            Configuração de Cálculo da Obra
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pt-3">
+          <CalculoFilters />
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* Etapas with drag and drop */}
       {etapas.map((etapa, idx) => (
         <div
