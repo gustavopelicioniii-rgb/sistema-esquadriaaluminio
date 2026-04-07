@@ -1,395 +1,416 @@
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
-import type { CalculationOutput, OptimizationResult } from "@/types/calculation";
+import type { CalculationOutput, OptimizationResult, ProfileSummary } from "@/types/calculation";
 
 const A4_W = 210;
 const A4_H = 297;
-const M = 12; // margin
-const CW = A4_W - M * 2; // content width
+const ML = 8;
+const MR = 8;
+const CW = A4_W - ML - MR;
 const FONT = "helvetica";
 
-function addHeader(pdf: jsPDF, title: string, subtitle: string) {
-  pdf.setFillColor(37, 99, 235); // primary blue
-  pdf.rect(0, 0, A4_W, 28, "F");
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(16);
-  pdf.setTextColor(255, 255, 255);
-  pdf.text(title, M, 12);
-  pdf.setFontSize(9);
-  pdf.setFont(FONT, "normal");
-  pdf.text(subtitle, M, 20);
-  pdf.setTextColor(0, 0, 0);
-}
+const GREEN = [0, 128, 0] as const;
+const BLACK = [0, 0, 0] as const;
+const DARK = [40, 40, 40] as const;
+const MID = [100, 100, 100] as const;
+const LIGHT = [180, 180, 180] as const;
+const HEADER_GREEN = [0, 100, 0] as const;
 
-function addSectionTitle(pdf: jsPDF, y: number, text: string): number {
-  if (y > A4_H - 30) {
-    pdf.addPage();
-    y = M;
-  }
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(11);
-  pdf.setTextColor(37, 99, 235);
-  pdf.text(text, M, y);
-  pdf.setTextColor(0, 0, 0);
-  pdf.setFont(FONT, "normal");
-  return y + 6;
-}
+const formatDateBR = () => {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear());
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}/${mm}/${yy}  ${hh}:${mi}`;
+};
 
-function drawTableRow(
-  pdf: jsPDF,
-  y: number,
-  cols: { x: number; w: number; text: string; align?: "left" | "center" | "right" }[],
-  isHeader: boolean,
-  rowH: number = 6
-): number {
-  if (y > A4_H - M - rowH) {
-    pdf.addPage();
-    y = M;
-  }
+const safeText = (pdf: jsPDF, text: any, x: number, y: number, options?: any) => {
+  const str = text == null ? "" : String(text);
+  if (options) pdf.text(str, x, y, options);
+  else pdf.text(str, x, y);
+};
 
-  if (isHeader) {
-    pdf.setFillColor(241, 245, 249); // slate-100
-    pdf.rect(M, y - 4, CW, rowH, "F");
-    pdf.setFont(FONT, "bold");
-    pdf.setFontSize(7);
-    pdf.setTextColor(100, 116, 139);
-  } else {
-    pdf.setFont(FONT, "normal");
-    pdf.setFontSize(7.5);
-    pdf.setTextColor(30, 41, 59);
-  }
-
-  for (const col of cols) {
-    const align = col.align ?? "left";
-    let tx = col.x;
-    if (align === "right") tx = col.x + col.w;
-    if (align === "center") tx = col.x + col.w / 2;
-    pdf.text(col.text, tx, y, { align });
-  }
-
-  // thin bottom line
-  pdf.setDrawColor(226, 232, 240);
-  pdf.setLineWidth(0.2);
-  pdf.line(M, y + 2, M + CW, y + 2);
-
-  return y + rowH;
+interface RelacaoBarrasConfig {
+  obraCod?: string;
+  nomeObra?: string;
+  cliente?: string;
+  tratamento?: string;
+  dataCalc?: string;
+  responsavel?: string;
+  logoUrl?: string;
+  empresaNome?: string;
 }
 
 export async function generateCutListPDF(
   result: CalculationOutput,
   barResults: OptimizationResult[],
-  svgPreviewElementId?: string
+  _svgPreviewElementId?: string,
+  config?: RelacaoBarrasConfig
 ) {
   const pdf = new jsPDF("p", "mm", "a4");
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("pt-BR");
+  const dateStr = formatDateBR();
+  const cfg = config || {};
 
-  // === HEADER ===
-  addHeader(
-    pdf,
-    `Lista de Corte — ${result.typology_name}`,
-    `${result.input.width_mm} × ${result.input.height_mm} mm  |  Qtd: ${result.input.quantity}  |  ${dateStr}`
-  );
+  let y = 0;
 
-  let y = 36;
+  // ═══════════ HEADER ═══════════
+  // Top green line
+  pdf.setFillColor(...HEADER_GREEN);
+  pdf.rect(0, 0, A4_W, 1.5, "F");
 
-  // === SUMMARY ROW ===
-  const summaryItems = [
-    { label: "Peças", value: String(result.cuts.reduce((s, c) => s + c.quantity, 0)) },
-    { label: "Peso Alumínio", value: `${result.total_aluminum_weight_kg.toFixed(2)} kg` },
-    { label: "Área Vidro", value: `${result.total_glass_area_m2.toFixed(4)} m²` },
-    { label: "Barras", value: String(result.profiles_summary.reduce((s, p) => s + p.total_bars_needed, 0)) },
-  ];
-  const boxW = CW / summaryItems.length;
-  pdf.setFillColor(248, 250, 252);
-  pdf.roundedRect(M, y, CW, 14, 2, 2, "F");
-  summaryItems.forEach((item, i) => {
-    const bx = M + i * boxW;
-    pdf.setFont(FONT, "normal");
+  y = 6;
+
+  // Logo area (left)
+  pdf.setFontSize(10);
+  pdf.setFont(FONT, "bold");
+  pdf.setTextColor(...HEADER_GREEN);
+  safeText(pdf, cfg.empresaNome || "EMPRESA", ML, y + 5);
+
+  // Title (center)
+  pdf.setFontSize(14);
+  pdf.setFont(FONT, "bold");
+  pdf.setTextColor(...BLACK);
+  safeText(pdf, "Relação de Barras", A4_W / 2, y + 4, { align: "center" });
+
+  // Right side: Emitido por + date
+  pdf.setFontSize(7);
+  pdf.setFont(FONT, "normal");
+  pdf.setTextColor(...MID);
+  safeText(pdf, "Emitido por:", A4_W - MR - 55, y);
+  pdf.setFont(FONT, "bold");
+  pdf.setTextColor(...BLACK);
+  safeText(pdf, "ADMINISTRADOR", A4_W - MR - 35, y);
+  safeText(pdf, dateStr, A4_W - MR, y, { align: "right" });
+
+  y = 16;
+
+  // Separator
+  pdf.setDrawColor(...LIGHT);
+  pdf.setLineWidth(0.3);
+  pdf.line(ML, y, A4_W - MR, y);
+  y += 3;
+
+  // ═══════════ INFO BLOCK ═══════════
+  const infoLabelW = 30;
+  const infoValueX = ML + infoLabelW;
+  const infoRightLabelX = A4_W / 2 + 10;
+  const infoRightValueX = infoRightLabelX + 25;
+
+  const drawInfoRow = (label: string, value: string, x: number, iy: number, lw = infoLabelW) => {
     pdf.setFontSize(7);
-    pdf.setTextColor(100, 116, 139);
-    pdf.text(item.label, bx + boxW / 2, y + 5, { align: "center" });
     pdf.setFont(FONT, "bold");
-    pdf.setFontSize(12);
-    pdf.setTextColor(30, 41, 59);
-    pdf.text(item.value, bx + boxW / 2, y + 11, { align: "center" });
-  });
-  y += 20;
+    pdf.setTextColor(...MID);
+    safeText(pdf, `${label}:`, x, iy);
+    pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...DARK);
+    safeText(pdf, value || "-", x + lw, iy);
+  };
 
-  // === 1. LISTA DE CORTE ===
-  y = addSectionTitle(pdf, y, "1. Lista de Corte");
+  drawInfoRow("Obra cod.", cfg.obraCod || "-", ML, y);
+  drawInfoRow("Nome", cfg.nomeObra || result.typology_name, infoRightLabelX, y, 15);
+  y += 4;
+  drawInfoRow("Cliente", cfg.cliente || "-", ML, y);
+  y += 4;
+  drawInfoRow("Trat./Cor/acabam.", cfg.tratamento || "-", ML, y, 35);
+  drawInfoRow("Data Calc.", cfg.dataCalc || dateStr, infoRightLabelX, y, 20);
+  y += 5;
 
-  const cutCols = [
-    { x: M, w: 6 },
-    { x: M + 7, w: 48 },
-    { x: M + 56, w: 22 },
-    { x: M + 79, w: 28 },
-    { x: M + 108, w: 22 },
-    { x: M + 131, w: 14 },
-    { x: M + 146, w: 22 },
-  ];
-  y = drawTableRow(pdf, y, [
-    { ...cutCols[0], text: "#" },
-    { ...cutCols[1], text: "PEÇA" },
-    { ...cutCols[2], text: "PERFIL" },
-    { ...cutCols[3], text: "MEDIDA (mm)", align: "right" },
-    { ...cutCols[4], text: "ÂNGULO", align: "center" },
-    { ...cutCols[5], text: "QTD", align: "center" },
-    { ...cutCols[6], text: "PESO (kg)", align: "right" },
-  ], true);
+  // Obs line
+  pdf.setFontSize(6);
+  pdf.setFont(FONT, "normal");
+  pdf.setTextColor(...MID);
+  safeText(pdf, "Obs.: Para que o material abaixo seja suficiente para a montagem de todos os caixilhos é preciso seguir o relatório de Orientação de Cortes da Obra", ML, y);
+  y += 5;
 
-  result.cuts.forEach((cut, i) => {
-    y = drawTableRow(pdf, y, [
-      { ...cutCols[0], text: String(i + 1), align: "center" },
-      { ...cutCols[1], text: cut.piece_name },
-      { ...cutCols[2], text: cut.profile_code },
-      { ...cutCols[3], text: String(cut.cut_length_mm), align: "right" },
-      { ...cutCols[4], text: `${cut.cut_angle_left}°/${cut.cut_angle_right}°`, align: "center" },
-      { ...cutCols[5], text: String(cut.quantity), align: "center" },
-      { ...cutCols[6], text: cut.weight_kg.toFixed(3), align: "right" },
-    ], false);
-  });
+  // ═══════════ TABLE HEADER ═══════════
+  // Column definitions matching image
+  const colDefs = {
+    perfil: { x: ML, w: 22 },
+    tratCor: { x: ML + 23, w: 45 },
+    qtde: { x: ML + 69, w: 12 },
+    barra: { x: ML + 82, w: 22 },
+    peso: { x: ML + 105, w: 22 },
+    sobra: { x: ML + 128, w: 22 },
+    pct: { x: ML + 151, w: 18 },
+  };
 
-  y += 6;
+  const drawTableHeader = (hy: number): number => {
+    pdf.setFillColor(240, 240, 240);
+    pdf.rect(ML, hy - 3.5, CW, 5.5, "F");
+    pdf.setFontSize(6.5);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...DARK);
+    safeText(pdf, "Perfil", colDefs.perfil.x + 1, hy);
+    safeText(pdf, "Trat./Cor", colDefs.tratCor.x + 1, hy);
+    safeText(pdf, "Qtde", colDefs.qtde.x + colDefs.qtde.w, hy, { align: "right" });
+    safeText(pdf, "Barra", colDefs.barra.x + colDefs.barra.w, hy, { align: "right" });
+    safeText(pdf, "Peso (kg)", colDefs.peso.x + colDefs.peso.w, hy, { align: "right" });
+    safeText(pdf, "Sobra (kg)", colDefs.sobra.x + colDefs.sobra.w, hy, { align: "right" });
+    safeText(pdf, "( % )", colDefs.pct.x + colDefs.pct.w, hy, { align: "right" });
 
-  // === 2. VIDROS ===
-  y = addSectionTitle(pdf, y, "2. Vidros");
+    // Bottom line
+    pdf.setDrawColor(...LIGHT);
+    pdf.setLineWidth(0.2);
+    pdf.line(ML, hy + 1.5, A4_W - MR, hy + 1.5);
+    return hy + 4;
+  };
 
-  const glassCols = [
-    { x: M, w: 44 },
-    { x: M + 45, w: 28 },
-    { x: M + 74, w: 28 },
-    { x: M + 103, w: 14 },
-    { x: M + 118, w: 28 },
-  ];
-  y = drawTableRow(pdf, y, [
-    { ...glassCols[0], text: "VIDRO" },
-    { ...glassCols[1], text: "LARGURA (mm)", align: "right" },
-    { ...glassCols[2], text: "ALTURA (mm)", align: "right" },
-    { ...glassCols[3], text: "QTD", align: "center" },
-    { ...glassCols[4], text: "ÁREA (m²)", align: "right" },
-  ], true);
+  y = drawTableHeader(y);
 
-  result.glasses.forEach((glass) => {
-    y = drawTableRow(pdf, y, [
-      { ...glassCols[0], text: glass.glass_name },
-      { ...glassCols[1], text: String(glass.width_mm), align: "right" },
-      { ...glassCols[2], text: String(glass.height_mm), align: "right" },
-      { ...glassCols[3], text: String(glass.quantity), align: "center" },
-      { ...glassCols[4], text: glass.area_m2.toFixed(4), align: "right" },
-    ], false);
-  });
+  // ═══════════ BUILD GROUPS BY PROFILE ═══════════
+  // Group profiles by a common alloy prefix (first profile group)
+  // Each OptimizationResult has profile_code, bars, totals
 
-  y += 6;
+  // We need to create profile groups. In the reference image, profiles are grouped
+  // by alloy (e.g., "AZ-A-1001-A18", "CM", "SA-A-1001-A18")
+  // For our data, we group by the first part of profile_code or just list them
 
-  // === 3. COMPONENTES ===
-  if (result.components.length > 0) {
-    y = addSectionTitle(pdf, y, "3. Componentes");
+  interface ProfileGroupRow {
+    profileCode: string;
+    treatment: string;
+    quantity: number;
+    barLength: number;
+    weightKg: number;
+    wasteKg: number;
+    wastePct: number;
+    isSubProfile?: boolean;
+  }
 
-    const compCols = [
-      { x: M, w: 50 },
-      { x: M + 51, w: 30 },
-      { x: M + 82, w: 14 },
-      { x: M + 97, w: 20 },
-      { x: M + 118, w: 30 },
-    ];
-    y = drawTableRow(pdf, y, [
-      { ...compCols[0], text: "COMPONENTE" },
-      { ...compCols[1], text: "TIPO" },
-      { ...compCols[2], text: "QTD", align: "center" },
-      { ...compCols[3], text: "UNIDADE" },
-      { ...compCols[4], text: "COMP. TOTAL", align: "right" },
-    ], true);
+  interface ProfileGroup {
+    groupCode: string;
+    treatment: string;
+    rows: ProfileGroupRow[];
+    totalWeight: number;
+    totalWaste: number;
+    totalWastePct: number;
+  }
 
-    result.components.forEach((comp) => {
-      y = drawTableRow(pdf, y, [
-        { ...compCols[0], text: comp.component_name },
-        { ...compCols[1], text: comp.component_type },
-        { ...compCols[2], text: String(comp.quantity), align: "center" },
-        { ...compCols[3], text: comp.unit },
-        { ...compCols[4], text: comp.total_length_mm ? `${comp.total_length_mm} mm` : "—", align: "right" },
-      ], false);
+  // Build groups from profiles_summary + barResults
+  const groups: ProfileGroup[] = [];
+
+  for (const prof of result.profiles_summary) {
+    const barOpt = barResults.find(b => b.profile_code === prof.profile_code);
+    const barLen = barOpt?.bar_length_mm || 6000;
+    const totalBars = prof.total_bars_needed;
+    const totalWeightKg = prof.total_weight_kg;
+    const totalBarLengthMm = totalBars * barLen;
+    const usedLengthMm = prof.total_length_mm;
+    const wasteLengthMm = totalBarLengthMm - usedLengthMm;
+    const wasteWeightKg = (wasteLengthMm / 1000) * prof.weight_per_meter;
+    const wastePct = totalBarLengthMm > 0 ? (wasteLengthMm / totalBarLengthMm) * 100 : 0;
+
+    // Find related cuts to show sub-rows
+    const relatedCuts = result.cuts.filter(c => c.profile_code === prof.profile_code);
+
+    const rows: ProfileGroupRow[] = [];
+
+    // Main profile row
+    rows.push({
+      profileCode: prof.profile_code,
+      treatment: cfg.tratamento || "-",
+      quantity: totalBars,
+      barLength: barLen,
+      weightKg: totalWeightKg,
+      wasteKg: wasteWeightKg,
+      wastePct: wastePct,
     });
+
+    // Sub-rows for each cut piece
+    for (const cut of relatedCuts) {
+      const pieceWeightKg = cut.weight_kg;
+      rows.push({
+        profileCode: cut.piece_name,
+        treatment: cfg.tratamento || "-",
+        quantity: cut.quantity,
+        barLength: cut.cut_length_mm,
+        weightKg: pieceWeightKg,
+        wasteKg: 0,
+        wastePct: 0,
+        isSubProfile: true,
+      });
+    }
+
+    groups.push({
+      groupCode: prof.profile_code,
+      treatment: cfg.tratamento || "-",
+      rows,
+      totalWeight: totalWeightKg + wasteWeightKg,
+      totalWaste: wasteWeightKg,
+      totalWastePct: wastePct,
+    });
+  }
+
+  // ═══════════ DRAW GROUPS ═══════════
+  let grandTotalWeight = 0;
+  let grandTotalWaste = 0;
+
+  for (const group of groups) {
+    // Check page space
+    if (y + (group.rows.length + 3) * 4.5 > A4_H - 25) {
+      pdf.addPage();
+      y = 10;
+      y = drawTableHeader(y);
+    }
+
+    // Group header (bold, green-ish)
+    pdf.setFontSize(7);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...HEADER_GREEN);
+    safeText(pdf, group.groupCode, colDefs.perfil.x + 1, y);
+
+    pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...DARK);
+    safeText(pdf, group.treatment, colDefs.tratCor.x + 1, y);
+    y += 4;
+
+    // Sub-rows (individual pieces)
+    for (const row of group.rows) {
+      if (y > A4_H - 20) {
+        pdf.addPage();
+        y = 10;
+        y = drawTableHeader(y);
+      }
+
+      pdf.setFontSize(6.5);
+      if (row.isSubProfile) {
+        pdf.setFont(FONT, "normal");
+        pdf.setTextColor(...DARK);
+        safeText(pdf, row.profileCode, colDefs.perfil.x + 5, y);
+      } else {
+        pdf.setFont(FONT, "bold");
+        pdf.setTextColor(...BLACK);
+        safeText(pdf, row.profileCode, colDefs.perfil.x + 1, y);
+      }
+
+      pdf.setFont(FONT, "normal");
+      pdf.setTextColor(...DARK);
+
+      if (!row.isSubProfile) {
+        safeText(pdf, row.treatment, colDefs.tratCor.x + 1, y);
+      } else {
+        safeText(pdf, cfg.tratamento || "-", colDefs.tratCor.x + 1, y);
+      }
+
+      safeText(pdf, String(row.quantity), colDefs.qtde.x + colDefs.qtde.w, y, { align: "right" });
+      safeText(pdf, String(row.barLength), colDefs.barra.x + colDefs.barra.w, y, { align: "right" });
+
+      if (!row.isSubProfile) {
+        safeText(pdf, row.weightKg.toFixed(2), colDefs.peso.x + colDefs.peso.w, y, { align: "right" });
+        safeText(pdf, row.wasteKg.toFixed(2), colDefs.sobra.x + colDefs.sobra.w, y, { align: "right" });
+        safeText(pdf, row.wastePct.toFixed(2), colDefs.pct.x + colDefs.pct.w, y, { align: "right" });
+      } else {
+        // Individual piece weight
+        safeText(pdf, row.weightKg.toFixed(2), colDefs.peso.x + colDefs.peso.w, y, { align: "right" });
+      }
+
+      // Light line
+      pdf.setDrawColor(230, 230, 230);
+      pdf.setLineWidth(0.1);
+      pdf.line(ML, y + 1.2, A4_W - MR, y + 1.2);
+
+      y += 4;
+    }
+
+    // Group subtotal line
+    pdf.setDrawColor(...LIGHT);
+    pdf.setLineWidth(0.3);
+    pdf.line(colDefs.peso.x, y - 0.5, A4_W - MR, y - 0.5);
+
+    const groupTotalWeight = group.rows.reduce((s, r) => s + r.weightKg, 0);
+    const groupWaste = group.rows.find(r => !r.isSubProfile)?.wasteKg || 0;
+    const groupWastePct = group.rows.find(r => !r.isSubProfile)?.wastePct || 0;
+
+    pdf.setFontSize(7);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...BLACK);
+    safeText(pdf, groupTotalWeight.toFixed(2), colDefs.peso.x + colDefs.peso.w, y + 1, { align: "right" });
+    safeText(pdf, groupWaste.toFixed(2), colDefs.sobra.x + colDefs.sobra.w, y + 1, { align: "right" });
+    safeText(pdf, groupWastePct.toFixed(2), colDefs.pct.x + colDefs.pct.w, y + 1, { align: "right" });
+
+    grandTotalWeight += groupTotalWeight;
+    grandTotalWaste += groupWaste;
+
+    y += 5;
+
+    // Liga / Têmpera row
+    pdf.setFontSize(6.5);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...MID);
+    safeText(pdf, "Liga:", ML + 5, y);
+
+    // Green tag for Liga
+    pdf.setFillColor(200, 230, 200);
+    pdf.roundedRect(ML + 14, y - 2.8, 15, 4, 1, 1, "F");
+    pdf.setFontSize(6);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...HEADER_GREEN);
+    safeText(pdf, "6063", ML + 16, y);
+
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...MID);
+    safeText(pdf, "Têmpera:", ML + 35, y);
+
+    pdf.setFillColor(200, 230, 200);
+    pdf.roundedRect(ML + 52, y - 2.8, 10, 4, 1, 1, "F");
+    pdf.setFontSize(6);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...HEADER_GREEN);
+    safeText(pdf, "T5", ML + 54, y);
 
     y += 6;
   }
 
-  // === 4. PLANO DE BARRAS (visual) ===
-  if (barResults.length > 0) {
-    y = addSectionTitle(pdf, y, "4. Plano de Barras");
+  // ═══════════ GRAND TOTAL ═══════════
+  if (groups.length > 1) {
+    pdf.setDrawColor(...HEADER_GREEN);
+    pdf.setLineWidth(0.5);
+    pdf.line(colDefs.peso.x, y - 1, A4_W - MR, y - 1);
 
-    for (const opt of barResults) {
-      if (y > A4_H - 40) {
-        pdf.addPage();
-        y = M;
-      }
+    pdf.setFontSize(8);
+    pdf.setFont(FONT, "bold");
+    pdf.setTextColor(...BLACK);
+    safeText(pdf, "TOTAL GERAL:", colDefs.tratCor.x + 1, y + 2);
 
-      pdf.setFont(FONT, "bold");
-      pdf.setFontSize(8);
-      pdf.setTextColor(30, 41, 59);
-      pdf.text(`${opt.profile_code}  —  ${opt.total_bars} barra(s) de ${opt.bar_length_mm}mm  |  Aproveitamento: ${opt.overall_utilization_percent}%`, M, y);
-      y += 5;
+    const grandWastePct = grandTotalWeight > 0 ? (grandTotalWaste / (grandTotalWeight)) * 100 : 0;
 
-      for (const bar of opt.bars) {
-        if (y > A4_H - 20) {
-          pdf.addPage();
-          y = M;
-        }
-
-        // Label
-        pdf.setFont(FONT, "normal");
-        pdf.setFontSize(6);
-        pdf.setTextColor(100, 116, 139);
-        pdf.text(`Barra ${bar.bar_number}  •  Sobra: ${bar.waste_mm}mm (${(100 - bar.utilization_percent).toFixed(1)}%)`, M, y);
-        y += 3;
-
-        // Draw bar
-        const barH = 7;
-        const barW = CW;
-        pdf.setDrawColor(203, 213, 225);
-        pdf.setFillColor(248, 250, 252);
-        pdf.roundedRect(M, y, barW, barH, 1, 1, "FD");
-
-        // Draw pieces
-        const colors = [
-          [59, 130, 246],  // blue-500
-          [99, 102, 241],  // indigo-500
-          [139, 92, 246],  // violet-500
-          [14, 165, 233],  // sky-500
-          [6, 182, 212],   // cyan-500
-          [34, 197, 94],   // green-500
-        ];
-
-        for (let pi = 0; pi < bar.pieces.length; pi++) {
-          const piece = bar.pieces[pi];
-          const px = M + (piece.position_mm / opt.bar_length_mm) * barW;
-          const pw = (piece.length_mm / opt.bar_length_mm) * barW;
-          const [r, g, b] = colors[pi % colors.length];
-          pdf.setFillColor(r, g, b);
-          if (pi === 0) {
-            pdf.roundedRect(px, y, pw, barH, 1, 1, "F");
-          } else {
-            pdf.rect(px, y, pw, barH, "F");
-          }
-
-          // Piece label
-          if (pw > 8) {
-            pdf.setFont(FONT, "bold");
-            pdf.setFontSize(5.5);
-            pdf.setTextColor(255, 255, 255);
-            pdf.text(String(piece.length_mm), px + pw / 2, y + barH / 2 + 1.5, { align: "center" });
-          }
-        }
-
-        // Waste
-        if (bar.waste_mm > 0) {
-          const wasteX = M + ((opt.bar_length_mm - bar.waste_mm) / opt.bar_length_mm) * barW;
-          const wasteW = (bar.waste_mm / opt.bar_length_mm) * barW;
-          pdf.setFillColor(254, 202, 202); // red-200
-          pdf.rect(wasteX, y, wasteW, barH, "F");
-          if (wasteW > 8) {
-            pdf.setFont(FONT, "normal");
-            pdf.setFontSize(5);
-            pdf.setTextColor(220, 38, 38);
-            pdf.text(String(bar.waste_mm), wasteX + wasteW / 2, y + barH / 2 + 1.5, { align: "center" });
-          }
-        }
-
-        y += barH + 3;
-      }
-      y += 3;
-    }
+    safeText(pdf, grandTotalWeight.toFixed(2), colDefs.peso.x + colDefs.peso.w, y + 2, { align: "right" });
+    safeText(pdf, grandTotalWaste.toFixed(2), colDefs.sobra.x + colDefs.sobra.w, y + 2, { align: "right" });
+    safeText(pdf, grandWastePct.toFixed(2), colDefs.pct.x + colDefs.pct.w, y + 2, { align: "right" });
+    y += 8;
   }
 
-  // === 5. RESUMO POR PERFIL ===
-  y = addSectionTitle(pdf, y, "5. Resumo por Perfil");
-
-  const sumCols = [
-    { x: M, w: 30 },
-    { x: M + 31, w: 35 },
-    { x: M + 67, w: 20 },
-    { x: M + 88, w: 30 },
-    { x: M + 119, w: 30 },
-  ];
-  y = drawTableRow(pdf, y, [
-    { ...sumCols[0], text: "PERFIL" },
-    { ...sumCols[1], text: "COMP. TOTAL (mm)", align: "right" },
-    { ...sumCols[2], text: "BARRAS", align: "center" },
-    { ...sumCols[3], text: "PESO/m (kg)", align: "right" },
-    { ...sumCols[4], text: "PESO TOTAL (kg)", align: "right" },
-  ], true);
-
-  result.profiles_summary.forEach((p) => {
-    y = drawTableRow(pdf, y, [
-      { ...sumCols[0], text: p.profile_code },
-      { ...sumCols[1], text: String(p.total_length_mm), align: "right" },
-      { ...sumCols[2], text: String(p.total_bars_needed), align: "center" },
-      { ...sumCols[3], text: p.weight_per_meter.toFixed(3), align: "right" },
-      { ...sumCols[4], text: p.total_weight_kg.toFixed(3), align: "right" },
-    ], false);
-  });
-
-  // Total row
+  // ═══════════ RESPONSIBLE ═══════════
+  y += 4;
+  pdf.setFontSize(7);
   pdf.setFont(FONT, "bold");
-  pdf.setFontSize(8);
-  y += 2;
-  pdf.text("TOTAL", M, y);
-  pdf.text(
-    String(result.profiles_summary.reduce((s, p) => s + p.total_bars_needed, 0)),
-    sumCols[2].x + sumCols[2].w / 2,
-    y,
-    { align: "center" }
-  );
-  pdf.setTextColor(37, 99, 235);
-  pdf.text(
-    `${result.total_aluminum_weight_kg.toFixed(3)} kg`,
-    sumCols[4].x + sumCols[4].w,
-    y,
-    { align: "right" }
-  );
-  pdf.setTextColor(0, 0, 0);
+  pdf.setTextColor(...BLACK);
+  safeText(pdf, cfg.responsavel || "ADMINISTRADOR", ML, y);
 
-  y += 8;
-
-  // === 6. PREVIEW SVG (via html2canvas) ===
-  if (svgPreviewElementId) {
-    const svgEl = document.getElementById(svgPreviewElementId);
-    if (svgEl) {
-      try {
-        const canvas = await html2canvas(svgEl, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-        });
-        const imgData = canvas.toDataURL("image/png");
-        const imgW = CW * 0.6;
-        const imgH = (canvas.height / canvas.width) * imgW;
-
-        if (y + imgH + 10 > A4_H - M) {
-          pdf.addPage();
-          y = M;
-        }
-
-        y = addSectionTitle(pdf, y, "6. Preview da Esquadria");
-        const centerX = M + (CW - imgW) / 2;
-        pdf.addImage(imgData, "PNG", centerX, y, imgW, imgH);
-        y += imgH + 4;
-      } catch {
-        // silently skip preview if html2canvas fails
-      }
-    }
-  }
-
-  // === FOOTER ===
+  // ═══════════ FOOTER (all pages) ═══════════
   const totalPages = pdf.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
+    const footY = A4_H - 6;
+
+    // Top line
+    pdf.setDrawColor(...LIGHT);
+    pdf.setLineWidth(0.2);
+    pdf.line(ML, footY - 3, A4_W - MR, footY - 3);
+
+    // Page number
+    pdf.setFontSize(7);
     pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...MID);
+    safeText(pdf, `${i} / ${totalPages}`, A4_W - MR, footY, { align: "right" });
+
+    // System credit
     pdf.setFontSize(6);
-    pdf.setTextColor(160, 174, 192);
-    pdf.text(`Página ${i}/${totalPages}`, A4_W - M, A4_H - 5, { align: "right" });
-    pdf.text(`Gerado em ${dateStr} — Sistema de Cálculo de Esquadrias`, M, A4_H - 5);
+    pdf.setTextColor(...LIGHT);
+    safeText(pdf, "Sistema AluFlow - Alumínio® Sistemas", A4_W / 2, footY, { align: "center" });
   }
 
-  pdf.save(`lista-corte-${result.typology_name.replace(/\s+/g, "-").toLowerCase()}-${result.input.width_mm}x${result.input.height_mm}.pdf`);
+  // Save
+  const safeName = result.typology_name.replace(/\s+/g, "-").toLowerCase();
+  pdf.save(`relacao-barras-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`);
 }
