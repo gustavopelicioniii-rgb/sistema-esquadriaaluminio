@@ -105,6 +105,51 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Plan Banner */}
+      {!planoLoading && (
+        <Card className={cn(
+          "border-0 shadow-md overflow-hidden",
+          plano === "premium"
+            ? "bg-gradient-to-r from-amber-500/10 to-yellow-400/10"
+            : plano === "profissional"
+            ? "bg-gradient-to-r from-primary/10 to-primary/5"
+            : "bg-gradient-to-r from-muted to-muted/60"
+        )}>
+          <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className={cn(
+                "flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full",
+                plano === "premium" ? "bg-amber-500/20 text-amber-600" :
+                plano === "profissional" ? "bg-primary/20 text-primary" :
+                "bg-muted-foreground/10 text-muted-foreground"
+              )}>
+                <Crown className="h-4 w-4 sm:h-5 sm:w-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-semibold truncate">Plano {PLAN_LABELS[plano]}</span>
+                  <Badge variant="secondary" className="text-[10px] shrink-0">
+                    {plano === "basico" ? "10 dias" : "Ativo"}
+                  </Badge>
+                </div>
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                  {plano === "premium"
+                    ? "Acesso completo a todos os recursos"
+                    : plano === "profissional"
+                    ? "Faça upgrade para acessar financeiro e relatórios"
+                    : "Faça upgrade para desbloquear mais recursos"}
+                </p>
+              </div>
+            </div>
+            {plano !== "premium" && (
+              <Button size="sm" className="gap-1.5 shrink-0 text-xs" onClick={() => navigate("/planos")}>
+                Upgrade <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Top stats row */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
         <Card className="bg-foreground text-background border-0 shadow-lg col-span-2 sm:col-span-1">
