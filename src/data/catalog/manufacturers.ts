@@ -9,6 +9,7 @@ export const manufacturers: Manufacturer[] = [
   { id: "fab-daluminio", name: "D'Alumínio (DS)", active: true },
   // Distribuidores com linhas próprias
   { id: "fab-decamp", name: "Decamp Alumínio", active: true },
+  { id: "fab-centenario", name: "Metal Centenário Alumínio", active: true },
   // Fabricantes sem catálogo confirmado (desativados)
   { id: "fab-brimetal", name: "Brimetal", active: false },
   { id: "fab-cba", name: "CBA (Votorantim)", active: false },
@@ -63,4 +64,11 @@ export const productLines: ProductLine[] = [
   { id: "line-decamp-estufas", manufacturer_id: "fab-decamp", name: "Decamp Estufas", bitola_mm: 0, description: "Perfis exclusivos para estufas e coberturas. Catálogo Estufas 2021.", active: true },
   { id: "line-decamp-muxarabi", manufacturer_id: "fab-decamp", name: "Decamp Muxarabi", bitola_mm: 0, description: "Perfis para painéis muxarabi, portas camarão e divisores. Catálogo Muxarabi 2026.", active: true },
   { id: "line-decamp-geral", manufacturer_id: "fab-decamp", name: "Decamp Geral", bitola_mm: 0, description: "Tubos, barras, cantoneiras, box, guarda-corpo, moveleiro e acessórios diversos.", active: true },
+
+  // ===================== Metal Centenário Alumínio =====================
+  // Fonte: Catálogos oficiais Metal Centenário 2023 (Máxima 2.0, Perfetta, Amadeirados, Perfis Padronizados)
+  { id: "line-cent-maxima", manufacturer_id: "fab-centenario", name: "Centenário Máxima 2.0", bitola_mm: 0, description: "Linha Máxima 2.0 - Design moderno, obras verticais médio porte. NBR 10821/6123. ~150 perfis.", active: true },
+  { id: "line-cent-perfetta", manufacturer_id: "fab-centenario", name: "Centenário Perfetta", bitola_mm: 0, description: "Linha Perfetta - Perfis 35/45/50/55mm. Correr, maxim-ar, giro, camarão, pivotante, integrada. ~120 perfis.", active: true },
+  { id: "line-cent-amadeirado", manufacturer_id: "fab-centenario", name: "Centenário Amadeirado", bitola_mm: 0, description: "Perfis com acabamento amadeirado. Linhas 30, 42, TMG. Esquadrias, fachadas, portões.", active: false },
+  { id: "line-cent-padronizado", manufacturer_id: "fab-centenario", name: "Centenário Perfis Padronizados", bitola_mm: 0, description: "Cantoneiras, barras, tubos, perfis U, T. Tabela de equivalência Alcan/Tamboré. ~400 perfis.", active: false },
 ];
