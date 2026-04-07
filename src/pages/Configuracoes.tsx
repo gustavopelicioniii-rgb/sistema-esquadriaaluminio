@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Save, Settings2, RotateCcw, Building2, Users, UserCog, Key, Wand2,
   Plus, Trash2, Phone, Mail, Edit2, Shield, Plug, Copy, Eye, EyeOff,
@@ -71,6 +72,8 @@ interface ApiConfig {
 // ─── Component ───
 const Configuracoes = () => {
   usePageTitle("Configurações");
+  const { role } = useAuth();
+  const isAdmin = role === "admin";
   const [config, setConfig] = useState<Record<string, string>>(defaultConfig);
   const [folgas, setFolgas] = useState(defaultFolgas);
   const [loading, setLoading] = useState(true);
@@ -400,16 +403,20 @@ const Configuracoes = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-auto">
+        <TabsList className={`grid w-full h-auto ${isAdmin ? 'grid-cols-5' : 'grid-cols-3'}`}>
           <TabsTrigger value="empresa" className="gap-1.5 text-xs sm:text-sm py-2">
             <Building2 className="h-4 w-4 hidden sm:block" /> Empresa
           </TabsTrigger>
-          <TabsTrigger value="funcionarios" className="gap-1.5 text-xs sm:text-sm py-2">
-            <Users className="h-4 w-4 hidden sm:block" /> Equipe
-          </TabsTrigger>
-          <TabsTrigger value="admins" className="gap-1.5 text-xs sm:text-sm py-2">
-            <UserCog className="h-4 w-4 hidden sm:block" /> Admins
-          </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="funcionarios" className="gap-1.5 text-xs sm:text-sm py-2">
+              <Users className="h-4 w-4 hidden sm:block" /> Equipe
+            </TabsTrigger>
+          )}
+          {isAdmin && (
+            <TabsTrigger value="admins" className="gap-1.5 text-xs sm:text-sm py-2">
+              <UserCog className="h-4 w-4 hidden sm:block" /> Admins
+            </TabsTrigger>
+          )}
           <TabsTrigger value="apis" className="gap-1.5 text-xs sm:text-sm py-2">
             <Key className="h-4 w-4 hidden sm:block" /> APIs
           </TabsTrigger>
