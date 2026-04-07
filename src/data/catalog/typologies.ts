@@ -148,6 +148,43 @@ const decampL45Typologies: Typology[] = [
 ];
 
 // ============================================
+// 8 TIPOLOGIAS DECAMP PRATIC 20 (20mm)
+// Linha econômica para janelas pequenas e basculantes
+// ============================================
+const decampP20Typologies: Typology[] = [
+  { id: "typ-p20-jc2f", product_line_id: "line-decamp-pratic20", name: "Janela de Correr 2 Folhas", category: "janela", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 400, max_width_mm: 3000, min_height_mm: 300, max_height_mm: 1800 },
+  { id: "typ-p20-jc4f", product_line_id: "line-decamp-pratic20", name: "Janela de Correr 4 Folhas", category: "janela", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 800, max_width_mm: 4000, min_height_mm: 300, max_height_mm: 1800 },
+  { id: "typ-p20-jma1", product_line_id: "line-decamp-pratic20", name: "Janela Maxim-Ar 1 Folha", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 1200, min_height_mm: 300, max_height_mm: 1000 },
+  { id: "typ-p20-jma2", product_line_id: "line-decamp-pratic20", name: "Janela Maxim-Ar 2 Folhas", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 2000, min_height_mm: 300, max_height_mm: 1200 },
+  { id: "typ-p20-jbas1", product_line_id: "line-decamp-pratic20", name: "Basculante 1 Folha", category: "basculante", subcategory: "basculante", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 1000, min_height_mm: 200, max_height_mm: 600 },
+  { id: "typ-p20-vfix", product_line_id: "line-decamp-pratic20", name: "Vitrô Fixo", category: "vitro", subcategory: "fixo", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 200, max_width_mm: 2000, min_height_mm: 200, max_height_mm: 2000 },
+  { id: "typ-p20-pg1f", product_line_id: "line-decamp-pratic20", name: "Porta de Giro 1 Folha", category: "porta", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1000, min_height_mm: 1800, max_height_mm: 2500 },
+  { id: "typ-p20-pc2f", product_line_id: "line-decamp-pratic20", name: "Porta de Correr 2 Folhas", category: "porta", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 800, max_width_mm: 3500, min_height_mm: 1800, max_height_mm: 2500 },
+];
+
+// ============================================
+// 15 TIPOLOGIAS DECAMP PRATIC 32 (32mm)
+// Linha robusta para grandes vãos
+// ============================================
+const decampP32Typologies: Typology[] = [
+  { id: "typ-p32-jc2f", product_line_id: "line-decamp-pratic32", name: "Janela de Correr 2 Folhas", category: "janela", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 4500, min_height_mm: 400, max_height_mm: 2800 },
+  { id: "typ-p32-jc3f", product_line_id: "line-decamp-pratic32", name: "Janela de Correr 3 Folhas", category: "janela", subcategory: "correr", num_folhas: 3, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 900, max_width_mm: 5500, min_height_mm: 400, max_height_mm: 2800 },
+  { id: "typ-p32-jc4f", product_line_id: "line-decamp-pratic32", name: "Janela de Correr 4 Folhas", category: "janela", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1200, max_width_mm: 6000, min_height_mm: 400, max_height_mm: 2800 },
+  { id: "typ-p32-jma1", product_line_id: "line-decamp-pratic32", name: "Janela Maxim-Ar 1 Folha", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 1600, min_height_mm: 300, max_height_mm: 1400 },
+  { id: "typ-p32-jma2", product_line_id: "line-decamp-pratic32", name: "Janela Maxim-Ar 2 Folhas", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 2800, min_height_mm: 300, max_height_mm: 1600 },
+  { id: "typ-p32-jcam", product_line_id: "line-decamp-pratic32", name: "Janela Camarão", category: "camarao", subcategory: "camarao", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1000, max_width_mm: 5500, min_height_mm: 500, max_height_mm: 2800 },
+  { id: "typ-p32-pc2f", product_line_id: "line-decamp-pratic32", name: "Porta de Correr 2 Folhas", category: "porta", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1000, max_width_mm: 5500, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-p32-pc3f", product_line_id: "line-decamp-pratic32", name: "Porta de Correr 3 Folhas", category: "porta", subcategory: "correr", num_folhas: 3, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1500, max_width_mm: 6000, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-p32-pc4f", product_line_id: "line-decamp-pratic32", name: "Porta de Correr 4 Folhas", category: "porta", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 2000, max_width_mm: 6000, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-p32-pg1f", product_line_id: "line-decamp-pratic32", name: "Porta de Giro 1 Folha", category: "porta", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1300, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-p32-pg2f", product_line_id: "line-decamp-pratic32", name: "Porta de Giro 2 Folhas", category: "porta", subcategory: "giro", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 900, max_width_mm: 2600, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-p32-jc2fv", product_line_id: "line-decamp-pratic32", name: "Janela de Correr 2F c/ Veneziana", category: "veneziana", subcategory: "correr", num_folhas: 2, has_veneziana: true, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 4500, min_height_mm: 500, max_height_mm: 2800 },
+  { id: "typ-p32-jbas1", product_line_id: "line-decamp-pratic32", name: "Basculante 1 Folha", category: "basculante", subcategory: "basculante", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 1400, min_height_mm: 300, max_height_mm: 900 },
+  { id: "typ-p32-vfix", product_line_id: "line-decamp-pratic32", name: "Vitrô Fixo", category: "vitro", subcategory: "fixo", num_folhas: 0, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 3500, min_height_mm: 300, max_height_mm: 3500 },
+  { id: "typ-p32-jpiv", product_line_id: "line-decamp-pratic32", name: "Janela Pivotante", category: "pivotante", subcategory: "pivotante", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 400, max_width_mm: 1600, min_height_mm: 400, max_height_mm: 2200 },
+];
+
+// ============================================
 // CLONE PARA TODAS AS LINHAS COMPATÍVEIS
 // ============================================
 interface LineClone {
@@ -215,6 +252,8 @@ export const typologies: Typology[] = [
   ...goldTypologies,
   ...topTypologies,
   ...decampL45Typologies,
+  ...decampP20Typologies,
+  ...decampP32Typologies,
   ...cloned25Typologies,
   ...cloned32Typologies,
   ...cloned40Typologies,

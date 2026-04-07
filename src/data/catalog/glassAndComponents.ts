@@ -129,11 +129,48 @@ const decampL45GlassRules: GlassRule[] = [
   { id: "gr-dc-pbal", typology_id: "typ-dc-pbal", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
 ];
 
+// ============================================
+// GLASS RULES - DECAMP PRATIC 20 (20mm)
+// ============================================
+const pratic20GlassRules: GlassRule[] = [
+  { id: "gr-p20-jc2f", typology_id: "typ-p20-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -65, height_reference: "H", height_constant_mm: -105, quantity: 2, glass_type: "comum", min_thickness_mm: 3, max_thickness_mm: 5 },
+  { id: "gr-p20-jc4f", typology_id: "typ-p20-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -65, height_reference: "H", height_constant_mm: -105, quantity: 4 },
+  { id: "gr-p20-jma1", typology_id: "typ-p20-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -115, height_reference: "H", height_constant_mm: -110, quantity: 1, glass_type: "temperado", min_thickness_mm: 3, max_thickness_mm: 5 },
+  { id: "gr-p20-jma2", typology_id: "typ-p20-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -115, height_reference: "H", height_constant_mm: -110, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p20-jbas1", typology_id: "typ-p20-jbas1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -115, height_reference: "H", height_constant_mm: -105, quantity: 1, glass_type: "comum" },
+  { id: "gr-p20-vfix", typology_id: "typ-p20-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -50, height_reference: "H", height_constant_mm: -50, quantity: 1, glass_type: "comum", min_thickness_mm: 3, max_thickness_mm: 6 },
+  { id: "gr-p20-pg1f", typology_id: "typ-p20-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -90, height_reference: "H", height_constant_mm: -85, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 6 },
+  { id: "gr-p20-pc2f", typology_id: "typ-p20-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -65, height_reference: "H", height_constant_mm: -88, quantity: 2, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 6 },
+];
+
+// ============================================
+// GLASS RULES - DECAMP PRATIC 32 (32mm)
+// ============================================
+const pratic32GlassRules: GlassRule[] = [
+  { id: "gr-p32-jc2f", typology_id: "typ-p32-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-p32-jc3f", typology_id: "typ-p32-jc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 3 },
+  { id: "gr-p32-jc4f", typology_id: "typ-p32-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
+  { id: "gr-p32-jma1", typology_id: "typ-p32-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-p32-jma2", typology_id: "typ-p32-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p32-jcam", typology_id: "typ-p32-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 4 },
+  { id: "gr-p32-pc2f", typology_id: "typ-p32-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-p32-pc3f", typology_id: "typ-p32-pc3f", glass_name: "Vidro Folha", width_reference: "L/3", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 3, glass_type: "temperado" },
+  { id: "gr-p32-pc4f", typology_id: "typ-p32-pc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -97, height_reference: "H", height_constant_mm: -132, quantity: 4, glass_type: "temperado" },
+  { id: "gr-p32-pg1f", typology_id: "typ-p32-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 1, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-p32-pg2f", typology_id: "typ-p32-pg2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -138, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado" },
+  { id: "gr-p32-jc2fv", typology_id: "typ-p32-jc2fv", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -97, height_reference: "H", height_constant_mm: -152, quantity: 2, glass_type: "comum" },
+  { id: "gr-p32-jbas1", typology_id: "typ-p32-jbas1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -152, quantity: 1, glass_type: "comum" },
+  { id: "gr-p32-vfix", typology_id: "typ-p32-vfix", glass_name: "Vidro Fixo", width_reference: "L", width_constant_mm: -78, height_reference: "H", height_constant_mm: -78, quantity: 1, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 10 },
+  { id: "gr-p32-jpiv", typology_id: "typ-p32-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado" },
+];
+
 export const glassRules: GlassRule[] = [
   ...supremaGlassRules,
   ...goldGlassRules,
   ...topGlassRules,
   ...decampL45GlassRules,
+  ...pratic20GlassRules,
+  ...pratic32GlassRules,
   ...cloned25GlassRules,
   ...cloned32GlassRules,
   ...cloned40GlassRules,

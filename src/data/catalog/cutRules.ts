@@ -791,11 +791,15 @@ const decampL45CutRules: CutRule[] = [
   cr("dc-pbal-10","typ-dc-pbal","PF-45.017",DC,"Baguete H","baguete_h","L/2",-97,90,90,"4",10),
 ];
 
+import { pratic20CutRules, pratic32CutRules } from "./cutRulesPratic";
+
 export const cutRules: CutRule[] = [
   ...supremaCutRules,
   ...goldCutRules,
   ...topCutRules,
   ...decampL45CutRules,
+  ...pratic20CutRules,
+  ...pratic32CutRules,
   ...cloned25CutRules,
   ...cloned32CutRules,
   ...cloned40CutRules,
