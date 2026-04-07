@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { calculateTypology, validateDimensions } from "@/lib/calculation-engine";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
+import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
 import { optimizeBars } from "@/lib/bar-optimizer";
 import { getEffectiveCutRules } from "@/hooks/use-custom-cut-rules";
 import { getEffectiveGlassRules } from "@/hooks/use-custom-glass-rules";
@@ -400,14 +401,24 @@ export default function CalculoEsquadrias() {
                   <CardTitle className="text-sm sm:text-base">
                     {result.typology_name} — {result.input.width_mm} × {result.input.height_mm} mm
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto" onClick={async () => {
-                    toast.info("Gerando PDF...");
-                    await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
-                    toast.success("PDF exportado com sucesso!");
-                  }}>
-                    <FileDown className="h-4 w-4" />
-                    Exportar
-                  </Button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
+                      toast.info("Gerando Relação de Barras...");
+                      await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
+                      toast.success("PDF exportado!");
+                    }}>
+                      <FileDown className="h-4 w-4" />
+                      Rel. Barras
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
+                      toast.info("Gerando Padrões de Cortes...");
+                      await generatePadroesCortesPDF(result, barResults);
+                      toast.success("PDF exportado!");
+                    }}>
+                      <FileDown className="h-4 w-4" />
+                      Padrões Corte
+                    </Button>
+                  </div>
                 </div>
                 <div className="mt-3 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
                   <TabsList className="w-max sm:w-auto">
