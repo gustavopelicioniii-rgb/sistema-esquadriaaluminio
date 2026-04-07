@@ -77,11 +77,12 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
         ambiente: itensData?.ambiente,
         observacoes: itensData?.observacoes,
         empresa: {
-          nome: empresaData.empresa_nome || "AluFlow",
-          cnpj: empresaData.empresa_cnpj || "",
-          telefone: empresaData.empresa_telefone || "",
-          email: empresaData.empresa_email || "",
-          endereco: empresaData.empresa_endereco || "",
+          nome: empresaData.nome || "AluFlow",
+          cnpj: empresaData.cnpj || "",
+          telefone: empresaData.telefone || "",
+          email: empresaData.email || "",
+          endereco: empresaData.endereco || "",
+          logoUrl: empresaData.logo_url || "",
         },
       });
       toast({ title: "PDF gerado com sucesso!" });
