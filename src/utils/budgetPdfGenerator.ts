@@ -207,8 +207,8 @@ export async function generateProfessionalBudgetPDF(
   if (config.ambiente) specs.push(`Amb: ${config.ambiente}`);
   const specsLine = specs.join(" | ");
 
-  pdf.text(config.produto || "—", colX[0], y);
-  pdf.text(`${config.larguraCm ?? 0}×${config.alturaCm ?? 0} cm`, colX[1], y);
+  pdf.text(config.produto || "-", colX[0], y);
+  pdf.text(`${config.larguraCm ?? 0}x${config.alturaCm ?? 0} cm`, colX[1], y);
   pdf.text(String(config.quantidade ?? 1), colX[2], y);
   pdf.text((config.areaM2 ?? 0).toFixed(2), colX[4], y, { align: "right" });
   const unitPrice = (config.valorFinal ?? 0) / (config.quantidade || 1);
