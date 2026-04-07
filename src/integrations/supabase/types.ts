@@ -110,6 +110,39 @@ export type Database = {
         }
         Relationships: []
       }
+      assinaturas: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          id: string
+          plano: Database["public"]["Enums"]["plan_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          plano?: Database["public"]["Enums"]["plan_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          plano?: Database["public"]["Enums"]["plan_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           cidade: string | null
@@ -1090,6 +1123,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "funcionario"
+      plan_tier: "basico" | "profissional" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1218,6 +1252,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "funcionario"],
+      plan_tier: ["basico", "profissional", "premium"],
     },
   },
 } as const
