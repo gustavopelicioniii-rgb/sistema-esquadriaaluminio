@@ -82,6 +82,16 @@ export async function generateProfessionalBudgetPDF(
   const CW = W - M * 2;
   let y = 0;
 
+  // Safe text wrapper to prevent "Invalid arguments" errors
+  const safeText = (text: any, x: number, yPos: number, options?: any) => {
+    const str = text == null ? "" : String(text);
+    if (options) {
+      pdf.text(str, x, yPos, options);
+    } else {
+      pdf.text(str, x, yPos);
+    }
+  };
+
   // ─── HEADER BAR ───
   pdf.setFillColor(37, 99, 235);
   pdf.rect(0, 0, W, 48, "F");
