@@ -3,16 +3,19 @@ import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
   Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
+  Lock, Crown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useNotifications } from "@/hooks/use-notifications";
+import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
