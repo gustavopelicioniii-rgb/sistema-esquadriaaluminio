@@ -52,11 +52,11 @@
     --sidebar-ring: 263 84% 58%;
     --sidebar-muted: 220 9% 60%;
 
-    --glass-bg: rgba(255, 255, 255, 0.45);
-    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-bg: hsl(0 0% 100%);
+    --glass-border: hsl(220 13% 91%);
     --glass-shadow: 0 8px 32px rgba(76, 29, 149, 0.08);
-    --glass-blur: 32px;
-    --glass-highlight: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.15) 100%);
+    --glass-blur: 0px;
+    --glass-highlight: none;
   }
 
   .dark {
@@ -97,11 +97,11 @@
     --sidebar-border: 263 40% 12%;
     --sidebar-ring: 263 84% 58%;
 
-    --glass-bg: rgba(20, 10, 40, 0.5);
-    --glass-border: rgba(167, 139, 250, 0.12);
+    --glass-bg: hsl(263 60% 8%);
+    --glass-border: hsl(263 40% 15%);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --glass-blur: 32px;
-    --glass-highlight: linear-gradient(135deg, rgba(167,139,250,0.1) 0%, rgba(167,139,250,0.04) 50%, transparent 100%);
+    --glass-blur: 0px;
+    --glass-highlight: none;
   }
 }
 
@@ -120,91 +120,65 @@
 @layer components {
   .glass {
     background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(2.2);
     border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.2);
+    box-shadow: var(--glass-shadow);
   }
 
   .glass-subtle {
     background: var(--glass-bg);
-    backdrop-filter: blur(12px) saturate(1.4);
-    -webkit-backdrop-filter: blur(12px) saturate(1.4);
     border: 1px solid var(--glass-border);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   }
 
   .glass-strong {
     background: var(--glass-bg);
-    backdrop-filter: blur(48px) saturate(2.5);
-    -webkit-backdrop-filter: blur(48px) saturate(2.5);
     border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.08);
+    box-shadow: var(--glass-shadow);
   }
 
   .glass-highlight::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--glass-highlight);
-    pointer-events: none;
-    mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
-    opacity: 0.5;
+    display: none;
   }
 }
 
-/* Cards — Liquid Glass */
+/* Cards — Solid */
 [data-slot="card"],
 .card-glass {
-  background: rgba(255, 255, 255, 0.35) !important;
-  backdrop-filter: blur(48px) saturate(2.5) brightness(1.05);
-  -webkit-backdrop-filter: blur(48px) saturate(2.5) brightness(1.05);
-  border: 1px solid rgba(255, 255, 255, 0.55) !important;
-  box-shadow: 0 8px 32px rgba(76, 29, 149, 0.06), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.04);
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .dark [data-slot="card"],
 .dark .card-glass {
-  background: rgba(20, 10, 40, 0.4) !important;
-  border: 1px solid rgba(167, 139, 250, 0.1) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(167,139,250,0.08), inset 0 -1px 0 rgba(0,0,0,0.1);
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 [data-slot="card"].hover-lift:hover,
 .card-glass.hover-lift:hover {
-  box-shadow: 0 16px 48px rgba(76, 29, 149, 0.1), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 10px 30px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
 .dark [data-slot="card"].hover-lift:hover,
 .dark .card-glass.hover-lift:hover {
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(167,139,250,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
 }
 
-/* Dialogs / Popovers / Dropdowns */
+/* Dialogs / Popovers / Dropdowns — Solid */
 [role="dialog"],
 [role="dialog"] > div,
 [data-radix-popper-content-wrapper] [role="listbox"],
 [data-radix-popper-content-wrapper] [data-radix-menu-content],
 [data-radix-popper-content-wrapper] [data-side],
 .popover-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.35) 100%
-  ) !important;
-  backdrop-filter: blur(64px) saturate(2.8) brightness(1.05) !important;
-  -webkit-backdrop-filter: blur(64px) saturate(2.8) brightness(1.05) !important;
-  border: none !important;
-  box-shadow:
-    0 24px 80px rgba(76, 29, 149, 0.1),
-    0 8px 24px rgba(76, 29, 149, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04) !important;
+  background: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
 .dark [role="dialog"],
@@ -213,47 +187,33 @@
 .dark [data-radix-popper-content-wrapper] [data-radix-menu-content],
 .dark [data-radix-popper-content-wrapper] [data-side],
 .dark .popover-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(20, 10, 40, 0.7) 0%,
-    rgba(30, 15, 55, 0.55) 100%
-  ) !important;
-  backdrop-filter: blur(64px) saturate(2.8) brightness(0.9) !important;
-  -webkit-backdrop-filter: blur(64px) saturate(2.8) brightness(0.9) !important;
-  border: none !important;
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.4),
-    0 8px 24px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(167, 139, 250, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
+  background: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* Dropdown/popover items hover */
 [data-radix-popper-content-wrapper] [role="menuitem"]:hover,
 [data-radix-popper-content-wrapper] [role="option"]:hover {
-  background: rgba(124, 58, 237, 0.08) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: hsl(var(--accent)) !important;
 }
 
 .dark [data-radix-popper-content-wrapper] [role="menuitem"]:hover,
 .dark [data-radix-popper-content-wrapper] [role="option"]:hover {
-  background: rgba(167, 139, 250, 0.1) !important;
-  box-shadow: inset 0 1px 0 rgba(167, 139, 250, 0.05);
+  background: hsl(var(--accent)) !important;
 }
 
-/* Topbar — Liquid Glass */
+/* Topbar — Solid */
 .topbar-glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(48px) saturate(2.5) brightness(1.02);
-  -webkit-backdrop-filter: blur(48px) saturate(2.5) brightness(1.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 2px 20px rgba(76, 29, 149, 0.05), inset 0 -1px 0 rgba(255,255,255,0.3);
+  background: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .dark .topbar-glass {
-  background: rgba(20, 10, 40, 0.45);
-  border-bottom: 1px solid rgba(167, 139, 250, 0.08);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(167,139,250,0.04);
+  background: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Sidebar — solid dark */
@@ -266,17 +226,15 @@
   border-bottom: 1px solid hsl(var(--sidebar-border));
 }
 
-/* Input glass */
+/* Input — Solid */
 .input-glass,
 input:not([type="color"]):not([type="range"]),
 textarea,
 select,
 [data-slot="select-trigger"],
 [role="combobox"] {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(8px) saturate(1.4);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4);
-  border-color: var(--glass-border) !important;
+  background: hsl(var(--background)) !important;
+  border-color: hsl(var(--input)) !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -284,15 +242,13 @@ input:focus,
 textarea:focus,
 [data-slot="select-trigger"]:focus {
   border-color: hsl(var(--primary)) !important;
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12) !important;
 }
 
-/* Badge glass */
+/* Badge — Solid */
 .badge-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border);
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
 }
 
 /* App background */
