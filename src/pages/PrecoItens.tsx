@@ -13,25 +13,22 @@ import { exportPrecoItensPdf } from "@/utils/precoItensPdfGenerator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import perfilImg from "@/assets/items/perfil.png";
-import vidroImg from "@/assets/items/vidro.png";
-import ferragemImg from "@/assets/items/ferragem.png";
+import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
 
-interface Produto {
-  id: string;
-  codigo: string;
-  nome: string;
-  categoria: string;
-  preco: number;
-  unidade: string;
-  ativo: boolean;
+// Derive a profile type from product name for varied icons
+function guessProfileType(nome: string, categoria: string): string {
+  const n = nome.toLowerCase();
+  if (n.includes("trilho") || n.includes("inferior")) return "trilho";
+  if (n.includes("montante") || n.includes("central")) return "montante";
+  if (n.includes("travessa") || n.includes("horizontal")) return "travessa";
+  if (n.includes("baguete") || n.includes("guarnição")) return "baguete";
+  if (n.includes("contramarco")) return "contramarco";
+  if (n.includes("arremate") || n.includes("acabamento")) return "arremate";
+  if (n.includes("marco") || n.includes("superior")) return "marco";
+  if (categoria === "Vidros") return "travessa";
+  if (categoria === "Ferragens") return "baguete";
+  return "marco";
 }
-
-const categoryImage: Record<string, string> = {
-  Perfis: perfilImg,
-  Vidros: vidroImg,
-  Ferragens: ferragemImg,
-};
 
 type SortKey = "codigo" | "nome" | "preco" | "categoria";
 type SortDir = "asc" | "desc";
