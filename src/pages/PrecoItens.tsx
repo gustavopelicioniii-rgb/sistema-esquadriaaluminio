@@ -30,6 +30,16 @@ function guessProfileType(nome: string, categoria: string): string {
   return "marco";
 }
 
+interface Produto {
+  id: string;
+  codigo: string;
+  nome: string;
+  categoria: string;
+  preco: number;
+  unidade: string;
+  ativo: boolean;
+}
+
 type SortKey = "codigo" | "nome" | "preco" | "categoria";
 type SortDir = "asc" | "desc";
 
