@@ -46,7 +46,6 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
     "/projeto-vidro",
     "/agenda",
     "/produtos",
-    "/preco-itens",
     "/estoque",
   ],
   premium: [
@@ -66,7 +65,7 @@ const PLAN_FEATURES: Record<PlanTier, string[]> = {
     "/projeto-vidro",
     "/agenda",
     "/produtos",
-    "/preco-itens",
+    
     "/estoque",
     "/financeiro",
     "/nota-fiscal",

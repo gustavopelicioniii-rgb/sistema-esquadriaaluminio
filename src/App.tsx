@@ -29,7 +29,7 @@ const Estoque = lazy(() => import("./pages/Estoque"));
 const Financeiro = lazy(() => import("./pages/Financeiro"));
 const Agenda = lazy(() => import("./pages/Agenda"));
 const Produtos = lazy(() => import("./pages/Produtos"));
-const PrecoItens = lazy(() => import("./pages/PrecoItens"));
+
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Mapa = lazy(() => import("./pages/Mapa"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
@@ -90,7 +90,7 @@ const App = () => (
                   <Route path="/financeiro" element={<S><Financeiro /></S>} />
                   <Route path="/agenda" element={<S><Agenda /></S>} />
                   <Route path="/produtos" element={<S><Produtos /></S>} />
-                  <Route path="/preco-itens" element={<S><PrecoItens /></S>} />
+                  
                   <Route path="/relatorios" element={<S><Relatorios /></S>} />
                   <Route path="/mapa" element={<S><Mapa /></S>} />
                   <Route path="/nota-fiscal" element={<S><NotaFiscal /></S>} />
