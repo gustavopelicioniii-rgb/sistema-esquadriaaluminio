@@ -105,13 +105,55 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
   const handleStatusChange = (status: string) => {
     const previousStatus = orc.status;
     updateStatus.mutate({ id: orc.id, status }, {
-      onSuccess: () => {
+      onSuccess: async () => {
         addHistorico.mutate({
           orcamento_id: orc.id,
           status_anterior: previousStatus,
           status_novo: status,
         });
         toast({ title: `Status alterado para ${status}` });
+
+        // Auto-create pedido when approved
+        if (status === "aprovado") {
+          try {
+            // Get next pedido_num
+            const { data: lastPedido } = await supabase
+              .from("pedidos")
+              .select("pedido_num")
+              .order("pedido_num", { ascending: false })
+              .limit(1);
+            const nextNum = (lastPedido?.[0]?.pedido_num ?? 0) + 1;
+
+            // Get client info
+            const { data: clienteData } = await supabase
+              .from("clientes")
+              .select("telefone, endereco")
+              .eq("nome", orc.cliente)
+              .limit(1);
+            const cliente = clienteData?.[0];
+
+            const { error: pedidoError } = await supabase.from("pedidos").insert({
+              pedido_num: nextNum,
+              cliente: orc.cliente,
+              endereco: cliente?.endereco ?? "",
+              telefone: cliente?.telefone ?? "",
+              vendedor: "",
+              valor: orc.valor,
+              status: "em_andamento",
+              dias_restantes: 30,
+              etapa: "Orçamento",
+              anotacao: `Gerado automaticamente do orçamento ${orc.numero}`,
+            } as any);
+
+            if (pedidoError) {
+              toast({ title: "Erro ao gerar pedido", description: pedidoError.message, variant: "destructive" });
+            } else {
+              toast({ title: "Pedido gerado", description: `Pedido #${nextNum} criado automaticamente a partir do orçamento ${orc.numero}.` });
+            }
+          } catch (e: any) {
+            toast({ title: "Erro ao gerar pedido", description: e.message, variant: "destructive" });
+          }
+        }
       },
     });
   };
