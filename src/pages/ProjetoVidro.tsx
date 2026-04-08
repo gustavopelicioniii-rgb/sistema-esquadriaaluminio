@@ -981,17 +981,7 @@ const ProjetoVidroPage = () => {
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary">
-                          {/* Aluminum frame */}
-                          <rect x="2" y="2" width="20" height="20" rx="1" stroke="currentColor" strokeWidth="1.8" />
-                          <rect x="4" y="4" width="16" height="16" rx="0.5" stroke="currentColor" strokeWidth="0.8" />
-                          {/* Center mullion */}
-                          <rect x="11" y="4" width="2" height="16" fill="currentColor" opacity="0.5" />
-                          {/* Glass fills */}
-                          <rect x="4.5" y="4.5" width="6.5" height="15" rx="0.3" fill="hsl(var(--primary))" opacity="0.15" />
-                          <rect x="13" y="4.5" width="6.5" height="15" rx="0.3" fill="hsl(var(--primary))" opacity="0.15" />
-                          {/* Arrows */}
-                          <path d="M6 12.5 L9 11 L9 14 Z" fill="currentColor" opacity="0.45" />
-                          <path d="M18 12.5 L15 11 L15 14 Z" fill="currentColor" opacity="0.45" />
+                          {getGlassSvgElements(projeto.tipo, "sm")}
                         </svg>
                       </div>
                       <div className="min-w-0">
