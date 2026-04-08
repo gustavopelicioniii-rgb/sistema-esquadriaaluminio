@@ -7,6 +7,7 @@ interface VidroItem {
   larguraMm: number;
   alturaMm: number;
   quantidade: number;
+  observacao?: string;
 }
 
 interface ProjetoVidro {
@@ -16,6 +17,7 @@ interface ProjetoVidro {
   espessura: string;
   cor: string;
   precoM2: number;
+  areaMinimaM2?: number;
   itens: VidroItem[];
   criadoEm: string;
 }
@@ -24,15 +26,21 @@ function calcAreaM2(largMm: number, altMm: number): number {
   return (largMm * altMm) / 1_000_000;
 }
 
+function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): number {
+  const real = calcAreaM2(largMm, altMm);
+  return areaMinimaM2 > 0 ? Math.max(real, areaMinimaM2) : real;
+}
+
 export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const W = 210;
   const M = 15;
   const CW = W - M * 2;
   let y = M;
+  const areaMin = projeto.areaMinimaM2 ?? 0;
 
   const areaTotal = projeto.itens.reduce(
-    (sum, it) => sum + calcAreaM2(it.larguraMm, it.alturaMm) * it.quantidade,
+    (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, areaMin) * it.quantidade,
     0
   );
   const valorTotal = areaTotal * projeto.precoM2;
@@ -59,7 +67,8 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(100, 100, 100);
-  const specs = `Tipo: ${projeto.tipo}  |  Espessura: ${projeto.espessura}  |  Cor: ${projeto.cor}  |  Criado: ${projeto.criadoEm}`;
+  let specs = `Tipo: ${projeto.tipo}  |  Espessura: ${projeto.espessura}  |  Cor: ${projeto.cor}  |  Criado: ${projeto.criadoEm}`;
+  if (areaMin > 0) specs += `  |  Área mín: ${areaMin} m²`;
   pdf.text(specs, M, y);
   y += 10;
 
@@ -97,12 +106,13 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
     pdf.setFont("helvetica", "bold");
 
     const cols = [
-      { label: "DESCRICAO", x: M + 2, w: 60 },
-      { label: "LARGURA (mm)", x: M + 64, w: 28 },
-      { label: "ALTURA (mm)", x: M + 94, w: 28 },
-      { label: "QTD", x: M + 124, w: 16 },
-      { label: "AREA (m2)", x: M + 142, w: 22 },
-      { label: "VALOR", x: M + 166, w: 14 },
+      { label: "DESCRICAO", x: M + 2, w: 52 },
+      { label: "LARG (mm)", x: M + 56, w: 22 },
+      { label: "ALT (mm)", x: M + 80, w: 22 },
+      { label: "QTD", x: M + 104, w: 12 },
+      { label: "AREA (m2)", x: M + 118, w: 22 },
+      { label: "VALOR", x: M + 142, w: 20 },
+      { label: "OBS", x: M + 164, w: 16 },
     ];
 
     cols.forEach((col) => {
@@ -121,9 +131,12 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
         y = M;
       }
 
-      const area = calcAreaM2(item.larguraMm, item.alturaMm) * item.quantidade;
-      const valor = area * projeto.precoM2;
-      const rowH = 8;
+      const areaReal = calcAreaM2(item.larguraMm, item.alturaMm);
+      const areaEfetiva = calcAreaEfetiva(item.larguraMm, item.alturaMm, areaMin);
+      const areaTotalItem = areaEfetiva * item.quantidade;
+      const valor = areaTotalItem * projeto.precoM2;
+      const isMinApplied = areaMin > 0 && areaReal < areaMin;
+      const rowH = item.observacao ? 12 : 8;
 
       if (idx % 2 === 0) {
         pdf.setFillColor(249, 250, 251);
@@ -131,13 +144,27 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
       }
 
       pdf.setTextColor(50, 50, 50);
-      pdf.text(item.descricao.substring(0, 30), cols[0].x, y + 5.5);
+      pdf.text(item.descricao.substring(0, 26), cols[0].x, y + 5.5);
       pdf.text(String(item.larguraMm), cols[1].x, y + 5.5);
       pdf.text(String(item.alturaMm), cols[2].x, y + 5.5);
       pdf.text(String(item.quantidade), cols[3].x, y + 5.5);
-      pdf.text(area.toFixed(2), cols[4].x, y + 5.5);
+
+      if (isMinApplied) {
+        pdf.setTextColor(180, 130, 0);
+        pdf.text(`${areaTotalItem.toFixed(2)}*`, cols[4].x, y + 5.5);
+      } else {
+        pdf.text(areaTotalItem.toFixed(2), cols[4].x, y + 5.5);
+      }
+
       pdf.setTextColor(59, 130, 246);
       pdf.text(formatCurrency(valor), cols[5].x, y + 5.5);
+
+      if (item.observacao) {
+        pdf.setTextColor(130, 130, 130);
+        pdf.setFontSize(7);
+        pdf.text(item.observacao.substring(0, 40), cols[0].x, y + 10);
+        pdf.setFontSize(9);
+      }
 
       y += rowH;
     });
@@ -149,7 +176,9 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
 
     pdf.setTextColor(100, 100, 100);
     pdf.setFontSize(9);
-    pdf.text(`${projeto.itens.length} vidro(s)  •  ${areaTotal.toFixed(2)} m2 total`, M, y + 3);
+    let footerText = `${projeto.itens.length} vidro(s)  •  ${areaTotal.toFixed(2)} m2 total`;
+    if (areaMin > 0) footerText += `  •  * = área mínima aplicada (${areaMin} m²)`;
+    pdf.text(footerText, M, y + 3);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(59, 130, 246);
     pdf.setFontSize(11);
