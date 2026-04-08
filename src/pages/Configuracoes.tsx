@@ -74,7 +74,7 @@ interface ApiConfig {
 // ─── Component ───
 const Configuracoes = () => {
   usePageTitle("Configurações");
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const isAdmin = role === "admin";
   const [config, setConfig] = useState<Record<string, string>>(defaultConfig);
   const [folgas, setFolgas] = useState(defaultFolgas);
