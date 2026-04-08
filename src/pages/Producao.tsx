@@ -213,7 +213,7 @@ const Producao = () => {
               ]),
               filename: "producao",
             })} />
-            <Button size="sm" className="gap-1.5 sm:gap-2" onClick={handleNovoPedido}>
+            <Button size="sm" className="gap-1.5 sm:gap-2" onClick={() => setNovoPedidoOpen(true)}>
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Novo Pedido</span>
               <span className="sm:hidden">Novo</span>
@@ -294,7 +294,7 @@ const Producao = () => {
             {/* Actions */}
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">AÇÕES</p>
-              <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline" onClick={handleNovoPedido}>
+              <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline" onClick={() => setNovoPedidoOpen(true)}>
                 <Plus className="h-3.5 w-3.5" /> Novo pedido
               </button>
             </div>
