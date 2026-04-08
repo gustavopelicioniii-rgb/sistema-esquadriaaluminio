@@ -23,6 +23,7 @@ export type Database = {
           nome: string
           role: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           ativo?: boolean
@@ -32,6 +33,7 @@ export type Database = {
           nome: string
           role?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           ativo?: boolean
@@ -41,6 +43,7 @@ export type Database = {
           nome?: string
           role?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -54,6 +57,7 @@ export type Database = {
           responsavel: string | null
           titulo: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -64,6 +68,7 @@ export type Database = {
           responsavel?: string | null
           titulo: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -74,6 +79,7 @@ export type Database = {
           responsavel?: string | null
           titulo?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -154,6 +160,7 @@ export type Database = {
           orcamentos_count: number
           telefone: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           cidade?: string | null
@@ -165,6 +172,7 @@ export type Database = {
           orcamentos_count?: number
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           cidade?: string | null
@@ -176,6 +184,7 @@ export type Database = {
           orcamentos_count?: number
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -185,6 +194,7 @@ export type Database = {
           created_at: string
           id: string
           updated_at: string
+          user_id: string | null
           valor: string
         }
         Insert: {
@@ -192,6 +202,7 @@ export type Database = {
           created_at?: string
           id?: string
           updated_at?: string
+          user_id?: string | null
           valor?: string
         }
         Update: {
@@ -199,6 +210,7 @@ export type Database = {
           created_at?: string
           id?: string
           updated_at?: string
+          user_id?: string | null
           valor?: string
         }
         Relationships: []
@@ -213,6 +225,7 @@ export type Database = {
           status: string
           tipo: string
           updated_at: string
+          user_id: string | null
           valor: number
           vencimento: string
         }
@@ -225,6 +238,7 @@ export type Database = {
           status?: string
           tipo?: string
           updated_at?: string
+          user_id?: string | null
           valor?: number
           vencimento?: string
         }
@@ -237,6 +251,7 @@ export type Database = {
           status?: string
           tipo?: string
           updated_at?: string
+          user_id?: string | null
           valor?: number
           vencimento?: string
         }
@@ -253,6 +268,7 @@ export type Database = {
           status: string
           telefone: string | null
           updated_at: string
+          user_id: string | null
           valor: number
         }
         Insert: {
@@ -265,6 +281,7 @@ export type Database = {
           status?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
           valor?: number
         }
         Update: {
@@ -277,6 +294,7 @@ export type Database = {
           status?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
           valor?: number
         }
         Relationships: []
@@ -292,6 +310,7 @@ export type Database = {
           quantidade: number
           unidade: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           categoria?: string
@@ -303,6 +322,7 @@ export type Database = {
           quantidade?: number
           unidade?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           categoria?: string
@@ -314,6 +334,7 @@ export type Database = {
           quantidade?: number
           unidade?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -327,6 +348,7 @@ export type Database = {
           setor: string
           telefone: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           ativo?: boolean
@@ -337,6 +359,7 @@ export type Database = {
           setor?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           ativo?: boolean
@@ -347,6 +370,7 @@ export type Database = {
           setor?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -378,6 +402,7 @@ export type Database = {
           orcamento_id: string
           status_anterior: string | null
           status_novo: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -385,6 +410,7 @@ export type Database = {
           orcamento_id: string
           status_anterior?: string | null
           status_novo: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -392,12 +418,14 @@ export type Database = {
           orcamento_id?: string
           status_anterior?: string | null
           status_novo?: string
+          user_id?: string | null
         }
         Relationships: []
       }
       orcamentos: {
         Row: {
           cliente: string
+          cliente_id: string | null
           created_at: string
           data: string
           id: string
@@ -406,10 +434,12 @@ export type Database = {
           produto: string
           status: string
           updated_at: string
+          user_id: string | null
           valor: number
         }
         Insert: {
           cliente: string
+          cliente_id?: string | null
           created_at?: string
           data?: string
           id?: string
@@ -418,10 +448,12 @@ export type Database = {
           produto: string
           status?: string
           updated_at?: string
+          user_id?: string | null
           valor?: number
         }
         Update: {
           cliente?: string
+          cliente_id?: string | null
           created_at?: string
           data?: string
           id?: string
@@ -430,9 +462,18 @@ export type Database = {
           produto?: string
           status?: string
           updated_at?: string
+          user_id?: string | null
           valor?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orcamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pagamentos: {
         Row: {
@@ -660,6 +701,7 @@ export type Database = {
         Row: {
           anotacao: string | null
           cliente: string
+          cliente_id: string | null
           created_at: string
           dias_restantes: number | null
           endereco: string | null
@@ -671,12 +713,14 @@ export type Database = {
           status: string
           telefone: string | null
           updated_at: string
+          user_id: string | null
           valor: number
           vendedor: string | null
         }
         Insert: {
           anotacao?: string | null
           cliente: string
+          cliente_id?: string | null
           created_at?: string
           dias_restantes?: number | null
           endereco?: string | null
@@ -688,12 +732,14 @@ export type Database = {
           status?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
           valor?: number
           vendedor?: string | null
         }
         Update: {
           anotacao?: string | null
           cliente?: string
+          cliente_id?: string | null
           created_at?: string
           dias_restantes?: number | null
           endereco?: string | null
@@ -705,10 +751,19 @@ export type Database = {
           status?: string
           telefone?: string | null
           updated_at?: string
+          user_id?: string | null
           valor?: number
           vendedor?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pedidos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       planos_corte: {
         Row: {
@@ -760,6 +815,7 @@ export type Database = {
           preco: number
           unidade: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           ativo?: boolean
@@ -771,6 +827,7 @@ export type Database = {
           preco?: number
           unidade?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           ativo?: boolean
@@ -782,6 +839,7 @@ export type Database = {
           preco?: number
           unidade?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
