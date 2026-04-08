@@ -30,7 +30,7 @@ const menuItems = [
   { title: "Projeto vidro", url: "/projeto-vidro", icon: Monitor },
   { title: "Agenda", url: "/agenda", icon: CalendarDays },
   { title: "Produtos", url: "/produtos", icon: ShoppingBag },
-  { title: "Preço dos itens", url: "/preco-itens", icon: DollarSign },
+  
   { title: "Estoque", url: "/estoque", icon: Package, badgeKey: "estoque" as const },
   { title: "Financeiro", url: "/financeiro", icon: DollarSign, badgeKey: "pagamento" as const },
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
