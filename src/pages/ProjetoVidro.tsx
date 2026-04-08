@@ -136,9 +136,7 @@ function getGlassSvgElements(tipo: string, size: "sm" | "md" | "lg" = "md") {
     </>
   );
 }
-  const real = calcAreaM2(largMm, altMm);
-  return areaMinimaM2 > 0 ? Math.max(real, areaMinimaM2) : real;
-}
+
 
 // DB helpers
 async function fetchProjetos(): Promise<ProjetoVidro[]> {
