@@ -1036,12 +1036,8 @@ const ProjetoVidroPage = () => {
             })();
 
             return (
-              <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg"}`}>
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={() => toggleSelect(projeto.id)}
-                  className="absolute right-4 top-4 z-10 bg-background/90"
-                />
+              <Card key={projeto.id} className="group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg">
+
 
                 <CardContent className="p-4">
                   <div className="flex items-start gap-4">
