@@ -19,6 +19,7 @@ import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
 import EditarServicoDialog from "@/components/producao/EditarServicoDialog";
+import NovoPedidoDialog from "@/components/producao/NovoPedidoDialog";
 
 export interface Pedido {
   id: string;
@@ -176,26 +177,8 @@ const Producao = () => {
     fetchPedidos();
   };
 
-  const handleNovoPedido = async () => {
-    const maxNum = pedidos.length > 0 ? Math.max(...pedidos.map(p => p.pedido_num)) : 0;
-    const { error } = await supabase.from("pedidos").insert({
-      pedido_num: maxNum + 1,
-      cliente: "Novo Cliente",
-      endereco: "",
-      telefone: "",
-      vendedor: "",
-      valor: 0,
-      status: "em_andamento",
-      dias_restantes: 30,
-      etapa: "Orçamento",
-    } as any);
-    if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Pedido criado", description: `Pedido ${maxNum + 1} criado.` });
-    fetchPedidos();
-  };
+  const [novoPedidoOpen, setNovoPedidoOpen] = useState(false);
+  const nextPedidoNum = pedidos.length > 0 ? Math.max(...pedidos.map(p => p.pedido_num)) + 1 : 1;
 
   if (detailPedido) {
     return (
