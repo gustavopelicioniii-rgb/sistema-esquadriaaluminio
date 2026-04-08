@@ -77,14 +77,20 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
  *  sm = viewBox 0 0 24 24, md = viewBox 0 0 100 100, lg = viewBox 0 0 48 48
  */
 type GlassSvgSize = "sm" | "md" | "lg";
-type GlassVariant = "comum" | "temperado" | "laminado" | "temperado-laminado" | "insulado";
+type GlassVariant = "comum" | "temperado" | "laminado" | "temperado-laminado" | "insulado" | "veneziana" | "pivotante" | "maxim-ar" | "serigrafado" | "espelhado" | "acidato";
 
 function getGlassVariant(tipo: string): GlassVariant {
   const t = tipo.toLowerCase();
   if (t.includes("temperado") && t.includes("laminado")) return "temperado-laminado";
+  if (t.includes("veneziana")) return "veneziana";
+  if (t.includes("pivotante")) return "pivotante";
+  if (t.includes("maxim")) return "maxim-ar";
   if (t.includes("insulado")) return "insulado";
   if (t.includes("laminado")) return "laminado";
   if (t.includes("temperado")) return "temperado";
+  if (t.includes("serigrafado")) return "serigrafado";
+  if (t.includes("espelhado")) return "espelhado";
+  if (t.includes("acidato")) return "acidato";
   return "comum";
 }
 
