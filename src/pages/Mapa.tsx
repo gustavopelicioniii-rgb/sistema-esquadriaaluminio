@@ -1,27 +1,41 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, User, ExternalLink } from "lucide-react";
+import { MapPin, Phone, User, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePageTitle } from "@/hooks/use-page-title";
-
-const locais = [
-  { nome: "Igor Soares de Souza", endereco: "Rua Teste, 1234, Caieiras, SP", telefone: "(11) 9602-2000", tipo: "Cliente" },
-  { nome: "Empresa Modelo Ltda", endereco: "R. Arica Mirim, 12, São Paulo, SP", telefone: "(11) 97473-9209", tipo: "Cliente" },
-  { nome: "Maria Santos", endereco: "Av. Brasil, 567, São Paulo, SP", telefone: "(11) 98888-5678", tipo: "Cliente" },
-  { nome: "Carlos Oliveira", endereco: "Rua das Flores, 89, Rio de Janeiro, RJ", telefone: "(21) 97777-9012", tipo: "Obra" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Mapa = () => {
   usePageTitle("Mapa");
 
+  const { data: clientes = [], isLoading } = useQuery({
+    queryKey: ["clientes_mapa"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clientes")
+        .select("id, nome, endereco, telefone, cidade")
+        .order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const locais = clientes.filter((c) => c.endereco?.trim());
+
   const openMaps = (endereco: string) => {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`, "_blank");
+    window.open(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`,
+      "_blank"
+    );
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Mapa</h1>
-        <p className="text-muted-foreground text-sm">Localização de clientes e obras</p>
+        <p className="text-muted-foreground text-sm">
+          Localização de clientes e obras
+        </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -38,26 +52,47 @@ const Mapa = () => {
         </div>
         <div className="space-y-3">
           <h3 className="font-semibold text-sm">Locais cadastrados</h3>
-          {locais.map((local, i) => (
-            <Card key={i} className="shadow-sm border-border/50 hover:shadow-md transition-shadow">
+          {isLoading && (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          )}
+          {!isLoading && locais.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Nenhum cliente com endereço cadastrado.
+            </p>
+          )}
+          {locais.map((local) => (
+            <Card
+              key={local.id}
+              className="shadow-sm border-border/50 hover:shadow-md transition-shadow"
+            >
               <CardContent className="p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-sm font-medium">
                     <User className="h-3 w-3 text-primary" />
                     {local.nome}
                   </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openMaps(local.endereco)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => openMaps(local.endereco!)}
+                  >
                     <ExternalLink className="h-3 w-3" />
                   </Button>
                 </div>
                 <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
                   <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
                   {local.endereco}
+                  {local.cidade ? `, ${local.cidade}` : ""}
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Phone className="h-3 w-3" />
-                  {local.telefone}
-                </div>
+                {local.telefone && (
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Phone className="h-3 w-3" />
+                    {local.telefone}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
