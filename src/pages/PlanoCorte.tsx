@@ -378,13 +378,17 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                     {result.cuts.map((cut) => (
                       <TableRow key={cut.cut_rule_id}>
                         <TableCell>
-                          <div>
-                            <span className="font-bold text-xs">{cut.profile_code}</span>
-                            <p className="text-[10px] text-muted-foreground">{cut.piece_name}</p>
-                            {/* Mobile-only extra info */}
-                            <div className="flex gap-2 sm:hidden text-[10px] text-muted-foreground mt-0.5">
-                              <span>×{cut.quantity}</span>
-                              <span>{cut.weight_kg.toFixed(2)}kg</span>
+                          <div className="flex items-center gap-2.5">
+                            <div className="shrink-0 w-9 h-9 rounded-md bg-muted/50 flex items-center justify-center text-primary">
+                              <ProfileCrossSection profileType={cut.piece_function || cut.piece_name} profileCode={cut.profile_code} size={32} />
+                            </div>
+                            <div>
+                              <span className="font-bold text-xs">{cut.profile_code}</span>
+                              <p className="text-[10px] text-muted-foreground">{cut.piece_name}</p>
+                              <div className="flex gap-2 sm:hidden text-[10px] text-muted-foreground mt-0.5">
+                                <span>×{cut.quantity}</span>
+                                <span>{cut.weight_kg.toFixed(2)}kg</span>
+                              </div>
                             </div>
                           </div>
                         </TableCell>
