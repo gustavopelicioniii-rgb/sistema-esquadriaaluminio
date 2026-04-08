@@ -417,6 +417,12 @@ const Producao = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <NovoPedidoDialog
+          open={novoPedidoOpen}
+          onClose={() => { setNovoPedidoOpen(false); fetchPedidos(); }}
+          nextNum={nextPedidoNum}
+        />
       </div>
     </PullToRefresh>
   );
