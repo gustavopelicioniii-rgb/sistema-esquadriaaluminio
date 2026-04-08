@@ -969,22 +969,10 @@ const ProjetoVidroPage = () => {
 
             return (
               <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5"}`}>
-                {/* Glass SVG watermark — aluminum frame style */}
+                {/* Glass SVG watermark — varies by type */}
                 <div className="absolute -top-2 -right-2 opacity-[0.07] pointer-events-none">
                   <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                    {/* Outer aluminum frame */}
-                    <rect x="8" y="8" width="84" height="84" rx="1" stroke="currentColor" strokeWidth="4" />
-                    {/* Inner frame rebate */}
-                    <rect x="14" y="14" width="72" height="72" rx="1" stroke="currentColor" strokeWidth="2" />
-                    {/* Center mullion */}
-                    <rect x="47" y="14" width="6" height="72" fill="currentColor" opacity="0.6" />
-                    {/* Glass panels — left */}
-                    <rect x="16" y="16" width="30" height="68" fill="currentColor" opacity="0.15" />
-                    {/* Glass panels — right */}
-                    <rect x="54" y="16" width="30" height="68" fill="currentColor" opacity="0.15" />
-                    {/* Sliding arrows */}
-                    <path d="M26 52 L36 48 L36 56 Z" fill="currentColor" opacity="0.4" />
-                    <path d="M74 52 L64 48 L64 56 Z" fill="currentColor" opacity="0.4" />
+                    {getGlassSvgElements(projeto.tipo, "md")}
                   </svg>
                 </div>
 
