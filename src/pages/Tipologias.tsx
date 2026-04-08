@@ -112,10 +112,18 @@ const Tipologias = () => {
 
   // Filtered catalog typologies
   const filteredCatalog = catalogTypologies.filter(t => {
-    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || (t.id && t.id.toLowerCase().includes(search.toLowerCase()));
     const matchLine = filterLine === "all" || t.product_line_id === filterLine;
-    return matchSearch && matchLine;
+    const matchCategory = !filterCategory || t.category === filterCategory;
+    const matchSubcategory = !filterSubcategory || t.subcategory === filterSubcategory;
+    const matchFolhas = !filterFolhas || t.num_folhas === filterFolhas;
+    return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas;
   });
+
+  // Unique values for sidebar filters
+  const uniqueCategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.category))], []);
+  const uniqueSubcategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.subcategory).filter(Boolean))], []);
+  const uniqueFolhas = useMemo(() => [...new Set(catalogTypologies.map(t => t.num_folhas))].sort((a, b) => a - b), []);
 
   // Filtered custom typologies
   const filteredCustom = customs.filter(t => {
