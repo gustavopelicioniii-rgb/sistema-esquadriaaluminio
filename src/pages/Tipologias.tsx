@@ -89,6 +89,8 @@ const Tipologias = () => {
   const [filterFolhas, setFilterFolhas] = useState<number | null>(null);
   const [filterVeneziana, setFilterVeneziana] = useState<boolean | null>(null);
   const [filterBandeira, setFilterBandeira] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
 
   // Custom typologies
   const [customs, setCustoms] = useState<CustomTypology[]>([]);
