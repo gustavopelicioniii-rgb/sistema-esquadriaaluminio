@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FramePreview } from "@/components/frame-preview";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Scissors, GlassWater, Package, Ruler } from "lucide-react";
+import { Scissors, GlassWater, Package, Ruler, FileDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { generateTypologyDetailPdf } from "@/utils/typologyDetailPdfGenerator";
 import type { Typology } from "@/types/calculation";
 
 interface Props {
