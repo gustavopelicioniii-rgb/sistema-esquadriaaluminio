@@ -15,6 +15,62 @@ const MID = [100, 100, 100] as const;
 const LIGHT = [180, 180, 180] as const;
 const HEADER_GREEN = [0, 100, 0] as const;
 
+// ═══════════ PROFILE CROSS-SECTION DRAWING ═══════════
+function drawProfileIcon(pdf: jsPDF, type: string, code: string, cx: number, cy: number, s: number) {
+  const sc = s / 40; // scale factor relative to 40x40 viewBox
+  const ox = cx - s / 2;
+  const oy = cy - s / 2;
+  const x = (v: number) => ox + v * sc;
+  const y = (v: number) => oy + v * sc;
+
+  pdf.setDrawColor(...DARK);
+  pdf.setLineWidth(0.3);
+
+  const t = type.toLowerCase();
+  const c = code.toUpperCase();
+
+  if (t === "marco" && (c.includes("010") || c.includes("SUPERIOR"))) {
+    // U channel
+    pdf.line(x(8), y(30), x(8), y(10));
+    pdf.line(x(8), y(10), x(32), y(10));
+    pdf.line(x(32), y(10), x(32), y(30));
+    pdf.line(x(6), y(10), x(12), y(10));
+    pdf.line(x(28), y(10), x(34), y(10));
+  } else if (t === "trilho") {
+    pdf.rect(x(6), y(24), 28 * sc, 6 * sc);
+    pdf.line(x(14), y(24), x(14), y(18));
+    pdf.line(x(26), y(24), x(26), y(18));
+    pdf.line(x(12), y(18), x(16), y(18));
+    pdf.line(x(24), y(18), x(28), y(18));
+  } else if (t === "marco") {
+    pdf.rect(x(10), y(6), 8 * sc, 28 * sc);
+    pdf.line(x(18), y(10), x(30), y(10));
+    pdf.line(x(18), y(30), x(30), y(30));
+  } else if (t === "montante") {
+    pdf.rect(x(10), y(6), 6 * sc, 28 * sc);
+    pdf.rect(x(24), y(6), 6 * sc, 28 * sc);
+    pdf.line(x(16), y(20), x(24), y(20));
+  } else if (t === "travessa") {
+    pdf.rect(x(6), y(14), 28 * sc, 12 * sc);
+    pdf.setLineDashPattern([1, 1], 0);
+    pdf.line(x(10), y(20), x(30), y(20));
+    pdf.setLineDashPattern([], 0);
+  } else if (t === "baguete") {
+    pdf.roundedRect(x(12), y(14), 16 * sc, 12 * sc, 4 * sc, 4 * sc);
+  } else if (t === "contramarco") {
+    pdf.line(x(28), y(8), x(10), y(8));
+    pdf.line(x(10), y(8), x(10), y(32));
+    pdf.line(x(10), y(32), x(28), y(32));
+  } else if (t === "arremate") {
+    pdf.rect(x(8), y(16), 24 * sc, 8 * sc);
+    pdf.line(x(8), y(12), x(14), y(16));
+  } else {
+    // Generic rectangular tube
+    pdf.rect(x(10), y(10), 20 * sc, 20 * sc);
+    pdf.rect(x(14), y(14), 12 * sc, 12 * sc);
+  }
+}
+
 const formatDateBR = () => {
   const d = new Date();
   const dd = String(d.getDate()).padStart(2, "0");
