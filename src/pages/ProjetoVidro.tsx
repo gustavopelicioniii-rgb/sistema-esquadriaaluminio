@@ -1015,7 +1015,7 @@ const ProjetoVidroPage = () => {
               (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
             );
             const valorTotal = areaTotal * projeto.precoM2;
-            const isSelected = selectedIds.has(projeto.id);
+            
 
             const tipoBadgeClass = (() => {
               const t = projeto.tipo.toLowerCase();
