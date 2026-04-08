@@ -95,6 +95,7 @@ const Tipologias = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [rulesTypology, setRulesTypology] = useState<CustomTypology | null>(null);
+  const [detailTypology, setDetailTypology] = useState<typeof catalogTypologies[0] | null>(null);
 
   const fetchCustoms = async () => {
     const { data } = await supabase.from("tipologias_customizadas").select("*").order("created_at", { ascending: false });
