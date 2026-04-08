@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
+import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
 import ProfileCrossSectionPanel from "@/components/frame-preview/ProfileCrossSectionPanel";
 import { getColorById } from "@/components/frame-preview/colors";
