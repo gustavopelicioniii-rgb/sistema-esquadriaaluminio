@@ -17,6 +17,19 @@ import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  VidroInteiro, Vidro1DivVertical, Vidro2DivVerticais,
+  VidroGrade4, VidroGrade6, VidroBandeiraSuperior,
+  VidroTravessaCentral, VidroAssimetrico, VidroGradeMultipla,
+} from "@/components/tipologias/vidro-svgs";
+
+const glassVariantToSvg: Record<string, React.FC> = {
+  "comum": VidroInteiro,
+  "temperado": VidroGrade4,
+  "laminado": Vidro2DivVerticais,
+  "temperado-laminado": VidroGrade6,
+  "insulado": Vidro1DivVertical,
+};
 
 // Types
 interface VidroItem {
