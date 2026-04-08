@@ -884,12 +884,22 @@ const ProjetoVidroPage = () => {
 
             return (
               <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5"}`}>
-                {/* Glass SVG watermark */}
-                <div className="absolute -top-4 -right-4 opacity-[0.04] pointer-events-none">
+                {/* Glass SVG watermark — aluminum frame style */}
+                <div className="absolute -top-2 -right-2 opacity-[0.07] pointer-events-none">
                   <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                    <rect x="10" y="10" width="80" height="80" rx="2" stroke="currentColor" strokeWidth="3" />
-                    <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
-                    <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                    {/* Outer aluminum frame */}
+                    <rect x="8" y="8" width="84" height="84" rx="1" stroke="currentColor" strokeWidth="4" />
+                    {/* Inner frame rebate */}
+                    <rect x="14" y="14" width="72" height="72" rx="1" stroke="currentColor" strokeWidth="2" />
+                    {/* Center mullion */}
+                    <rect x="47" y="14" width="6" height="72" fill="currentColor" opacity="0.6" />
+                    {/* Glass panels — left */}
+                    <rect x="16" y="16" width="30" height="68" fill="currentColor" opacity="0.15" />
+                    {/* Glass panels — right */}
+                    <rect x="54" y="16" width="30" height="68" fill="currentColor" opacity="0.15" />
+                    {/* Sliding arrows */}
+                    <path d="M26 52 L36 48 L36 56 Z" fill="currentColor" opacity="0.4" />
+                    <path d="M74 52 L64 48 L64 56 Z" fill="currentColor" opacity="0.4" />
                   </svg>
                 </div>
 
@@ -897,10 +907,18 @@ const ProjetoVidroPage = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-primary">
-                          <rect x="3" y="3" width="18" height="18" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1" opacity="0.4" />
-                          <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary">
+                          {/* Aluminum frame */}
+                          <rect x="2" y="2" width="20" height="20" rx="1" stroke="currentColor" strokeWidth="1.8" />
+                          <rect x="4" y="4" width="16" height="16" rx="0.5" stroke="currentColor" strokeWidth="0.8" />
+                          {/* Center mullion */}
+                          <rect x="11" y="4" width="2" height="16" fill="currentColor" opacity="0.5" />
+                          {/* Glass fills */}
+                          <rect x="4.5" y="4.5" width="6.5" height="15" rx="0.3" fill="hsl(var(--primary))" opacity="0.15" />
+                          <rect x="13" y="4.5" width="6.5" height="15" rx="0.3" fill="hsl(var(--primary))" opacity="0.15" />
+                          {/* Arrows */}
+                          <path d="M6 12.5 L9 11 L9 14 Z" fill="currentColor" opacity="0.45" />
+                          <path d="M18 12.5 L15 11 L15 14 Z" fill="currentColor" opacity="0.45" />
                         </svg>
                       </div>
                       <div className="min-w-0">
@@ -944,12 +962,18 @@ const ProjetoVidroPage = () => {
       {!loading && filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/5 mb-5">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-primary/40">
-              <rect x="2" y="2" width="20" height="20" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-              <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="1" />
-              <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="1" />
-              <line x1="7" y1="2" x2="7" y2="22" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
-              <line x1="17" y1="2" x2="17" y2="22" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+            <svg width="44" height="44" viewBox="0 0 48 48" fill="none" className="text-primary/40">
+              {/* Outer frame */}
+              <rect x="4" y="4" width="40" height="40" rx="1.5" stroke="currentColor" strokeWidth="3" />
+              <rect x="7" y="7" width="34" height="34" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              {/* Center mullion */}
+              <rect x="22" y="7" width="4" height="34" fill="currentColor" opacity="0.4" />
+              {/* Glass panels */}
+              <rect x="8" y="8" width="14" height="32" rx="0.5" fill="currentColor" opacity="0.12" />
+              <rect x="26" y="8" width="14" height="32" rx="0.5" fill="currentColor" opacity="0.12" />
+              {/* Arrows */}
+              <path d="M12 25 L17 22 L17 28 Z" fill="currentColor" opacity="0.35" />
+              <path d="M36 25 L31 22 L31 28 Z" fill="currentColor" opacity="0.35" />
             </svg>
           </div>
           <h3 className="text-base font-semibold text-foreground mb-1">Nenhum projeto encontrado</h3>
