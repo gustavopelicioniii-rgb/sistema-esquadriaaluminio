@@ -504,10 +504,8 @@ function ProjetoDetalhe({
 
       <Card>
         <CardContent className="p-4 sm:p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Monitor className="h-6 w-6 text-primary" />
-            </div>
+          <div className="flex items-start gap-5">
+            <GlassPreviewTile tipo={projeto.tipo} />
             <div className="flex-1 min-w-0">
               <h2 className="text-lg font-bold">{projeto.titulo}</h2>
               <div className="flex flex-wrap gap-2 mt-2">
@@ -536,9 +534,6 @@ function ProjetoDetalhe({
           </div>
         </CardContent>
       </Card>
-
-      {/* Visual Preview */}
-      <VidroVisualPreview itens={projeto.itens} areaMinimaM2={projeto.areaMinimaM2} />
 
       <Card>
         <CardHeader className="pb-2 flex flex-row items-center justify-between">
