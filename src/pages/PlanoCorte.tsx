@@ -241,12 +241,12 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
         <div className="flex gap-2">
           {result && (
             <>
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPDF}>
-                <FileDown className="h-4 w-4" /> Rel. Barras
-              </Button>
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPadroes}>
-                <FileDown className="h-4 w-4" /> Padrões Corte
-              </Button>
+               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPDF}>
+                 <Eye className="h-4 w-4" /> Rel. Barras
+               </Button>
+               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPadroes}>
+                 <Eye className="h-4 w-4" /> Padrões Corte
+               </Button>
             </>
           )}
           <Button size="sm" className="gap-2" onClick={handleSave}>
