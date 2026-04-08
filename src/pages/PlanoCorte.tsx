@@ -308,6 +308,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {originalCutRules.map(rule => (
                       <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-primary">
+                          <ProfileCrossSection profileType={rule.piece_function || rule.piece_name} profileCode={rule.profile_code ?? ''} size={24} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold truncate">{rule.profile_code}</p>
                           <p className="text-[10px] text-muted-foreground truncate">{rule.piece_name}</p>
@@ -325,6 +328,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {originalGlassRules.map(rule => (
                       <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-primary">
+                          <ProfileCrossSection profileType="vidro" profileCode="" size={24} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold truncate">{rule.glass_name}</p>
                         </div>
