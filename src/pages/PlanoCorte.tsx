@@ -12,7 +12,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, Trash2, Boxes, Scissors, Weight, BarChart3 } from "lucide-react";
+import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, Trash2, Boxes, Scissors, Weight, BarChart3, Eye } from "lucide-react";
+import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
