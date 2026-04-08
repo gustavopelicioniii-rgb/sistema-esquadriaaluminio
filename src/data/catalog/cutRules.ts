@@ -792,6 +792,7 @@ const decampL45CutRules: CutRule[] = [
 ];
 
 import { pratic20CutRules, pratic32CutRules } from "./cutRulesPratic";
+import { perfettaCutRules } from "./cutRulesPerfetta";
 
 export const cutRules: CutRule[] = [
   ...supremaCutRules,
@@ -800,6 +801,7 @@ export const cutRules: CutRule[] = [
   ...decampL45CutRules,
   ...pratic20CutRules,
   ...pratic32CutRules,
+  ...perfettaCutRules,
   ...cloned25CutRules,
   ...cloned32CutRules,
   ...cloned40CutRules,

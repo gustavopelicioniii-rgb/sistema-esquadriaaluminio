@@ -185,6 +185,26 @@ const decampP32Typologies: Typology[] = [
 ];
 
 // ============================================
+// 9 TIPOLOGIAS CENTENÁRIO PERFETTA 45
+// ============================================
+const perfettaTypologies: Typology[] = [
+  // Janelas de Correr
+  { id: "typ-cpf-jc2f", product_line_id: "line-cent-perfetta", name: "Janela de Correr 2 Folhas", category: "janela", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 4500, min_height_mm: 400, max_height_mm: 2800 },
+  { id: "typ-cpf-jc4f", product_line_id: "line-cent-perfetta", name: "Janela de Correr 4 Folhas", category: "janela", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1200, max_width_mm: 6000, min_height_mm: 400, max_height_mm: 2800 },
+  // Portas de Correr
+  { id: "typ-cpf-pc2f", product_line_id: "line-cent-perfetta", name: "Porta de Correr 2 Folhas", category: "porta", subcategory: "correr", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1000, max_width_mm: 5500, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-cpf-pc4f", product_line_id: "line-cent-perfetta", name: "Porta de Correr 4 Folhas", category: "porta", subcategory: "correr", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 2000, max_width_mm: 6000, min_height_mm: 1900, max_height_mm: 3200 },
+  // Maxim-Ar
+  { id: "typ-cpf-jma1", product_line_id: "line-cent-perfetta", name: "Janela Maxim-Ar 1 Folha", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 300, max_width_mm: 1600, min_height_mm: 300, max_height_mm: 1400 },
+  { id: "typ-cpf-jma2", product_line_id: "line-cent-perfetta", name: "Janela Maxim-Ar 2 Folhas", category: "maxim_ar", subcategory: "maxim_ar", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 600, max_width_mm: 2800, min_height_mm: 300, max_height_mm: 1600 },
+  // Porta de Giro
+  { id: "typ-cpf-pg1f", product_line_id: "line-cent-perfetta", name: "Porta de Giro 1 Folha", category: "porta", subcategory: "giro", num_folhas: 1, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 500, max_width_mm: 1300, min_height_mm: 1900, max_height_mm: 3200 },
+  { id: "typ-cpf-pg2f", product_line_id: "line-cent-perfetta", name: "Porta de Giro 2 Folhas", category: "porta", subcategory: "giro", num_folhas: 2, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 900, max_width_mm: 2600, min_height_mm: 1900, max_height_mm: 3200 },
+  // Camarão
+  { id: "typ-cpf-jcam", product_line_id: "line-cent-perfetta", name: "Janela Camarão (Sanfonada)", category: "camarao", subcategory: "camarao", num_folhas: 4, has_veneziana: false, has_bandeira: false, active: true, min_width_mm: 1000, max_width_mm: 5500, min_height_mm: 500, max_height_mm: 2800 },
+];
+
+// ============================================
 // CLONE PARA TODAS AS LINHAS COMPATÍVEIS
 // ============================================
 interface LineClone {
@@ -254,6 +274,7 @@ export const typologies: Typology[] = [
   ...decampL45Typologies,
   ...decampP20Typologies,
   ...decampP32Typologies,
+  ...perfettaTypologies,
   ...cloned25Typologies,
   ...cloned32Typologies,
   ...cloned40Typologies,

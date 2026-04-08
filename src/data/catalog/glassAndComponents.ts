@@ -490,6 +490,57 @@ const pratic32Components: TypologyComponent[] = [
   { id: "tc-p32-jpiv-03", typology_id: "typ-p32-jpiv", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
 ];
 
+// ============================================
+// GLASS RULES - CENTENÁRIO PERFETTA 45
+// ============================================
+const perfettaGlassRules: GlassRule[] = [
+  { id: "gr-cpf-jc2f", typology_id: "typ-cpf-jc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -92, height_reference: "H", height_constant_mm: -142, quantity: 2, glass_type: "comum", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-cpf-jc4f", typology_id: "typ-cpf-jc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -92, height_reference: "H", height_constant_mm: -142, quantity: 4, glass_type: "comum" },
+  { id: "gr-cpf-pc2f", typology_id: "typ-cpf-pc2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -92, height_reference: "H", height_constant_mm: -132, quantity: 2, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-cpf-pc4f", typology_id: "typ-cpf-pc4f", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -92, height_reference: "H", height_constant_mm: -132, quantity: 4, glass_type: "temperado" },
+  { id: "gr-cpf-jma1", typology_id: "typ-cpf-jma1", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -172, height_reference: "H", height_constant_mm: -162, quantity: 1, glass_type: "temperado", min_thickness_mm: 4, max_thickness_mm: 8 },
+  { id: "gr-cpf-jma2", typology_id: "typ-cpf-jma2", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -172, height_reference: "H", height_constant_mm: -162, quantity: 2, glass_type: "temperado" },
+  { id: "gr-cpf-pg1f", typology_id: "typ-cpf-pg1f", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -142, height_reference: "H", height_constant_mm: -137, quantity: 1, glass_type: "temperado", min_thickness_mm: 6, max_thickness_mm: 10 },
+  { id: "gr-cpf-pg2f", typology_id: "typ-cpf-pg2f", glass_name: "Vidro Folha", width_reference: "L/2", width_constant_mm: -142, height_reference: "H", height_constant_mm: -137, quantity: 2, glass_type: "temperado" },
+  { id: "gr-cpf-jcam", typology_id: "typ-cpf-jcam", glass_name: "Vidro Folha", width_reference: "L/4", width_constant_mm: -92, height_reference: "H", height_constant_mm: -142, quantity: 4, glass_type: "comum" },
+];
+
+// ============================================
+// COMPONENTS - CENTENÁRIO PERFETTA 45
+// ============================================
+const perfettaComponents: TypologyComponent[] = [
+  // Correr 2F
+  { id: "tc-cpf-jc2f-01", typology_id: "typ-cpf-jc2f", component_name: "Roldana Perfetta", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-cpf-jc2f-02", typology_id: "typ-cpf-jc2f", component_name: "Fecho Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  { id: "tc-cpf-jc2f-03", typology_id: "typ-cpf-jc2f", component_name: "Escova Vedação 7x7", component_type: "vedacao", quantity_formula: "2", unit: "un", length_reference: "H", length_constant_mm: 0 },
+  // Correr 4F
+  { id: "tc-cpf-jc4f-01", typology_id: "typ-cpf-jc4f", component_name: "Roldana Perfetta", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-cpf-jc4f-02", typology_id: "typ-cpf-jc4f", component_name: "Fecho Concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Porta Correr 2F
+  { id: "tc-cpf-pc2f-01", typology_id: "typ-cpf-pc2f", component_name: "Roldana Porta Perfetta", component_type: "roldana", quantity_formula: "4", unit: "un" },
+  { id: "tc-cpf-pc2f-02", typology_id: "typ-cpf-pc2f", component_name: "Puxador Concha", component_type: "puxador", quantity_formula: "2", unit: "un" },
+  { id: "tc-cpf-pc2f-03", typology_id: "typ-cpf-pc2f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "1", unit: "un" },
+  // Porta Correr 4F
+  { id: "tc-cpf-pc4f-01", typology_id: "typ-cpf-pc4f", component_name: "Roldana Porta Perfetta", component_type: "roldana", quantity_formula: "8", unit: "un" },
+  { id: "tc-cpf-pc4f-02", typology_id: "typ-cpf-pc4f", component_name: "Trinco Concha", component_type: "fecho", quantity_formula: "2", unit: "un" },
+  // Maxim-Ar 1F
+  { id: "tc-cpf-jma1-01", typology_id: "typ-cpf-jma1", component_name: "Braço Maxim-Ar Perfetta", component_type: "braco", quantity_formula: "2", unit: "un" },
+  { id: "tc-cpf-jma1-02", typology_id: "typ-cpf-jma1", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "1", unit: "un" },
+  // Maxim-Ar 2F
+  { id: "tc-cpf-jma2-01", typology_id: "typ-cpf-jma2", component_name: "Braço Maxim-Ar Perfetta", component_type: "braco", quantity_formula: "4", unit: "un" },
+  { id: "tc-cpf-jma2-02", typology_id: "typ-cpf-jma2", component_name: "Fecho/Trinco", component_type: "fechamento", quantity_formula: "2", unit: "un" },
+  // Porta Giro 1F
+  { id: "tc-cpf-pg1f-01", typology_id: "typ-cpf-pg1f", component_name: "Dobradiça Perfetta", component_type: "dobradica", quantity_formula: "3", unit: "un" },
+  { id: "tc-cpf-pg1f-02", typology_id: "typ-cpf-pg1f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "1", unit: "un" },
+  { id: "tc-cpf-pg1f-03", typology_id: "typ-cpf-pg1f", component_name: "Contratesta", component_type: "contrafecho", quantity_formula: "1", unit: "un" },
+  // Porta Giro 2F
+  { id: "tc-cpf-pg2f-01", typology_id: "typ-cpf-pg2f", component_name: "Dobradiça Perfetta", component_type: "dobradica", quantity_formula: "6", unit: "un" },
+  { id: "tc-cpf-pg2f-02", typology_id: "typ-cpf-pg2f", component_name: "Maçaneta c/ espelho", component_type: "macaneta", quantity_formula: "2", unit: "un" },
+  // Camarão
+  { id: "tc-cpf-jcam-01", typology_id: "typ-cpf-jcam", component_name: "Dobradiça Camarão Perfetta", component_type: "dobradica", quantity_formula: "8", unit: "un" },
+  { id: "tc-cpf-jcam-02", typology_id: "typ-cpf-jcam", component_name: "Carrinho Camarão", component_type: "roldana", quantity_formula: "4", unit: "un" },
+];
+
 export const typologyComponents: TypologyComponent[] = [
   ...supremaComponents,
   ...goldComponents,
@@ -497,7 +548,21 @@ export const typologyComponents: TypologyComponent[] = [
   ...decampL45Components,
   ...pratic20Components,
   ...pratic32Components,
+  ...perfettaComponents,
   ...cloned25Components,
   ...cloned32Components,
   ...cloned40Components,
+];
+
+export const glassRules: GlassRule[] = [
+  ...supremaGlassRules,
+  ...goldGlassRules,
+  ...topGlassRules,
+  ...decampL45GlassRules,
+  ...pratic20GlassRules,
+  ...pratic32GlassRules,
+  ...perfettaGlassRules,
+  ...cloned25GlassRules,
+  ...cloned32GlassRules,
+  ...cloned40GlassRules,
 ];
