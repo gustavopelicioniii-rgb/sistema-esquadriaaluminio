@@ -44,6 +44,9 @@ export default function CalculoEsquadrias() {
   const [result, setResult] = useState<CalculationOutput | null>(null);
   const [barResults, setBarResults] = useState<OptimizationResult[]>([]);
   const [selectedColor, setSelectedColor] = useState("natural");
+  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
+    open: false, title: "", blobUrl: null, filename: "", loading: false,
+  });
 
   const filteredTypologies = useMemo(
     () => allTypologies.filter(t => t.product_line_id === selectedLine && t.active),
