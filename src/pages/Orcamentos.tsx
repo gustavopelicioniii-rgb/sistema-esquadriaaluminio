@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useOrcamentos, useDeleteOrcamento, useUpdateOrcamentoStatus } from "@/hooks/use-orcamentos";
 import { useOrcamentoHistorico, useAddOrcamentoHistorico } from "@/hooks/use-orcamento-historico";
 import { PullToRefresh } from "@/components/PullToRefresh";
