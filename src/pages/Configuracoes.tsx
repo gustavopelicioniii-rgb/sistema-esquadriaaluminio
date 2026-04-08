@@ -168,18 +168,19 @@ const Configuracoes = () => {
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !user) return;
     if (!file.type.startsWith("image/")) {
       toast({ title: "Arquivo inválido", description: "Selecione uma imagem.", variant: "destructive" });
       return;
     }
     setLogoUploading(true);
     const ext = file.name.split(".").pop();
-    const path = `logo.${ext}`;
+    const folder = user.id;
+    const path = `${folder}/logo.${ext}`;
     // Remove old logo files
-    const { data: existingFiles } = await supabase.storage.from("company-assets").list("", { search: "logo" });
+    const { data: existingFiles } = await supabase.storage.from("company-assets").list(folder, { search: "logo" });
     if (existingFiles && existingFiles.length > 0) {
-      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => f.name));
+      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => `${folder}/${f.name}`));
     }
     const { error: uploadErr } = await supabase.storage.from("company-assets").upload(path, file, { upsert: true });
     if (uploadErr) {
@@ -196,9 +197,11 @@ const Configuracoes = () => {
   };
 
   const handleRemoveLogo = async () => {
-    const { data: existingFiles } = await supabase.storage.from("company-assets").list("", { search: "logo" });
+    if (!user) return;
+    const folder = user.id;
+    const { data: existingFiles } = await supabase.storage.from("company-assets").list(folder, { search: "logo" });
     if (existingFiles && existingFiles.length > 0) {
-      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => f.name));
+      await supabase.storage.from("company-assets").remove(existingFiles.map((f) => `${folder}/${f.name}`));
     }
     update("logo_url", "");
     await supabase.from("configuracoes").upsert({ chave: "logo_url", valor: "" }, { onConflict: "chave" });
