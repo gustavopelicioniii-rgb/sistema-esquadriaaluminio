@@ -838,8 +838,6 @@ const ProjetoVidroPage = () => {
   const [novoOpen, setNovoOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [showSummary, setShowSummary] = useState(false);
 
   const [novoTitulo, setNovoTitulo] = useState("");
   const [novoTipo, setNovoTipo] = useState("Comum");
@@ -968,13 +966,6 @@ const ProjetoVidroPage = () => {
     await load();
   };
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
 
   if (selected) {
     const latest = projetos.find((p) => p.id === selected.id) || selected;
@@ -992,7 +983,7 @@ const ProjetoVidroPage = () => {
     );
   }
 
-  const selectedProjetos = projetos.filter((p) => selectedIds.has(p.id));
+  
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -1002,11 +993,6 @@ const ProjetoVidroPage = () => {
           <p className="text-muted-foreground text-sm">Visualize e configure projetos de vidro</p>
         </div>
         <div className="flex gap-2">
-          {selectedIds.size >= 2 && (
-            <Button variant="outline" className="gap-2" onClick={() => setShowSummary(true)}>
-              <BarChart3 className="h-4 w-4" /> Resumo ({selectedIds.size})
-            </Button>
-          )}
           <Button className="gap-2 w-full sm:w-auto" onClick={() => setNovoOpen(true)}>
             <Plus className="h-4 w-4" /> Novo Projeto
           </Button>
@@ -1029,7 +1015,7 @@ const ProjetoVidroPage = () => {
               (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
             );
             const valorTotal = areaTotal * projeto.precoM2;
-            const isSelected = selectedIds.has(projeto.id);
+            
 
             const tipoBadgeClass = (() => {
               const t = projeto.tipo.toLowerCase();
@@ -1050,12 +1036,8 @@ const ProjetoVidroPage = () => {
             })();
 
             return (
-              <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg"}`}>
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={() => toggleSelect(projeto.id)}
-                  className="absolute right-4 top-4 z-10 bg-background/90"
-                />
+              <Card key={projeto.id} className="group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg">
+
 
                 <CardContent className="p-4">
                   <div className="flex items-start gap-4">
@@ -1128,9 +1110,6 @@ const ProjetoVidroPage = () => {
         </div>
       )}
 
-      {showSummary && selectedProjetos.length >= 2 && (
-        <MultiProjetoSummary projetos={selectedProjetos} onClose={() => setShowSummary(false)} />
-      )}
 
       {/* New project dialog */}
       <Dialog open={novoOpen} onOpenChange={setNovoOpen}>
