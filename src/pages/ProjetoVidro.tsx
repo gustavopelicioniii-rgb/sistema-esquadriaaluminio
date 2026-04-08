@@ -60,7 +60,7 @@ interface ProjetoVidro {
   criadoEm: string;
 }
 
-const tiposVidro = ["Comum", "Temperado", "Laminado", "Temperado Laminado", "Insulado", "Serigrafado", "Espelhado", "Acidato"];
+const tiposVidro = ["Comum", "Temperado", "Laminado", "Temperado Laminado", "Insulado", "Veneziana", "Pivotante", "Maxim-Ar", "Serigrafado", "Espelhado", "Acidato"];
 const espessuras = ["4mm", "6mm", "8mm", "10mm", "12mm", "15mm", "19mm"];
 const cores = ["Incolor", "Fumê", "Verde", "Bronze", "Cinza", "Preto", "Branco Leitoso"];
 
