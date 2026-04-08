@@ -1110,9 +1110,6 @@ const ProjetoVidroPage = () => {
         </div>
       )}
 
-      {showSummary && selectedProjetos.length >= 2 && (
-        <MultiProjetoSummary projetos={selectedProjetos} onClose={() => setShowSummary(false)} />
-      )}
 
       {/* New project dialog */}
       <Dialog open={novoOpen} onOpenChange={setNovoOpen}>
