@@ -53,8 +53,85 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
   return areaMinimaM2 > 0 ? Math.max(real, areaMinimaM2) : real;
 }
 
-/** Returns SVG inner elements based on glass type */
+/** Returns SVG inner elements based on glass type.
+ *  sm = viewBox 0 0 24 24, md = viewBox 0 0 100 100, lg = viewBox 0 0 48 48
+ */
 function getGlassSvgElements(tipo: string, size: "sm" | "md" | "lg" = "md") {
+  const t = tipo.toLowerCase();
+
+  // Preset coords per size: frame, inner, glass area
+  const c = size === "sm"
+    ? { fx: 2, fy: 2, fw: 20, fh: 20, ix: 4, iy: 4, iw: 16, ih: 16, s1: 1.5, s2: 0.7 }
+    : size === "lg"
+    ? { fx: 4, fy: 4, fw: 40, fh: 40, ix: 7, iy: 7, iw: 34, ih: 34, s1: 2.5, s2: 1.2 }
+    : { fx: 8, fy: 8, fw: 84, fh: 84, ix: 14, iy: 14, iw: 72, ih: 72, s1: 3.5, s2: 1.5 };
+
+  // Temperado = fixed glass with X cross
+  if (t.includes("temperado") && !t.includes("laminado")) {
+    return (
+      <>
+        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
+        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.1" />
+        <line x1={c.ix} y1={c.iy} x2={c.ix + c.iw} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.7} opacity="0.3" />
+        <line x1={c.ix + c.iw} y1={c.iy} x2={c.ix} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.7} opacity="0.3" />
+      </>
+    );
+  }
+
+  // Insulado = double layer
+  if (t.includes("insulado")) {
+    const g = size === "sm" ? 2 : size === "lg" ? 3 : 5;
+    return (
+      <>
+        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
+        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.08" />
+        <rect x={c.ix + g} y={c.iy + g} width={c.iw - g * 2} height={c.ih - g * 2} rx="0.5" fill="currentColor" opacity="0.15" />
+        <line x1={c.ix + g} y1={c.iy} x2={c.ix + g} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.5} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
+        <line x1={c.ix + c.iw - g} y1={c.iy} x2={c.ix + c.iw - g} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.5} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
+      </>
+    );
+  }
+
+  // Laminado = giro with hinge
+  if (t.includes("laminado")) {
+    const mid = c.iy + c.ih / 2;
+    const a = size === "sm" ? 3 : size === "lg" ? 6 : 10;
+    return (
+      <>
+        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
+        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.1" />
+        {/* Hinge line left */}
+        <line x1={c.ix} y1={c.iy} x2={c.ix} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s1} opacity="0.5" />
+        {/* Arc arrow */}
+        <path d={`M ${c.ix + 1} ${mid - a} A ${a} ${a} 0 0 1 ${c.ix + 1} ${mid + a}`} stroke="currentColor" strokeWidth={c.s2} fill="none" opacity="0.35" />
+        <polygon points={`${c.ix + 1},${mid - a} ${c.ix + a * 0.6},${mid - a * 0.4} ${c.ix - a * 0.1},${mid - a * 0.5}`} fill="currentColor" opacity="0.35" />
+      </>
+    );
+  }
+
+  // Default = sliding (2 panels + arrows)
+  const mx = c.ix + c.iw / 2;
+  const mw = size === "sm" ? 1.5 : size === "lg" ? 3 : 5;
+  const mid = c.iy + c.ih / 2;
+  const arr = size === "sm" ? 2 : size === "lg" ? 4 : 6;
+  const lx = c.ix + c.iw * 0.25;
+  const rx = c.ix + c.iw * 0.75;
+  return (
+    <>
+      <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
+      {/* Left glass */}
+      <rect x={c.ix + 1} y={c.iy + 1} width={c.iw / 2 - mw / 2 - 1} height={c.ih - 2} rx="0.3" fill="currentColor" opacity="0.1" />
+      {/* Right glass */}
+      <rect x={mx + mw / 2} y={c.iy + 1} width={c.iw / 2 - mw / 2 - 1} height={c.ih - 2} rx="0.3" fill="currentColor" opacity="0.1" />
+      {/* Mullion */}
+      <rect x={mx - mw / 2} y={c.iy} width={mw} height={c.ih} fill="currentColor" opacity="0.45" />
+      {/* Left arrow ◀ */}
+      <polygon points={`${lx - arr},${mid} ${lx + arr},${mid - arr} ${lx + arr},${mid + arr}`} fill="currentColor" opacity="0.35" />
+      {/* Right arrow ▶ */}
+      <polygon points={`${rx + arr},${mid} ${rx - arr},${mid - arr} ${rx - arr},${mid + arr}`} fill="currentColor" opacity="0.35" />
+    </>
+  );
+}
   const t = tipo.toLowerCase();
   const s = size === "sm" ? { ox: 2, oy: 2, w: 20, h: 20, fw: 16, fh: 16, sw1: 1.8, sw2: 0.8 }
     : size === "md" ? { ox: 8, oy: 8, w: 84, h: 84, fw: 72, fh: 72, sw1: 4, sw2: 2 }
