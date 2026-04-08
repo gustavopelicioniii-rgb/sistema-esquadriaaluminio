@@ -787,6 +787,7 @@ export type Database = {
       }
       projetos_vidro: {
         Row: {
+          area_minima_m2: number
           cor: string
           created_at: string
           espessura: string
@@ -798,6 +799,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          area_minima_m2?: number
           cor?: string
           created_at?: string
           espessura?: string
@@ -809,6 +811,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          area_minima_m2?: number
           cor?: string
           created_at?: string
           espessura?: string
@@ -1101,6 +1104,7 @@ export type Database = {
           descricao: string
           id: string
           largura_mm: number
+          observacao: string | null
           projeto_id: string
           quantidade: number
         }
@@ -1110,6 +1114,7 @@ export type Database = {
           descricao: string
           id?: string
           largura_mm?: number
+          observacao?: string | null
           projeto_id: string
           quantidade?: number
         }
@@ -1119,6 +1124,7 @@ export type Database = {
           descricao?: string
           id?: string
           largura_mm?: number
+          observacao?: string | null
           projeto_id?: string
           quantidade?: number
         }
