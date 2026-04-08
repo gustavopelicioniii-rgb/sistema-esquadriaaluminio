@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/formatters";
 import { Printer, FileText, Receipt, ClipboardList } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import type { Pedido } from "@/pages/Producao";
 
 interface Props {
