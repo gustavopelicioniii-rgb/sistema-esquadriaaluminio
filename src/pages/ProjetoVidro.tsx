@@ -21,6 +21,7 @@ import {
   VidroInteiro, Vidro1DivVertical, Vidro2DivVerticais,
   VidroGrade4, VidroGrade6, VidroBandeiraSuperior,
   VidroTravessaCentral, VidroAssimetrico, VidroGradeMultipla,
+  VidroVeneziana, VidroPivotante, VidroMaximAr,
 } from "@/components/tipologias/vidro-svgs";
 
 const glassVariantToSvg: Record<string, React.FC> = {
@@ -29,6 +30,12 @@ const glassVariantToSvg: Record<string, React.FC> = {
   "laminado": Vidro2DivVerticais,
   "temperado-laminado": VidroGrade6,
   "insulado": Vidro1DivVertical,
+  "veneziana": VidroVeneziana,
+  "pivotante": VidroPivotante,
+  "maxim-ar": VidroMaximAr,
+  "serigrafado": VidroGradeMultipla,
+  "espelhado": VidroTravessaCentral,
+  "acidato": VidroBandeiraSuperior,
 };
 
 // Types
@@ -53,7 +60,7 @@ interface ProjetoVidro {
   criadoEm: string;
 }
 
-const tiposVidro = ["Comum", "Temperado", "Laminado", "Temperado Laminado", "Insulado", "Serigrafado", "Espelhado", "Acidato"];
+const tiposVidro = ["Comum", "Temperado", "Laminado", "Temperado Laminado", "Insulado", "Veneziana", "Pivotante", "Maxim-Ar", "Serigrafado", "Espelhado", "Acidato"];
 const espessuras = ["4mm", "6mm", "8mm", "10mm", "12mm", "15mm", "19mm"];
 const cores = ["Incolor", "Fumê", "Verde", "Bronze", "Cinza", "Preto", "Branco Leitoso"];
 
@@ -70,14 +77,20 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
  *  sm = viewBox 0 0 24 24, md = viewBox 0 0 100 100, lg = viewBox 0 0 48 48
  */
 type GlassSvgSize = "sm" | "md" | "lg";
-type GlassVariant = "comum" | "temperado" | "laminado" | "temperado-laminado" | "insulado";
+type GlassVariant = "comum" | "temperado" | "laminado" | "temperado-laminado" | "insulado" | "veneziana" | "pivotante" | "maxim-ar" | "serigrafado" | "espelhado" | "acidato";
 
 function getGlassVariant(tipo: string): GlassVariant {
   const t = tipo.toLowerCase();
   if (t.includes("temperado") && t.includes("laminado")) return "temperado-laminado";
+  if (t.includes("veneziana")) return "veneziana";
+  if (t.includes("pivotante")) return "pivotante";
+  if (t.includes("maxim")) return "maxim-ar";
   if (t.includes("insulado")) return "insulado";
   if (t.includes("laminado")) return "laminado";
   if (t.includes("temperado")) return "temperado";
+  if (t.includes("serigrafado")) return "serigrafado";
+  if (t.includes("espelhado")) return "espelhado";
+  if (t.includes("acidato")) return "acidato";
   return "comum";
 }
 
@@ -491,10 +504,8 @@ function ProjetoDetalhe({
 
       <Card>
         <CardContent className="p-4 sm:p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Monitor className="h-6 w-6 text-primary" />
-            </div>
+          <div className="flex items-start gap-5">
+            <GlassPreviewTile tipo={projeto.tipo} />
             <div className="flex-1 min-w-0">
               <h2 className="text-lg font-bold">{projeto.titulo}</h2>
               <div className="flex flex-wrap gap-2 mt-2">
@@ -523,9 +534,6 @@ function ProjetoDetalhe({
           </div>
         </CardContent>
       </Card>
-
-      {/* Visual Preview */}
-      <VidroVisualPreview itens={projeto.itens} areaMinimaM2={projeto.areaMinimaM2} />
 
       <Card>
         <CardHeader className="pb-2 flex flex-row items-center justify-between">
