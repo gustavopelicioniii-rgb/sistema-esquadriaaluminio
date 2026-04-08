@@ -478,10 +478,10 @@ const Tipologias = () => {
                   </Button>
                 )}
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredCatalog.slice(0, 60).map((t) => (
                   <Card key={t.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
-                    <div className="bg-muted/30 p-3 flex items-center justify-center aspect-square cursor-pointer"
+                    <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
                       onClick={() => setDetailTypology(t)}>
                       <FramePreview
                         width_mm={t.max_width_mm || 1200}
@@ -492,8 +492,8 @@ const Tipologias = () => {
                         has_veneziana={t.has_veneziana}
                         has_bandeira={t.has_bandeira}
                         notes={t.notes || undefined}
-                        maxWidth={130}
-                        maxHeight={130}
+                        maxWidth={180}
+                        maxHeight={180}
                         showDimensions={false}
                       />
                     </div>
