@@ -83,6 +83,9 @@ const Tipologias = () => {
   const [tab, setTab] = useState("catalogo");
   const [search, setSearch] = useState("");
   const [filterLine, setFilterLine] = useState("all");
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [filterSubcategory, setFilterSubcategory] = useState<string | null>(null);
+  const [filterFolhas, setFilterFolhas] = useState<number | null>(null);
 
   // Custom typologies
   const [customs, setCustoms] = useState<CustomTypology[]>([]);
