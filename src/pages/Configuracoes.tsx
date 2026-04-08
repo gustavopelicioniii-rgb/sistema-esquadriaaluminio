@@ -18,8 +18,10 @@ import { useAuth } from "@/hooks/use-auth";
 import {
   Save, Settings2, RotateCcw, Building2, Users, UserCog, Key, Wand2,
   Plus, Trash2, Phone, Mail, Edit2, Shield, Plug, Copy, Eye, EyeOff,
-  Upload, CheckCircle2, AlertCircle, Loader2
+  Upload, CheckCircle2, AlertCircle, Loader2, Crown
 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import Planos from "./Planos";
 
 // ─── Company Config ───
 const defaultConfig: Record<string, string> = {
@@ -77,7 +79,8 @@ const Configuracoes = () => {
   const [config, setConfig] = useState<Record<string, string>>(defaultConfig);
   const [folgas, setFolgas] = useState(defaultFolgas);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("empresa");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "empresa");
 
   // Funcionarios state
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
@@ -403,7 +406,7 @@ const Configuracoes = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={`grid w-full h-auto ${isAdmin ? 'grid-cols-5' : 'grid-cols-3'}`}>
+        <TabsList className={`grid w-full h-auto ${isAdmin ? 'grid-cols-6' : 'grid-cols-4'}`}>
           <TabsTrigger value="empresa" className="gap-1.5 text-xs sm:text-sm py-2">
             <Building2 className="h-4 w-4 hidden sm:block" /> Empresa
           </TabsTrigger>
@@ -419,6 +422,9 @@ const Configuracoes = () => {
           )}
           <TabsTrigger value="apis" className="gap-1.5 text-xs sm:text-sm py-2">
             <Key className="h-4 w-4 hidden sm:block" /> APIs
+          </TabsTrigger>
+          <TabsTrigger value="planos" className="gap-1.5 text-xs sm:text-sm py-2">
+            <Crown className="h-4 w-4 hidden sm:block" /> Planos
           </TabsTrigger>
           <TabsTrigger value="setup" className="gap-1.5 text-xs sm:text-sm py-2">
             <Wand2 className="h-4 w-4 hidden sm:block" /> Setup
@@ -939,6 +945,11 @@ const Configuracoes = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* ═══════════ TAB: PLANOS ═══════════ */}
+        <TabsContent value="planos" className="mt-6">
+          <Planos />
         </TabsContent>
       </Tabs>
     </div>

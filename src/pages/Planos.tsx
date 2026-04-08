@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlano, PlanTier, PLAN_LABELS, PLAN_PRICES, PLAN_DESCRIPTIONS, STRIPE_TIERS } from "@/hooks/use-plano";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { BILLING_DISABLED_MESSAGE, BILLING_ENABLED } from "@/lib/billing";
 
 const PLAN_ICONS: Record<PlanTier, React.ReactNode> = {
