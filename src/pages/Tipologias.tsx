@@ -454,9 +454,9 @@ const Tipologias = () => {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {filteredCatalog.slice(0, 60).map((t) => (
-                  <Card key={t.id} className="group hover:shadow-md transition-shadow cursor-pointer border-border/60 overflow-hidden"
-                    onClick={() => handleCloneFromCatalog(t)}>
-                    <div className="bg-muted/30 p-3 flex items-center justify-center aspect-square">
+                  <Card key={t.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
+                    <div className="bg-muted/30 p-3 flex items-center justify-center aspect-square cursor-pointer"
+                      onClick={() => setDetailTypology(t)}>
                       <FramePreview
                         width_mm={t.max_width_mm || 1200}
                         height_mm={t.max_height_mm || 1400}
@@ -471,9 +471,17 @@ const Tipologias = () => {
                         showDimensions={false}
                       />
                     </div>
-                    <CardContent className="p-2.5 space-y-1">
+                    <CardContent className="p-2.5 space-y-1.5">
                       <p className="text-xs text-primary leading-tight line-clamp-2 font-medium">{t.name}</p>
                       <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wide truncate">{t.id}</p>
+                      <div className="flex gap-1 pt-0.5">
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => setDetailTypology(t)}>
+                          <Eye className="h-3 w-3" /> Detalhes
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleCloneFromCatalog(t)}>
+                          <Copy className="h-3 w-3" /> Clonar
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
