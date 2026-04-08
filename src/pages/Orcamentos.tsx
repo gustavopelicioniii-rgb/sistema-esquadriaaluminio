@@ -237,7 +237,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 overflow-hidden max-h-[90vh] flex flex-col border-0 shadow-2xl shadow-primary/5">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl p-0 flex flex-col border-0 shadow-2xl shadow-primary/5">
         {/* Premium header */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/20" />

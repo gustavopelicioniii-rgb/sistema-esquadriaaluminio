@@ -314,7 +314,7 @@ const Relatorios = () => {
 
       {/* Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogContent className="max-w-4xl flex flex-col">
           <DialogHeader>
             <DialogTitle className="text-lg">{previewData?.title}</DialogTitle>
             {previewData?.subtitle && (

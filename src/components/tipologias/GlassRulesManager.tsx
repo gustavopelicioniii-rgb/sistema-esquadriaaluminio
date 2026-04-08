@@ -234,7 +234,7 @@ export function GlassRulesManager({ typology }: Props) {
       </CardContent>
 
       <Dialog open={showForm} onOpenChange={(o) => { setShowForm(o); if (!o) { setEditId(null); setForm(emptyRule); } }}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editId ? "Editar Regra de Vidro" : "Nova Regra de Vidro"}</DialogTitle>
           </DialogHeader>

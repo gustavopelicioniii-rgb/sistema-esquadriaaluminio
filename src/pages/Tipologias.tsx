@@ -244,7 +244,7 @@ const Tipologias = () => {
 
   const formDialog = (
     <Dialog open={showAdd} onOpenChange={(o) => { setShowAdd(o); if (!o) { setEditId(null); setForm(emptyForm); } }}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>{editId ? "Editar Tipologia" : "Nova Tipologia Customizada"}</DialogTitle>
         </DialogHeader>
@@ -499,7 +499,7 @@ const Tipologias = () => {
 
       {/* Cut Rules Dialog */}
       <Dialog open={!!rulesTypology} onOpenChange={(o) => { if (!o) setRulesTypology(null); }}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Regras — {rulesTypology?.name}</DialogTitle>
           </DialogHeader>

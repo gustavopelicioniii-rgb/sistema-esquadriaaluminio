@@ -72,7 +72,7 @@ export default function EditEtapaDialog({ open, onOpenChange, etapa, onSaved }: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Editar Etapa</DialogTitle>
         </DialogHeader>

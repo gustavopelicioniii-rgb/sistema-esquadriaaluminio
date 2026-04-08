@@ -80,7 +80,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Pagamentos – Pedido {pedido.pedido_num}</DialogTitle>
         </DialogHeader>

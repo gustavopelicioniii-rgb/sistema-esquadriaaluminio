@@ -244,7 +244,7 @@ export function CutRulesManager({ typology }: Props) {
 
       {/* Add/Edit Rule Dialog */}
       <Dialog open={showForm} onOpenChange={(o) => { setShowForm(o); if (!o) { setEditId(null); setForm(emptyRule); } }}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editId ? "Editar Regra de Corte" : "Nova Regra de Corte"}</DialogTitle>
           </DialogHeader>
