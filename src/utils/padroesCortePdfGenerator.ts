@@ -36,8 +36,9 @@ interface PadroesCorteConfig {
 export async function generatePadroesCortesPDF(
   result: CalculationOutput,
   barResults: OptimizationResult[],
-  config?: PadroesCorteConfig
-) {
+  config?: PadroesCorteConfig,
+  options?: { preview?: boolean }
+): Promise<{ blob: Blob; filename: string } | void> {
   const pdf = new jsPDF("p", "mm", "a4");
   const dateStr = formatDateBR();
   const cfg = config || {};
@@ -361,5 +362,10 @@ export async function generatePadroesCortesPDF(
   }
 
   const safeName = result.typology_name.replace(/\s+/g, "-").toLowerCase();
-  pdf.save(`padroes-cortes-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`);
+  const filename = `padroes-cortes-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`;
+
+  if (options?.preview) {
+    return { blob: pdf.output("blob"), filename };
+  }
+  pdf.save(filename);
 }
