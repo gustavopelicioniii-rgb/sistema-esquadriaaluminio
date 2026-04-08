@@ -89,6 +89,8 @@ const Tipologias = () => {
   const [filterFolhas, setFilterFolhas] = useState<number | null>(null);
   const [filterVeneziana, setFilterVeneziana] = useState<boolean | null>(null);
   const [filterBandeira, setFilterBandeira] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
 
   // Custom typologies
   const [customs, setCustoms] = useState<CustomTypology[]>([]);
@@ -114,6 +116,9 @@ const Tipologias = () => {
 
   const getCategoryLabel = (cat: string) => CATEGORIES.find(c => c.value === cat)?.label || cat;
 
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, filterLine, filterCategory, filterSubcategory, filterFolhas, filterVeneziana, filterBandeira]);
+
   // Filtered catalog typologies
   const filteredCatalog = catalogTypologies.filter(t => {
     const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || (t.id && t.id.toLowerCase().includes(search.toLowerCase()));
@@ -125,6 +130,9 @@ const Tipologias = () => {
     const matchBandeira = filterBandeira === null || t.has_bandeira === filterBandeira;
     return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas && matchVeneziana && matchBandeira;
   });
+
+  const totalPages = Math.ceil(filteredCatalog.length / ITEMS_PER_PAGE);
+  const paginatedCatalog = filteredCatalog.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Unique values for sidebar filters
   const uniqueCategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.category))], []);
@@ -471,7 +479,7 @@ const Tipologias = () => {
             {/* Grid of typology cards */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias</p>
+                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias — página {currentPage} de {totalPages || 1}</p>
                 {(filterCategory || filterSubcategory || filterFolhas || filterVeneziana !== null || filterBandeira !== null) && (
                   <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); setFilterVeneziana(null); setFilterBandeira(null); }}>
                     Limpar filtros
@@ -479,7 +487,7 @@ const Tipologias = () => {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredCatalog.slice(0, 60).map((t) => (
+                {paginatedCatalog.map((t) => (
                   <Card key={t.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
                     <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
                       onClick={() => setDetailTypology(t)}>
@@ -512,9 +520,33 @@ const Tipologias = () => {
                   </Card>
                 ))}
               </div>
-              {filteredCatalog.length > 60 && (
-                <div className="py-4 text-center text-xs text-muted-foreground">
-                  Mostrando 60 de {filteredCatalog.length} — use os filtros para refinar
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 pb-2">
+                  <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>
+                    Anterior
+                  </Button>
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                      .reduce<(number | string)[]>((acc, p, idx, arr) => {
+                        if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((p, i) =>
+                        typeof p === "string" ? (
+                          <span key={`ellipsis-${i}`} className="flex items-center justify-center w-8 h-8 text-xs text-muted-foreground">…</span>
+                        ) : (
+                          <Button key={p} variant={currentPage === p ? "default" : "outline"} size="sm" className="w-8 h-8 p-0 text-xs" onClick={() => setCurrentPage(p)}>
+                            {p}
+                          </Button>
+                        )
+                      )}
+                  </div>
+                  <Button variant="outline" size="sm" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>
+                    Próximo
+                  </Button>
                 </div>
               )}
             </div>
