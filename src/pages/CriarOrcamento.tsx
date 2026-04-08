@@ -18,7 +18,7 @@ import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import { cn } from "@/lib/utils";
 import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
 import { OrcamentoAiHelper } from "@/components/ai/OrcamentoAiHelper";
-import { tiposProduto, formasPagamento } from "@/data/orcamento-produtos";
+import { tiposProduto, formasPagamento, validateDimensions } from "@/data/orcamento-produtos";
 
 const vidroOptions = ["Comum", "Temperado", "Laminado", "Jateado", "Nenhum"];
 const ferragemColors = [
@@ -383,16 +383,44 @@ const CriarOrcamento = () => {
             </div>
 
             {/* Dimensões */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Largura (cm)</Label>
-                <Input type="number" value={activeItem.largura} onChange={(e) => updateItem(activeItemIdx, { largura: Number(e.target.value) })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Altura (cm)</Label>
-                <Input type="number" value={activeItem.altura} onChange={(e) => updateItem(activeItemIdx, { altura: Number(e.target.value) })} />
-              </div>
-            </div>
+            {(() => {
+              const dimErrors = validateDimensions(activeItem.tipo, activeItem.largura, activeItem.altura);
+              const prod = tiposProduto.find(t => t.value === activeItem.tipo);
+              return (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label>Largura (cm)</Label>
+                      <Input
+                        type="number"
+                        value={activeItem.largura}
+                        onChange={(e) => updateItem(activeItemIdx, { largura: Number(e.target.value) })}
+                        className={cn(dimErrors?.largura && "border-destructive focus-visible:ring-destructive")}
+                      />
+                      {dimErrors?.largura ? (
+                        <p className="text-[11px] font-medium text-destructive">{dimErrors.largura}</p>
+                      ) : prod && (
+                        <p className="text-[10px] text-muted-foreground">{prod.minLarguraCm}–{prod.maxLarguraCm} cm</p>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>Altura (cm)</Label>
+                      <Input
+                        type="number"
+                        value={activeItem.altura}
+                        onChange={(e) => updateItem(activeItemIdx, { altura: Number(e.target.value) })}
+                        className={cn(dimErrors?.altura && "border-destructive focus-visible:ring-destructive")}
+                      />
+                      {dimErrors?.altura ? (
+                        <p className="text-[11px] font-medium text-destructive">{dimErrors.altura}</p>
+                      ) : prod && (
+                        <p className="text-[10px] text-muted-foreground">{prod.minAlturaCm}–{prod.maxAlturaCm} cm</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Tipo de vidro */}
             <div className="space-y-2">
