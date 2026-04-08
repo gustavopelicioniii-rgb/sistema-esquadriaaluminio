@@ -57,7 +57,7 @@ export default function ContratoDialog({ open, onOpenChange, pedido }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh]">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-4 w-4" /> Contrato – Pedido {pedido.pedido_num}
