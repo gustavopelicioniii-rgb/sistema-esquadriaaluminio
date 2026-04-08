@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/formatters";
 import { Printer, FileText, Receipt, ClipboardList } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import type { Pedido } from "@/pages/Producao";
 
 interface Props {
@@ -170,7 +172,61 @@ function buildGenericHTML(tipo: string, pedido: Pedido): string {
 }
 
 export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) {
-  const handleImprimir = (tipo: string, id: string) => {
+  const handleImprimir = async (tipo: string, id: string) => {
+    if (id === "orcamento") {
+      // Fetch real orcamento from database matching this pedido's client
+      try {
+        const { data: orcamentos } = await supabase
+          .from("orcamentos")
+          .select("*")
+          .eq("cliente", pedido.cliente)
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        const orc = orcamentos?.[0];
+        if (!orc) {
+          toast({ title: "Nenhum orçamento encontrado", description: `Não há orçamento cadastrado para o cliente "${pedido.cliente}".`, variant: "destructive" });
+          return;
+        }
+
+        const itens = Array.isArray(orc.itens) ? orc.itens as any[] : [];
+        const itensMultiplos = itens.map((item: any, idx: number) => ({
+          produto: item.produto || item.descricao || `Item ${idx + 1}`,
+          tipo: item.tipo || "",
+          linha: item.linha || "",
+          tratamento: item.tratamento || item.cor || "",
+          larguraCm: item.larguraCm || item.largura || 0,
+          alturaCm: item.alturaCm || item.altura || 0,
+          quantidade: item.quantidade || 1,
+          valorUnitario: item.valorUnitario || item.valor_unitario || 0,
+          valorTotal: item.valorTotal || item.valor_total || 0,
+          localizacao: item.localizacao || item.ambiente || "",
+          descricaoCompleta: item.descricaoCompleta || item.descricao || "",
+        }));
+
+        await generateProfessionalBudgetPDF({
+          numero: orc.numero,
+          cliente: orc.cliente,
+          produto: orc.produto,
+          larguraCm: 0,
+          alturaCm: 0,
+          quantidade: 1,
+          areaM2: 0,
+          custoTotal: orc.valor,
+          margem: 0,
+          valorFinal: orc.valor,
+          vendedor: pedido.vendedor || "",
+          itensMultiplos: itensMultiplos.length > 0 ? itensMultiplos : undefined,
+        });
+
+        toast({ title: "PDF gerado", description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
+      } catch (err) {
+        console.error("Erro ao gerar orçamento:", err);
+        toast({ title: "Erro", description: "Falha ao gerar o PDF do orçamento.", variant: "destructive" });
+      }
+      return;
+    }
+
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
       toast({ title: "Erro", description: "Popup bloqueado. Permita popups para imprimir.", variant: "destructive" });
