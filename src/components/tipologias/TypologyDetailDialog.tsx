@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FramePreview } from "@/components/frame-preview";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Scissors, GlassWater, Package, Ruler } from "lucide-react";
+import { Scissors, GlassWater, Package, Ruler, FileDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { generateTypologyDetailPdf } from "@/utils/typologyDetailPdfGenerator";
 import type { Typology } from "@/types/calculation";
 
 interface Props {
@@ -41,7 +43,24 @@ export function TypologyDetailDialog({ typology, open, onOpenChange }: Props) {
       <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-0">
           <DialogTitle className="text-lg">{typology.name}</DialogTitle>
-          <p className="text-xs text-muted-foreground font-mono uppercase">{typology.id}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground font-mono uppercase">{typology.id}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => generateTypologyDetailPdf({
+                typology,
+                lineName: line?.name,
+                cutRules,
+                glassRules,
+                components,
+              })}
+            >
+              <FileDown className="h-4 w-4" />
+              Exportar PDF
+            </Button>
+          </div>
         </DialogHeader>
 
         <ScrollArea className="h-[calc(90vh-100px)]">
