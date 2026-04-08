@@ -56,80 +56,151 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
 /** Returns SVG inner elements based on glass type.
  *  sm = viewBox 0 0 24 24, md = viewBox 0 0 100 100, lg = viewBox 0 0 48 48
  */
-function getGlassSvgElements(tipo: string, size: "sm" | "md" | "lg" = "md") {
+type GlassSvgSize = "sm" | "md" | "lg";
+type GlassVariant = "comum" | "temperado" | "laminado" | "temperado-laminado" | "insulado";
+
+function getGlassVariant(tipo: string): GlassVariant {
   const t = tipo.toLowerCase();
+  if (t.includes("temperado") && t.includes("laminado")) return "temperado-laminado";
+  if (t.includes("insulado")) return "insulado";
+  if (t.includes("laminado")) return "laminado";
+  if (t.includes("temperado")) return "temperado";
+  return "comum";
+}
 
-  // Preset coords per size: frame, inner, glass area
+function getGlassSvgElements(tipo: string, size: GlassSvgSize = "md") {
+  const variant = getGlassVariant(tipo);
+
   const c = size === "sm"
-    ? { fx: 2, fy: 2, fw: 20, fh: 20, ix: 4, iy: 4, iw: 16, ih: 16, s1: 1.5, s2: 0.7 }
+    ? { fx: 2.5, fy: 2.5, fw: 19, fh: 19, ix: 4.5, iy: 4.5, iw: 15, ih: 15, stroke: 1.3, thin: 0.9, panel: 1.6, rail: 1.15, handle: 0.85, dot: 0.7, arc: 3.5, radius: 1.1 }
     : size === "lg"
-    ? { fx: 4, fy: 4, fw: 40, fh: 40, ix: 7, iy: 7, iw: 34, ih: 34, s1: 2.5, s2: 1.2 }
-    : { fx: 8, fy: 8, fw: 84, fh: 84, ix: 14, iy: 14, iw: 72, ih: 72, s1: 3.5, s2: 1.5 };
+    ? { fx: 4, fy: 4, fw: 40, fh: 40, ix: 8, iy: 8, iw: 32, ih: 32, stroke: 2.2, thin: 1.4, panel: 3, rail: 2.2, handle: 1.8, dot: 1.25, arc: 8, radius: 2 }
+    : { fx: 10, fy: 10, fw: 80, fh: 80, ix: 18, iy: 18, iw: 64, ih: 64, stroke: 3, thin: 1.9, panel: 6, rail: 4, handle: 3.2, dot: 2.2, arc: 16, radius: 4 };
 
-  // Temperado = fixed glass with X cross
-  if (t.includes("temperado") && !t.includes("laminado")) {
+  const right = c.ix + c.iw;
+  const bottom = c.iy + c.ih;
+  const midX = c.ix + c.iw / 2;
+  const midY = c.iy + c.ih / 2;
+  const leftPaneX = c.ix + c.panel;
+  const rightPaneX = midX - c.panel * 0.35;
+  const paneY = c.iy + c.panel;
+  const paneH = c.ih - c.panel * 2;
+  const paneW = c.iw / 2 + c.panel * 0.35;
+  const innerX = c.ix + c.panel;
+  const innerY = c.iy + c.panel;
+  const innerW = c.iw - c.panel * 2;
+  const innerH = c.ih - c.panel * 2;
+  const innerRight = innerX + innerW;
+  const innerBottom = innerY + innerH;
+  const openLeafW = c.iw * 0.68;
+  const openLeafX = c.ix + c.panel * 1.05;
+  const openLeafY = c.iy + c.panel * 0.9;
+  const openLeafH = c.ih - c.panel * 1.8;
+  const openLeafRight = openLeafX + openLeafW;
+  const openLeafBottom = openLeafY + openLeafH;
+  const arcStartX = c.ix + c.panel * 1.6;
+  const handleX = midX - c.handle / 2;
+
+  const frame = (
+    <>
+      <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx={c.radius * 1.4} stroke="currentColor" strokeWidth={c.stroke} fill="none" />
+      <path
+        d={`M ${c.fx + c.radius} ${c.fy + c.radius * 0.6} H ${c.fx + c.radius * 3.1}
+            M ${c.fx + c.radius * 0.6} ${c.fy + c.radius} V ${c.fy + c.radius * 3.1}
+            M ${c.fx + c.fw - c.radius * 3.1} ${c.fy + c.radius * 0.6} H ${c.fx + c.fw - c.radius}
+            M ${c.fx + c.fw - c.radius * 0.6} ${c.fy + c.radius} V ${c.fy + c.radius * 3.1}
+            M ${c.fx + c.radius} ${c.fy + c.fh - c.radius * 0.6} H ${c.fx + c.radius * 3.1}
+            M ${c.fx + c.radius * 0.6} ${c.fy + c.fh - c.radius} V ${c.fy + c.fh - c.radius * 3.1}
+            M ${c.fx + c.fw - c.radius * 3.1} ${c.fy + c.fh - c.radius * 0.6} H ${c.fx + c.fw - c.radius}
+            M ${c.fx + c.fw - c.radius * 0.6} ${c.fy + c.fh - c.radius} V ${c.fy + c.fh - c.radius * 3.1}`}
+        stroke="currentColor"
+        strokeWidth={c.thin}
+        opacity="0.35"
+        strokeLinecap="round"
+      />
+      <line x1={c.ix} y1={c.iy + c.rail} x2={right} y2={c.iy + c.rail} stroke="currentColor" strokeWidth={c.thin} opacity="0.22" />
+      <line x1={c.ix} y1={bottom - c.rail} x2={right} y2={bottom - c.rail} stroke="currentColor" strokeWidth={c.thin} opacity="0.22" />
+    </>
+  );
+
+  if (variant === "temperado") {
     return (
       <>
-        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
-        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.1" />
-        <line x1={c.ix} y1={c.iy} x2={c.ix + c.iw} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.7} opacity="0.3" />
-        <line x1={c.ix + c.iw} y1={c.iy} x2={c.ix} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.7} opacity="0.3" />
+        {frame}
+        <rect x={innerX} y={innerY} width={innerW} height={innerH} rx={c.radius} fill="currentColor" opacity="0.08" />
+        <rect x={innerX} y={innerY} width={innerW} height={innerH} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.42" />
+        <line x1={innerX + c.panel * 0.6} y1={innerBottom - c.panel * 0.6} x2={innerRight - c.panel * 0.6} y2={innerY + c.panel * 0.6} stroke="currentColor" strokeWidth={c.thin} opacity="0.28" />
+        <line x1={innerX + c.panel * 0.6} y1={innerY + c.panel * 0.6} x2={innerRight - c.panel * 0.6} y2={innerBottom - c.panel * 0.6} stroke="currentColor" strokeWidth={c.thin} opacity="0.18" />
+        {[
+          [innerX + c.panel * 0.65, innerY + c.panel * 0.65],
+          [innerRight - c.panel * 0.65, innerY + c.panel * 0.65],
+          [innerX + c.panel * 0.65, innerBottom - c.panel * 0.65],
+          [innerRight - c.panel * 0.65, innerBottom - c.panel * 0.65],
+        ].map(([x, y], index) => (
+          <circle key={index} cx={x} cy={y} r={c.dot} fill="currentColor" opacity="0.55" />
+        ))}
       </>
     );
   }
 
-  // Insulado = double layer
-  if (t.includes("insulado")) {
-    const g = size === "sm" ? 2 : size === "lg" ? 3 : 5;
+  if (variant === "insulado") {
     return (
       <>
-        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
-        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.08" />
-        <rect x={c.ix + g} y={c.iy + g} width={c.iw - g * 2} height={c.ih - g * 2} rx="0.5" fill="currentColor" opacity="0.15" />
-        <line x1={c.ix + g} y1={c.iy} x2={c.ix + g} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.5} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
-        <line x1={c.ix + c.iw - g} y1={c.iy} x2={c.ix + c.iw - g} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s2 * 0.5} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
+        {frame}
+        <rect x={innerX - c.panel * 0.35} y={innerY - c.panel * 0.35} width={innerW} height={innerH} rx={c.radius} fill="currentColor" opacity="0.05" />
+        <rect x={innerX + c.panel * 0.55} y={innerY + c.panel * 0.55} width={innerW - c.panel * 1.1} height={innerH - c.panel * 1.1} rx={c.radius} fill="currentColor" opacity="0.12" />
+        <rect x={innerX - c.panel * 0.35} y={innerY - c.panel * 0.35} width={innerW} height={innerH} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.28" />
+        <rect x={innerX + c.panel * 0.55} y={innerY + c.panel * 0.55} width={innerW - c.panel * 1.1} height={innerH - c.panel * 1.1} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.45" />
+        <line x1={midX - c.panel * 0.7} y1={innerY} x2={midX - c.panel * 0.7} y2={innerBottom} stroke="currentColor" strokeWidth={c.thin} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "3 3"} />
+        <line x1={midX + c.panel * 0.7} y1={innerY + c.panel * 0.2} x2={midX + c.panel * 0.7} y2={innerBottom - c.panel * 0.2} stroke="currentColor" strokeWidth={c.thin} opacity="0.25" strokeDasharray={size === "sm" ? "1 1" : "3 3"} />
       </>
     );
   }
 
-  // Laminado = giro with hinge
-  if (t.includes("laminado")) {
-    const mid = c.iy + c.ih / 2;
-    const a = size === "sm" ? 3 : size === "lg" ? 6 : 10;
+  if (variant === "laminado" || variant === "temperado-laminado") {
     return (
       <>
-        <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
-        <rect x={c.ix} y={c.iy} width={c.iw} height={c.ih} rx="0.5" fill="currentColor" opacity="0.1" />
-        {/* Hinge line left */}
-        <line x1={c.ix} y1={c.iy} x2={c.ix} y2={c.iy + c.ih} stroke="currentColor" strokeWidth={c.s1} opacity="0.5" />
-        {/* Arc arrow */}
-        <path d={`M ${c.ix + 1} ${mid - a} A ${a} ${a} 0 0 1 ${c.ix + 1} ${mid + a}`} stroke="currentColor" strokeWidth={c.s2} fill="none" opacity="0.35" />
-        <polygon points={`${c.ix + 1},${mid - a} ${c.ix + a * 0.6},${mid - a * 0.4} ${c.ix - a * 0.1},${mid - a * 0.5}`} fill="currentColor" opacity="0.35" />
+        {frame}
+        <rect x={openLeafX} y={openLeafY} width={openLeafW} height={openLeafH} rx={c.radius} fill="currentColor" opacity="0.08" />
+        <rect x={openLeafX} y={openLeafY} width={openLeafW} height={openLeafH} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.45" />
+        <line x1={openLeafX} y1={openLeafY} x2={openLeafX} y2={openLeafBottom} stroke="currentColor" strokeWidth={c.stroke * 0.7} opacity="0.55" />
+        <circle cx={openLeafX} cy={openLeafY + openLeafH * 0.22} r={c.dot} fill="currentColor" opacity="0.6" />
+        <circle cx={openLeafX} cy={openLeafY + openLeafH * 0.78} r={c.dot} fill="currentColor" opacity="0.6" />
+        <path d={`M ${arcStartX} ${midY - c.arc} A ${c.arc} ${c.arc} 0 0 1 ${arcStartX} ${midY + c.arc}`} stroke="currentColor" strokeWidth={c.thin} fill="none" opacity="0.35" />
+        <path d={`M ${arcStartX + c.thin} ${midY - c.arc} l ${c.panel * 1.35} ${c.panel * 0.72} l ${-c.panel * 0.2} ${c.panel * 0.95}`} stroke="currentColor" strokeWidth={c.thin} fill="none" opacity="0.35" strokeLinecap="round" strokeLinejoin="round" />
+        {variant === "temperado-laminado" && (
+          <line x1={openLeafX + c.panel * 1.2} y1={openLeafY + c.panel * 1.1} x2={openLeafRight - c.panel * 1.1} y2={openLeafBottom - c.panel * 1.1} stroke="currentColor" strokeWidth={c.thin} opacity="0.22" />
+        )}
       </>
     );
   }
 
-  // Default = sliding (2 panels + arrows)
-  const mx = c.ix + c.iw / 2;
-  const mw = size === "sm" ? 1.5 : size === "lg" ? 3 : 5;
-  const mid = c.iy + c.ih / 2;
-  const arr = size === "sm" ? 2 : size === "lg" ? 4 : 6;
-  const lx = c.ix + c.iw * 0.25;
-  const rx = c.ix + c.iw * 0.75;
   return (
     <>
-      <rect x={c.fx} y={c.fy} width={c.fw} height={c.fh} rx="1" stroke="currentColor" strokeWidth={c.s1} fill="none" />
-      {/* Left glass */}
-      <rect x={c.ix + 1} y={c.iy + 1} width={c.iw / 2 - mw / 2 - 1} height={c.ih - 2} rx="0.3" fill="currentColor" opacity="0.1" />
-      {/* Right glass */}
-      <rect x={mx + mw / 2} y={c.iy + 1} width={c.iw / 2 - mw / 2 - 1} height={c.ih - 2} rx="0.3" fill="currentColor" opacity="0.1" />
-      {/* Mullion */}
-      <rect x={mx - mw / 2} y={c.iy} width={mw} height={c.ih} fill="currentColor" opacity="0.45" />
-      {/* Left arrow ◀ */}
-      <polygon points={`${lx - arr},${mid} ${lx + arr},${mid - arr} ${lx + arr},${mid + arr}`} fill="currentColor" opacity="0.35" />
-      {/* Right arrow ▶ */}
-      <polygon points={`${rx + arr},${mid} ${rx - arr},${mid - arr} ${rx - arr},${mid + arr}`} fill="currentColor" opacity="0.35" />
+      {frame}
+      <rect x={leftPaneX} y={paneY} width={paneW - c.panel} height={paneH} rx={c.radius} fill="currentColor" opacity="0.08" />
+      <rect x={leftPaneX} y={paneY} width={paneW - c.panel} height={paneH} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.36" />
+      <rect x={rightPaneX} y={paneY + c.panel * 0.35} width={paneW - c.panel} height={paneH - c.panel * 0.7} rx={c.radius} fill="currentColor" opacity="0.14" />
+      <rect x={rightPaneX} y={paneY + c.panel * 0.35} width={paneW - c.panel} height={paneH - c.panel * 0.7} rx={c.radius} stroke="currentColor" strokeWidth={c.thin} opacity="0.45" />
+      <line x1={midX} y1={c.iy} x2={midX} y2={bottom} stroke="currentColor" strokeWidth={c.thin} opacity="0.24" />
+      <rect x={handleX - c.panel * 0.9} y={midY - c.panel * 0.75} width={c.handle} height={c.panel * 1.5} rx={c.handle} fill="currentColor" opacity="0.6" />
+      <rect x={handleX + c.panel * 0.8} y={midY - c.panel * 0.75} width={c.handle} height={c.panel * 1.5} rx={c.handle} fill="currentColor" opacity="0.32" />
     </>
+  );
+}
+
+function GlassPreviewTile({ tipo }: { tipo: string }) {
+  return (
+    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background sm:h-24 sm:w-24">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(circle at top left, hsl(var(--primary) / 0.16), transparent 62%)" }}
+      />
+      <div className="pointer-events-none absolute inset-[12%] rounded-xl border border-border/40" />
+      <svg width="74" height="74" viewBox="0 0 100 100" fill="none" className="relative h-[66px] w-[66px] text-primary sm:h-[74px] sm:w-[74px]" aria-hidden="true">
+        {getGlassSvgElements(tipo, "md")}
+      </svg>
+    </div>
   );
 }
 
@@ -964,53 +1035,58 @@ const ProjetoVidroPage = () => {
             })();
 
             return (
-              <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5"}`}>
-                {/* Glass SVG watermark — varies by type */}
-                <div className="absolute -top-2 -right-2 opacity-[0.07] pointer-events-none">
-                  <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                    {getGlassSvgElements(projeto.tipo, "md")}
-                  </svg>
-                </div>
+              <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg"}`}>
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => toggleSelect(projeto.id)}
+                  className="absolute right-4 top-4 z-10 bg-background/90"
+                />
 
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary">
-                          {getGlassSvgElements(projeto.tipo, "sm")}
-                        </svg>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center gap-2.5 pr-8">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/15">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary" aria-hidden="true">
+                            {getGlassSvgElements(projeto.tipo, "sm")}
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="truncate text-base font-bold leading-tight">{projeto.titulo}</CardTitle>
+                          <p className="mt-0.5 text-[11px] text-muted-foreground">{projeto.criadoEm} · {projeto.itens.length} vidro{projeto.itens.length !== 1 ? "s" : ""}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <CardTitle className="text-sm font-bold truncate">{projeto.titulo}</CardTitle>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{projeto.criadoEm} · {projeto.itens.length} vidro{projeto.itens.length !== 1 ? "s" : ""}</p>
+
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${tipoBadgeClass}`}>{projeto.tipo}</Badge>
+                        <Badge variant="outline" className="text-[10px] px-2 py-0.5 font-medium">{projeto.espessura}</Badge>
+                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${corBadgeClass}`}>{projeto.cor}</Badge>
                       </div>
+
+                      <div className="mt-4 space-y-2 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Área total</span>
+                          <span className="font-semibold">{areaTotal.toFixed(2)} m²</span>
+                        </div>
+                        <div className="flex items-center justify-between border-t border-border/50 pt-2">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Total</span>
+                          <span className="text-base font-extrabold text-primary">{formatCurrency(valorTotal)}</span>
+                        </div>
+                      </div>
+
+                      <Button variant="outline" size="sm" className="mt-4 w-full gap-2 transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground" onClick={() => setSelected(projeto)}>
+                        <Eye className="h-3.5 w-3.5" /> Ver detalhes
+                      </Button>
                     </div>
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => toggleSelect(projeto.id)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-2.5">
-                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${tipoBadgeClass}`}>{projeto.tipo}</Badge>
-                    <Badge variant="outline" className="text-[10px] px-2 py-0.5 font-medium">{projeto.espessura}</Badge>
-                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${corBadgeClass}`}>{projeto.cor}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground text-xs">Área total</span>
-                      <span className="font-semibold">{areaTotal.toFixed(2)} m²</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-border/50">
-                      <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Total</span>
-                      <span className="font-extrabold text-base text-primary">{formatCurrency(valorTotal)}</span>
+
+                    <div className="hidden sm:block">
+                      <GlassPreviewTile tipo={projeto.tipo} />
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full mt-4 gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" onClick={() => setSelected(projeto)}>
-                    <Eye className="h-3.5 w-3.5" /> Ver detalhes
-                  </Button>
+
+                  <div className="mt-4 sm:hidden">
+                    <GlassPreviewTile tipo={projeto.tipo} />
+                  </div>
                 </CardContent>
               </Card>
             );
