@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet, CalendarIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet, CalendarIcon, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { formatCurrency } from "@/lib/formatters";
@@ -28,6 +31,10 @@ const Relatorios = () => {
   const [generating, setGenerating] = useState<string | null>(null);
   const [dataInicio, setDataInicio] = useState<Date | undefined>(undefined);
   const [dataFim, setDataFim] = useState<Date | undefined>(undefined);
+  const [previewData, setPreviewData] = useState<ReportData | null>(null);
+  const [previewKey, setPreviewKey] = useState<string>("");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [loadingPreview, setLoadingPreview] = useState<string | null>(null);
 
   const filterByDate = (dateStr: string) => {
     if (!dataInicio && !dataFim) return true;
@@ -155,16 +162,47 @@ const Relatorios = () => {
     }
   };
 
-  const exportReport = async (key: string, format: "pdf" | "excel") => {
-    setGenerating(`${key}-${format}`);
+  const handlePreview = async (key: string) => {
+    setLoadingPreview(key);
     try {
       const data = await fetchReportData(key);
-      if (format === "pdf") {
+      setPreviewData(data);
+      setPreviewKey(key);
+      setPreviewOpen(true);
+    } catch (e: any) {
+      toast({ title: "Erro", description: e.message, variant: "destructive" });
+    } finally {
+      setLoadingPreview(null);
+    }
+  };
+
+  const exportFromPreview = async (fmt: "pdf" | "excel") => {
+    if (!previewData) return;
+    setGenerating(`${previewKey}-${fmt}`);
+    try {
+      if (fmt === "pdf") {
+        generateReportPdf({ ...previewData, filename: `${previewKey}.pdf` });
+      } else {
+        generateExcel({ ...previewData, filename: `${previewKey}.xlsx` });
+      }
+      toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${previewData.rows.length} registros exportados` });
+    } catch (e: any) {
+      toast({ title: "Erro", description: e.message, variant: "destructive" });
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const exportReport = async (key: string, fmt: "pdf" | "excel") => {
+    setGenerating(`${key}-${fmt}`);
+    try {
+      const data = await fetchReportData(key);
+      if (fmt === "pdf") {
         generateReportPdf({ ...data, filename: `${key}.pdf` });
       } else {
         generateExcel({ ...data, filename: `${key}.xlsx` });
       }
-      toast({ title: `${format === "pdf" ? "PDF" : "Excel"} gerado`, description: `${data.rows.length} registros exportados` });
+      toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${data.rows.length} registros exportados` });
     } catch (e: any) {
       toast({ title: "Erro", description: e.message, variant: "destructive" });
     } finally {
@@ -241,7 +279,17 @@ const Relatorios = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                  className="flex-1 gap-1.5"
+                  onClick={() => handlePreview(r.key)}
+                  disabled={loadingPreview === r.key}
+                >
+                  {loadingPreview === r.key ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+                  Visualizar
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
                   onClick={() => exportReport(r.key, "pdf")}
                   disabled={generating === `${r.key}-pdf`}
                 >
@@ -251,7 +299,7 @@ const Relatorios = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 gap-1.5 hover:bg-success/10 hover:text-success hover:border-success/30 transition-colors"
+                  className="gap-1.5 hover:bg-emerald-500/10 hover:text-emerald-600 hover:border-emerald-500/30 dark:hover:text-emerald-400 transition-colors"
                   onClick={() => exportReport(r.key, "excel")}
                   disabled={generating === `${r.key}-excel`}
                 >
@@ -263,6 +311,99 @@ const Relatorios = () => {
           </Card>
         ))}
       </div>
+
+      {/* Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-lg">{previewData?.title}</DialogTitle>
+            {previewData?.subtitle && (
+              <p className="text-sm text-muted-foreground">{previewData.subtitle}</p>
+            )}
+          </DialogHeader>
+
+          {previewData && (
+            <div className="flex-1 overflow-hidden flex flex-col gap-4">
+              {/* Summary Cards */}
+              <div className="flex flex-wrap gap-3">
+                {previewData.summaryCards.map((card, i) => (
+                  <div key={i} className="flex-1 min-w-[120px] rounded-lg border border-border/50 bg-muted/30 p-3">
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">{card.label}</p>
+                    <p className="text-lg font-bold text-foreground mt-0.5">{card.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Data Table */}
+              <div className="flex-1 overflow-auto rounded-lg border border-border/50">
+                {previewData.rows.length === 0 ? (
+                  <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">
+                    Nenhum registro encontrado para o período selecionado.
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/40">
+                        {previewData.headers.map((h, i) => (
+                          <TableHead key={i} className="text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{h}</TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {previewData.rows.map((row, ri) => (
+                        <TableRow key={ri} className="hover:bg-muted/20">
+                          {row.map((cell, ci) => (
+                            <TableCell key={ci} className="text-sm py-2.5 whitespace-nowrap">
+                              {cell === "BAIXO" ? (
+                                <Badge variant="destructive" className="text-[10px]">BAIXO</Badge>
+                              ) : cell === "aprovado" ? (
+                                <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">Aprovado</Badge>
+                              ) : cell === "pendente" ? (
+                                <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-400/40 text-[10px]">Pendente</Badge>
+                              ) : cell === "em_andamento" ? (
+                                <Badge variant="outline" className="text-blue-600 dark:text-blue-400 border-blue-400/40 text-[10px]">Em Andamento</Badge>
+                              ) : cell === "concluido" ? (
+                                <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">Concluído</Badge>
+                              ) : (
+                                cell
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </div>
+
+              <p className="text-xs text-muted-foreground text-right">
+                {previewData.rows.length} registro{previewData.rows.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-border/50">
+            <Button variant="outline" onClick={() => setPreviewOpen(false)}>Fechar</Button>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => exportFromPreview("excel")}
+              disabled={generating === `${previewKey}-excel`}
+            >
+              {generating === `${previewKey}-excel` ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+              Excel
+            </Button>
+            <Button
+              className="gap-2"
+              onClick={() => exportFromPreview("pdf")}
+              disabled={generating === `${previewKey}-pdf`}
+            >
+              {generating === `${previewKey}-pdf` ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+              Exportar PDF
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
