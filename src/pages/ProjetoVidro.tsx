@@ -838,8 +838,6 @@ const ProjetoVidroPage = () => {
   const [novoOpen, setNovoOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [showSummary, setShowSummary] = useState(false);
 
   const [novoTitulo, setNovoTitulo] = useState("");
   const [novoTipo, setNovoTipo] = useState("Comum");
