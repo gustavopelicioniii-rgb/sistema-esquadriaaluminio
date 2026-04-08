@@ -1,6 +1,8 @@
 import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import ProfileCrossSectionPanel from "@/components/frame-preview/ProfileCrossSectionPanel";
+import { getColorById } from "@/components/frame-preview/colors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -327,7 +329,7 @@ export default function CalculoEsquadrias() {
                 maxWidth={280}
                 maxHeight={220}
               />
-              </div>
+               </div>
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
@@ -338,6 +340,21 @@ export default function CalculoEsquadrias() {
                   {width && height ? ` — ${width} × ${height} mm` : ""}
                 </p>
               </div>
+              {/* Cross-section panel from calculation results */}
+              {result && result.cuts.length > 0 && (
+                <Separator />
+              )}
+              {result && result.cuts.length > 0 && (
+                <ProfileCrossSectionPanel
+                  profiles={(() => {
+                    const seen = new Set<string>();
+                    return result.cuts
+                      .filter(c => { if (seen.has(c.profile_code)) return false; seen.add(c.profile_code); return true; })
+                      .map(c => ({ code: c.profile_code, name: c.piece_name, type: c.piece_function }));
+                  })()}
+                  color={getColorById(selectedColor)}
+                />
+              )}
             </div>
           </CardContent>
         </Card>
