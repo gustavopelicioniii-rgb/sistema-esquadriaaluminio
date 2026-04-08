@@ -164,17 +164,7 @@ const pratic32GlassRules: GlassRule[] = [
   { id: "gr-p32-jpiv", typology_id: "typ-p32-jpiv", glass_name: "Vidro Folha", width_reference: "L", width_constant_mm: -167, height_reference: "H", height_constant_mm: -160, quantity: 1, glass_type: "temperado" },
 ];
 
-export const glassRules: GlassRule[] = [
-  ...supremaGlassRules,
-  ...goldGlassRules,
-  ...topGlassRules,
-  ...decampL45GlassRules,
-  ...pratic20GlassRules,
-  ...pratic32GlassRules,
-  ...cloned25GlassRules,
-  ...cloned32GlassRules,
-  ...cloned40GlassRules,
-];
+// glassRules exported at end of file after perfetta rules
 
 // ============================================
 // COMPONENTS - SUPREMA
