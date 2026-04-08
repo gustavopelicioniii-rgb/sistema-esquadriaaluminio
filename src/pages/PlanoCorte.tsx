@@ -91,6 +91,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
   const [folgasSaving, setFolgasSaving] = useState(false);
   const [folgasSource, setFolgasSource] = useState<"catalogo" | "global" | "personalizada">("catalogo");
+  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
+    open: false, title: "", blobUrl: null, filename: "", loading: false,
+  });
 
   const folgasKey = `folgas_${plano.typology_id}`;
   useEffect(() => {
