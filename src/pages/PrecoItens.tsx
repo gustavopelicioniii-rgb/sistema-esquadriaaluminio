@@ -273,8 +273,8 @@ const PrecoItens = () => {
               {filtered.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                      <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={40} height={40} className="h-8 w-8 object-contain" />
+                    <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center">
+                      <ProfileCrossSection profileType={guessProfileType(item.nome, item.categoria)} profileCode={item.codigo} size={32} />
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
