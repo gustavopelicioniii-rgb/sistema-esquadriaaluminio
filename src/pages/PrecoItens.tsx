@@ -13,9 +13,22 @@ import { exportPrecoItensPdf } from "@/utils/precoItensPdfGenerator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import perfilImg from "@/assets/items/perfil.png";
-import vidroImg from "@/assets/items/vidro.png";
-import ferragemImg from "@/assets/items/ferragem.png";
+import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
+
+// Derive a profile type from product name for varied icons
+function guessProfileType(nome: string, categoria: string): string {
+  const n = nome.toLowerCase();
+  if (n.includes("trilho") || n.includes("inferior")) return "trilho";
+  if (n.includes("montante") || n.includes("central")) return "montante";
+  if (n.includes("travessa") || n.includes("horizontal")) return "travessa";
+  if (n.includes("baguete") || n.includes("guarnição")) return "baguete";
+  if (n.includes("contramarco")) return "contramarco";
+  if (n.includes("arremate") || n.includes("acabamento")) return "arremate";
+  if (n.includes("marco") || n.includes("superior")) return "marco";
+  if (categoria === "Vidros") return "travessa";
+  if (categoria === "Ferragens") return "baguete";
+  return "marco";
+}
 
 interface Produto {
   id: string;
@@ -26,12 +39,6 @@ interface Produto {
   unidade: string;
   ativo: boolean;
 }
-
-const categoryImage: Record<string, string> = {
-  Perfis: perfilImg,
-  Vidros: vidroImg,
-  Ferragens: ferragemImg,
-};
 
 type SortKey = "codigo" | "nome" | "preco" | "categoria";
 type SortDir = "asc" | "desc";
@@ -219,8 +226,8 @@ const PrecoItens = () => {
             <Card key={item.id} className="shadow-sm border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                    <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={48} height={48} className="h-10 w-10 object-contain" />
+                  <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center">
+                    <ProfileCrossSection profileType={guessProfileType(item.nome, item.categoria)} profileCode={item.codigo} size={36} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
@@ -266,8 +273,8 @@ const PrecoItens = () => {
               {filtered.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                      <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={40} height={40} className="h-8 w-8 object-contain" />
+                    <div className="h-10 w-10 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center">
+                      <ProfileCrossSection profileType={guessProfileType(item.nome, item.categoria)} profileCode={item.codigo} size={32} />
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold text-primary">{item.codigo}</TableCell>
