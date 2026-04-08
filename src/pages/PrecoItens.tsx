@@ -18,6 +18,7 @@ import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection"
 // Derive a profile type from product name for varied icons
 function guessProfileType(nome: string, categoria: string): string {
   const n = nome.toLowerCase();
+  // Perfis de alumínio
   if (n.includes("trilho") || n.includes("inferior")) return "trilho";
   if (n.includes("montante") || n.includes("central")) return "montante";
   if (n.includes("travessa") || n.includes("horizontal")) return "travessa";
@@ -25,8 +26,21 @@ function guessProfileType(nome: string, categoria: string): string {
   if (n.includes("contramarco")) return "contramarco";
   if (n.includes("arremate") || n.includes("acabamento")) return "arremate";
   if (n.includes("marco") || n.includes("superior")) return "marco";
-  if (categoria === "Vidros") return "travessa";
-  if (categoria === "Ferragens") return "baguete";
+  // Ferragens específicas
+  if (n.includes("puxador") || n.includes("alça")) return "puxador";
+  if (n.includes("fechadura") || n.includes("fecho") || n.includes("trinco")) return "fechadura";
+  if (n.includes("roldana") || n.includes("rodízio") || n.includes("roda")) return "roldana";
+  if (n.includes("parafuso") || n.includes("rebite") || n.includes("bucha")) return "parafuso";
+  if (n.includes("dobradiça") || n.includes("articulação")) return "ferragem";
+  // Vedação
+  if (n.includes("vedação") || n.includes("borracha") || n.includes("silicone") || n.includes("gaxeta") || n.includes("escova")) return "vedacao";
+  // Vidros
+  if (n.includes("vidro") || n.includes("espelho") || n.includes("laminado") || n.includes("temperado")) return "vidro";
+  // Categorias
+  if (categoria === "Vidros") return "vidro";
+  if (categoria === "Ferragens") return "ferragem";
+  if (categoria === "Acessórios" || categoria === "Acessorios") return "acessorio";
+  if (categoria === "Vedação" || categoria === "Vedacao") return "vedacao";
   return "marco";
 }
 
