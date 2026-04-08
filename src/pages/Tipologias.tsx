@@ -479,7 +479,7 @@ const Tipologias = () => {
             {/* Grid of typology cards */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias</p>
+                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias — página {currentPage} de {totalPages || 1}</p>
                 {(filterCategory || filterSubcategory || filterFolhas || filterVeneziana !== null || filterBandeira !== null) && (
                   <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); setFilterVeneziana(null); setFilterBandeira(null); }}>
                     Limpar filtros
