@@ -530,7 +530,27 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
           )}
         </>
       )}
-    </div>
+      </div>
+
+      <PdfPreviewDialog
+        open={pdfPreview.open}
+        onOpenChange={(open) => {
+          if (!open && pdfPreview.blobUrl) URL.revokeObjectURL(pdfPreview.blobUrl);
+          setPdfPreview(p => ({ ...p, open, ...(open ? {} : { blobUrl: null }) }));
+        }}
+        title={pdfPreview.title}
+        pdfBlobUrl={pdfPreview.blobUrl}
+        loading={pdfPreview.loading}
+        onDownload={() => {
+          if (pdfPreview.blobUrl) {
+            const a = document.createElement("a");
+            a.href = pdfPreview.blobUrl;
+            a.download = pdfPreview.filename;
+            a.click();
+          }
+        }}
+      />
+    </>
   );
 }
 
