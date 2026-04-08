@@ -371,6 +371,30 @@ export type Database = {
         }
         Relationships: []
       }
+      orcamento_historico: {
+        Row: {
+          created_at: string
+          id: string
+          orcamento_id: string
+          status_anterior: string | null
+          status_novo: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          orcamento_id: string
+          status_anterior?: string | null
+          status_novo: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          orcamento_id?: string
+          status_anterior?: string | null
+          status_novo?: string
+        }
+        Relationships: []
+      }
       orcamentos: {
         Row: {
           cliente: string
