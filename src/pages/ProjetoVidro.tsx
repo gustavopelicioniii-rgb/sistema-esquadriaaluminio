@@ -1026,17 +1026,7 @@ const ProjetoVidroPage = () => {
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/5 mb-5">
             <svg width="44" height="44" viewBox="0 0 48 48" fill="none" className="text-primary/40">
-              {/* Outer frame */}
-              <rect x="4" y="4" width="40" height="40" rx="1.5" stroke="currentColor" strokeWidth="3" />
-              <rect x="7" y="7" width="34" height="34" rx="1" stroke="currentColor" strokeWidth="1.5" />
-              {/* Center mullion */}
-              <rect x="22" y="7" width="4" height="34" fill="currentColor" opacity="0.4" />
-              {/* Glass panels */}
-              <rect x="8" y="8" width="14" height="32" rx="0.5" fill="currentColor" opacity="0.12" />
-              <rect x="26" y="8" width="14" height="32" rx="0.5" fill="currentColor" opacity="0.12" />
-              {/* Arrows */}
-              <path d="M12 25 L17 22 L17 28 Z" fill="currentColor" opacity="0.35" />
-              <path d="M36 25 L31 22 L31 28 Z" fill="currentColor" opacity="0.35" />
+              {getGlassSvgElements("Comum", "lg")}
             </svg>
           </div>
           <h3 className="text-base font-semibold text-foreground mb-1">Nenhum projeto encontrado</h3>
