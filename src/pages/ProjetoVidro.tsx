@@ -21,6 +21,7 @@ import {
   VidroInteiro, Vidro1DivVertical, Vidro2DivVerticais,
   VidroGrade4, VidroGrade6, VidroBandeiraSuperior,
   VidroTravessaCentral, VidroAssimetrico, VidroGradeMultipla,
+  VidroVeneziana, VidroPivotante, VidroMaximAr,
 } from "@/components/tipologias/vidro-svgs";
 
 const glassVariantToSvg: Record<string, React.FC> = {
