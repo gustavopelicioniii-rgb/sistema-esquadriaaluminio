@@ -265,6 +265,7 @@ export async function generateCutListPDF(
     // Main profile row
     rows.push({
       profileCode: prof.profile_code,
+      pieceFunction: "marco",
       treatment: cfg.tratamento || "-",
       quantity: totalBars,
       barLength: barLen,
@@ -278,6 +279,7 @@ export async function generateCutListPDF(
       const pieceWeightKg = cut.weight_kg;
       rows.push({
         profileCode: cut.piece_name,
+        pieceFunction: cut.piece_function || cut.piece_name,
         treatment: cfg.tratamento || "-",
         quantity: cut.quantity,
         barLength: cut.cut_length_mm,
