@@ -308,6 +308,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {originalCutRules.map(rule => (
                       <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-primary">
+                          <ProfileCrossSection profileType={rule.piece_function || rule.piece_name} profileCode={rule.profile_code ?? ''} size={24} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold truncate">{rule.profile_code}</p>
                           <p className="text-[10px] text-muted-foreground truncate">{rule.piece_name}</p>
@@ -325,6 +328,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {originalGlassRules.map(rule => (
                       <div key={rule.id} className="flex items-center gap-2 rounded-md border px-3 py-2">
+                        <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-primary">
+                          <ProfileCrossSection profileType="vidro" profileCode="" size={24} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold truncate">{rule.glass_name}</p>
                         </div>
@@ -447,7 +453,14 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                     <TableBody>
                       {result.glasses.map(g => (
                         <TableRow key={g.glass_rule_id}>
-                          <TableCell className="font-medium">{g.glass_name}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2.5">
+                              <div className="shrink-0 w-9 h-9 rounded-md bg-muted/50 flex items-center justify-center text-primary">
+                                <ProfileCrossSection profileType="vidro" profileCode="" size={32} />
+                              </div>
+                              <span className="font-medium">{g.glass_name}</span>
+                            </div>
+                          </TableCell>
                           <TableCell className="text-center font-mono">{g.width_mm}</TableCell>
                           <TableCell className="text-center font-mono">{g.height_mm}</TableCell>
                           <TableCell className="text-center font-semibold">{g.quantity}</TableCell>
@@ -470,8 +483,11 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                     <h4 className="font-bold text-sm mb-3">Ferragens</h4>
                     <div className="space-y-2">
                       {result.components.filter(c => c.component_type === "ferragem" || c.component_type === "acessorio").map((comp, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">{comp.component_name}</span>
+                        <div key={i} className="flex items-center gap-2.5 text-sm">
+                          <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
+                            <ProfileCrossSection profileType={comp.component_type === "acessorio" ? "acessorio" : "ferragem"} profileCode={comp.component_code || ''} size={22} />
+                          </div>
+                          <span className="text-muted-foreground flex-1">{comp.component_name}</span>
                           <span className="font-semibold">{comp.quantity} {comp.unit}</span>
                         </div>
                       ))}
@@ -483,12 +499,18 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                   <div>
                     <h4 className="font-bold text-sm mb-3">Materiais Auxiliares</h4>
                     <div className="space-y-2">
-                      {result.components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type)).map((comp, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">{comp.component_name}</span>
-                          <span className="font-semibold text-primary">{comp.quantity} {comp.unit}</span>
-                        </div>
-                      ))}
+                      {result.components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type)).map((comp, i) => {
+                        const iconType = comp.component_type === "vedacao" ? "vedacao" : comp.component_type === "fixacao" ? "parafuso" : "arremate";
+                        return (
+                          <div key={i} className="flex items-center gap-2.5 text-sm">
+                            <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
+                              <ProfileCrossSection profileType={iconType} profileCode={comp.component_code || ''} size={22} />
+                            </div>
+                            <span className="text-muted-foreground flex-1">{comp.component_name}</span>
+                            <span className="font-semibold text-primary">{comp.quantity} {comp.unit}</span>
+                          </div>
+                        );
+                      })}
                       {result.components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type)).length === 0 && (
                         <p className="text-xs text-muted-foreground">Nenhum material auxiliar</p>
                       )}
