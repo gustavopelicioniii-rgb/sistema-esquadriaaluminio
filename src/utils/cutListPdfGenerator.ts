@@ -224,6 +224,7 @@ export async function generateCutListPDF(
 
   interface ProfileGroupRow {
     profileCode: string;
+    pieceFunction: string;
     treatment: string;
     quantity: number;
     barLength: number;
