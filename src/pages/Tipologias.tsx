@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,16 +11,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package, Filter } from "lucide-react";
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
 import { RulesValidatorWrapper } from "@/components/ai/RulesValidatorWrapper";
+import { FramePreview } from "@/components/frame-preview";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
