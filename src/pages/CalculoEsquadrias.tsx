@@ -425,27 +425,36 @@ export default function CalculoEsquadrias() {
                   </CardTitle>
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Relação de Barras...");
-                      await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Relação de Barras", blobUrl: null, filename: "", loading: true });
+                      const res = await generateCutListPDF(result, barResults, "frame-preview-for-pdf", undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Rel. Barras
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Padrões de Cortes...");
-                      await generatePadroesCortesPDF(result, barResults);
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Padrões de Cortes", blobUrl: null, filename: "", loading: true });
+                      const res = await generatePadroesCortesPDF(result, barResults, undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Padrões Corte
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Impressão da Obra...");
-                      await generateImpressaoObraPDF(result, barResults);
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Impressão da Obra", blobUrl: null, filename: "", loading: true });
+                      const res = await generateImpressaoObraPDF(result, barResults, undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Impressão
                     </Button>
                   </div>
