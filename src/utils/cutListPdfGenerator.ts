@@ -332,14 +332,21 @@ export async function generateCutListPDF(
       }
 
       pdf.setFontSize(6.5);
+
+      // Draw profile cross-section icon
+      const iconSize = 3.5;
+      const iconX = row.isSubProfile ? colDefs.perfil.x + 5 : colDefs.perfil.x + 1;
+      drawProfileIcon(pdf, row.pieceFunction, row.profileCode, iconX + iconSize / 2, y - 0.8, iconSize);
+
+      const textOffset = iconSize + 1.5;
       if (row.isSubProfile) {
         pdf.setFont(FONT, "normal");
         pdf.setTextColor(...DARK);
-        safeText(pdf, row.profileCode, colDefs.perfil.x + 5, y);
+        safeText(pdf, row.profileCode, iconX + textOffset, y);
       } else {
         pdf.setFont(FONT, "bold");
         pdf.setTextColor(...BLACK);
-        safeText(pdf, row.profileCode, colDefs.perfil.x + 1, y);
+        safeText(pdf, row.profileCode, iconX + textOffset, y);
       }
 
       pdf.setFont(FONT, "normal");
