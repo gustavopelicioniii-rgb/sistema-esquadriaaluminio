@@ -45,14 +45,25 @@ function Glass({ x, y, w, h, color }: { x: number; y: number; w: number; h: numb
   );
 }
 
+// ===== DROP SHADOW FILTER =====
+let _filterId = 0;
+function useFilterId() { return `frame-shadow-${++_filterId}`; }
+
 // ===== REALISTIC ALUMINUM PROFILE (FRAME) =====
 function ProfileFrame({ x, y, w, h, color, t }: { x: number; y: number; w: number; h: number; color: AluminumColor; t: number }) {
   const groove = t * 0.15;
   const inner = t * 0.25;
+  const fId = useFilterId();
   return (
     <g>
-      {/* Outer body */}
-      <rect x={x} y={y} width={w} height={h} fill={color.frameColor} stroke={color.frameDark} strokeWidth={0.8} />
+      <defs>
+        <filter id={fId} x="-8%" y="-6%" width="120%" height="120%">
+          <feDropShadow dx="2" dy="3" stdDeviation="4" floodColor={color.frameDark} floodOpacity="0.25" />
+          <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor={color.frameDark} floodOpacity="0.15" />
+        </filter>
+      </defs>
+      {/* Outer body with drop shadow */}
+      <rect x={x} y={y} width={w} height={h} fill={color.frameColor} stroke={color.frameDark} strokeWidth={0.8} filter={`url(#${fId})`} />
       {/* Top bevel highlight */}
       <rect x={x} y={y} width={w} height={t * 0.35} fill={color.frameLight} opacity={0.55} />
       {/* Left bevel highlight */}
@@ -428,20 +439,34 @@ function JanelaVeneziana({ svgWidth: sw, svgHeight: sh, color, numFolhas = 2 }: 
       {/* Veneziana side (right half) */}
       <rect x={pad + t + halfW + 2} y={pad + t + 1} width={halfW - 3} height={h - 2 * t - 2}
         fill={color.frameColor} stroke={color.frameDark} strokeWidth={0.5} />
-      {/* Venetian slats - realistic angled */}
+      {/* Venetian slats - 3D perspective with depth */}
       {Array.from({ length: slatCount }).map((_, i) => {
         const sy = pad + t + lt + 5 + i * 10;
         const sx = pad + t + halfW + lt + 4;
         const sw2 = halfW - lt * 2 - 8;
+        const angle = -15;
+        const slatH = 6;
+        const depthOffset = 2.5;
+        const cx = sx + sw2 / 2;
+        const cy = sy + slatH / 2;
         return (
           <g key={`s-${i}`}>
-            <rect x={sx} y={sy} width={sw2} height={5} rx={0.5}
+            {/* Shadow/depth underneath slat */}
+            <rect x={sx + 1} y={sy + depthOffset} width={sw2} height={slatH} rx={0.5}
+              fill={color.frameDark} opacity={0.2}
+              transform={`rotate(${angle}, ${cx + 1}, ${cy + depthOffset})`} />
+            {/* Slat body - main surface */}
+            <rect x={sx} y={sy} width={sw2} height={slatH} rx={0.5}
               fill={color.frameColor} stroke={color.frameDark} strokeWidth={0.4}
-              transform={`rotate(-12, ${sx + sw2 / 2}, ${sy + 2.5})`} />
-            {/* Slat highlight */}
-            <rect x={sx} y={sy} width={sw2} height={1.5} rx={0.3}
-              fill={color.frameLight} opacity={0.4}
-              transform={`rotate(-12, ${sx + sw2 / 2}, ${sy + 0.75})`} />
+              transform={`rotate(${angle}, ${cx}, ${cy})`} />
+            {/* Slat top bevel highlight */}
+            <rect x={sx} y={sy} width={sw2} height={slatH * 0.3} rx={0.3}
+              fill={color.frameLight} opacity={0.5}
+              transform={`rotate(${angle}, ${cx}, ${cy - slatH * 0.35})`} />
+            {/* Slat bottom edge shadow */}
+            <rect x={sx} y={sy + slatH * 0.7} width={sw2} height={slatH * 0.3} rx={0.3}
+              fill={color.frameDark} opacity={0.25}
+              transform={`rotate(${angle}, ${cx}, ${cy + slatH * 0.35})`} />
           </g>
         );
       })}
