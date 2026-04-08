@@ -30,6 +30,12 @@ const glassVariantToSvg: Record<string, React.FC> = {
   "laminado": Vidro2DivVerticais,
   "temperado-laminado": VidroGrade6,
   "insulado": Vidro1DivVertical,
+  "veneziana": VidroVeneziana,
+  "pivotante": VidroPivotante,
+  "maxim-ar": VidroMaximAr,
+  "serigrafado": VidroGradeMultipla,
+  "espelhado": VidroTravessaCentral,
+  "acidato": VidroBandeiraSuperior,
 };
 
 // Types
