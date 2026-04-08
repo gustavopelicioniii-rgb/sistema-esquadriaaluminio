@@ -11,84 +11,125 @@ interface ReportOptions {
 }
 
 const COLORS = {
-  primary: [59, 130, 246] as [number, number, number],
-  primaryLight: [239, 246, 255] as [number, number, number],
+  primary: [37, 99, 235] as [number, number, number],
+  primaryDark: [29, 78, 216] as [number, number, number],
   dark: [15, 23, 42] as [number, number, number],
-  muted: [100, 116, 139] as [number, number, number],
+  text: [51, 65, 85] as [number, number, number],
+  muted: [148, 163, 184] as [number, number, number],
   border: [226, 232, 240] as [number, number, number],
   white: [255, 255, 255] as [number, number, number],
   bg: [248, 250, 252] as [number, number, number],
-  green: [34, 197, 94] as [number, number, number],
-  red: [239, 68, 68] as [number, number, number],
-  yellow: [245, 158, 11] as [number, number, number],
+  cardBg: [241, 245, 249] as [number, number, number],
+  headerRow: [239, 246, 255] as [number, number, number],
+  accent: [59, 130, 246] as [number, number, number],
 };
 
-const MARGIN = 15;
+const MARGIN = 18;
 const PAGE_WIDTH = 210;
+const PAGE_HEIGHT = 297;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 
-function addHeader(doc: jsPDF, title: string, subtitle?: string) {
-  // Header bar
-  doc.setFillColor(...COLORS.primary);
-  doc.rect(0, 0, PAGE_WIDTH, 28, "F");
+function drawRoundedRect(doc: jsPDF, x: number, y: number, w: number, h: number, r: number, style: "F" | "S" | "FD") {
+  doc.roundedRect(x, y, w, h, r, r, style);
+}
 
+function addHeader(doc: jsPDF, title: string, subtitle?: string) {
+  // Gradient-like header with two rects
+  doc.setFillColor(...COLORS.primaryDark);
+  doc.rect(0, 0, PAGE_WIDTH, 32, "F");
+  doc.setFillColor(...COLORS.primary);
+  doc.rect(0, 0, PAGE_WIDTH, 30, "F");
+
+  // Decorative accent line at bottom of header
+  doc.setFillColor(...COLORS.primaryDark);
+  doc.rect(0, 30, PAGE_WIDTH, 2, "F");
+
+  // Title
   doc.setTextColor(...COLORS.white);
-  doc.setFontSize(16);
+  doc.setFontSize(15);
   doc.setFont("helvetica", "bold");
-  doc.text(title, MARGIN, 13);
+  doc.text(title, MARGIN, 14);
 
   if (subtitle) {
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text(subtitle, MARGIN, 20);
+    doc.setTextColor(255, 255, 255);
+    doc.text(subtitle, MARGIN, 22);
   }
 
-  // Date
+  // Right side info
   const dateStr = new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   }).format(new Date());
+
   doc.setFontSize(8);
-  doc.text(dateStr, PAGE_WIDTH - MARGIN, 13, { align: "right" });
-  doc.text("Gerado pelo sistema", PAGE_WIDTH - MARGIN, 20, { align: "right" });
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(200, 220, 255);
+  doc.text(dateStr, PAGE_WIDTH - MARGIN, 14, { align: "right" });
+
+  const timeStr = new Intl.DateTimeFormat("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date());
+  doc.text(`Gerado às ${timeStr}`, PAGE_WIDTH - MARGIN, 21, { align: "right" });
 }
 
 function addFooter(doc: jsPDF, pageNum: number, totalPages: number) {
-  const y = 290;
+  const y = PAGE_HEIGHT - 12;
+
+  // Footer line
   doc.setDrawColor(...COLORS.border);
-  doc.line(MARGIN, y - 4, PAGE_WIDTH - MARGIN, y - 4);
+  doc.setLineWidth(0.3);
+  doc.line(MARGIN, y - 3, PAGE_WIDTH - MARGIN, y - 3);
+
   doc.setFontSize(7);
   doc.setTextColor(...COLORS.muted);
-  doc.text("Relatório gerado automaticamente", MARGIN, y);
+  doc.setFont("helvetica", "normal");
+  doc.text("AluFlow · Relatório gerado automaticamente", MARGIN, y);
   doc.text(`Página ${pageNum} de ${totalPages}`, PAGE_WIDTH - MARGIN, y, { align: "right" });
 }
 
 function addSummaryCards(doc: jsPDF, cards: { label: string; value: string }[], startY: number): number {
-  const cardWidth = (CONTENT_WIDTH - (cards.length - 1) * 4) / cards.length;
-  const cardHeight = 22;
+  const gap = 5;
+  const maxCards = Math.min(cards.length, 4);
+  const cardWidth = (CONTENT_WIDTH - (maxCards - 1) * gap) / maxCards;
+  const cardHeight = 26;
 
-  cards.forEach((card, i) => {
-    const x = MARGIN + i * (cardWidth + 4);
+  cards.slice(0, maxCards).forEach((card, i) => {
+    const x = MARGIN + i * (cardWidth + gap);
+
+    // Card shadow
+    doc.setFillColor(0, 0, 0);
+    doc.setGState(new (doc as any).GState({ opacity: 0.04 }));
+    drawRoundedRect(doc, x + 0.5, startY + 0.8, cardWidth, cardHeight, 3, "F");
+    doc.setGState(new (doc as any).GState({ opacity: 1 }));
+
     // Card background
-    doc.setFillColor(...COLORS.bg);
+    doc.setFillColor(...COLORS.white);
     doc.setDrawColor(...COLORS.border);
-    doc.roundedRect(x, startY, cardWidth, cardHeight, 2, 2, "FD");
+    doc.setLineWidth(0.3);
+    drawRoundedRect(doc, x, startY, cardWidth, cardHeight, 3, "FD");
+
+    // Top accent line
+    doc.setFillColor(...COLORS.accent);
+    doc.rect(x + 8, startY, cardWidth - 16, 1.2, "F");
 
     // Value
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...COLORS.dark);
-    doc.text(card.value, x + cardWidth / 2, startY + 10, { align: "center" });
+    doc.text(card.value, x + cardWidth / 2, startY + 12, { align: "center" });
 
     // Label
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...COLORS.muted);
-    doc.text(card.label, x + cardWidth / 2, startY + 17, { align: "center" });
+    doc.text(card.label.toUpperCase(), x + cardWidth / 2, startY + 19, { align: "center" });
   });
 
-  return startY + cardHeight + 8;
+  return startY + cardHeight + 10;
 }
 
 export function generateReportPdf(options: ReportOptions) {
@@ -100,7 +141,7 @@ export function generateReportPdf(options: ReportOptions) {
   // Calculate column widths
   const colWidths = options.columnWidths || headers.map(() => CONTENT_WIDTH / totalCols);
 
-  let currentY = 34;
+  let currentY = 38;
 
   addHeader(doc, title, subtitle);
 
@@ -109,19 +150,34 @@ export function generateReportPdf(options: ReportOptions) {
     currentY = addSummaryCards(doc, summaryCards, currentY);
   }
 
+  // Section label
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...COLORS.dark);
+  doc.text("DADOS", MARGIN, currentY);
+  doc.setFontSize(7);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...COLORS.muted);
+  doc.text(`${rows.length} registros`, MARGIN + 16, currentY);
+  currentY += 5;
+
   // Table header
+  const ROW_HEIGHT = 8;
+  const HEADER_HEIGHT = 9;
+
   const drawTableHeader = (y: number) => {
     doc.setFillColor(...COLORS.primary);
+    drawRoundedRect(doc, MARGIN, y, CONTENT_WIDTH, HEADER_HEIGHT, 2, "F");
+
     let x = MARGIN;
     headers.forEach((header, i) => {
-      doc.rect(x, y, colWidths[i], 8, "F");
       doc.setFontSize(7);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(...COLORS.white);
-      doc.text(header, x + 2, y + 5.5);
+      doc.text(header.toUpperCase(), x + 3, y + 6);
       x += colWidths[i];
     });
-    return y + 8;
+    return y + HEADER_HEIGHT;
   };
 
   currentY = drawTableHeader(currentY);
@@ -130,50 +186,63 @@ export function generateReportPdf(options: ReportOptions) {
 
   // Table rows
   rows.forEach((row, rowIndex) => {
-    if (currentY > 275) {
+    if (currentY > PAGE_HEIGHT - 25) {
       doc.addPage();
       pageCount++;
       addHeader(doc, title, subtitle);
-      currentY = 34;
+      currentY = 38;
       currentY = drawTableHeader(currentY);
     }
 
-    const rowHeight = 7;
     const isEven = rowIndex % 2 === 0;
+
+    // Row background
+    if (isEven) {
+      doc.setFillColor(...COLORS.bg);
+      doc.rect(MARGIN, currentY, CONTENT_WIDTH, ROW_HEIGHT, "F");
+    }
+
+    // Bottom border
+    doc.setDrawColor(...COLORS.border);
+    doc.setLineWidth(0.15);
+    doc.line(MARGIN, currentY + ROW_HEIGHT, MARGIN + CONTENT_WIDTH, currentY + ROW_HEIGHT);
 
     let x = MARGIN;
     row.forEach((cell, colIndex) => {
-      // Alternating row background
-      if (isEven) {
-        doc.setFillColor(...COLORS.bg);
-        doc.rect(x, currentY, colWidths[colIndex], rowHeight, "F");
-      }
-
-      // Cell border bottom
-      doc.setDrawColor(...COLORS.border);
-      doc.line(x, currentY + rowHeight, x + colWidths[colIndex], currentY + rowHeight);
-
-      // Cell text
-      doc.setFontSize(7);
+      doc.setFontSize(7.5);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(...COLORS.dark);
+      doc.setTextColor(...COLORS.text);
 
       // Truncate text if too long
-      const maxChars = Math.floor(colWidths[colIndex] / 1.8);
+      const maxChars = Math.floor(colWidths[colIndex] / 1.7);
       const text = cell.length > maxChars ? cell.substring(0, maxChars - 1) + "…" : cell;
-      doc.text(text, x + 2, currentY + 4.8);
+      doc.text(text, x + 3, currentY + 5.2);
 
       x += colWidths[colIndex];
     });
 
-    currentY += rowHeight;
+    currentY += ROW_HEIGHT;
   });
 
-  // Total row count
+  // Bottom summary bar
   currentY += 4;
+  doc.setFillColor(...COLORS.cardBg);
+  drawRoundedRect(doc, MARGIN, currentY, CONTENT_WIDTH, 8, 2, "F");
   doc.setFontSize(7);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...COLORS.text);
+  doc.text(`Total: ${rows.length} registros`, MARGIN + 3, currentY + 5.2);
+
+  const dateStr = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date());
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...COLORS.muted);
-  doc.text(`Total: ${rows.length} registros`, MARGIN, currentY);
+  doc.text(`Exportado em ${dateStr}`, PAGE_WIDTH - MARGIN - 3, currentY + 5.2, { align: "right" });
 
   // Add footers to all pages
   const totalPages = doc.getNumberOfPages();
