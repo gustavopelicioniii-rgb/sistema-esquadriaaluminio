@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,16 +11,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package, Filter } from "lucide-react";
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
 import { RulesValidatorWrapper } from "@/components/ai/RulesValidatorWrapper";
+import { FramePreview } from "@/components/frame-preview";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
@@ -81,6 +83,9 @@ const Tipologias = () => {
   const [tab, setTab] = useState("catalogo");
   const [search, setSearch] = useState("");
   const [filterLine, setFilterLine] = useState("all");
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [filterSubcategory, setFilterSubcategory] = useState<string | null>(null);
+  const [filterFolhas, setFilterFolhas] = useState<number | null>(null);
 
   // Custom typologies
   const [customs, setCustoms] = useState<CustomTypology[]>([]);
@@ -107,10 +112,18 @@ const Tipologias = () => {
 
   // Filtered catalog typologies
   const filteredCatalog = catalogTypologies.filter(t => {
-    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || (t.id && t.id.toLowerCase().includes(search.toLowerCase()));
     const matchLine = filterLine === "all" || t.product_line_id === filterLine;
-    return matchSearch && matchLine;
+    const matchCategory = !filterCategory || t.category === filterCategory;
+    const matchSubcategory = !filterSubcategory || t.subcategory === filterSubcategory;
+    const matchFolhas = !filterFolhas || t.num_folhas === filterFolhas;
+    return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas;
   });
+
+  // Unique values for sidebar filters
+  const uniqueCategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.category))], []);
+  const uniqueSubcategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.subcategory).filter(Boolean))], []);
+  const uniqueFolhas = useMemo(() => [...new Set(catalogTypologies.map(t => t.num_folhas))].sort((a, b) => a - b), []);
 
   // Filtered custom typologies
   const filteredCustom = customs.filter(t => {
@@ -383,45 +396,93 @@ const Tipologias = () => {
 
         {/* CATALOG TAB */}
         <TabsContent value="catalogo" className="mt-4">
-          <Card className="shadow-sm border-border/50">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Linha</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead className="hidden md:table-cell">Folhas</TableHead>
-                    <TableHead className="hidden lg:table-cell">Dimensões (mm)</TableHead>
-                    <TableHead className="text-right">Ação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCatalog.slice(0, 50).map((t) => (
-                    <TableRow key={t.id}>
-                      <TableCell className="font-medium text-sm">{t.name}</TableCell>
-                      <TableCell><Badge variant="secondary" className="text-[10px]">{getLineName(t.product_line_id)}</Badge></TableCell>
-                      <TableCell className="text-sm">{getCategoryLabel(t.category)}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{t.num_folhas}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
-                        {t.min_width_mm}–{t.max_width_mm} × {t.min_height_mm}–{t.max_height_mm}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => handleCloneFromCatalog(t)}>
-                          <Copy className="h-3 w-3" /> Clonar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+          <div className="flex gap-4">
+            {/* Sidebar Filters */}
+            <div className="hidden md:block w-52 shrink-0">
+              <ScrollArea className="h-[calc(100vh-280px)]">
+                <div className="space-y-4 pr-3">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Tipologia</h4>
+                    <div className="space-y-0.5">
+                      {uniqueCategories.map(cat => (
+                        <button key={cat} onClick={() => setFilterCategory(filterCategory === cat ? null : cat)}
+                          className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterCategory === cat ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                          {getCategoryLabel(cat)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Sistema de Abertura</h4>
+                    <div className="space-y-0.5">
+                      {uniqueSubcategories.map(sub => (
+                        <button key={sub} onClick={() => setFilterSubcategory(filterSubcategory === sub ? null : sub)}
+                          className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterSubcategory === sub ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                          {SUBCATEGORIES.find(s => s.value === sub)?.label || sub}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Quantidade de Folhas</h4>
+                    <div className="space-y-0.5">
+                      {uniqueFolhas.map(n => (
+                        <button key={n} onClick={() => setFilterFolhas(filterFolhas === n ? null : n)}
+                          className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterFolhas === n ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                          {n} Folha{n !== 1 ? "s" : ""}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </ScrollArea>
             </div>
-            {filteredCatalog.length > 50 && (
-              <div className="p-3 text-center text-xs text-muted-foreground border-t">
-                Mostrando 50 de {filteredCatalog.length} — use o filtro para refinar
+
+            {/* Grid of typology cards */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias</p>
+                {(filterCategory || filterSubcategory || filterFolhas) && (
+                  <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); }}>
+                    Limpar filtros
+                  </Button>
+                )}
               </div>
-            )}
-          </Card>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                {filteredCatalog.slice(0, 60).map((t) => (
+                  <Card key={t.id} className="group hover:shadow-md transition-shadow cursor-pointer border-border/60 overflow-hidden"
+                    onClick={() => handleCloneFromCatalog(t)}>
+                    <div className="bg-muted/30 p-3 flex items-center justify-center aspect-square">
+                      <FramePreview
+                        width_mm={t.max_width_mm || 1200}
+                        height_mm={t.max_height_mm || 1400}
+                        category={t.category}
+                        subcategory={t.subcategory || "correr"}
+                        num_folhas={t.num_folhas}
+                        has_veneziana={t.has_veneziana}
+                        has_bandeira={t.has_bandeira}
+                        notes={t.notes || undefined}
+                        maxWidth={130}
+                        maxHeight={130}
+                        showDimensions={false}
+                      />
+                    </div>
+                    <CardContent className="p-2.5 space-y-1">
+                      <p className="text-xs text-primary leading-tight line-clamp-2 font-medium">{t.name}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wide truncate">{t.id}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {filteredCatalog.length > 60 && (
+                <div className="py-4 text-center text-xs text-muted-foreground">
+                  Mostrando 60 de {filteredCatalog.length} — use os filtros para refinar
+                </div>
+              )}
+            </div>
+          </div>
         </TabsContent>
 
         {/* CUSTOM TAB */}
