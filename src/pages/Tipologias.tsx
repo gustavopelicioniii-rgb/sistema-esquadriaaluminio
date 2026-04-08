@@ -584,6 +584,12 @@ const Tipologias = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <TypologyDetailDialog
+        typology={detailTypology}
+        open={!!detailTypology}
+        onOpenChange={(o) => { if (!o) setDetailTypology(null); }}
+      />
     </div>
   );
 };
