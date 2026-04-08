@@ -19,6 +19,7 @@ interface Props {
 }
 
 export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
+  const { user } = useAuth();
   const [fotos, setFotos] = useState<Foto[]>([]);
   const [uploading, setUploading] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -47,7 +48,7 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
 
     for (const file of Array.from(files)) {
       const ext = file.name.split(".").pop();
-      const path = `${pedidoId}/${etapaId}/${Date.now()}.${ext}`;
+      const path = `${user?.id}/${pedidoId}/${etapaId}/${Date.now()}.${ext}`;
 
       const { error: uploadErr } = await supabase.storage
         .from("checklist-fotos")
