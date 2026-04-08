@@ -168,8 +168,14 @@ const CriarOrcamento = () => {
     return { totalArea, custo: totalCusto, lucro, subtotal, acrescimo: acrescimoVal, desconto: descontoCalc, total, itemCalcs };
   }, [items, margemPercent, temAcrescimo, acrescimo, descontoTipo, descontoValor]);
 
+  const hasValidationErrors = items.some(item => validateDimensions(item.tipo, item.largura, item.altura) !== null);
+
   const handleSalvar = async () => {
     if (!calculo || !cliente) return;
+    if (hasValidationErrors) {
+      toast({ title: "Dimensões inválidas", description: "Corrija as dimensões fora dos limites antes de salvar.", variant: "destructive" });
+      return;
+    }
     const itemsData = items.map((item, i) => {
       const produto = tiposProduto.find(t => t.value === item.tipo);
       const ic = calculo.itemCalcs[i];
