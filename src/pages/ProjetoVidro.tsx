@@ -863,38 +863,75 @@ const ProjetoVidroPage = () => {
             );
             const valorTotal = areaTotal * projeto.precoM2;
             const isSelected = selectedIds.has(projeto.id);
+
+            const tipoBadgeClass = (() => {
+              const t = projeto.tipo.toLowerCase();
+              if (t.includes("temperado") && t.includes("laminado")) return "bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-700";
+              if (t.includes("temperado")) return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700";
+              if (t.includes("laminado")) return "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
+              if (t.includes("insulado")) return "bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-700";
+              return "bg-muted text-muted-foreground";
+            })();
+
+            const corBadgeClass = (() => {
+              const c = projeto.cor.toLowerCase();
+              if (c.includes("fumê") || c.includes("fume")) return "bg-gray-200 text-gray-700 border-gray-300 dark:bg-gray-700/40 dark:text-gray-300 dark:border-gray-600";
+              if (c.includes("verde")) return "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700";
+              if (c.includes("bronze")) return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700";
+              if (c.includes("preto")) return "bg-gray-900 text-white border-gray-700 dark:bg-gray-800 dark:text-gray-200";
+              return "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-700";
+            })();
+
             return (
-              <Card key={projeto.id} className={`shadow-sm border-border/50 hover:shadow-md transition-all ${isSelected ? "ring-2 ring-primary border-primary/50" : "hover:border-primary/30"}`}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Monitor className="h-4 w-4 text-primary" />
-                      {projeto.titulo}
-                    </CardTitle>
+              <Card key={projeto.id} className={`group relative overflow-hidden border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 ${isSelected ? "ring-2 ring-primary border-primary/50 shadow-primary/10" : "hover:border-primary/30 hover:-translate-y-0.5"}`}>
+                {/* Glass SVG watermark */}
+                <div className="absolute -top-4 -right-4 opacity-[0.04] pointer-events-none">
+                  <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                    <rect x="10" y="10" width="80" height="80" rx="2" stroke="currentColor" strokeWidth="3" />
+                    <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                    <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                  </svg>
+                </div>
+
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-primary">
+                          <rect x="3" y="3" width="18" height="18" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+                          <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <CardTitle className="text-sm font-bold truncate">{projeto.titulo}</CardTitle>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{projeto.criadoEm} · {projeto.itens.length} vidro{projeto.itens.length !== 1 ? "s" : ""}</p>
+                      </div>
+                    </div>
                     <Checkbox
                       checked={isSelected}
                       onCheckedChange={() => toggleSelect(projeto.id)}
-                      className="mt-0.5"
+                      className="mt-1"
                     />
                   </div>
-                  <div className="flex gap-1.5 mt-1">
-                    <Badge variant="secondary" className="text-[10px]">{projeto.tipo}</Badge>
-                    <Badge variant="outline" className="text-[10px]">{projeto.espessura}</Badge>
-                    <Badge variant="outline" className="text-[10px]">{projeto.cor}</Badge>
+                  <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${tipoBadgeClass}`}>{projeto.tipo}</Badge>
+                    <Badge variant="outline" className="text-[10px] px-2 py-0.5 font-medium">{projeto.espessura}</Badge>
+                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${corBadgeClass}`}>{projeto.cor}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Área</span>
-                      <span className="font-semibold">{areaTotal.toFixed(2)} M²</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground text-xs">Área total</span>
+                      <span className="font-semibold">{areaTotal.toFixed(2)} m²</span>
                     </div>
-                    <div className="flex justify-between border-t pt-2">
-                      <span className="font-semibold">TOTAL</span>
-                      <span className="font-bold text-primary">{formatCurrency(valorTotal)}</span>
+                    <div className="flex justify-between items-center pt-2 border-t border-border/50">
+                      <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Total</span>
+                      <span className="font-extrabold text-base text-primary">{formatCurrency(valorTotal)}</span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full mt-4 gap-2" onClick={() => setSelected(projeto)}>
+                  <Button variant="outline" size="sm" className="w-full mt-4 gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" onClick={() => setSelected(projeto)}>
                     <Eye className="h-3.5 w-3.5" /> Ver detalhes
                   </Button>
                 </CardContent>
@@ -905,8 +942,25 @@ const ProjetoVidroPage = () => {
       )}
 
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground text-sm">
-          Nenhum projeto encontrado.
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/5 mb-5">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-primary/40">
+              <rect x="2" y="2" width="20" height="20" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="1" />
+              <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="1" />
+              <line x1="7" y1="2" x2="7" y2="22" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+              <line x1="17" y1="2" x2="17" y2="22" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+            </svg>
+          </div>
+          <h3 className="text-base font-semibold text-foreground mb-1">Nenhum projeto encontrado</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mb-5">
+            {search ? "Tente buscar com outros termos." : "Crie seu primeiro projeto de vidro para começar."}
+          </p>
+          {!search && (
+            <Button className="gap-2" onClick={() => setNovoOpen(true)}>
+              <Plus className="h-4 w-4" /> Novo Projeto
+            </Button>
+          )}
         </div>
       )}
 
