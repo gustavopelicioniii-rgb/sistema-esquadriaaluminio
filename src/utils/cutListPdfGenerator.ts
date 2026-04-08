@@ -102,8 +102,9 @@ export async function generateCutListPDF(
   result: CalculationOutput,
   barResults: OptimizationResult[],
   _svgPreviewElementId?: string,
-  config?: RelacaoBarrasConfig
-) {
+  config?: RelacaoBarrasConfig,
+  options?: { preview?: boolean }
+): Promise<{ blob: Blob; filename: string } | void> {
   const pdf = new jsPDF("p", "mm", "a4");
   const dateStr = formatDateBR();
   const cfg = config || {};
@@ -476,7 +477,11 @@ export async function generateCutListPDF(
     safeText(pdf, "Sistema AluFlow - Alumínio® Sistemas", A4_W / 2, footY, { align: "center" });
   }
 
-  // Save
   const safeName = result.typology_name.replace(/\s+/g, "-").toLowerCase();
-  pdf.save(`relacao-barras-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`);
+  const filename = `relacao-barras-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`;
+
+  if (options?.preview) {
+    return { blob: pdf.output("blob"), filename };
+  }
+  pdf.save(filename);
 }

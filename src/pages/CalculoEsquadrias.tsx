@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
+import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
 import ProfileCrossSectionPanel from "@/components/frame-preview/ProfileCrossSectionPanel";
 import { getColorById } from "@/components/frame-preview/colors";
@@ -43,6 +44,9 @@ export default function CalculoEsquadrias() {
   const [result, setResult] = useState<CalculationOutput | null>(null);
   const [barResults, setBarResults] = useState<OptimizationResult[]>([]);
   const [selectedColor, setSelectedColor] = useState("natural");
+  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
+    open: false, title: "", blobUrl: null, filename: "", loading: false,
+  });
 
   const filteredTypologies = useMemo(
     () => allTypologies.filter(t => t.product_line_id === selectedLine && t.active),
@@ -150,6 +154,7 @@ export default function CalculoEsquadrias() {
   };
 
   return (
+    <>
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -421,27 +426,36 @@ export default function CalculoEsquadrias() {
                   </CardTitle>
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Relação de Barras...");
-                      await generateCutListPDF(result, barResults, "frame-preview-for-pdf");
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Relação de Barras", blobUrl: null, filename: "", loading: true });
+                      const res = await generateCutListPDF(result, barResults, "frame-preview-for-pdf", undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Rel. Barras
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Padrões de Cortes...");
-                      await generatePadroesCortesPDF(result, barResults);
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Padrões de Cortes", blobUrl: null, filename: "", loading: true });
+                      const res = await generatePadroesCortesPDF(result, barResults, undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Padrões Corte
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1.5 flex-1 sm:flex-none" onClick={async () => {
-                      toast.info("Gerando Impressão da Obra...");
-                      await generateImpressaoObraPDF(result, barResults);
-                      toast.success("PDF exportado!");
+                      setPdfPreview({ open: true, title: "Impressão da Obra", blobUrl: null, filename: "", loading: true });
+                      const res = await generateImpressaoObraPDF(result, barResults, undefined, { preview: true });
+                      if (res) {
+                        const url = URL.createObjectURL(res.blob);
+                        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+                      }
                     }}>
-                      <FileDown className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Impressão
                     </Button>
                   </div>
@@ -714,6 +728,26 @@ export default function CalculoEsquadrias() {
           </Card>
         </>
       )}
-    </div>
+     </div>
+
+      <PdfPreviewDialog
+        open={pdfPreview.open}
+        onOpenChange={(open) => {
+          if (!open && pdfPreview.blobUrl) URL.revokeObjectURL(pdfPreview.blobUrl);
+          setPdfPreview(p => ({ ...p, open, ...(open ? {} : { blobUrl: null }) }));
+        }}
+        title={pdfPreview.title}
+        pdfBlobUrl={pdfPreview.blobUrl}
+        loading={pdfPreview.loading}
+        onDownload={() => {
+          if (pdfPreview.blobUrl) {
+            const a = document.createElement("a");
+            a.href = pdfPreview.blobUrl;
+            a.download = pdfPreview.filename;
+            a.click();
+          }
+        }}
+      />
+    </>
   );
 }

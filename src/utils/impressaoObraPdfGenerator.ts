@@ -42,8 +42,9 @@ export interface ImpressaoObraConfig {
 export async function generateImpressaoObraPDF(
   result: CalculationOutput,
   barResults: OptimizationResult[],
-  config?: ImpressaoObraConfig
-) {
+  config?: ImpressaoObraConfig,
+  options?: { preview?: boolean }
+): Promise<{ blob: Blob; filename: string } | void> {
   const pdf = new jsPDF("p", "mm", "a4");
   const cfg = config || {};
   const dateStr = formatDateBR();
@@ -423,5 +424,10 @@ export async function generateImpressaoObraPDF(
   }
 
   const safeName = result.typology_name.replace(/\s+/g, "-").toLowerCase();
-  pdf.save(`impressao-obra-${safeName}-${W}x${H}.pdf`);
+  const filename = `impressao-obra-${safeName}-${W}x${H}.pdf`;
+
+  if (options?.preview) {
+    return { blob: pdf.output("blob"), filename };
+  }
+  pdf.save(filename);
 }

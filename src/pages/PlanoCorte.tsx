@@ -12,7 +12,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, Trash2, Boxes, Scissors, Weight, BarChart3 } from "lucide-react";
+import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, Trash2, Boxes, Scissors, Weight, BarChart3, Eye } from "lucide-react";
+import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,6 +91,9 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   const [glassFolgas, setGlassFolgas] = useState<Record<string, { w: number; h: number }>>(defaultGlassFolgas);
   const [folgasSaving, setFolgasSaving] = useState(false);
   const [folgasSource, setFolgasSource] = useState<"catalogo" | "global" | "personalizada">("catalogo");
+  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
+    open: false, title: "", blobUrl: null, filename: "", loading: false,
+  });
 
   const folgasKey = `folgas_${plano.typology_id}`;
   useEffect(() => {
@@ -195,26 +199,30 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
 
   const handleExportPDF = useCallback(async () => {
     if (!result) return;
-    toast.loading("Gerando Relação de Barras...");
+    setPdfPreview({ open: true, title: "Relação de Barras", blobUrl: null, filename: "", loading: true });
     try {
-      await generateCutListPDF(result, barResults, "frame-preview-svg");
-      toast.dismiss();
-      toast.success("PDF exportado com sucesso!");
+      const res = await generateCutListPDF(result, barResults, "frame-preview-svg", undefined, { preview: true });
+      if (res) {
+        const url = URL.createObjectURL(res.blob);
+        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+      }
     } catch {
-      toast.dismiss();
+      setPdfPreview(p => ({ ...p, loading: false }));
       toast.error("Erro ao gerar PDF");
     }
   }, [result, barResults]);
 
   const handleExportPadroes = useCallback(async () => {
     if (!result) return;
-    toast.loading("Gerando Padrões de Cortes...");
+    setPdfPreview({ open: true, title: "Padrões de Cortes", blobUrl: null, filename: "", loading: true });
     try {
-      await generatePadroesCortesPDF(result, barResults);
-      toast.dismiss();
-      toast.success("PDF exportado com sucesso!");
+      const res = await generatePadroesCortesPDF(result, barResults, undefined, { preview: true });
+      if (res) {
+        const url = URL.createObjectURL(res.blob);
+        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+      }
     } catch {
-      toast.dismiss();
+      setPdfPreview(p => ({ ...p, loading: false }));
       toast.error("Erro ao gerar PDF");
     }
   }, [result, barResults]);
@@ -225,6 +233,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   }, [plano.id, largura, altura, quantidade, onUpdate]);
 
   return (
+    <>
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
@@ -233,12 +242,12 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
         <div className="flex gap-2">
           {result && (
             <>
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPDF}>
-                <FileDown className="h-4 w-4" /> Rel. Barras
-              </Button>
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPadroes}>
-                <FileDown className="h-4 w-4" /> Padrões Corte
-              </Button>
+               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPDF}>
+                 <Eye className="h-4 w-4" /> Rel. Barras
+               </Button>
+               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPadroes}>
+                 <Eye className="h-4 w-4" /> Padrões Corte
+               </Button>
             </>
           )}
           <Button size="sm" className="gap-2" onClick={handleSave}>
@@ -522,7 +531,27 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
           )}
         </>
       )}
-    </div>
+      </div>
+
+      <PdfPreviewDialog
+        open={pdfPreview.open}
+        onOpenChange={(open) => {
+          if (!open && pdfPreview.blobUrl) URL.revokeObjectURL(pdfPreview.blobUrl);
+          setPdfPreview(p => ({ ...p, open, ...(open ? {} : { blobUrl: null }) }));
+        }}
+        title={pdfPreview.title}
+        pdfBlobUrl={pdfPreview.blobUrl}
+        loading={pdfPreview.loading}
+        onDownload={() => {
+          if (pdfPreview.blobUrl) {
+            const a = document.createElement("a");
+            a.href = pdfPreview.blobUrl;
+            a.download = pdfPreview.filename;
+            a.click();
+          }
+        }}
+      />
+    </>
   );
 }
 
