@@ -487,7 +487,7 @@ const Tipologias = () => {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredCatalog.slice(0, 60).map((t) => (
+                {paginatedCatalog.map((t) => (
                   <Card key={t.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
                     <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
                       onClick={() => setDetailTypology(t)}>
@@ -520,9 +520,33 @@ const Tipologias = () => {
                   </Card>
                 ))}
               </div>
-              {filteredCatalog.length > 60 && (
-                <div className="py-4 text-center text-xs text-muted-foreground">
-                  Mostrando 60 de {filteredCatalog.length} — use os filtros para refinar
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 pb-2">
+                  <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>
+                    Anterior
+                  </Button>
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                      .reduce<(number | string)[]>((acc, p, idx, arr) => {
+                        if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((p, i) =>
+                        typeof p === "string" ? (
+                          <span key={`ellipsis-${i}`} className="flex items-center justify-center w-8 h-8 text-xs text-muted-foreground">…</span>
+                        ) : (
+                          <Button key={p} variant={currentPage === p ? "default" : "outline"} size="sm" className="w-8 h-8 p-0 text-xs" onClick={() => setCurrentPage(p)}>
+                            {p}
+                          </Button>
+                        )
+                      )}
+                  </div>
+                  <Button variant="outline" size="sm" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>
+                    Próximo
+                  </Button>
                 </div>
               )}
             </div>
