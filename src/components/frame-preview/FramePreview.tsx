@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getTypologySvg } from "./typology-svgs";
 import { getColorById, aluminumColors, type AluminumColor } from "./colors";
 
@@ -48,15 +48,54 @@ export default function FramePreview({
   }, [width_mm, height_mm, maxWidth, maxHeight]);
 
   const dimFontSize = Math.max(9, Math.min(11, svgW * 0.03));
+  const [hovered, setHovered] = useState(false);
+
+  // Determine animation type based on typology
+  const animationType = useMemo(() => {
+    if (category === "maxim_ar") return "maxim-ar";
+    if (subcategory === "giro" || category === "pivotante") return "giro";
+    if (category === "camarao") return "camarao";
+    if (category === "basculante") return "basculante";
+    return null;
+  }, [category, subcategory]);
+
+  // CSS transform for the leaf group on hover
+  const leafTransform = useMemo(() => {
+    if (!hovered || !animationType) return "";
+    switch (animationType) {
+      case "maxim-ar":
+        return `perspective(${svgW * 2}px) rotateX(-12deg)`;
+      case "giro":
+        return `perspective(${svgW * 2}px) rotateY(14deg)`;
+      case "camarao":
+        return `perspective(${svgW * 2}px) rotateY(8deg) scaleX(0.92)`;
+      case "basculante":
+        return `perspective(${svgW * 2}px) rotateX(10deg)`;
+      default:
+        return "";
+    }
+  }, [hovered, animationType, svgW]);
 
   return (
-    <div className={`flex flex-col items-center gap-2 ${className}`}>
+    <div
+      className={`flex flex-col items-center gap-2 ${className}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <svg
         width={svgW + 50}
         height={svgH + 40}
         viewBox={`0 0 ${svgW + 50} ${svgH + 40}`}
         xmlns="http://www.w3.org/2000/svg"
         className="select-none"
+        style={{
+          transform: leafTransform,
+          transformOrigin: animationType === "maxim-ar" ? "center top"
+            : animationType === "basculante" ? "center bottom"
+            : animationType === "giro" ? "left center"
+            : "center center",
+          transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
       >
         {/* Background */}
         <rect width={svgW + 50} height={svgH + 40} fill="none" />
