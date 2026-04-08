@@ -87,6 +87,8 @@ const Tipologias = () => {
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [filterSubcategory, setFilterSubcategory] = useState<string | null>(null);
   const [filterFolhas, setFilterFolhas] = useState<number | null>(null);
+  const [filterVeneziana, setFilterVeneziana] = useState<boolean | null>(null);
+  const [filterBandeira, setFilterBandeira] = useState<boolean | null>(null);
 
   // Custom typologies
   const [customs, setCustoms] = useState<CustomTypology[]>([]);
@@ -119,7 +121,9 @@ const Tipologias = () => {
     const matchCategory = !filterCategory || t.category === filterCategory;
     const matchSubcategory = !filterSubcategory || t.subcategory === filterSubcategory;
     const matchFolhas = !filterFolhas || t.num_folhas === filterFolhas;
-    return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas;
+    const matchVeneziana = filterVeneziana === null || t.has_veneziana === filterVeneziana;
+    const matchBandeira = filterBandeira === null || t.has_bandeira === filterBandeira;
+    return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas && matchVeneziana && matchBandeira;
   });
 
   // Unique values for sidebar filters
@@ -438,6 +442,28 @@ const Tipologias = () => {
                       ))}
                     </div>
                   </div>
+                  <Separator />
+                  <div>
+                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Extras</h4>
+                    <div className="space-y-0.5">
+                      <button onClick={() => setFilterVeneziana(filterVeneziana === true ? null : true)}
+                        className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterVeneziana === true ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                        Com Veneziana
+                      </button>
+                      <button onClick={() => setFilterVeneziana(filterVeneziana === false ? null : false)}
+                        className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterVeneziana === false ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                        Sem Veneziana
+                      </button>
+                      <button onClick={() => setFilterBandeira(filterBandeira === true ? null : true)}
+                        className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterBandeira === true ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                        Com Bandeira
+                      </button>
+                      <button onClick={() => setFilterBandeira(filterBandeira === false ? null : false)}
+                        className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterBandeira === false ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                        Sem Bandeira
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </ScrollArea>
             </div>
@@ -446,8 +472,8 @@ const Tipologias = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias</p>
-                {(filterCategory || filterSubcategory || filterFolhas) && (
-                  <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); }}>
+                {(filterCategory || filterSubcategory || filterFolhas || filterVeneziana !== null || filterBandeira !== null) && (
+                  <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); setFilterVeneziana(null); setFilterBandeira(null); }}>
                     Limpar filtros
                   </Button>
                 )}
