@@ -233,6 +233,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   }, [plano.id, largura, altura, quantidade, onUpdate]);
 
   return (
+    <>
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-2">
