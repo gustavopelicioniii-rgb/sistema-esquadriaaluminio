@@ -966,13 +966,6 @@ const ProjetoVidroPage = () => {
     await load();
   };
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
 
   if (selected) {
     const latest = projetos.find((p) => p.id === selected.id) || selected;
