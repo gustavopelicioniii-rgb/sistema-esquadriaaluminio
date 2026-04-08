@@ -312,9 +312,9 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
                   </p>
                 </div>
                 <div className="rounded-2xl border border-border/50 bg-card p-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                     {/* Frame Preview SVG */}
-                    <div className="shrink-0 bg-muted/30 rounded-xl p-3 flex items-center justify-center">
+                    <div className="shrink-0 bg-muted/30 rounded-xl p-3 flex items-center justify-center self-start">
                       <FramePreview
                         width_mm={(item.largura_cm ?? 200) * 10}
                         height_mm={(item.altura_cm ?? 120) * 10}
@@ -328,7 +328,12 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
                       />
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
-                      <p className="font-bold text-sm">{produto.label}</p>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-sm">{produto.label}</p>
+                        {item.subtotal != null && (
+                          <p className="font-bold text-sm text-primary shrink-0">{formatCurrency(item.subtotal)}</p>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         {(item.largura_cm ?? 200) * 10} × {(item.altura_cm ?? 120) * 10} mm
                       </p>
@@ -343,9 +348,6 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
                         <p className="text-xs text-muted-foreground">Vidro: {item.vidro_tipo}</p>
                       )}
                     </div>
-                    {item.subtotal != null && (
-                      <p className="font-bold text-sm text-primary shrink-0">{formatCurrency(item.subtotal)}</p>
-                    )}
                   </div>
                 </div>
               </div>
