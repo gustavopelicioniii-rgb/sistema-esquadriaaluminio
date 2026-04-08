@@ -72,7 +72,7 @@ export default function MaterialDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-background/95 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="text-lg">Detalhes do Material</DialogTitle>
         </DialogHeader>
