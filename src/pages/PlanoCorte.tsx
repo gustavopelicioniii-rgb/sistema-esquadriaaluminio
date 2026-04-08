@@ -199,26 +199,30 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
 
   const handleExportPDF = useCallback(async () => {
     if (!result) return;
-    toast.loading("Gerando Relação de Barras...");
+    setPdfPreview({ open: true, title: "Relação de Barras", blobUrl: null, filename: "", loading: true });
     try {
-      await generateCutListPDF(result, barResults, "frame-preview-svg");
-      toast.dismiss();
-      toast.success("PDF exportado com sucesso!");
+      const res = await generateCutListPDF(result, barResults, "frame-preview-svg", undefined, { preview: true });
+      if (res) {
+        const url = URL.createObjectURL(res.blob);
+        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+      }
     } catch {
-      toast.dismiss();
+      setPdfPreview(p => ({ ...p, loading: false }));
       toast.error("Erro ao gerar PDF");
     }
   }, [result, barResults]);
 
   const handleExportPadroes = useCallback(async () => {
     if (!result) return;
-    toast.loading("Gerando Padrões de Cortes...");
+    setPdfPreview({ open: true, title: "Padrões de Cortes", blobUrl: null, filename: "", loading: true });
     try {
-      await generatePadroesCortesPDF(result, barResults);
-      toast.dismiss();
-      toast.success("PDF exportado com sucesso!");
+      const res = await generatePadroesCortesPDF(result, barResults, undefined, { preview: true });
+      if (res) {
+        const url = URL.createObjectURL(res.blob);
+        setPdfPreview(p => ({ ...p, blobUrl: url, filename: res.filename, loading: false }));
+      }
     } catch {
-      toast.dismiss();
+      setPdfPreview(p => ({ ...p, loading: false }));
       toast.error("Erro ao gerar PDF");
     }
   }, [result, barResults]);
