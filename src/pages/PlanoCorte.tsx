@@ -26,6 +26,7 @@ import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
 import { usePlanosCorte, type PlanoCorte as PlanoCorteType } from "@/hooks/use-planos-corte";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
 
 // ============ SUMMARY CARDS ============
 function SummaryCards({ result, barResults }: { result: CalculationOutput; barResults: OptimizationResult[] }) {
