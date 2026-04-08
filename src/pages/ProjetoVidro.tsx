@@ -993,11 +993,6 @@ const ProjetoVidroPage = () => {
           <p className="text-muted-foreground text-sm">Visualize e configure projetos de vidro</p>
         </div>
         <div className="flex gap-2">
-          {selectedIds.size >= 2 && (
-            <Button variant="outline" className="gap-2" onClick={() => setShowSummary(true)}>
-              <BarChart3 className="h-4 w-4" /> Resumo ({selectedIds.size})
-            </Button>
-          )}
           <Button className="gap-2 w-full sm:w-auto" onClick={() => setNovoOpen(true)}>
             <Plus className="h-4 w-4" /> Novo Projeto
           </Button>
