@@ -85,7 +85,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
           <DialogTitle>Pagamentos – Pedido {pedido.pedido_num}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
-          <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
             <div className="rounded-lg bg-muted/50 p-3">
               <p className="text-xs text-muted-foreground">Total</p>
               <p className="font-bold text-sm">{formatCurrency(pedido.valor)}</p>
@@ -97,6 +97,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
             <div className="rounded-lg bg-destructive/10 p-3">
               <p className="text-xs text-muted-foreground">Restante</p>
               <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
+            </div>
           </div>
 
           <div className="space-y-1">
@@ -105,7 +106,6 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
               <span className="font-medium">{percentPago.toFixed(0)}%</span>
             </div>
             <Progress value={percentPago} className="h-2.5" />
-          </div>
           </div>
 
           {pagamentos.length > 0 && (
