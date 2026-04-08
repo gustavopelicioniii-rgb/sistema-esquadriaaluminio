@@ -17,6 +17,19 @@ import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  VidroInteiro, Vidro1DivVertical, Vidro2DivVerticais,
+  VidroGrade4, VidroGrade6, VidroBandeiraSuperior,
+  VidroTravessaCentral, VidroAssimetrico, VidroGradeMultipla,
+} from "@/components/tipologias/vidro-svgs";
+
+const glassVariantToSvg: Record<string, React.FC> = {
+  "comum": VidroInteiro,
+  "temperado": VidroGrade4,
+  "laminado": Vidro2DivVerticais,
+  "temperado-laminado": VidroGrade6,
+  "insulado": Vidro1DivVertical,
+};
 
 // Types
 interface VidroItem {
@@ -190,6 +203,8 @@ function getGlassSvgElements(tipo: string, size: GlassSvgSize = "md") {
 }
 
 function GlassPreviewTile({ tipo }: { tipo: string }) {
+  const variant = getGlassVariant(tipo);
+  const SvgComponent = glassVariantToSvg[variant] ?? VidroInteiro;
   return (
     <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background sm:h-24 sm:w-24">
       <div
@@ -197,9 +212,9 @@ function GlassPreviewTile({ tipo }: { tipo: string }) {
         style={{ background: "radial-gradient(circle at top left, hsl(var(--primary) / 0.16), transparent 62%)" }}
       />
       <div className="pointer-events-none absolute inset-[12%] rounded-xl border border-border/40" />
-      <svg width="74" height="74" viewBox="0 0 100 100" fill="none" className="relative h-[66px] w-[66px] text-primary sm:h-[74px] sm:w-[74px]" aria-hidden="true">
-        {getGlassSvgElements(tipo, "md")}
-      </svg>
+      <div className="relative h-[66px] w-[66px] sm:h-[74px] sm:w-[74px]" aria-hidden="true">
+        <SvgComponent />
+      </div>
     </div>
   );
 }
