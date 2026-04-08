@@ -53,6 +53,93 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
   return areaMinimaM2 > 0 ? Math.max(real, areaMinimaM2) : real;
 }
 
+/** Returns SVG inner elements based on glass type */
+function getGlassSvgElements(tipo: string, size: "sm" | "md" | "lg" = "md") {
+  const t = tipo.toLowerCase();
+  const s = size === "sm" ? { ox: 2, oy: 2, w: 20, h: 20, fw: 16, fh: 16, sw1: 1.8, sw2: 0.8 }
+    : size === "md" ? { ox: 8, oy: 8, w: 84, h: 84, fw: 72, fh: 72, sw1: 4, sw2: 2 }
+    : { ox: 4, oy: 4, w: 40, h: 40, fw: 34, fh: 34, sw1: 3, sw2: 1.5 };
+  const ix = s.ox + (s.fw - s.fw) / 2 + (size === "sm" ? 2 : size === "md" ? 6 : 3);
+  const iy = s.oy + (size === "sm" ? 2 : size === "md" ? 6 : 3);
+  const iw = s.fw - (size === "sm" ? 4 : size === "md" ? 12 : 6);
+  const ih = s.fh - (size === "sm" ? 4 : size === "md" ? 12 : 6);
+
+  // Insulado = double glass (two layers)
+  if (t.includes("insulado")) {
+    const gap = size === "sm" ? 1 : size === "md" ? 3 : 2;
+    return (
+      <>
+        <rect x={s.ox} y={s.oy} width={s.w} height={s.h} rx="1" stroke="currentColor" strokeWidth={s.sw1} />
+        <rect x={s.ox + (size === "sm" ? 2 : size === "md" ? 6 : 3)} y={s.oy + (size === "sm" ? 2 : size === "md" ? 6 : 3)} width={s.fw - (size === "sm" ? 4 : size === "md" ? 12 : 6)} height={s.fh - (size === "sm" ? 4 : size === "md" ? 12 : 6)} rx="1" stroke="currentColor" strokeWidth={s.sw2} />
+        {/* Outer glass layer */}
+        <rect x={ix} y={iy} width={iw} height={ih} rx="0.5" fill="currentColor" opacity="0.12" />
+        {/* Inner glass layer (offset) */}
+        <rect x={ix + gap} y={iy + gap} width={iw - gap * 2} height={ih - gap * 2} rx="0.5" fill="currentColor" opacity="0.18" />
+        {/* Spacer lines between layers */}
+        <line x1={ix + gap} y1={iy} x2={ix + gap} y2={iy + ih} stroke="currentColor" strokeWidth={size === "sm" ? 0.3 : 0.6} opacity="0.3" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
+        <line x1={ix + iw - gap} y1={iy} x2={ix + iw - gap} y2={iy + ih} stroke="currentColor" strokeWidth={size === "sm" ? 0.3 : 0.6} opacity="0.3" strokeDasharray={size === "sm" ? "1 1" : "2 2"} />
+      </>
+    );
+  }
+
+  // Laminado = giro (hinge arrow)
+  if (t.includes("laminado")) {
+    const cx = ix + iw / 2;
+    const cy = iy + ih / 2;
+    const arrowSize = size === "sm" ? 2 : size === "md" ? 8 : 5;
+    return (
+      <>
+        <rect x={s.ox} y={s.oy} width={s.w} height={s.h} rx="1" stroke="currentColor" strokeWidth={s.sw1} />
+        <rect x={ix} y={iy} width={iw} height={ih} rx="1" stroke="currentColor" strokeWidth={s.sw2} />
+        {/* Glass fill */}
+        <rect x={ix + 1} y={iy + 1} width={iw - 2} height={ih - 2} rx="0.5" fill="currentColor" opacity="0.15" />
+        {/* Hinge line on left */}
+        <line x1={ix} y1={iy} x2={ix} y2={iy + ih} stroke="currentColor" strokeWidth={size === "sm" ? 1.2 : size === "md" ? 3 : 2} opacity="0.5" />
+        {/* Giro arc arrow */}
+        <path d={`M ${ix + arrowSize * 0.5} ${cy - arrowSize} A ${arrowSize} ${arrowSize} 0 0 1 ${ix + arrowSize * 0.5} ${cy + arrowSize}`} stroke="currentColor" strokeWidth={size === "sm" ? 0.5 : 1} fill="none" opacity="0.4" />
+        <path d={`M ${ix + arrowSize * 0.5} ${cy - arrowSize} L ${ix + arrowSize * 1.2} ${cy - arrowSize * 0.5} L ${ix + arrowSize * 0.1} ${cy - arrowSize * 0.3} Z`} fill="currentColor" opacity="0.4" />
+      </>
+    );
+  }
+
+  // Temperado = fixed (no arrows, cross lines)
+  if (t.includes("temperado")) {
+    return (
+      <>
+        <rect x={s.ox} y={s.oy} width={s.w} height={s.h} rx="1" stroke="currentColor" strokeWidth={s.sw1} />
+        <rect x={ix} y={iy} width={iw} height={ih} rx="1" stroke="currentColor" strokeWidth={s.sw2} />
+        {/* Glass fill */}
+        <rect x={ix + 1} y={iy + 1} width={iw - 2} height={ih - 2} rx="0.5" fill="currentColor" opacity="0.15" />
+        {/* Fixed cross mark */}
+        <line x1={ix} y1={iy} x2={ix + iw} y2={iy + ih} stroke="currentColor" strokeWidth={size === "sm" ? 0.4 : 0.8} opacity="0.25" />
+        <line x1={ix + iw} y1={iy} x2={ix} y2={iy + ih} stroke="currentColor" strokeWidth={size === "sm" ? 0.4 : 0.8} opacity="0.25" />
+      </>
+    );
+  }
+
+  // Default (Comum, etc.) = sliding with arrows
+  const mullionX = ix + iw / 2 - (size === "sm" ? 1 : size === "md" ? 3 : 2);
+  const mullionW = size === "sm" ? 2 : size === "md" ? 6 : 4;
+  const arrowS = size === "sm" ? 1.5 : size === "md" ? 5 : 3;
+  const lCx = ix + iw * 0.25;
+  const rCx = ix + iw * 0.75;
+  const aCy = iy + ih / 2;
+  return (
+    <>
+      <rect x={s.ox} y={s.oy} width={s.w} height={s.h} rx="1" stroke="currentColor" strokeWidth={s.sw1} />
+      <rect x={ix} y={iy} width={iw} height={ih} rx="1" stroke="currentColor" strokeWidth={s.sw2} />
+      <rect x={mullionX} y={iy} width={mullionW} height={ih} fill="currentColor" opacity="0.5" />
+      <rect x={ix + 1} y={iy + 1} width={iw / 2 - mullionW / 2 - 1} height={ih - 2} rx="0.3" fill="currentColor" opacity="0.12" />
+      <rect x={mullionX + mullionW} y={iy + 1} width={iw / 2 - mullionW / 2 - 1} height={ih - 2} rx="0.3" fill="currentColor" opacity="0.12" />
+      <path d={`M ${lCx - arrowS} ${aCy} L ${lCx + arrowS} ${aCy - arrowS} L ${lCx + arrowS} ${aCy + arrowS} Z`} fill="currentColor" opacity="0.4" />
+      <path d={`M ${rCx + arrowS} ${aCy} L ${rCx - arrowS} ${aCy - arrowS} L ${rCx - arrowS} ${aCy + arrowS} Z`} fill="currentColor" opacity="0.4" />
+    </>
+  );
+}
+  const real = calcAreaM2(largMm, altMm);
+  return areaMinimaM2 > 0 ? Math.max(real, areaMinimaM2) : real;
+}
+
 // DB helpers
 async function fetchProjetos(): Promise<ProjetoVidro[]> {
   const { data: projetos, error } = await supabase
