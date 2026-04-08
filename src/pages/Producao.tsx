@@ -19,6 +19,7 @@ import ImpressoesDialog from "@/components/producao/ImpressoesDialog";
 import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
 import EditarServicoDialog from "@/components/producao/EditarServicoDialog";
+import NovoPedidoDialog from "@/components/producao/NovoPedidoDialog";
 
 export interface Pedido {
   id: string;
@@ -176,26 +177,8 @@ const Producao = () => {
     fetchPedidos();
   };
 
-  const handleNovoPedido = async () => {
-    const maxNum = pedidos.length > 0 ? Math.max(...pedidos.map(p => p.pedido_num)) : 0;
-    const { error } = await supabase.from("pedidos").insert({
-      pedido_num: maxNum + 1,
-      cliente: "Novo Cliente",
-      endereco: "",
-      telefone: "",
-      vendedor: "",
-      valor: 0,
-      status: "em_andamento",
-      dias_restantes: 30,
-      etapa: "Orçamento",
-    } as any);
-    if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Pedido criado", description: `Pedido ${maxNum + 1} criado.` });
-    fetchPedidos();
-  };
+  const [novoPedidoOpen, setNovoPedidoOpen] = useState(false);
+  const nextPedidoNum = pedidos.length > 0 ? Math.max(...pedidos.map(p => p.pedido_num)) + 1 : 1;
 
   if (detailPedido) {
     return (
@@ -230,7 +213,7 @@ const Producao = () => {
               ]),
               filename: "producao",
             })} />
-            <Button size="sm" className="gap-1.5 sm:gap-2" onClick={handleNovoPedido}>
+            <Button size="sm" className="gap-1.5 sm:gap-2" onClick={() => setNovoPedidoOpen(true)}>
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Novo Pedido</span>
               <span className="sm:hidden">Novo</span>
@@ -311,7 +294,7 @@ const Producao = () => {
             {/* Actions */}
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">AÇÕES</p>
-              <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline" onClick={handleNovoPedido}>
+              <button className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline" onClick={() => setNovoPedidoOpen(true)}>
                 <Plus className="h-3.5 w-3.5" /> Novo pedido
               </button>
             </div>
@@ -434,6 +417,12 @@ const Producao = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <NovoPedidoDialog
+          open={novoPedidoOpen}
+          onClose={() => { setNovoPedidoOpen(false); fetchPedidos(); }}
+          nextNum={nextPedidoNum}
+        />
       </div>
     </PullToRefresh>
   );
