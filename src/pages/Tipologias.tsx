@@ -116,6 +116,9 @@ const Tipologias = () => {
 
   const getCategoryLabel = (cat: string) => CATEGORIES.find(c => c.value === cat)?.label || cat;
 
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, filterLine, filterCategory, filterSubcategory, filterFolhas, filterVeneziana, filterBandeira]);
+
   // Filtered catalog typologies
   const filteredCatalog = catalogTypologies.filter(t => {
     const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || (t.id && t.id.toLowerCase().includes(search.toLowerCase()));
@@ -127,6 +130,9 @@ const Tipologias = () => {
     const matchBandeira = filterBandeira === null || t.has_bandeira === filterBandeira;
     return matchSearch && matchLine && matchCategory && matchSubcategory && matchFolhas && matchVeneziana && matchBandeira;
   });
+
+  const totalPages = Math.ceil(filteredCatalog.length / ITEMS_PER_PAGE);
+  const paginatedCatalog = filteredCatalog.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Unique values for sidebar filters
   const uniqueCategories = useMemo(() => [...new Set(catalogTypologies.map(t => t.category))], []);
