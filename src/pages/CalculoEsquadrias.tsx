@@ -350,7 +350,7 @@ export default function CalculoEsquadrias() {
                     const seen = new Set<string>();
                     return result.cuts
                       .filter(c => { if (seen.has(c.profile_code)) return false; seen.add(c.profile_code); return true; })
-                      .map(c => ({ code: c.profile_code, name: c.piece_name, type: c.piece_function }));
+                      .map(c => ({ code: c.profile_code, name: c.piece_name, type: c.piece_function, weight_per_meter: c.weight_kg > 0 && c.cut_length_mm > 0 ? (c.weight_kg / c.quantity) / (c.cut_length_mm / 1000) : undefined }));
                   })()}
                   color={getColorById(selectedColor)}
                 />
