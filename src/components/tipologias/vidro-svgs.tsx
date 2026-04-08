@@ -123,6 +123,53 @@ export const VidroGradeMultipla = () => {
   );
 };
 
+/** Veneziana — lâminas horizontais */
+export const VidroVeneziana = () => {
+  const count = 7;
+  const lines: React.ReactElement[] = [];
+  for (let i = 1; i < count; i++) {
+    const y = M + (S * i) / count;
+    lines.push(<line key={i} x1={M + 4} y1={y} x2={100 - M - 4} y2={y - 3} stroke={STROKE} strokeWidth={SW} />);
+  }
+  return (
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x={M} y={M} width={S} height={S} {...base} />
+      {lines}
+    </svg>
+  );
+};
+
+/** Pivotante — eixo central com indicação de rotação */
+export const VidroPivotante = () => {
+  const cx = 50;
+  const cy = 50;
+  return (
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x={M} y={M} width={S} height={S} {...base} />
+      <line x1={cx} y1={M} x2={cx} y2={100 - M} stroke={STROKE} strokeWidth={SW} />
+      <circle cx={cx} cy={cy} r={3} fill={STROKE} />
+      <line x1={M} y1={cy} x2={cx - 6} y2={cy} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+      <line x1={cx + 6} y1={cy} x2={100 - M} y2={cy} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+    </svg>
+  );
+};
+
+/** Maxim-ar — abertura basculante superior */
+export const VidroMaximAr = () => {
+  const top = M;
+  const bot = 100 - M;
+  const left = M;
+  const right = 100 - M;
+  return (
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x={M} y={M} width={S} height={S} {...base} />
+      <line x1={left} y1={top + S * 0.3} x2={right} y2={top + S * 0.3} stroke={STROKE} strokeWidth={SW} />
+      <line x1={left} y1={top} x2={50} y2={top + S * 0.28} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+      <line x1={right} y1={top} x2={50} y2={top + S * 0.28} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+    </svg>
+  );
+};
+
 /** Catálogo completo */
 export const vidroTypologies = [
   { id: "vidro_inteiro", label: "Vidro Inteiro", Icon: VidroInteiro },
@@ -135,4 +182,7 @@ export const vidroTypologies = [
   { id: "vidro_travessa_central", label: "Travessa Central", Icon: VidroTravessaCentral },
   { id: "vidro_assimetrico", label: "Divisão Assimétrica 70/30", Icon: VidroAssimetrico },
   { id: "vidro_grade_multipla", label: "Grade Múltipla", Icon: VidroGradeMultipla },
+  { id: "vidro_veneziana", label: "Veneziana", Icon: VidroVeneziana },
+  { id: "vidro_pivotante", label: "Pivotante", Icon: VidroPivotante },
+  { id: "vidro_maxim_ar", label: "Maxim-Ar", Icon: VidroMaximAr },
 ] as const;
