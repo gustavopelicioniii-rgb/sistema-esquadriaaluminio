@@ -983,7 +983,7 @@ const ProjetoVidroPage = () => {
     );
   }
 
-  const selectedProjetos = projetos.filter((p) => selectedIds.has(p.id));
+  
 
   return (
     <div className="space-y-4 sm:space-y-6">
