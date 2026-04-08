@@ -226,8 +226,8 @@ const PrecoItens = () => {
             <Card key={item.id} className="shadow-sm border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden">
-                    <img src={categoryImage[item.categoria] || perfilImg} alt={item.categoria} loading="lazy" width={48} height={48} className="h-10 w-10 object-contain" />
+                  <div className="h-12 w-12 shrink-0 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center">
+                    <ProfileCrossSection profileType={guessProfileType(item.nome, item.categoria)} profileCode={item.codigo} size={36} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
