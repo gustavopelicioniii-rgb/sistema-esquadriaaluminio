@@ -17,7 +17,8 @@ import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
 import { productLines } from "@/data/catalog/manufacturers";
-import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package, Filter, Eye } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, Layers, BookOpen, Loader2, Copy, Scissors, GlassWater, Package, Filter, Eye, FileDown } from "lucide-react";
+import { generateReportPdf } from "@/utils/reportPdfGenerator";
 import { CutRulesManager } from "@/components/tipologias/CutRulesManager";
 import { TypologyDetailDialog } from "@/components/tipologias/TypologyDetailDialog";
 import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
@@ -479,7 +480,39 @@ const Tipologias = () => {
             {/* Grid of typology cards */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias — página {currentPage} de {totalPages || 1}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-muted-foreground">{filteredCatalog.length} tipologias — página {currentPage} de {totalPages || 1}</p>
+                  <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => {
+                    const headers = ["Nome", "ID", "Linha", "Categoria", "Subcategoria", "Folhas", "Veneziana", "Bandeira"];
+                    const colWidths = [42, 30, 28, 22, 22, 14, 16, 16];
+                    const rows = filteredCatalog.map(t => [
+                      t.name,
+                      t.id,
+                      getLineName(t.product_line_id),
+                      getCategoryLabel(t.category),
+                      t.subcategory ? (SUBCATEGORIES.find(s => s.value === t.subcategory)?.label || t.subcategory) : "–",
+                      String(t.num_folhas),
+                      t.has_veneziana ? "Sim" : "Não",
+                      t.has_bandeira ? "Sim" : "Não",
+                    ]);
+                    generateReportPdf({
+                      title: "Catálogo de Tipologias",
+                      subtitle: `${filteredCatalog.length} tipologias filtradas`,
+                      headers,
+                      rows,
+                      columnWidths: colWidths,
+                      filename: "tipologias-catalogo.pdf",
+                      summaryCards: [
+                        { label: "Total", value: String(filteredCatalog.length) },
+                        { label: "Categorias", value: String(new Set(filteredCatalog.map(t => t.category)).size) },
+                        { label: "Linhas", value: String(new Set(filteredCatalog.map(t => t.product_line_id)).size) },
+                      ],
+                    });
+                    toast({ title: "PDF gerado", description: `${filteredCatalog.length} tipologias exportadas` });
+                  }}>
+                    <FileDown className="h-3.5 w-3.5" /> Exportar PDF
+                  </Button>
+                </div>
                 {(filterCategory || filterSubcategory || filterFolhas || filterVeneziana !== null || filterBandeira !== null) && (
                   <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setFilterCategory(null); setFilterSubcategory(null); setFilterFolhas(null); setFilterVeneziana(null); setFilterBandeira(null); }}>
                     Limpar filtros
