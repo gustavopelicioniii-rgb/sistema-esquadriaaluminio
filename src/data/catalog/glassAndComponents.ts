@@ -477,9 +477,6 @@ export const typologyComponents: TypologyComponent[] = [
   ...pratic20Components,
   ...pratic32Components,
   ...perfettaComponents,
-  ...cloned25Components,
-  ...cloned32Components,
-  ...cloned40Components,
 ];
 
 export const glassRules: GlassRule[] = [
@@ -490,7 +487,4 @@ export const glassRules: GlassRule[] = [
   ...pratic20GlassRules,
   ...pratic32GlassRules,
   ...perfettaGlassRules,
-  ...cloned25GlassRules,
-  ...cloned32GlassRules,
-  ...cloned40GlassRules,
 ];
