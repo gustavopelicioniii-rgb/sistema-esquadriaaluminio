@@ -121,8 +121,10 @@ export function useReceitaMensal() {
 }
 
 export function useOrcamentosStatus(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["orcamentos_status", period],
+    queryKey: ["orcamentos_status", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("orcamentos").select("status, valor");
