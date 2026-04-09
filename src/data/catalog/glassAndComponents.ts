@@ -72,38 +72,7 @@ const topGlassRules: GlassRule[] = [
   { id: "gr-tp-mc2t-i", typology_id: "typ-tp-mc2t", glass_name: "Vidro Pano Inferior", width_reference: "L/2", width_constant_mm: -40, height_reference: "H/2", height_constant_mm: -20, quantity: 2, glass_type: "laminado", min_thickness_mm: 10, max_thickness_mm: 12 },
 ];
 
-// Clone glass rules for compatible lines
-function cloneGlassRules(rules: GlassRule[], prefixFrom: string, prefixTo: string, idPrefixFrom: string, idPrefixTo: string): GlassRule[] {
-  return rules.map(r => ({
-    ...r,
-    id: r.id.replace(idPrefixFrom, idPrefixTo),
-    typology_id: r.typology_id.replace(prefixFrom, prefixTo),
-  }));
-}
 
-// All 25mm lines clone from Suprema
-const clone25GlassLines = [
-  ["mg25"], ["hy"], ["al"], ["ds"], ["br"], ["cb"], ["re"], ["lp"],
-  ["ax"], ["ab"], ["sm"], ["pr"], ["hb"], ["pn"], ["sp"],
-];
-const cloned25GlassRules = clone25GlassLines.flatMap(([p]) =>
-  cloneGlassRules(supremaGlassRules, "typ-su-", `typ-${p}-`, "gr-su-", `gr-${p}-`)
-);
-
-// All 32mm lines clone from Gold
-const clone32GlassLines = [
-  ["dg"], ["bg"], ["c32"], ["r32"], ["l32"], ["x32"], ["a32"],
-  ["s32"], ["p32"], ["h32"], ["n32"], ["hx32"], ["m32"], ["am32"],
-];
-const cloned32GlassRules = clone32GlassLines.flatMap(([p]) =>
-  cloneGlassRules(goldGlassRules, "typ-go-", `typ-${p}-`, "gr-go-", `gr-${p}-`)
-);
-
-// All 40mm lines clone from Top
-const clone40GlassLines = [["h40"], ["m40"]];
-const cloned40GlassRules = clone40GlassLines.flatMap(([p]) =>
-  cloneGlassRules(topGlassRules, "typ-tp-", `typ-${p}-`, "gr-tp-", `gr-${p}-`)
-);
 
 // ============================================
 // GLASS RULES - DECAMP LINHA 45
@@ -362,38 +331,7 @@ const topComponents: TypologyComponent[] = [
   { id: "tc-tp-mc2t-05", typology_id: "typ-tp-mc2t", component_name: "Calço de apoio vidro", component_code: "CAL-220", component_type: "calco", quantity_formula: "16", unit: "un" },
 ];
 
-// Clone components for compatible lines
-function cloneComponents(source: TypologyComponent[], prefixFrom: string, prefixTo: string, idFrom: string, idTo: string): TypologyComponent[] {
-  return source.map(c => ({
-    ...c,
-    id: c.id.replace(idFrom, idTo),
-    typology_id: c.typology_id.replace(prefixFrom, prefixTo),
-  }));
-}
 
-// All 25mm lines clone from Suprema
-const clone25CompLines = [
-  ["mg25"], ["hy"], ["al"], ["ds"], ["br"], ["cb"], ["re"], ["lp"],
-  ["ax"], ["ab"], ["sm"], ["pr"], ["hb"], ["pn"], ["sp"],
-];
-const cloned25Components = clone25CompLines.flatMap(([p]) =>
-  cloneComponents(supremaComponents, "typ-su-", `typ-${p}-`, "tc-su-", `tc-${p}-`)
-);
-
-// All 32mm lines clone from Gold
-const clone32CompLines = [
-  ["dg"], ["bg"], ["c32"], ["r32"], ["l32"], ["x32"], ["a32"],
-  ["s32"], ["p32"], ["h32"], ["n32"], ["hx32"], ["m32"], ["am32"],
-];
-const cloned32Components = clone32CompLines.flatMap(([p]) =>
-  cloneComponents(goldComponents, "typ-go-", `typ-${p}-`, "tc-go-", `tc-${p}-`)
-);
-
-// All 40mm lines clone from Top
-const clone40CompLines = [["h40"], ["m40"]];
-const cloned40Components = clone40CompLines.flatMap(([p]) =>
-  cloneComponents(topComponents, "typ-tp-", `typ-${p}-`, "tc-tp-", `tc-${p}-`)
-);
 
 // ============================================
 // COMPONENTS - DECAMP LINHA 45
