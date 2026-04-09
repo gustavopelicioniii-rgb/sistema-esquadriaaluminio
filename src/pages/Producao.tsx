@@ -65,6 +65,7 @@ const valueOptions = [
 ];
 
 const Producao = () => {
+  const { user, isLoading: authLoading } = useAuth();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
