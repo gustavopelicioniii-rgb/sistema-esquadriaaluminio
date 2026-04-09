@@ -213,7 +213,7 @@ export default function CalculoEsquadrias() {
                               value={m.name}
                               onSelect={() => {
                                 const firstLine = productLines.find(l => l.manufacturer_id === m.id);
-                                if (firstLine) { setSelectedLine(firstLine.id); setSelectedTypology(""); setResult(null); }
+                                if (firstLine) { setSelectedLine(firstLine.id); setSelectedTypology(""); setResult(null); setSelectedColor("natural"); }
                                 setFabricanteOpen(false);
                               }}
                             >
@@ -230,7 +230,7 @@ export default function CalculoEsquadrias() {
             </div>
             <div className="space-y-2">
               <Label>Linha</Label>
-              <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setSelectedTypology(""); setResult(null); }}>
+              <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setSelectedTypology(""); setResult(null); setSelectedColor("natural"); }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {productLines
@@ -338,7 +338,7 @@ export default function CalculoEsquadrias() {
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
-                  <ColorSelector selectedColorId={selectedColor} onColorChange={setSelectedColor} />
+                  <ColorSelector selectedColorId={selectedColor} onColorChange={setSelectedColor} productLineId={selectedLine} />
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {filteredTypologies.find(t => t.id === selectedTypology)?.name}
