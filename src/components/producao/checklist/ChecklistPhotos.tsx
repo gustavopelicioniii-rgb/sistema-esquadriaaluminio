@@ -59,9 +59,9 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
         continue;
       }
 
-      const { data: urlData } = supabase.storage
+      const { data: urlData } = await supabase.storage
         .from("checklist-fotos")
-        .getPublicUrl(path);
+        .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year signed URL
 
       await supabase.from("pedido_checklist_fotos").insert({
         pedido_id: pedidoId,
