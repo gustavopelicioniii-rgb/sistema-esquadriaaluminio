@@ -26,7 +26,7 @@ export function BottomNav() {
               key={item.to}
               to={item.to}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all duration-200 min-w-[56px]",
+                "flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-200 min-w-[60px] min-h-[44px] active:scale-95",
                 active ? "text-primary scale-105" : "text-muted-foreground"
               )}
             >
