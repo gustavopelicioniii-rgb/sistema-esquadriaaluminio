@@ -205,68 +205,8 @@ const perfettaTypologies: Typology[] = [
 ];
 
 // ============================================
-// CLONE PARA TODAS AS LINHAS COMPATÍVEIS
+// EXPORTAÇÃO FINAL — Apenas dados reais
 // ============================================
-interface LineClone {
-  lineId: string;
-  prefix: string;
-}
-
-// Linhas 25mm → clonam tipologias Suprema
-const compatible25Lines: LineClone[] = [
-  { lineId: "line-mega25", prefix: "mg25" },
-  { lineId: "line-hyspex25su", prefix: "hy" },
-  { lineId: "line-alumasa25", prefix: "al" },
-  { lineId: "line-ds-suprema", prefix: "ds" },
-  { lineId: "line-brimetal25", prefix: "br" },
-  { lineId: "line-cba25", prefix: "cb" },
-  { lineId: "line-real25", prefix: "re" },
-  { lineId: "line-lp25", prefix: "lp" },
-  { lineId: "line-alux25", prefix: "ax" },
-  { lineId: "line-albras25", prefix: "ab" },
-  { lineId: "line-sm25", prefix: "sm" },
-  { lineId: "line-prado25", prefix: "pr" },
-  { lineId: "line-hydro25", prefix: "hb" },
-  { lineId: "line-pin25", prefix: "pn" },
-  { lineId: "line-suprema-plus", prefix: "sp" },
-];
-
-// Linhas 32mm → clonam tipologias Gold
-const compatible32Lines: LineClone[] = [
-  { lineId: "line-ds-gold", prefix: "dg" },
-  { lineId: "line-brimetal32", prefix: "bg" },
-  { lineId: "line-cba32", prefix: "c32" },
-  { lineId: "line-real32", prefix: "r32" },
-  { lineId: "line-lp32", prefix: "l32" },
-  { lineId: "line-alux32", prefix: "x32" },
-  { lineId: "line-albras32", prefix: "a32" },
-  { lineId: "line-sm32", prefix: "s32" },
-  { lineId: "line-prado32", prefix: "p32" },
-  { lineId: "line-hydro32", prefix: "h32" },
-  { lineId: "line-pin32", prefix: "n32" },
-  { lineId: "line-hyspex32", prefix: "hx32" },
-  { lineId: "line-mega32", prefix: "m32" },
-  { lineId: "line-alumasa32", prefix: "am32" },
-];
-
-// Linhas 40mm → clonam tipologias Top
-const compatible40Lines: LineClone[] = [
-  { lineId: "line-hydro40", prefix: "h40" },
-  { lineId: "line-mega40", prefix: "m40" },
-];
-
-function cloneTypologies(source: Typology[], clone: LineClone, sourcePrefix: string): Typology[] {
-  return source.map(t => ({
-    ...t,
-    id: t.id.replace(`typ-${sourcePrefix}-`, `typ-${clone.prefix}-`),
-    product_line_id: clone.lineId,
-  }));
-}
-
-const cloned25Typologies = compatible25Lines.flatMap(c => cloneTypologies(supremaTypologies, c, "su"));
-const cloned32Typologies = compatible32Lines.flatMap(c => cloneTypologies(goldTypologies, c, "go"));
-const cloned40Typologies = compatible40Lines.flatMap(c => cloneTypologies(topTypologies, c, "tp"));
-
 export const typologies: Typology[] = [
   ...supremaTypologies,
   ...goldTypologies,
@@ -275,7 +215,4 @@ export const typologies: Typology[] = [
   ...decampP20Typologies,
   ...decampP32Typologies,
   ...perfettaTypologies,
-  ...cloned25Typologies,
-  ...cloned32Typologies,
-  ...cloned40Typologies,
 ];
