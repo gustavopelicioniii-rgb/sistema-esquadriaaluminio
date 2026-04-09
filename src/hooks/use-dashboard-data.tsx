@@ -147,8 +147,10 @@ export function useOrcamentosStatus(period: PeriodFilter = "todos") {
 }
 
 export function useProducaoEtapas(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["producao_etapas", period],
+    queryKey: ["producao_etapas", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("pedidos").select("etapa").eq("status", "em_andamento");
