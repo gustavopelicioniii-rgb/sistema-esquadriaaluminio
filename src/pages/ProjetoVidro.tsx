@@ -853,6 +853,9 @@ const ProjetoVidroPage = () => {
   const [novoCor, setNovoCor] = useState("Incolor");
   const [novoPrecoM2, setNovoPrecoM2] = useState(106);
   const [novoAreaMinima, setNovoAreaMinima] = useState(0);
+  const [filterTipo, setFilterTipo] = useState<string | null>(null);
+  const [filterCor, setFilterCor] = useState<string | null>(null);
+  const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
