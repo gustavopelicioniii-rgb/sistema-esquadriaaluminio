@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,7 @@ const valueOptions = [
 ];
 
 const Producao = () => {
+  const { user, isLoading: authLoading } = useAuth();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -110,7 +112,7 @@ const Producao = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchPedidos(); }, [fetchPedidos]);
+  useEffect(() => { if (!authLoading && user) fetchPedidos(); }, [fetchPedidos, authLoading, user]);
 
   // Derive unique vendors
   const vendedores = Array.from(new Set(pedidos.map(p => p.vendedor).filter(Boolean)));
