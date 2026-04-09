@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const CATEGORIAS_FINANCEIRAS = [
   "material", "mão de obra", "aluguel", "transporte", "energia", "impostos", "outros"
@@ -20,8 +21,10 @@ export interface ContaFinanceira {
 }
 
 export function useContasFinanceiras() {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["contas_financeiras"],
+    queryKey: ["contas_financeiras", user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contas_financeiras")
