@@ -1,16 +1,15 @@
 import type { Manufacturer, ProductLine } from "@/types/calculation";
 
 export const manufacturers: Manufacturer[] = [
-  // Grandes fabricantes nacionais
+  // Fabricantes com catálogo real confirmado
   { id: "fab-alcoa", name: "Alcoa / Novelis", active: true },
-  { id: "fab-asa", name: "ASA Alumínio", active: true },
-  { id: "fab-hyspex", name: "Hyspex", active: true },
-  { id: "fab-alumasa", name: "Alumasa", active: true },
-  { id: "fab-daluminio", name: "D'Alumínio (DS)", active: true },
-  // Distribuidores com linhas próprias
   { id: "fab-decamp", name: "Decamp Alumínio", active: true },
   { id: "fab-centenario", name: "Metal Centenário Alumínio", active: true },
-  // Fabricantes sem catálogo confirmado (desativados)
+  // Fabricantes sem catálogo próprio — temporariamente desativados
+  { id: "fab-asa", name: "ASA Alumínio", active: false },
+  { id: "fab-hyspex", name: "Hyspex", active: false },
+  { id: "fab-alumasa", name: "Alumasa", active: false },
+  { id: "fab-daluminio", name: "D'Alumínio (DS)", active: false },
   { id: "fab-brimetal", name: "Brimetal", active: false },
   { id: "fab-cba", name: "CBA (Votorantim)", active: false },
   { id: "fab-real", name: "Real Alumínio", active: false },
