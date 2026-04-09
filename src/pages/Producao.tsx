@@ -112,7 +112,7 @@ const Producao = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchPedidos(); }, [fetchPedidos]);
+  useEffect(() => { if (!authLoading && user) fetchPedidos(); }, [fetchPedidos, authLoading, user]);
 
   // Derive unique vendors
   const vendedores = Array.from(new Set(pedidos.map(p => p.vendedor).filter(Boolean)));
