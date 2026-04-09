@@ -49,7 +49,7 @@ export function AiChatButton() {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed inset-x-2 bottom-20 sm:inset-x-auto sm:bottom-6 sm:right-6 z-[60] sm:w-[400px] h-[55vh] max-h-[380px] sm:h-[550px] sm:max-h-none bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300" style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="fixed inset-x-2 z-[60] sm:inset-x-auto sm:right-6 sm:w-[400px] sm:h-[550px] sm:max-h-none bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300" style={{ bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))', height: 'calc(100vh - 10rem)', maxHeight: '420px' }}>
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b bg-primary/5">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
