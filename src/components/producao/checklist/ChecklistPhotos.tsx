@@ -63,10 +63,12 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
         .from("checklist-fotos")
         .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year signed URL
 
+      const fotoUrl = urlData?.signedUrl || path;
+
       await supabase.from("pedido_checklist_fotos").insert({
         pedido_id: pedidoId,
         etapa: etapaId,
-        foto_url: urlData.publicUrl,
+        foto_url: path, // Store the storage path, not the signed URL
         nome_arquivo: file.name,
       } as any);
     }
