@@ -97,8 +97,10 @@ export function usePedidosStatus(period: PeriodFilter = "todos") {
 }
 
 export function useReceitaMensal() {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["receita_mensal"],
+    queryKey: ["receita_mensal", user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data: pedidos = [] } = await supabase.from("pedidos").select("valor, created_at");
       const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
