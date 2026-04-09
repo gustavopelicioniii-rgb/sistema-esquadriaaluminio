@@ -42,15 +42,15 @@
 
     --radius: 0.75rem;
 
-    --sidebar-background: 263 84% 12%;
-    --sidebar-foreground: 220 14% 96%;
+    --sidebar-background: 0 0% 100% / 0.72;
+    --sidebar-foreground: 263 84% 12%;
     --sidebar-primary: 263 84% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 263 40% 22%;
-    --sidebar-accent-foreground: 220 14% 96%;
-    --sidebar-border: 263 40% 22%;
+    --sidebar-accent: 263 60% 94%;
+    --sidebar-accent-foreground: 263 84% 35%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 263 84% 58%;
-    --sidebar-muted: 220 9% 60%;
+    --sidebar-muted: 220 9% 46%;
 
     --glass-bg: hsl(0 0% 100%);
     --glass-border: hsl(220 13% 91%);
@@ -88,13 +88,13 @@
     --input: 260 20% 18%;
     --ring: 263 60% 70%;
 
-    --sidebar-background: 260 30% 5%;
+    --sidebar-background: 260 25% 10% / 0.72;
     --sidebar-foreground: 220 14% 96%;
     --sidebar-primary: 263 84% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 25% 14%;
+    --sidebar-accent: 260 25% 18%;
     --sidebar-accent-foreground: 220 14% 96%;
-    --sidebar-border: 260 20% 16%;
+    --sidebar-border: 260 20% 20% / 0.5;
     --sidebar-ring: 263 84% 62%;
 
     --glass-bg: hsl(260 25% 10%);
@@ -232,10 +232,17 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Sidebar — solid dark */
+/* Sidebar — liquid glass */
 .sidebar-glass {
   background: hsl(var(--sidebar-background)) !important;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   border-right: 1px solid hsl(var(--sidebar-border));
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+}
+
+.dark .sidebar-glass {
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-glass .sidebar-header-glass {
