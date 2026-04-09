@@ -18,8 +18,10 @@ function getDateRange(period: PeriodFilter): { from: string | null } {
 }
 
 export function useDashboardStats(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["dashboard_stats", period],
+    queryKey: ["dashboard_stats", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
 
