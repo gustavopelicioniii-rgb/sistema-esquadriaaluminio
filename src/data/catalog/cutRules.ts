@@ -516,93 +516,7 @@ const topCutRules: CutRule[] = [
   cr("tp-mc2t-08","typ-tp-mc2t","TP-604",T,"Pressão Vidro H","pressao_h","L/2",-40,90,90,"8",8),
 ];
 
-// ============================================
-// CLONE CUT RULES FOR COMPATIBLE LINES
-// ============================================
 
-interface CloneMapping {
-  lineId: string;
-  typologyPrefix: string;
-  idPrefix: string;
-  profileCodeMap: (code: string) => string;
-  constantOffset: number;
-}
-
-function makeMapping(lineId: string, prefix: string, typPrefix: string, idPrefix: string, offset: number, sourceCodePrefix: string, sourceInsertPrefix: string): CloneMapping {
-  return {
-    lineId, typologyPrefix: typPrefix, idPrefix,
-    profileCodeMap: (c) => {
-      if (c.startsWith(sourceCodePrefix + "-")) return `${prefix}-${c.slice(sourceCodePrefix.length + 1)}`;
-      if (c.startsWith("I" + sourceCodePrefix + "-")) return `I${prefix}-${c.slice(sourceInsertPrefix.length + 1)}`;
-      if (c === "PAL" || c === "CM-200") return c;
-      return `${prefix}-${c}`;
-    },
-    constantOffset: offset,
-  };
-}
-
-// 25mm lines clone from Suprema
-const clone25Mappings: CloneMapping[] = [
-  makeMapping("line-mega25", "25", "typ-mg25-", "mg25-", -1, "SU", "ISU"),
-  makeMapping("line-hyspex25su", "HY", "typ-hy-", "hy-", 0, "SU", "ISU"),
-  makeMapping("line-alumasa25", "AL", "typ-al-", "al-", 0, "SU", "ISU"),
-  makeMapping("line-ds-suprema", "DS", "typ-ds-", "ds-", 0, "SU", "ISU"),
-  makeMapping("line-brimetal25", "BR", "typ-br-", "br-", 0, "SU", "ISU"),
-  makeMapping("line-cba25", "CB", "typ-cb-", "cb-", 0, "SU", "ISU"),
-  makeMapping("line-real25", "RE", "typ-re-", "re-", 0, "SU", "ISU"),
-  makeMapping("line-lp25", "LP", "typ-lp-", "lp-", 0, "SU", "ISU"),
-  makeMapping("line-alux25", "AX", "typ-ax-", "ax-", 0, "SU", "ISU"),
-  makeMapping("line-albras25", "AB", "typ-ab-", "ab-", 0, "SU", "ISU"),
-  makeMapping("line-sm25", "SM", "typ-sm-", "sm-", 0, "SU", "ISU"),
-  makeMapping("line-prado25", "PR", "typ-pr-", "pr-", 0, "SU", "ISU"),
-  makeMapping("line-hydro25", "HB", "typ-hb-", "hb-", 0, "SU", "ISU"),
-  makeMapping("line-pin25", "PN", "typ-pn-", "pn-", 0, "SU", "ISU"),
-  makeMapping("line-suprema-plus", "SP", "typ-sp-", "sp-", 0, "SU", "ISU"),
-];
-
-// 32mm lines clone from Gold
-const clone32Mappings: CloneMapping[] = [
-  makeMapping("line-ds-gold", "DG", "typ-dg-", "dg-", 0, "GO", "IGO"),
-  makeMapping("line-brimetal32", "BG", "typ-bg-", "bg-", 0, "GO", "IGO"),
-  makeMapping("line-cba32", "C32", "typ-c32-", "c32-", 0, "GO", "IGO"),
-  makeMapping("line-real32", "R32", "typ-r32-", "r32-", 0, "GO", "IGO"),
-  makeMapping("line-lp32", "L32", "typ-l32-", "l32-", 0, "GO", "IGO"),
-  makeMapping("line-alux32", "X32", "typ-x32-", "x32-", 0, "GO", "IGO"),
-  makeMapping("line-albras32", "A32", "typ-a32-", "a32-", 0, "GO", "IGO"),
-  makeMapping("line-sm32", "S32", "typ-s32-", "s32-", 0, "GO", "IGO"),
-  makeMapping("line-prado32", "P32", "typ-p32-", "p32-", 0, "GO", "IGO"),
-  makeMapping("line-hydro32", "H32", "typ-h32-", "h32-", 0, "GO", "IGO"),
-  makeMapping("line-pin32", "N32", "typ-n32-", "n32-", 0, "GO", "IGO"),
-  makeMapping("line-hyspex32", "HX32", "typ-hx32-", "hx32-", 0, "GO", "IGO"),
-  makeMapping("line-mega32", "M32", "typ-m32-", "m32-", 0, "GO", "IGO"),
-  makeMapping("line-alumasa32", "AM32", "typ-am32-", "am32-", 0, "GO", "IGO"),
-];
-
-// 40mm lines clone from Top
-const clone40Mappings: CloneMapping[] = [
-  makeMapping("line-hydro40", "H40", "typ-h40-", "h40-", 0, "TP", "ITP"),
-  makeMapping("line-mega40", "M40", "typ-m40-", "m40-", 0, "TP", "ITP"),
-];
-
-function cloneCutRules(source: CutRule[], mapping: CloneMapping, sourceIdPrefix: string, sourceTypPrefix: string): CutRule[] {
-  return source.map(rule => {
-    const newProfileCode = mapping.profileCodeMap(rule.profile_code ?? "");
-    const profile = profiles.find(p => p.code === newProfileCode && p.product_line_id === mapping.lineId);
-    return {
-      ...rule,
-      id: rule.id.replace(sourceIdPrefix, mapping.idPrefix),
-      typology_id: rule.typology_id.replace(sourceTypPrefix, mapping.typologyPrefix),
-      profile_id: profile?.id ?? rule.profile_id,
-      profile_code: newProfileCode,
-      weight_per_meter: profile?.weight_per_meter ?? rule.weight_per_meter,
-      constant_mm: rule.constant_mm + mapping.constantOffset,
-    };
-  });
-}
-
-const cloned25CutRules = clone25Mappings.flatMap(m => cloneCutRules(supremaCutRules, m, "su-", "typ-su-"));
-const cloned32CutRules = clone32Mappings.flatMap(m => cloneCutRules(goldCutRules, m, "go-", "typ-go-"));
-const cloned40CutRules = clone40Mappings.flatMap(m => cloneCutRules(topCutRules, m, "tp-", "typ-tp-"));
 
 // ============================================
 // DECAMP LINHA 45 — 18 TIPOLOGIAS
@@ -802,7 +716,4 @@ export const cutRules: CutRule[] = [
   ...pratic20CutRules,
   ...pratic32CutRules,
   ...perfettaCutRules,
-  ...cloned25CutRules,
-  ...cloned32CutRules,
-  ...cloned40CutRules,
 ];
