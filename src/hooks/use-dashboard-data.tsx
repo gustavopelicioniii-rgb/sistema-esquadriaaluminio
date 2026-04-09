@@ -74,8 +74,10 @@ export function useDashboardStats(period: PeriodFilter = "todos") {
 }
 
 export function usePedidosStatus(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["pedidos_status", period],
+    queryKey: ["pedidos_status", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("pedidos").select("status");
