@@ -29,24 +29,24 @@ export const productLines: ProductLine[] = [
   { id: "line-top", manufacturer_id: "fab-alcoa", name: "Linha Top (40mm)", bitola_mm: 40, description: "Linha 40mm para projetos de alto padrão e fachadas.", active: true },
   { id: "line-suprema-plus", manufacturer_id: "fab-alcoa", name: "Suprema Plus (25mm)", bitola_mm: 25, description: "Suprema com reforço estrutural para grandes vãos.", active: true },
 
-  // ===================== ASA Alumínio =====================
+  // ===================== ASA Alumínio (desativado — sem catálogo próprio) =====================
   { id: "line-mega20", manufacturer_id: "fab-asa", name: "Mega 20", bitola_mm: 20, description: "Linha econômica para janelas pequenas e basculantes.", active: false },
   { id: "line-mega25", manufacturer_id: "fab-asa", name: "Mega 25", bitola_mm: 25, description: "Linha intermediária, compatível com padrão 25mm.", active: false },
   { id: "line-mega32", manufacturer_id: "fab-asa", name: "Mega 32", bitola_mm: 32, description: "Linha robusta para grandes vãos e fachadas.", active: false },
   { id: "line-mega40", manufacturer_id: "fab-asa", name: "Mega 40", bitola_mm: 40, description: "Linha premium 40mm para fachadas e projetos especiais.", active: false },
 
-  // ===================== Hyspex =====================
+  // ===================== Hyspex (desativado — sem catálogo próprio) =====================
   { id: "line-hyspex25", manufacturer_id: "fab-hyspex", name: "Linha 25", bitola_mm: 25, description: "Linha 25mm padrão Hyspex.", active: false },
   { id: "line-hyspex25su", manufacturer_id: "fab-hyspex", name: "Linha 25 90° SU", bitola_mm: 25, description: "Linha 25mm compatível com padrão Suprema.", active: false },
   { id: "line-hyspex-mp", manufacturer_id: "fab-hyspex", name: "Módulo Prático (20mm)", bitola_mm: 20, description: "Linha 20mm econômica.", active: false },
   { id: "line-hyspex32", manufacturer_id: "fab-hyspex", name: "Linha 32", bitola_mm: 32, description: "Linha 32mm Hyspex para grandes vãos.", active: false },
 
-  // ===================== Alumasa =====================
+  // ===================== Alumasa (desativado — sem catálogo próprio) =====================
   { id: "line-alumasa25", manufacturer_id: "fab-alumasa", name: "Linha 25", bitola_mm: 25, description: "Linha 25mm Alumasa, padrão mercado.", active: false },
   { id: "line-alumasa32", manufacturer_id: "fab-alumasa", name: "Linha 32", bitola_mm: 32, description: "Linha 32mm Alumasa para grandes vãos.", active: false },
   { id: "line-alumasa20", manufacturer_id: "fab-alumasa", name: "Linha 20", bitola_mm: 20, description: "Linha 20mm econômica Alumasa.", active: false },
 
-  // ===================== D'Alumínio (DS) =====================
+  // ===================== D'Alumínio (desativado — sem catálogo próprio) =====================
   { id: "line-ds-suprema", manufacturer_id: "fab-daluminio", name: "Suprema Classic (25mm)", bitola_mm: 25, description: "Compatível com Suprema Alcoa.", active: false },
   { id: "line-ds-gold", manufacturer_id: "fab-daluminio", name: "Gold Classic (32mm)", bitola_mm: 32, description: "Compatível com Gold Alcoa.", active: false },
 
