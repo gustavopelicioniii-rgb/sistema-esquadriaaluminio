@@ -853,6 +853,9 @@ const ProjetoVidroPage = () => {
   const [novoCor, setNovoCor] = useState("Incolor");
   const [novoPrecoM2, setNovoPrecoM2] = useState(106);
   const [novoAreaMinima, setNovoAreaMinima] = useState(0);
+  const [filterTipo, setFilterTipo] = useState<string | null>(null);
+  const [filterCor, setFilterCor] = useState<string | null>(null);
+  const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -993,130 +996,159 @@ const ProjetoVidroPage = () => {
 
   
 
+  const uniqueTipos = [...new Set(projetos.map(p => p.tipo))];
+  const uniqueCores = [...new Set(projetos.map(p => p.cor))];
+  const uniqueEspessuras = [...new Set(projetos.map(p => p.espessura))];
+
+  const filteredFinal = filtered.filter(p => {
+    if (filterTipo && p.tipo !== filterTipo) return false;
+    if (filterCor && p.cor !== filterCor) return false;
+    if (filterEspessura && p.espessura !== filterEspessura) return false;
+    return true;
+  });
+
+  const hasActiveFilters = !!filterTipo || !!filterCor || !!filterEspessura;
+
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Projeto Vidro</h1>
-          <p className="text-muted-foreground text-sm">Visualize e configure projetos de vidro</p>
+          <h1 className="text-2xl font-bold tracking-tight">Projeto Vidro</h1>
+          <p className="text-muted-foreground text-sm">
+            {projetos.length} projeto{projetos.length !== 1 ? "s" : ""} de vidro
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button className="gap-2 w-full sm:w-auto" onClick={() => setNovoOpen(true)}>
-            <Plus className="h-4 w-4" /> Novo Projeto
-          </Button>
+        <Button className="gap-2" onClick={() => setNovoOpen(true)}>
+          <Plus className="h-4 w-4" /> Novo Projeto
+        </Button>
+      </div>
+
+      {/* Search */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder="Buscar projeto..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Buscar projeto..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <div className="flex gap-4">
+        {/* Sidebar Filters */}
+        <div className="hidden md:block w-52 shrink-0">
+          <div className="space-y-4 pr-3">
+            <div>
+              <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Tipo de Vidro</h4>
+              <div className="space-y-0.5">
+                {uniqueTipos.map(tipo => (
+                  <button key={tipo} onClick={() => setFilterTipo(filterTipo === tipo ? null : tipo)}
+                    className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterTipo === tipo ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                    {tipo}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="border-t border-border" />
+            <div>
+              <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Cor</h4>
+              <div className="space-y-0.5">
+                {uniqueCores.map(cor => (
+                  <button key={cor} onClick={() => setFilterCor(filterCor === cor ? null : cor)}
+                    className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterCor === cor ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                    {cor}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="border-t border-border" />
+            <div>
+              <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Espessura</h4>
+              <div className="space-y-0.5">
+                {uniqueEspessuras.map(esp => (
+                  <button key={esp} onClick={() => setFilterEspessura(filterEspessura === esp ? null : esp)}
+                    className={`block w-full text-left text-sm px-2 py-1 rounded-md transition-colors ${filterEspessura === esp ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted"}`}>
+                    {esp}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {hasActiveFilters && (
+              <>
+                <div className="border-t border-border" />
+                <Button variant="ghost" size="sm" className="text-xs h-7 w-full" onClick={() => { setFilterTipo(null); setFilterCor(null); setFilterEspessura(null); }}>
+                  Limpar filtros
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((projeto) => {
-            const areaTotal = projeto.itens.reduce(
-              (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
-            );
-            const valorTotal = areaTotal * projeto.precoM2;
-            
 
-            const tipoBadgeClass = (() => {
-              const t = projeto.tipo.toLowerCase();
-              if (t.includes("temperado") && t.includes("laminado")) return "bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-700";
-              if (t.includes("temperado")) return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700";
-              if (t.includes("laminado")) return "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
-              if (t.includes("insulado")) return "bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-700";
-              return "bg-muted text-muted-foreground";
-            })();
+        {/* Grid */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm text-muted-foreground">{filteredFinal.length} projeto{filteredFinal.length !== 1 ? "s" : ""}</p>
+          </div>
 
-            const corBadgeClass = (() => {
-              const c = projeto.cor.toLowerCase();
-              if (c.includes("fumê") || c.includes("fume")) return "bg-gray-200 text-gray-700 border-gray-300 dark:bg-gray-700/40 dark:text-gray-300 dark:border-gray-600";
-              if (c.includes("verde")) return "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700";
-              if (c.includes("bronze")) return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700";
-              if (c.includes("preto")) return "bg-gray-900 text-white border-gray-700 dark:bg-gray-800 dark:text-gray-200";
-              return "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-700";
-            })();
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredFinal.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/5 mb-5">
+                <svg width="44" height="44" viewBox="0 0 48 48" fill="none" className="text-primary/40">
+                  {getGlassSvgElements("Comum", "lg")}
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-foreground mb-1">Nenhum projeto encontrado</h3>
+              <p className="text-sm text-muted-foreground max-w-xs mb-5">
+                {search || hasActiveFilters ? "Tente buscar com outros termos ou limpe os filtros." : "Crie seu primeiro projeto de vidro para começar."}
+              </p>
+              {!search && !hasActiveFilters && (
+                <Button className="gap-2" onClick={() => setNovoOpen(true)}>
+                  <Plus className="h-4 w-4" /> Novo Projeto
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredFinal.map((projeto) => {
+                const areaTotal = projeto.itens.reduce(
+                  (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
+                );
+                const valorTotal = areaTotal * projeto.precoM2;
 
-            return (
-              <Card key={projeto.id} className="group relative overflow-hidden border-border/50 shadow-sm transition-all duration-300 hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-lg">
-
-
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 items-center gap-2.5 pr-8">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/15">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary" aria-hidden="true">
-                            {getGlassSvgElements(projeto.tipo, "sm")}
-                          </svg>
-                        </div>
-                        <div className="min-w-0">
-                          <CardTitle className="truncate text-base font-bold leading-tight">{projeto.titulo}</CardTitle>
-                          <p className="mt-0.5 text-[11px] text-muted-foreground">{projeto.criadoEm} · {projeto.itens.length} vidro{projeto.itens.length !== 1 ? "s" : ""}</p>
-                        </div>
-                      </div>
-
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${tipoBadgeClass}`}>{projeto.tipo}</Badge>
-                        <Badge variant="outline" className="text-[10px] px-2 py-0.5 font-medium">{projeto.espessura}</Badge>
-                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-medium border ${corBadgeClass}`}>{projeto.cor}</Badge>
-                      </div>
-
-                      <div className="mt-4 space-y-2 text-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">Área total</span>
-                          <span className="font-semibold">{areaTotal.toFixed(2)} m²</span>
-                        </div>
-                        <div className="flex items-center justify-between border-t border-border/50 pt-2">
-                          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Total</span>
-                          <span className="text-base font-extrabold text-primary">{formatCurrency(valorTotal)}</span>
-                        </div>
-                      </div>
-
-                      <Button variant="outline" size="sm" className="mt-4 w-full gap-2 transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground" onClick={() => setSelected(projeto)}>
-                        <Eye className="h-3.5 w-3.5" /> Ver detalhes
-                      </Button>
-                    </div>
-
-                    <div className="hidden sm:block">
+                return (
+                  <Card key={projeto.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
+                    <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
+                      onClick={() => setSelected(projeto)}>
                       <GlassPreviewTile tipo={projeto.tipo} />
                     </div>
-                  </div>
-
-                  <div className="mt-4 sm:hidden">
-                    <GlassPreviewTile tipo={projeto.tipo} />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
-
-      {!loading && filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/5 mb-5">
-            <svg width="44" height="44" viewBox="0 0 48 48" fill="none" className="text-primary/40">
-              {getGlassSvgElements("Comum", "lg")}
-            </svg>
-          </div>
-          <h3 className="text-base font-semibold text-foreground mb-1">Nenhum projeto encontrado</h3>
-          <p className="text-sm text-muted-foreground max-w-xs mb-5">
-            {search ? "Tente buscar com outros termos." : "Crie seu primeiro projeto de vidro para começar."}
-          </p>
-          {!search && (
-            <Button className="gap-2" onClick={() => setNovoOpen(true)}>
-              <Plus className="h-4 w-4" /> Novo Projeto
-            </Button>
+                    <CardContent className="p-2.5 space-y-1.5">
+                      <p className="text-xs text-primary leading-tight line-clamp-2 font-medium">{projeto.titulo}</p>
+                      <div className="flex flex-wrap gap-1">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">{projeto.tipo}</Badge>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">{projeto.espessura}</Badge>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">{projeto.cor}</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span>{projeto.itens.length} vidro{projeto.itens.length !== 1 ? "s" : ""} · {areaTotal.toFixed(2)} m²</span>
+                        <span className="font-bold text-xs text-primary">{formatCurrency(valorTotal)}</span>
+                      </div>
+                      <div className="flex gap-1 pt-0.5">
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => setSelected(projeto)}>
+                          <Eye className="h-3 w-3" /> Detalhes
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
+                          <Copy className="h-3 w-3" /> Duplicar
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           )}
         </div>
-      )}
+      </div>
 
 
       {/* New project dialog */}
