@@ -25,6 +25,7 @@ export function AppLayout() {
           </main>
         </div>
         <BottomNav />
+        <PwaInstallBanner />
         <AiChatButton />
       </div>
     </SidebarProvider>
