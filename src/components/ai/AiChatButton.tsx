@@ -40,7 +40,7 @@ export function AiChatButton() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-[60] h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center group"
+          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-[60] h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center group"
         >
           <Bot className="h-6 w-6 group-hover:hidden" />
           <Sparkles className="h-6 w-6 hidden group-hover:block animate-pulse" />
@@ -49,7 +49,7 @@ export function AiChatButton() {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-20 right-2 sm:bottom-6 sm:right-6 z-[60] w-[calc(100vw-16px)] sm:w-[400px] h-[500px] sm:h-[550px] bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-24 right-2 sm:bottom-6 sm:right-6 z-[60] w-[calc(100vw-16px)] sm:w-[400px] h-[70vh] max-h-[500px] sm:h-[550px] sm:max-h-none bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b bg-primary/5">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
