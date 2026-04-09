@@ -1,16 +1,19 @@
-import { aluminumColors } from "./colors";
+import { getColorsForLine } from "./colors";
 import { cn } from "@/lib/utils";
 
 interface ColorSelectorProps {
   selectedColorId: string;
   onColorChange: (colorId: string) => void;
+  productLineId?: string;
   className?: string;
 }
 
-export default function ColorSelector({ selectedColorId, onColorChange, className }: ColorSelectorProps) {
+export default function ColorSelector({ selectedColorId, onColorChange, productLineId, className }: ColorSelectorProps) {
+  const colors = getColorsForLine(productLineId);
+
   return (
     <div className={cn("flex flex-wrap gap-3", className)}>
-      {aluminumColors.map(c => (
+      {colors.map(c => (
         <button
           key={c.id}
           onClick={() => onColorChange(c.id)}
