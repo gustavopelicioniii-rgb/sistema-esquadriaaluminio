@@ -17,8 +17,8 @@ export function BottomNav() {
     to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-card/95 backdrop-blur-md sm:hidden safe-area-bottom">
-      <div className="flex items-center justify-around h-14">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-card/95 backdrop-blur-md sm:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="flex items-center justify-around h-16">
         {navItems.map((item) => {
           const active = isActive(item.to);
           return (
