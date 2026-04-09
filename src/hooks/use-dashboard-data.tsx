@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export type PeriodFilter = "semana" | "mes" | "trimestre" | "ano" | "todos";
 
@@ -17,8 +18,10 @@ function getDateRange(period: PeriodFilter): { from: string | null } {
 }
 
 export function useDashboardStats(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["dashboard_stats", period],
+    queryKey: ["dashboard_stats", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
 
@@ -71,8 +74,10 @@ export function useDashboardStats(period: PeriodFilter = "todos") {
 }
 
 export function usePedidosStatus(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["pedidos_status", period],
+    queryKey: ["pedidos_status", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("pedidos").select("status");
@@ -92,8 +97,10 @@ export function usePedidosStatus(period: PeriodFilter = "todos") {
 }
 
 export function useReceitaMensal() {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["receita_mensal"],
+    queryKey: ["receita_mensal", user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data: pedidos = [] } = await supabase.from("pedidos").select("valor, created_at");
       const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -114,8 +121,10 @@ export function useReceitaMensal() {
 }
 
 export function useOrcamentosStatus(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["orcamentos_status", period],
+    queryKey: ["orcamentos_status", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("orcamentos").select("status, valor");
@@ -138,8 +147,10 @@ export function useOrcamentosStatus(period: PeriodFilter = "todos") {
 }
 
 export function useProducaoEtapas(period: PeriodFilter = "todos") {
+  const { user, isLoading: authLoading } = useAuth();
   return useQuery({
-    queryKey: ["producao_etapas", period],
+    queryKey: ["producao_etapas", period, user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { from } = getDateRange(period);
       let query = supabase.from("pedidos").select("etapa").eq("status", "em_andamento");
