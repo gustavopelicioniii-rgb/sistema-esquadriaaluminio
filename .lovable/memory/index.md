@@ -2,10 +2,11 @@
 
 ## Core
 Sistema de cálculo de esquadrias de alumínio. Blue primary #3B82F6 on light bg. Inter font. Portuguese BR UI.
-3 fabricantes ativos (Alcoa, Decamp, Centenário), 15 linhas ativas. ~1600 perfis reais verificados. Frontend mock data.
+3 fabricantes ativos (Alcoa, Decamp, Centenário). Demais desativados temporariamente — sem catálogo real.
 
 ## Memories
 - [Calculation architecture](mem://features/calculation-engine) — Motor de cálculo: tipos, fórmulas, otimizador de barras
-- [Catalog structure](mem://features/catalog-data) — Fabricantes, profiles, cut rules, glass rules, components in src/data/catalog/
-- [Decamp catalog](mem://features/decamp-catalog) — 1032 perfis reais extraídos dos catálogos oficiais Decamp 2026 (11 linhas, 346 páginas)
-- [Centenário catalog](mem://features/centenario-catalog) — 559 perfis das 4 linhas Centenário (Máxima, Perfetta, Amadeirado, Padronizado)
+- [Catalog structure](mem://features/catalog-data) — 3 fabricantes ativos, profiles, cut rules, glass rules, components in src/data/catalog/
+- [Centenário catalog](mem://features/centenario-catalog) — 559 perfis reais (Máxima 2.0, Perfetta, Amadeirado, Padronizado)
+- [Decamp catalog](mem://features/decamp-catalog) — 1032 perfis reais (Linha 45, Pratic, Fachada, Perfetta, Geral)
+- [Frame preview](mem://features/frame-preview) — Preview 3D de esquadrias
