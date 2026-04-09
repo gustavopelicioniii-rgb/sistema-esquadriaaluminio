@@ -338,7 +338,7 @@ export default function CalculoEsquadrias() {
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-2 block">Cor do Alumínio</Label>
-                  <ColorSelector selectedColorId={selectedColor} onColorChange={setSelectedColor} />
+                  <ColorSelector selectedColorId={selectedColor} onColorChange={setSelectedColor} productLineId={selectedLine} />
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {filteredTypologies.find(t => t.id === selectedTypology)?.name}
