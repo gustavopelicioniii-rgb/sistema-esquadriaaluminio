@@ -4,13 +4,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Camera, X, Loader2, ImageIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 
 interface Foto {
   id: string;
-  foto_url: string;
+  foto_url: string; // storage path
   nome_arquivo: string | null;
   created_at: string;
+  signedUrl?: string; // resolved signed URL for display
 }
 
 interface Props {
@@ -29,6 +29,22 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
     fetchFotos();
   }, [pedidoId, etapaId]);
 
+  const resolveSignedUrls = async (items: Foto[]): Promise<Foto[]> => {
+    const results = await Promise.all(
+      items.map(async (foto) => {
+        // If foto_url is already an absolute URL (legacy data), use it directly
+        if (foto.foto_url.startsWith("http")) {
+          return { ...foto, signedUrl: foto.foto_url };
+        }
+        const { data } = await supabase.storage
+          .from("checklist-fotos")
+          .createSignedUrl(foto.foto_url, 60 * 60); // 1 hour
+        return { ...foto, signedUrl: data?.signedUrl || "" };
+      })
+    );
+    return results;
+  };
+
   const fetchFotos = async () => {
     const { data } = await supabase
       .from("pedido_checklist_fotos")
@@ -37,7 +53,9 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
       .eq("etapa", etapaId)
       .order("created_at", { ascending: false });
 
-    setFotos((data as any[]) || []);
+    const raw = (data as any[]) || [];
+    const resolved = await resolveSignedUrls(raw);
+    setFotos(resolved);
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,14 +77,10 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
         continue;
       }
 
-      const { data: urlData } = supabase.storage
-        .from("checklist-fotos")
-        .getPublicUrl(path);
-
       await supabase.from("pedido_checklist_fotos").insert({
         pedido_id: pedidoId,
         etapa: etapaId,
-        foto_url: urlData.publicUrl,
+        foto_url: path,
         nome_arquivo: file.name,
       } as any);
     }
@@ -78,11 +92,15 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
   };
 
   const handleDelete = async (foto: Foto) => {
-    // Extract storage path from URL
-    const url = foto.foto_url;
-    const bucketPath = url.split("/checklist-fotos/")[1];
-    if (bucketPath) {
-      await supabase.storage.from("checklist-fotos").remove([decodeURIComponent(bucketPath)]);
+    // Use stored path directly for private bucket
+    const storagePath = foto.foto_url.startsWith("http")
+      ? foto.foto_url.split("/checklist-fotos/")[1]
+        ? decodeURIComponent(foto.foto_url.split("/checklist-fotos/")[1])
+        : null
+      : foto.foto_url;
+
+    if (storagePath) {
+      await supabase.storage.from("checklist-fotos").remove([storagePath]);
     }
     await supabase.from("pedido_checklist_fotos").delete().eq("id", foto.id);
     setFotos((prev) => prev.filter((f) => f.id !== foto.id));
@@ -125,7 +143,7 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
           {fotos.map((foto) => (
             <div key={foto.id} className="relative group rounded-lg overflow-hidden border bg-muted aspect-square">
               <img
-                src={foto.foto_url}
+                src={foto.signedUrl || ""}
                 alt={foto.nome_arquivo || "Foto"}
                 className="w-full h-full object-cover"
               />
