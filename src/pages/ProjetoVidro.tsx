@@ -996,13 +996,9 @@ const ProjetoVidroPage = () => {
 
   
 
-  // Sidebar filter state
   const uniqueTipos = [...new Set(projetos.map(p => p.tipo))];
   const uniqueCores = [...new Set(projetos.map(p => p.cor))];
   const uniqueEspessuras = [...new Set(projetos.map(p => p.espessura))];
-  const [filterTipo, setFilterTipo] = useState<string | null>(null);
-  const [filterCor, setFilterCor] = useState<string | null>(null);
-  const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
 
   const filteredFinal = filtered.filter(p => {
     if (filterTipo && p.tipo !== filterTipo) return false;
