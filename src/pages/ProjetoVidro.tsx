@@ -1012,6 +1012,9 @@ const ProjetoVidroPage = () => {
     return true;
   });
 
+  const totalPages = Math.ceil(filteredFinal.length / ITEMS_PER_PAGE);
+  const paginatedFinal = filteredFinal.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   const hasActiveFilters = !!filterTipo || !!filterCor || !!filterEspessura;
 
   return (
