@@ -856,6 +856,8 @@ const ProjetoVidroPage = () => {
   const [filterTipo, setFilterTipo] = useState<string | null>(null);
   const [filterCor, setFilterCor] = useState<string | null>(null);
   const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
 
   const load = useCallback(async () => {
     try {
