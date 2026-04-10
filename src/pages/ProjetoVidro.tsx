@@ -856,6 +856,8 @@ const ProjetoVidroPage = () => {
   const [filterTipo, setFilterTipo] = useState<string | null>(null);
   const [filterCor, setFilterCor] = useState<string | null>(null);
   const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
 
   const load = useCallback(async () => {
     try {
@@ -870,6 +872,9 @@ const ProjetoVidroPage = () => {
   const filtered = projetos.filter(
     (p) => !search || p.titulo.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, filterTipo, filterCor, filterEspessura]);
 
   const handleCreate = async () => {
     if (!novoTitulo) { toast.error("Informe o título"); return; }
@@ -1007,6 +1012,9 @@ const ProjetoVidroPage = () => {
     return true;
   });
 
+  const totalPages = Math.ceil(filteredFinal.length / ITEMS_PER_PAGE);
+  const paginatedFinal = filteredFinal.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   const hasActiveFilters = !!filterTipo || !!filterCor || !!filterEspessura;
 
   return (
@@ -1110,7 +1118,7 @@ const ProjetoVidroPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredFinal.map((projeto) => {
+              {paginatedFinal.map((projeto) => {
                 const areaTotal = projeto.itens.reduce(
                   (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
                 );
@@ -1145,6 +1153,35 @@ const ProjetoVidroPage = () => {
                   </Card>
                 );
               })}
+            </div>
+          )}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-6 pb-2">
+              <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>
+                Anterior
+              </Button>
+              <div className="flex gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .reduce<(number | string)[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((p, i) =>
+                    typeof p === "string" ? (
+                      <span key={`ellipsis-${i}`} className="flex items-center justify-center w-8 h-8 text-xs text-muted-foreground">…</span>
+                    ) : (
+                      <Button key={p} variant={currentPage === p ? "default" : "outline"} size="sm" className="w-8 h-8 p-0 text-xs" onClick={() => setCurrentPage(p)}>
+                        {p}
+                      </Button>
+                    )
+                  )}
+              </div>
+              <Button variant="outline" size="sm" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>
+                Próximo
+              </Button>
             </div>
           )}
         </div>
