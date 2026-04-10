@@ -37,6 +37,7 @@ const menuItems = [
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
   { title: "Tipologias", url: "/tipologias", icon: Layers },
+  { title: "Catálogo Vidros", url: "/catalogo-vidros", icon: Monitor },
   
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];

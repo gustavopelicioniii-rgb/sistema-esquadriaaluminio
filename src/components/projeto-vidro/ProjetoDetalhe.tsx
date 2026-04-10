@@ -1,4 +1,8 @@
 import { useState, useRef } from "react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +40,7 @@ export function ProjetoDetalhe({
   const [editOpen, setEditOpen] = useState(false);
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [csvOpen, setCsvOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
@@ -164,7 +169,7 @@ export function ProjetoDetalhe({
           <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
             <Edit2 className="h-3.5 w-3.5" /> Editar
           </Button>
-          <Button variant="destructive" size="sm" className="gap-2" onClick={async () => { await onDelete(projeto.id); onBack(); }}>
+          <Button variant="destructive" size="sm" className="gap-2" onClick={() => setDeleteConfirmOpen(true)}>
             <Trash2 className="h-3.5 w-3.5" /> Excluir
           </Button>
         </div>
@@ -436,6 +441,24 @@ export function ProjetoDetalhe({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir projeto?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O projeto <strong>"{projeto.titulo}"</strong> e todos os seus vidros serão excluídos permanentemente. Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => { await onDelete(projeto.id); onBack(); }}>
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
