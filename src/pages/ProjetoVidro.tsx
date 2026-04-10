@@ -1093,6 +1093,11 @@ const ProjetoVidroPage = () => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm text-muted-foreground">{filteredFinal.length} projeto{filteredFinal.length !== 1 ? "s" : ""}</p>
+            {(hasActiveFilters || search) && (
+              <Button variant="outline" size="sm" className="gap-1.5 h-7 text-xs" onClick={() => { setFilterTipo(null); setFilterCor(null); setFilterEspessura(null); setSearch(""); }}>
+                <X className="h-3 w-3" /> Limpar filtros
+              </Button>
+            )}
           </div>
 
           {loading ? (
