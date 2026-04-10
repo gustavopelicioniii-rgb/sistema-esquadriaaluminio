@@ -873,6 +873,9 @@ const ProjetoVidroPage = () => {
     (p) => !search || p.titulo.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, filterTipo, filterCor, filterEspessura]);
+
   const handleCreate = async () => {
     if (!novoTitulo) { toast.error("Informe o título"); return; }
     setSaving(true);
