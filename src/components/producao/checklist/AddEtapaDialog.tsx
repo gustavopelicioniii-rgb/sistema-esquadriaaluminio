@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-
+import { toast } from "sonner";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,12 +25,12 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
 
   const handleSave = async () => {
     if (!label.trim()) {
-      toast({ title: "Erro", description: "Informe o nome da etapa.", variant: "destructive" });
+      toast.error("Erro", { description: "Informe o nome da etapa." });
       return;
     }
     const validItems = items.filter((i) => i.trim());
     if (validItems.length === 0) {
-      toast({ title: "Erro", description: "Adicione pelo menos 1 item.", variant: "destructive" });
+      toast.error("Erro", { description: "Adicione pelo menos 1 item." });
       return;
     }
 
@@ -45,7 +44,7 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
       .single();
 
     if (etapaErr || !etapaData) {
-      toast({ title: "Erro", description: etapaErr?.message || "Erro ao criar etapa.", variant: "destructive" });
+      toast.error("Erro", { description: etapaErr?.message || "Erro ao criar etapa." });
       setSaving(false);
       return;
     }
@@ -64,11 +63,11 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
     setSaving(false);
 
     if (itemsErr) {
-      toast({ title: "Erro", description: itemsErr.message, variant: "destructive" });
+      toast.error("Erro", { description: itemsErr.message });
       return;
     }
 
-    toast({ title: "Etapa criada", description: `"${label}" adicionada com ${validItems.length} itens.` });
+    toast.success("Etapa criada", { description: `"${label}" adicionada com ${validItems.length} itens.` });
     setLabel("");
     setItems([""]);
     onOpenChange(false);

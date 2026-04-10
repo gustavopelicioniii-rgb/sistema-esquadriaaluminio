@@ -9,7 +9,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Plus, Search, LayoutGrid, List, Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { ExportButtons } from "@/components/ExportButtons";
 import PedidoCardCompact from "@/components/producao/PedidoCardCompact";
 import KanbanBoard from "@/components/producao/KanbanBoard";
@@ -21,6 +20,7 @@ import AlterarEtapaDialog from "@/components/producao/AlterarEtapaDialog";
 import OrdemServicoDetail from "@/components/producao/OrdemServicoDetail";
 import EditarServicoDialog from "@/components/producao/EditarServicoDialog";
 import NovoPedidoDialog from "@/components/producao/NovoPedidoDialog";
+import { toast } from "sonner";
 
 export interface Pedido {
   id: string;
@@ -92,7 +92,7 @@ const Producao = () => {
       setPedidos([]);
       setLoadError(pedidosRes.error.message);
       setLoading(false);
-      toast({ title: "Erro ao carregar pedidos", description: pedidosRes.error.message, variant: "destructive" });
+      toast.error("Erro ao carregar pedidos", { description: pedidosRes.error.message });
       return;
     }
     setPedidos((pedidosRes.data ?? []) as Pedido[]);
@@ -150,21 +150,21 @@ const Producao = () => {
 
   const handleConcluir = async (op: Pedido) => {
     await supabase.from("pedidos").update({ status: "concluido", etapa: "Finalizado" } as any).eq("id", op.id);
-    toast({ title: "Pedido concluído", description: `Pedido ${op.pedido_num} foi finalizado.` });
+    toast.success("Pedido concluído", { description: `Pedido ${op.pedido_num} foi finalizado.` });
     fetchPedidos();
   };
 
   const handleCancelar = async () => {
     if (!cancelConfirm) return;
     await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
-    toast({ title: "Pedido cancelado", description: `Pedido ${cancelConfirm.pedido_num} foi removido.`, variant: "destructive" });
+    toast.error("Pedido cancelado", { description: `Pedido ${cancelConfirm.pedido_num} foi removido.` });
     setCancelConfirm(null);
     fetchPedidos();
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     await supabase.from("pedidos").update({ status: newStatus } as any).eq("id", id);
-    toast({ title: "Status atualizado" });
+    toast.success("Status atualizado");
     fetchPedidos();
   };
 

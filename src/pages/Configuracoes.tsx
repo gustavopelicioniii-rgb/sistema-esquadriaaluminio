@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -22,6 +21,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Planos from "./Planos";
+import { toast } from "sonner";
 
 // ─── Company Config ───
 const defaultConfig: Record<string, string> = {
@@ -163,14 +163,14 @@ const Configuracoes = () => {
     } else {
       await supabase.from("configuracoes").insert({ chave: "folgas_global", valor: folgasPayload });
     }
-    toast({ title: "Configurações salvas", description: "Suas alterações foram salvas." });
+    toast.success("Configurações salvas", { description: "Suas alterações foram salvas." });
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     if (!file.type.startsWith("image/")) {
-      toast({ title: "Arquivo inválido", description: "Selecione uma imagem.", variant: "destructive" });
+      toast.error("Arquivo inválido", { description: "Selecione uma imagem." });
       return;
     }
     setLogoUploading(true);
@@ -184,7 +184,7 @@ const Configuracoes = () => {
     }
     const { error: uploadErr } = await supabase.storage.from("company-assets").upload(path, file, { upsert: true });
     if (uploadErr) {
-      toast({ title: "Erro no upload", description: uploadErr.message, variant: "destructive" });
+      toast.error("Erro no upload", { description: uploadErr.message });
       setLogoUploading(false);
       return;
     }
@@ -193,7 +193,7 @@ const Configuracoes = () => {
     update("logo_url", logoUrl);
     await supabase.from("configuracoes").upsert({ chave: "logo_url", valor: logoUrl }, { onConflict: "chave" });
     setLogoUploading(false);
-    toast({ title: "Logo atualizado!" });
+    toast.success("Logo atualizado!");
   };
 
   const handleRemoveLogo = async () => {
@@ -205,7 +205,7 @@ const Configuracoes = () => {
     }
     update("logo_url", "");
     await supabase.from("configuracoes").upsert({ chave: "logo_url", valor: "" }, { onConflict: "chave" });
-    toast({ title: "Logo removido" });
+    toast.success("Logo removido");
   };
 
   // ─── Funcionarios handlers ───
@@ -217,18 +217,18 @@ const Configuracoes = () => {
       telefone: newFunc.telefone,
       setor: newFunc.setor,
     });
-    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     const { data } = await supabase.from("funcionarios").select("*").order("created_at");
     if (data) setFuncionarios(data as unknown as Funcionario[]);
     setNewFunc({ nome: "", cargo: "", telefone: "", setor: "Produção" });
     setShowAddFunc(false);
-    toast({ title: "Funcionário adicionado" });
+    toast.success("Funcionário adicionado");
   };
 
   const removeFuncionario = async (id: string) => {
     await supabase.from("funcionarios").delete().eq("id", id);
     setFuncionarios((prev) => prev.filter((f) => f.id !== id));
-    toast({ title: "Funcionário removido", variant: "destructive" });
+    toast.error("Funcionário removido");
   };
 
   const toggleFuncionario = async (id: string) => {
@@ -246,19 +246,19 @@ const Configuracoes = () => {
       email: newAdmin.email,
       role: newAdmin.role,
     });
-    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     const { data } = await supabase.from("administradores").select("*").order("created_at");
     if (data) setAdmins(data as unknown as Admin[]);
     setNewAdmin({ nome: "", email: "", role: "Admin" });
     setShowAddAdmin(false);
-    toast({ title: "Administrador adicionado" });
+    toast.success("Administrador adicionado");
 
     // Sync: grant admin role in user_roles
     const { data: syncResult } = await supabase.functions.invoke("sync-admin-role", {
       body: { action: "grant", email: newAdmin.email },
     });
     if (syncResult?.message) {
-      toast({ title: "Permissão", description: syncResult.message });
+      toast.success("Permissão", { description: syncResult.message });
     }
   };
 
@@ -266,7 +266,7 @@ const Configuracoes = () => {
     const adminToRemove = admins.find((a) => a.id === id);
     await supabase.from("administradores").delete().eq("id", id);
     setAdmins((prev) => prev.filter((a) => a.id !== id));
-    toast({ title: "Administrador removido", variant: "destructive" });
+    toast.error("Administrador removido");
 
     // Sync: revoke admin role in user_roles
     if (adminToRemove?.email) {
@@ -302,12 +302,12 @@ const Configuracoes = () => {
       chave: newApi.chave,
       descricao: newApi.descricao,
     }).select().single();
-    if (error) { toast({ title: "Erro ao adicionar API", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast.error("Erro ao adicionar API", { description: error.message }); return; }
     setApis((prev) => [...prev, data as unknown as ApiConfig]);
     setNewApi({ nome: "", chave: "", descricao: "" });
     setShowAddApi(false);
     setKeyTestResult(null);
-    toast({ title: "API adicionada" });
+    toast.success("API adicionada");
   };
 
   const updateApi = async () => {
@@ -321,18 +321,18 @@ const Configuracoes = () => {
       chave: editingApi.chave,
       descricao: editingApi.descricao,
     }).eq("id", editingApi.id);
-    if (error) { toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast.error("Erro ao atualizar", { description: error.message }); return; }
     setApis((prev) => prev.map((a) => a.id === editingApi.id ? { ...a, ...editingApi } : a));
     setShowEditApi(false);
     setEditingApi(null);
     setKeyTestResult(null);
-    toast({ title: "API atualizada" });
+    toast.success("API atualizada");
   };
 
   const testApiKey = async (key: string): Promise<boolean> => {
     if (!key || key.trim().length < 8) {
       setKeyTestResult("error");
-      toast({ title: "Chave inválida", description: "A chave deve ter pelo menos 8 caracteres.", variant: "destructive" });
+      toast.error("Chave inválida", { description: "A chave deve ter pelo menos 8 caracteres." });
       return false;
     }
     setTestingKey(true);
@@ -344,11 +344,11 @@ const Configuracoes = () => {
     setTestingKey(false);
     if (looksValid) {
       setKeyTestResult("success");
-      toast({ title: "Chave válida", description: "O formato da chave parece correto." });
+      toast.success("Chave válida", { description: "O formato da chave parece correto." });
       return true;
     } else {
       setKeyTestResult("error");
-      toast({ title: "Chave suspeita", description: "O formato da chave não corresponde aos padrões conhecidos. Verifique e tente novamente.", variant: "destructive" });
+      toast.error("Chave suspeita", { description: "O formato da chave não corresponde aos padrões conhecidos. Verifique e tente novamente." });
       return false;
     }
   };
@@ -364,7 +364,7 @@ const Configuracoes = () => {
   const removeApi = async (id: string) => {
     await supabase.from("api_integracoes").delete().eq("id", id);
     setApis((prev) => prev.filter((a) => a.id !== id));
-    toast({ title: "API removida", variant: "destructive" });
+    toast.error("API removida");
   };
 
   const toggleKeyVisibility = (id: string) => {
@@ -396,7 +396,7 @@ const Configuracoes = () => {
     setConfig((prev) => ({ ...prev, ...entries }));
     setSetupLoading(false);
     setSetupStep(4); // complete
-    toast({ title: "Sistema configurado!", description: "Suas informações foram salvas com sucesso." });
+    toast.success("Sistema configurado!", { description: "Suas informações foram salvas com sucesso." });
   };
 
   if (loading) return <div className="p-6 text-muted-foreground">Carregando...</div>;
@@ -779,7 +779,7 @@ const Configuracoes = () => {
                           </Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
                             navigator.clipboard.writeText(api.chave);
-                            toast({ title: "Chave copiada" });
+                            toast.success("Chave copiada");
                           }}>
                             <Copy className="h-3 w-3" />
                           </Button>

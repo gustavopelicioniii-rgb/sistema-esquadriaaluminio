@@ -16,8 +16,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
-
+import { toast } from "sonner";
 const menuItems = [
   { title: "Início", url: "/", icon: Home },
   { title: "CRM", url: "/crm", icon: Kanban, badgeKey: "crm" as const },
@@ -92,10 +91,7 @@ export function AppSidebar() {
                 const handleLockedClick = (e: React.MouseEvent) => {
                   if (locked) {
                     e.preventDefault();
-                    toast({
-                      title: "Funcao bloqueada",
-                      description: `Disponivel no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.`,
-                    });
+                    toast.error("Função bloqueada", { description: `Disponível no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.` });
                     navigate("/configuracoes?tab=planos");
                   }
                 };

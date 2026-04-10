@@ -8,8 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Trash2, Loader2, ShieldCheck } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-
+import { toast } from "sonner";
 interface AdminRecord {
   id: string;
   nome: string;
@@ -34,7 +33,7 @@ const Administradores = () => {
       .order("created_at", { ascending: true });
 
     if (error) {
-      toast({ title: "Erro ao carregar administradores", description: error.message, variant: "destructive" });
+      toast.error("Erro ao carregar administradores", { description: error.message });
     } else {
       setAdmins((data as AdminRecord[]) || []);
     }
@@ -57,7 +56,7 @@ const Administradores = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.success) {
-        toast({ title: data.message || "Admin concedido com sucesso" });
+        toast.success(data.message || "Admin concedido com sucesso");
         // Also add to administradores display table
         await supabase.from("administradores").upsert(
           { email: email.trim().toLowerCase(), nome: email.trim().split("@")[0], role: "Admin", ativo: true },
@@ -67,10 +66,10 @@ const Administradores = () => {
         setDialogOpen(false);
         fetchAdmins();
       } else {
-        toast({ title: data?.message || "Operação falhou", variant: "destructive" });
+        toast.error(data?.message || "Operação falhou");
       }
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     } finally {
       setActionLoading(null);
     }
@@ -87,14 +86,14 @@ const Administradores = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.success) {
-        toast({ title: data.message || "Admin removido" });
+        toast.success(data.message || "Admin removido");
         await supabase.from("administradores").delete().eq("id", admin.id);
         fetchAdmins();
       } else {
-        toast({ title: data?.message || "Operação falhou", variant: "destructive" });
+        toast.error(data?.message || "Operação falhou");
       }
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     } finally {
       setActionLoading(null);
     }

@@ -7,8 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency } from "@/lib/formatters";
 import { ArrowLeft, FileDown, Minus, Plus, Pencil, Trash2, List, MessageCircle, CreditCard, Percent } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
-import { toast as sonnerToast } from "sonner";
+import { toast } from "sonner";
 import { useCreateOrcamento, useUpdateOrcamento, useOrcamentoById } from "@/hooks/use-orcamentos";
 import { useAddOrcamentoHistorico } from "@/hooks/use-orcamento-historico";
 import { FramePreview } from "@/components/frame-preview";
@@ -173,7 +172,7 @@ const CriarOrcamento = () => {
   const handleSalvar = async () => {
     if (!calculo || !cliente) return;
     if (hasValidationErrors) {
-      toast({ title: "Dimensões inválidas", description: "Corrija as dimensões fora dos limites antes de salvar.", variant: "destructive" });
+      toast.error("Dimensões inválidas", { description: "Corrija as dimensões fora dos limites antes de salvar." });
       return;
     }
     const itemsData = items.map((item, i) => {
@@ -231,18 +230,18 @@ const CriarOrcamento = () => {
     try {
       if (isEditing && editId) {
         await updateOrcamento.mutateAsync({ ...payload, id: editId });
-        toast({ title: "Orçamento atualizado!", description: `Orçamento para ${cliente} atualizado.` });
+        toast.success("Orçamento atualizado!", { description: `Orçamento para ${cliente} atualizado.` });
       } else {
         const result = await createOrcamento.mutateAsync(payload);
         // Add history entry for creation
         if (result?.id) {
           addHistorico.mutate({ orcamento_id: result.id, status_anterior: null, status_novo: "pendente" });
         }
-        toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+        toast.success("Orçamento criado!", { description: `Orçamento para ${cliente} salvo com sucesso.` });
       }
       navigate("/orcamentos");
     } catch (err: any) {
-      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+      toast.error("Erro ao salvar", { description: err.message });
     }
   };
 
@@ -651,7 +650,7 @@ const CriarOrcamento = () => {
                 className="gap-2"
                 onClick={async () => {
                   if (!calculo || !produtoSelecionado) return;
-                  sonnerToast.info("Gerando PDF profissional...");
+                  toast.info("Gerando PDF profissional...");
                   await generateProfessionalBudgetPDF(
                     {
                       cliente,
@@ -672,7 +671,7 @@ const CriarOrcamento = () => {
                     },
                     "budget-frame-preview"
                   );
-                  sonnerToast.success("PDF exportado!");
+                  toast.success("PDF exportado!");
                 }}
               >
                 <FileDown className="h-4 w-4" /> PDF
@@ -699,7 +698,7 @@ const CriarOrcamento = () => {
                     "Válido por 15 dias.",
                   ].filter(Boolean).join("\n");
                   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
-                  sonnerToast.success("WhatsApp aberto!");
+                  toast.success("WhatsApp aberto!");
                 }}
               >
                 <MessageCircle className="h-4 w-4" /> WhatsApp

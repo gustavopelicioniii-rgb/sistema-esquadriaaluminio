@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FileDown, FileSpreadsheet, Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { generateReportPdf } from "@/utils/reportPdfGenerator";
 import { generateExcel } from "@/utils/excelGenerator";
 import { formatCurrency } from "@/lib/formatters";
+import { toast } from "sonner";
 
 interface ExportConfig {
   title: string;
@@ -31,9 +31,9 @@ export function ExportButtons({ getConfig }: ExportButtonsProps) {
       } else {
         generateExcel(config);
       }
-      toast({ title: `${format === "pdf" ? "PDF" : "Excel"} gerado`, description: `${config.rows.length} registros exportados` });
+      toast.success(`${format === "pdf" ? "PDF" : "Excel"} gerado`, { description: `${config.rows.length} registros exportados` });
     } catch (e: any) {
-      toast({ title: "Erro", description: e.message, variant: "destructive" });
+      toast.error("Erro", { description: e.message });
     } finally {
       setGenerating(null);
     }

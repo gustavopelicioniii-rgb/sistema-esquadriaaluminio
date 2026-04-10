@@ -9,8 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search, Phone, Mail, MapPin, Pencil, Trash2, GripVertical, Loader2, CalendarDays, MessageSquare, Eye } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { toast as sonnerToast } from "sonner";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -177,15 +176,15 @@ const Clientes = () => {
   };
 
   const handleSave = async () => {
-    if (!form.nome.trim()) { toast({ title: "Nome obrigatório", variant: "destructive" }); return; }
+    if (!form.nome.trim()) { toast.error("Nome obrigatório"); return; }
     if (editingId) {
       const { error } = await supabase.from("clientes").update(form).eq("id", editingId);
-      if (error) { toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Cliente atualizado" });
+      if (error) { toast.error("Erro ao atualizar", { description: error.message }); return; }
+      toast.success("Cliente atualizado");
     } else {
       const { error } = await supabase.from("clientes").insert(form);
-      if (error) { toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Cliente cadastrado" });
+      if (error) { toast.error("Erro ao cadastrar", { description: error.message }); return; }
+      toast.success("Cliente cadastrado");
     }
     setDialogOpen(false);
     fetchClientes();
@@ -194,8 +193,8 @@ const Clientes = () => {
   const confirmDelete = async () => {
     if (!deleteId) return;
     const { error } = await supabase.from("clientes").delete().eq("id", deleteId);
-    if (error) { toast({ title: "Erro ao remover", variant: "destructive" }); return; }
-    toast({ title: "Cliente removido", variant: "destructive" });
+    if (error) { toast.error("Erro ao remover"); return; }
+    toast.error("Cliente removido");
     setDeleteId(null);
     fetchClientes();
   };
@@ -217,7 +216,7 @@ const Clientes = () => {
     if (!lead || lead.status === newStatus) return;
     updateStatus.mutate(
       { id: leadId, status: newStatus },
-      { onSuccess: () => sonnerToast.success(`Lead movido para ${columns.find(c => c.id === newStatus)?.title}`) }
+      { onSuccess: () => toast.success(`Lead movido para ${columns.find(c => c.id === newStatus)?.title}`) }
     );
   };
 
@@ -228,14 +227,14 @@ const Clientes = () => {
   };
 
   const handleCreateLead = () => {
-    if (!leadForm.nome.trim()) { sonnerToast.error("Nome é obrigatório"); return; }
+    if (!leadForm.nome.trim()) { toast.error("Nome é obrigatório"); return; }
     createLead.mutate(leadForm, {
-      onSuccess: () => { sonnerToast.success("Lead criado"); setLeadDialogOpen(false); },
+      onSuccess: () => { toast.success("Lead criado"); setLeadDialogOpen(false); },
     });
   };
 
   const handleDeleteLead = (id: string) => {
-    deleteLead.mutate(id, { onSuccess: () => sonnerToast.success("Lead removido") });
+    deleteLead.mutate(id, { onSuccess: () => toast.success("Lead removido") });
   };
 
   const openLeadDetail = (lead: CrmLead) => {
@@ -251,7 +250,7 @@ const Clientes = () => {
       observacao: editObs,
       follow_up_date: editFollowUp ? format(editFollowUp, "yyyy-MM-dd") : null,
     }, {
-      onSuccess: () => { sonnerToast.success("Lead atualizado"); setDetailLead(null); },
+      onSuccess: () => { toast.success("Lead atualizado"); setDetailLead(null); },
     });
   };
 

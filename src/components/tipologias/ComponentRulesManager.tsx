@@ -7,10 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { useCustomComponentRules, type CustomComponentRuleRow } from "@/hooks/use-custom-component-rules";
 import { findBaseTypologyId } from "@/hooks/use-all-typologies";
 import { Plus, Trash2, Edit2, Download, Loader2, Package } from "lucide-react";
+import { toast } from "sonner";
 
 const COMPONENT_TYPES = [
   { value: "roldana", label: "Roldana" },
@@ -71,7 +71,7 @@ export function ComponentRulesManager({ typology }: Props) {
 
   const handleSave = async () => {
     if (!form.component_name.trim()) {
-      toast({ title: "Preencha o nome do componente", variant: "destructive" });
+      toast.error("Preencha o nome do componente");
       return;
     }
     try {
@@ -87,7 +87,7 @@ export function ComponentRulesManager({ typology }: Props) {
           notes: form.notes || null,
           sort_order: form.sort_order,
         } as any);
-        toast({ title: "Componente atualizado" });
+        toast.success("Componente atualizado");
       } else {
         await addRule({
           typology_id: typology.id,
@@ -101,13 +101,13 @@ export function ComponentRulesManager({ typology }: Props) {
           notes: form.notes || null,
           sort_order: rules.length,
         } as any);
-        toast({ title: "Componente adicionado" });
+        toast.success("Componente adicionado");
       }
       setShowForm(false);
       setEditId(null);
       setForm(emptyRule);
     } catch (err: any) {
-      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+      toast.error("Erro ao salvar", { description: err.message });
     }
   };
 
@@ -130,24 +130,24 @@ export function ComponentRulesManager({ typology }: Props) {
   const handleDelete = async (id: string) => {
     try {
       await deleteRule(id);
-      toast({ title: "Componente removido", variant: "destructive" });
+      toast.error("Componente removido");
     } catch (err: any) {
-      toast({ title: "Erro ao remover", description: err.message, variant: "destructive" });
+      toast.error("Erro ao remover", { description: err.message });
     }
   };
 
   const handleInherit = async () => {
     const baseId = findBaseTypologyId(typology as any);
     if (!baseId) {
-      toast({ title: "Tipologia base não encontrada", description: "Não foi possível identificar a tipologia de origem.", variant: "destructive" });
+      toast.error("Tipologia base não encontrada", { description: "Não foi possível identificar a tipologia de origem." });
       return;
     }
     setInheriting(true);
     try {
       await inheritFromBase(baseId);
-      toast({ title: "Componentes herdados", description: "Regras de componentes do catálogo foram copiadas." });
+      toast.success("Componentes herdados", { description: "Regras de componentes do catálogo foram copiadas." });
     } catch (err: any) {
-      toast({ title: "Erro ao herdar", description: err.message, variant: "destructive" });
+      toast.error("Erro ao herdar", { description: err.message });
     }
     setInheriting(false);
   };

@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Phone, Pencil, Search } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { PageLoading } from "@/components/LoadingSpinner";
+import { toast } from "sonner";
 
 type Funcionario = {
   id: string;
@@ -55,10 +55,10 @@ const Funcionarios = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["funcionarios"] });
-      toast({ title: editing ? "Funcionário atualizado" : "Funcionário adicionado" });
+      toast.success(editing ? "Funcionário atualizado" : "Funcionário adicionado");
       closeDialog();
     },
-    onError: () => toast({ title: "Erro ao salvar", variant: "destructive" }),
+    onError: () => toast.error("Erro ao salvar"),
   });
 
   const deleteMutation = useMutation({
@@ -68,7 +68,7 @@ const Funcionarios = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["funcionarios"] });
-      toast({ title: "Funcionário removido", variant: "destructive" });
+      toast.error("Funcionário removido");
     },
   });
 
@@ -90,7 +90,7 @@ const Funcionarios = () => {
   };
 
   const handleSubmit = () => {
-    if (!form.nome.trim()) return toast({ title: "Nome é obrigatório", variant: "destructive" });
+    if (!form.nome.trim()) return toast.error("Nome é obrigatório");
     upsertMutation.mutate(editing ? { ...form, id: editing.id } : form);
   };
 

@@ -15,12 +15,12 @@ import {
 import { Plus, Eye, Trash2, Search, Loader2, Calendar, User, Package, Hash, DollarSign, FileText, CheckCircle, XCircle, Clock, Pencil, FileDown, CreditCard, Percent, History } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import { FramePreview } from "@/components/frame-preview";
 import { getColorById } from "@/components/frame-preview/colors";
 import { getProdutoByValue } from "@/data/orcamento-produtos";
+import { toast } from "sonner";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -112,7 +112,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           status_anterior: previousStatus,
           status_novo: status,
         });
-        toast({ title: `Status alterado para ${status}` });
+        toast.success(`Status alterado para ${status}`);
 
         // Auto-create pedido when approved
         if (status === "aprovado") {
@@ -147,12 +147,12 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
             } as any);
 
             if (pedidoError) {
-              toast({ title: "Erro ao gerar pedido", description: pedidoError.message, variant: "destructive" });
+              toast.error("Erro ao gerar pedido", { description: pedidoError.message });
             } else {
-              toast({ title: "Pedido gerado", description: `Pedido #${nextNum} criado automaticamente a partir do orçamento ${orc.numero}.` });
+              toast.success("Pedido gerado", { description: `Pedido #${nextNum} criado automaticamente a partir do orçamento ${orc.numero}.` });
             }
           } catch (e: any) {
-            toast({ title: "Erro ao gerar pedido", description: e.message, variant: "destructive" });
+            toast.error("Erro ao gerar pedido", { description: e.message });
           }
         }
       },
@@ -187,9 +187,9 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           logoUrl: empresaData.logo_url || "",
         },
       });
-      toast({ title: "PDF gerado com sucesso!" });
+      toast.success("PDF gerado com sucesso!");
     } catch (err: any) {
-      toast({ title: "Erro ao gerar PDF", description: err.message, variant: "destructive" });
+      toast.error("Erro ao gerar PDF", { description: err.message });
     }
   };
 
@@ -476,7 +476,7 @@ const Orcamentos = () => {
 
   const handleDelete = (orc: any) => {
     deleteOrcamento.mutate(orc.id, {
-      onSuccess: () => toast({ title: "Orçamento excluído" }),
+      onSuccess: () => toast.success("Orçamento excluído"),
     });
   };
 

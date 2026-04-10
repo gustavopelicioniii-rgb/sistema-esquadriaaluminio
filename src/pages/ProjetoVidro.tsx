@@ -240,13 +240,25 @@ async function fetchProjetos(): Promise<ProjetoVidro[]> {
     .select("*")
     .order("created_at", { ascending: false });
   if (error) throw error;
+  if (!projetos || projetos.length === 0) return [];
 
+  // Fetch only items belonging to loaded projects
+  const projetoIds = projetos.map((p: any) => p.id);
   const { data: itens, error: itensError } = await supabase
     .from("vidro_itens")
-    .select("*");
+    .select("*")
+    .in("projeto_id", projetoIds);
   if (itensError) throw itensError;
 
-  return (projetos || []).map((p: any) => ({
+  // Group items by project for O(n) lookup
+  const itensByProjeto = new Map<string, any[]>();
+  for (const it of itens || []) {
+    const list = itensByProjeto.get(it.projeto_id) || [];
+    list.push(it);
+    itensByProjeto.set(it.projeto_id, list);
+  }
+
+  return projetos.map((p: any) => ({
     id: p.id,
     titulo: p.titulo,
     tipo: p.tipo,
@@ -255,16 +267,14 @@ async function fetchProjetos(): Promise<ProjetoVidro[]> {
     precoM2: Number(p.preco_m2),
     areaMinimaM2: Number(p.area_minima_m2 ?? 0),
     criadoEm: new Date(p.created_at).toLocaleDateString("pt-BR"),
-    itens: (itens || [])
-      .filter((it: any) => it.projeto_id === p.id)
-      .map((it: any) => ({
-        id: it.id,
-        descricao: it.descricao,
-        larguraMm: it.largura_mm,
-        alturaMm: it.altura_mm,
-        quantidade: it.quantidade,
-        observacao: it.observacao ?? "",
-      })),
+    itens: (itensByProjeto.get(p.id) || []).map((it: any) => ({
+      id: it.id,
+      descricao: it.descricao,
+      larguraMm: it.largura_mm,
+      alturaMm: it.altura_mm,
+      quantidade: it.quantidade,
+      observacao: it.observacao ?? "",
+    })),
   }));
 }
 

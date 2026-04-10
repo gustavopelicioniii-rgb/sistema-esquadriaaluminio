@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -34,7 +34,7 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
 
   const handleSalvar = async () => {
     if (!selected) {
-      toast({ title: "Erro", description: "Selecione uma etapa.", variant: "destructive" });
+      toast.error("Erro", { description: "Selecione uma etapa." });
       return;
     }
     const etapa = etapas.find((e) => e.id === selected);
@@ -57,11 +57,11 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
     setSaving(false);
 
     if (updateErr) {
-      toast({ title: "Erro", description: updateErr.message, variant: "destructive" });
+      toast.error("Erro", { description: updateErr.message });
       return;
     }
 
-    toast({ title: "Etapa alterada", description: `Pedido ${pedido.pedido_num} → ${etapa?.label}` });
+    toast.success("Etapa alterada", { description: `Pedido ${pedido.pedido_num} → ${etapa?.label}` });
     setObs("");
     onOpenChange(false);
   };

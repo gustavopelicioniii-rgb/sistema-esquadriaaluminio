@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Cliente {
   id: string;
@@ -80,11 +80,11 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
 
   const handleSave = async () => {
     if (!clienteId) {
-      toast({ title: "Selecione um cliente", variant: "destructive" });
+      toast.error("Selecione um cliente");
       return;
     }
     if (!valor || Number(valor) <= 0) {
-      toast({ title: "Informe o valor", variant: "destructive" });
+      toast.error("Informe o valor");
       return;
     }
 
@@ -105,10 +105,10 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
     setSaving(false);
 
     if (error) {
-      toast({ title: "Erro ao criar pedido", description: error.message, variant: "destructive" });
+      toast.error("Erro ao criar pedido", { description: error.message });
       return;
     }
-    toast({ title: "Pedido criado", description: `Pedido #${nextNum} criado com sucesso.` });
+    toast.success("Pedido criado", { description: `Pedido #${nextNum} criado com sucesso.` });
     onClose();
   };
 

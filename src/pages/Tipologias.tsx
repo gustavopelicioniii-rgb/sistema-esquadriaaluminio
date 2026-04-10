@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { typologies as catalogTypologies } from "@/data/catalog/typologies";
@@ -25,6 +24,7 @@ import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
 import { RulesValidatorWrapper } from "@/components/ai/RulesValidatorWrapper";
 import { FramePreview } from "@/components/frame-preview";
+import { toast } from "sonner";
 
 const CATEGORIES = [
   { value: "janela", label: "Janela" },
@@ -149,7 +149,7 @@ const Tipologias = () => {
 
   const handleSave = async () => {
     if (!form.name.trim()) {
-      toast({ title: "Nome obrigatório", variant: "destructive" });
+      toast.error("Nome obrigatório");
       return;
     }
 
@@ -168,8 +168,8 @@ const Tipologias = () => {
         min_height_mm: form.min_height_mm,
         max_height_mm: form.max_height_mm,
       }).eq("id", editId);
-      if (error) { toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Tipologia atualizada" });
+      if (error) { toast.error("Erro ao atualizar", { description: error.message }); return; }
+      toast.success("Tipologia atualizada");
     } else {
       const { error } = await supabase.from("tipologias_customizadas").insert({
         product_line_id: form.product_line_id,
@@ -185,8 +185,8 @@ const Tipologias = () => {
         min_height_mm: form.min_height_mm,
         max_height_mm: form.max_height_mm,
       });
-      if (error) { toast({ title: "Erro ao criar", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Tipologia criada" });
+      if (error) { toast.error("Erro ao criar", { description: error.message }); return; }
+      toast.success("Tipologia criada");
     }
 
     setForm(emptyForm);
@@ -255,7 +255,7 @@ const Tipologias = () => {
 
   const handleDelete = async (id: string) => {
     await supabase.from("tipologias_customizadas").delete().eq("id", id);
-    toast({ title: "Tipologia removida", variant: "destructive" });
+    toast.error("Tipologia removida");
     fetchCustoms();
   };
 
@@ -508,7 +508,7 @@ const Tipologias = () => {
                         { label: "Linhas", value: String(new Set(filteredCatalog.map(t => t.product_line_id)).size) },
                       ],
                     });
-                    toast({ title: "PDF gerado", description: `${filteredCatalog.length} tipologias exportadas` });
+                    toast.success("PDF gerado", { description: `${filteredCatalog.length} tipologias exportadas` });
                   }}>
                     <FileDown className="h-3.5 w-3.5" /> Exportar PDF
                   </Button>
