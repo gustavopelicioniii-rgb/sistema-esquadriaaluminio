@@ -1118,14 +1118,14 @@ const ProjetoVidroPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {paginatedFinal.map((projeto) => {
+              {paginatedFinal.map((projeto, index) => {
                 const areaTotal = projeto.itens.reduce(
                   (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
                 );
                 const valorTotal = areaTotal * projeto.precoM2;
 
                 return (
-                  <Card key={projeto.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
+                  <Card key={projeto.id} className="group hover:shadow-md hover:scale-[1.02] transition-all duration-300 border-border/60 overflow-hidden animate-fade-in" style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}>
                     <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
                       onClick={() => setSelected(projeto)}>
                       <GlassPreviewTile tipo={projeto.tipo} />
