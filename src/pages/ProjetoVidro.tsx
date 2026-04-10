@@ -1118,7 +1118,7 @@ const ProjetoVidroPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {paginatedFinal.map((projeto) => {
+              {paginatedFinal.map((projeto, index) => {
                 const areaTotal = projeto.itens.reduce(
                   (sum, it) => sum + calcAreaEfetiva(it.larguraMm, it.alturaMm, projeto.areaMinimaM2) * it.quantidade, 0
                 );
