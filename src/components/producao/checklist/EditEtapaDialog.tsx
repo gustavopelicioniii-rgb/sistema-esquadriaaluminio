@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 import type { Etapa } from "./etapasConfig";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -34,12 +34,12 @@ export default function EditEtapaDialog({ open, onOpenChange, etapa, onSaved }: 
 
   const handleSave = async () => {
     if (!label.trim()) {
-      toast({ title: "Erro", description: "Informe o nome da etapa.", variant: "destructive" });
+      toast.error("Erro", { description: "Informe o nome da etapa." });
       return;
     }
     const validItems = items.filter((i) => i.trim());
     if (validItems.length === 0) {
-      toast({ title: "Erro", description: "Adicione pelo menos 1 item.", variant: "destructive" });
+      toast.error("Erro", { description: "Adicione pelo menos 1 item." });
       return;
     }
     if (!etapa.dbId) return;

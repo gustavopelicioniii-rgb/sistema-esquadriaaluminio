@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { KeyRound } from "lucide-react";
+import { toast } from "sonner";
 
 const ResetPassword = () => {
   usePageTitle("Redefinir Senha");
@@ -35,20 +35,20 @@ const ResetPassword = () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({ title: "Senhas não coincidem", variant: "destructive" });
+      toast.error("Senhas não coincidem");
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Senha deve ter pelo menos 6 caracteres", variant: "destructive" });
+      toast.error("Senha deve ter pelo menos 6 caracteres");
       return;
     }
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      toast.error("Erro", { description: error.message });
     } else {
-      toast({ title: "Senha atualizada com sucesso!" });
+      toast.success("Senha atualizada com sucesso!");
       navigate("/login");
     }
   };

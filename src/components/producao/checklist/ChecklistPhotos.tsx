@@ -3,8 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Camera, X, Loader2, ImageIcon } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-
+import { toast } from "sonner";
 interface Foto {
   id: string;
   foto_url: string; // storage path
@@ -73,7 +72,7 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
         .upload(path, file);
 
       if (uploadErr) {
-        toast({ title: "Erro no upload", description: uploadErr.message, variant: "destructive" });
+        toast.error("Erro no upload", { description: uploadErr.message });
         continue;
       }
 

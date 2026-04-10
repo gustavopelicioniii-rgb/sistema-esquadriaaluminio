@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, CalendarDays, Clock, MapPin, User, ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type Evento = {
   id: string;
@@ -71,16 +71,16 @@ const Agenda = () => {
   };
 
   const handleSave = async () => {
-    if (!form.titulo.trim() || !form.data) { toast({ title: "Preencha título e data", variant: "destructive" }); return; }
+    if (!form.titulo.trim() || !form.data) { toast.error("Preencha título e data"); return; }
     const payload = { titulo: form.titulo, data: form.data, hora: form.hora || null, local: form.local || null, responsavel: form.responsavel || null };
     if (editingId) {
       const { error } = await supabase.from("agenda").update(payload).eq("id", editingId);
-      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Evento atualizado" });
+      if (error) { toast.error("Erro", { description: error.message }); return; }
+      toast.success("Evento atualizado");
     } else {
       const { error } = await supabase.from("agenda").insert(payload);
-      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Evento criado" });
+      if (error) { toast.error("Erro", { description: error.message }); return; }
+      toast.success("Evento criado");
     }
     setDialogOpen(false);
     fetchEventos();
@@ -89,8 +89,8 @@ const Agenda = () => {
   const confirmDelete = async () => {
     if (!deleteId) return;
     const { error } = await supabase.from("agenda").delete().eq("id", deleteId);
-    if (error) { toast({ title: "Erro", variant: "destructive" }); return; }
-    toast({ title: "Evento removido", variant: "destructive" });
+    if (error) { toast.error("Erro"); return; }
+    toast.error("Evento removido");
     setDeleteId(null);
     fetchEventos();
   };

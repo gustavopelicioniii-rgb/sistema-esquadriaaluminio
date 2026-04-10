@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -21,7 +21,7 @@ export default function ReagendarDialog({ open, onOpenChange, pedido }: Props) {
 
   const handleSalvar = async () => {
     if (!novaData) {
-      toast({ title: "Erro", description: "Informe a nova data.", variant: "destructive" });
+      toast.error("Erro", { description: "Informe a nova data." });
       return;
     }
     setSaving(true);
@@ -32,7 +32,7 @@ export default function ReagendarDialog({ open, onOpenChange, pedido }: Props) {
     setSaving(false);
 
     if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      toast.error("Erro", { description: error.message });
       return;
     }
     toast({ title: "Reagendado", description: `Pedido ${pedido.pedido_num} reagendado para ${novaData}.` });

@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { FileDown, TrendingUp, DollarSign, Package, Users, FileText, BarChart3, Loader2, FileSpreadsheet, CalendarIcon, Eye } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { formatCurrency } from "@/lib/formatters";
 import { generateReportPdf } from "@/utils/reportPdfGenerator";
@@ -16,6 +15,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { toast } from "sonner";
 
 type ReportData = {
   title: string;
@@ -170,7 +170,7 @@ const Relatorios = () => {
       setPreviewKey(key);
       setPreviewOpen(true);
     } catch (e: any) {
-      toast({ title: "Erro", description: e.message, variant: "destructive" });
+      toast.error("Erro", { description: e.message });
     } finally {
       setLoadingPreview(null);
     }
@@ -187,7 +187,7 @@ const Relatorios = () => {
       }
       toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${previewData.rows.length} registros exportados` });
     } catch (e: any) {
-      toast({ title: "Erro", description: e.message, variant: "destructive" });
+      toast.error("Erro", { description: e.message });
     } finally {
       setGenerating(null);
     }
@@ -204,7 +204,7 @@ const Relatorios = () => {
       }
       toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${data.rows.length} registros exportados` });
     } catch (e: any) {
-      toast({ title: "Erro", description: e.message, variant: "destructive" });
+      toast.error("Erro", { description: e.message });
     } finally {
       setGenerating(null);
     }

@@ -10,9 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Plus, Search, Eye, Trash2, Package, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface Produto {
   id: string;
@@ -52,11 +52,11 @@ const Produtos = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
-      toast({ title: "Produto criado", description: "Produto cadastrado com sucesso." });
+      toast.success("Produto criado", { description: "Produto cadastrado com sucesso." });
       setShowCreate(false);
       setForm({ codigo: "", nome: "", categoria: "Janelas", preco: "", unidade: "m²", ativo: true });
     },
-    onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
+    onError: (err: any) => toast.error("Erro", { description: err.message }),
   });
 
   const deleteMutation = useMutation({
@@ -66,10 +66,10 @@ const Produtos = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
-      toast({ title: "Produto removido", description: "Produto excluído com sucesso." });
+      toast.success("Produto removido", { description: "Produto excluído com sucesso." });
       setDeleteProduct(null);
     },
-    onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
+    onError: (err: any) => toast.error("Erro", { description: err.message }),
   });
 
   const filtered = produtos.filter((p) => {
@@ -80,7 +80,7 @@ const Produtos = () => {
 
   const handleCreate = () => {
     if (!form.codigo.trim() || !form.nome.trim()) {
-      toast({ title: "Campos obrigatórios", description: "Preencha código e nome.", variant: "destructive" });
+      toast.error("Campos obrigatórios", { description: "Preencha código e nome." });
       return;
     }
     createMutation.mutate({

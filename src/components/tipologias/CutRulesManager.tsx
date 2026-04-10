@@ -7,11 +7,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { useCustomCutRules, type CustomCutRuleRow } from "@/hooks/use-custom-cut-rules";
 import { findBaseTypologyId } from "@/hooks/use-all-typologies";
 import { Plus, Trash2, Edit2, Download, Loader2, Scissors } from "lucide-react";
 import type { Typology } from "@/types/calculation";
+import { toast } from "sonner";
 
 const REFERENCE_DIMENSIONS = [
   { value: "L", label: "L (Largura)" },
@@ -61,7 +61,7 @@ export function CutRulesManager({ typology }: Props) {
 
   const handleSave = async () => {
     if (!form.piece_name.trim() || !form.profile_code.trim()) {
-      toast({ title: "Preencha código do perfil e nome da peça", variant: "destructive" });
+      toast.error("Preencha código do perfil e nome da peça");
       return;
     }
     try {
@@ -81,7 +81,7 @@ export function CutRulesManager({ typology }: Props) {
           weight_per_meter: form.weight_per_meter,
           notes: form.notes || null,
         } as Partial<CustomCutRuleRow>);
-        toast({ title: "Regra atualizada" });
+        toast.success("Regra atualizada");
       } else {
         await addRule({
           typology_id: typology.id,
@@ -99,13 +99,13 @@ export function CutRulesManager({ typology }: Props) {
           weight_per_meter: form.weight_per_meter,
           notes: form.notes || null,
         } as Omit<CustomCutRuleRow, "id" | "user_id">);
-        toast({ title: "Regra adicionada" });
+        toast.success("Regra adicionada");
       }
       setForm(emptyRule);
       setEditId(null);
       setShowForm(false);
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     }
   };
 
@@ -132,9 +132,9 @@ export function CutRulesManager({ typology }: Props) {
   const handleDelete = async (id: string) => {
     try {
       await deleteRule(id);
-      toast({ title: "Regra removida", variant: "destructive" });
+      toast.error("Regra removida");
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     }
   };
 
@@ -148,13 +148,13 @@ export function CutRulesManager({ typology }: Props) {
         num_folhas: typology.num_folhas,
       });
       if (!baseId) {
-        toast({ title: "Nenhuma tipologia base encontrada no catálogo", variant: "destructive" });
+        toast.error("Nenhuma tipologia base encontrada no catálogo");
         return;
       }
       await inheritFromBase(baseId);
-      toast({ title: "Regras herdadas do catálogo com sucesso!" });
+      toast.success("Regras herdadas do catálogo com sucesso!");
     } catch (err: any) {
-      toast({ title: "Erro ao herdar regras", description: err.message, variant: "destructive" });
+      toast.error("Erro ao herdar regras", { description: err.message });
     } finally {
       setInheriting(false);
     }

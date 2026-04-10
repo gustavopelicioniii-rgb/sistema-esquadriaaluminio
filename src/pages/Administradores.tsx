@@ -8,8 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Trash2, Loader2, ShieldCheck } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-
+import { toast } from "sonner";
 interface AdminRecord {
   id: string;
   nome: string;
@@ -34,7 +33,7 @@ const Administradores = () => {
       .order("created_at", { ascending: true });
 
     if (error) {
-      toast({ title: "Erro ao carregar administradores", description: error.message, variant: "destructive" });
+      toast.error("Erro ao carregar administradores", { description: error.message });
     } else {
       setAdmins((data as AdminRecord[]) || []);
     }
@@ -70,7 +69,7 @@ const Administradores = () => {
         toast({ title: data?.message || "Operação falhou", variant: "destructive" });
       }
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     } finally {
       setActionLoading(null);
     }
@@ -94,7 +93,7 @@ const Administradores = () => {
         toast({ title: data?.message || "Operação falhou", variant: "destructive" });
       }
     } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast.error("Erro", { description: err.message });
     } finally {
       setActionLoading(null);
     }

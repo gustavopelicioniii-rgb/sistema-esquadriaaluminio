@@ -1,11 +1,11 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/formatters";
 import { Printer, FileText, Receipt, ClipboardList } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -222,14 +222,14 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
         toast({ title: "PDF gerado", description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
       } catch (err) {
         console.error("Erro ao gerar orçamento:", err);
-        toast({ title: "Erro", description: "Falha ao gerar o PDF do orçamento.", variant: "destructive" });
+        toast.error("Erro", { description: "Falha ao gerar o PDF do orçamento." });
       }
       return;
     }
 
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
-      toast({ title: "Erro", description: "Popup bloqueado. Permita popups para imprimir.", variant: "destructive" });
+      toast.error("Erro", { description: "Popup bloqueado. Permita popups para imprimir." });
       return;
     }
 

@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/formatters";
 import { Check, Plus, Trash2 } from "lucide-react";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 interface Pagamento {
   id: string;
@@ -51,7 +51,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
   const handleAdd = async () => {
     const v = parseFloat(valor);
     if (!v || v <= 0 || !data) {
-      toast({ title: "Erro", description: "Preencha valor e data.", variant: "destructive" });
+      toast.error("Erro", { description: "Preencha valor e data." });
       return;
     }
     setLoading(true);
@@ -63,7 +63,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
     } as any);
     setLoading(false);
     if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      toast.error("Erro", { description: error.message });
       return;
     }
     setValor("");
@@ -74,7 +74,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
 
   const handleDelete = async (id: string) => {
     await supabase.from("pagamentos").delete().eq("id", id);
-    toast({ title: "Pagamento removido" });
+    toast.success("Pagamento removido");
     fetchPagamentos();
   };
 

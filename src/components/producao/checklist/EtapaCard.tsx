@@ -3,9 +3,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronDown, CheckCircle2, Circle, Printer, Trash2, GripVertical, Pencil } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import ChecklistPhotos from "./ChecklistPhotos";
 import type { Etapa } from "./etapasConfig";
+import { toast } from "sonner";
 
 interface Props {
   etapa: Etapa;

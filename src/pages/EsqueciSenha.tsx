@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { Mail, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const EsqueciSenha = () => {
   usePageTitle("Esqueci a Senha");
@@ -23,7 +23,7 @@ const EsqueciSenha = () => {
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      toast.error("Erro", { description: error.message });
     } else {
       setSent(true);
     }

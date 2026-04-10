@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Plus, CheckCircle2, Circle, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
 import { defaultEtapasConfig, type Etapa } from "./checklist/etapasConfig";
 import EtapaCard from "./checklist/EtapaCard";
@@ -11,6 +10,7 @@ import AddEtapaDialog from "./checklist/AddEtapaDialog";
 import EditEtapaDialog from "./checklist/EditEtapaDialog";
 import CalculoFilters from "./CalculoFilters";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { toast } from "sonner";
 
 interface Props {
   pedido: Pedido;
@@ -64,7 +64,7 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
       .eq("pedido_id", pedido.id);
 
     if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      toast.error("Erro", { description: error.message });
       return;
     }
 
@@ -108,7 +108,7 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
     );
 
     if (error) {
-      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+      toast.error("Erro ao salvar", { description: error.message });
       setCheckStates((prev) => ({
         ...prev,
         [etapaId]: { ...prev[etapaId], [itemKey]: currentVal },

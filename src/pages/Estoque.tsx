@@ -8,10 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Pencil, ArrowDownUp } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const categorias = ["Todos", "Perfis", "Vidros", "Acessórios", "Insumos", "Fixação"];
 
@@ -66,15 +66,15 @@ const Estoque = () => {
   };
 
   const handleSave = async () => {
-    if (!form.produto.trim()) { toast({ title: "Nome obrigatório", variant: "destructive" }); return; }
+    if (!form.produto.trim()) { toast.error("Nome obrigatório"); return; }
     if (editingId) {
       const { error } = await supabase.from("estoque").update({ produto: form.produto, quantidade: form.quantidade, unidade: form.unidade, minimo: form.minimo, categoria: form.categoria }).eq("id", editingId);
-      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Item atualizado" });
+      if (error) { toast.error("Erro", { description: error.message }); return; }
+      toast.success("Item atualizado");
     } else {
       const { error } = await supabase.from("estoque").insert({ codigo: form.codigo, produto: form.produto, quantidade: form.quantidade, unidade: form.unidade, minimo: form.minimo, categoria: form.categoria });
-      if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Item adicionado" });
+      if (error) { toast.error("Erro", { description: error.message }); return; }
+      toast.success("Item adicionado");
     }
     setDialogOpen(false);
     fetchItens();
@@ -84,7 +84,7 @@ const Estoque = () => {
     if (!movDialog || movQtd <= 0) return;
     const newQtd = movDialog.tipo === "entrada" ? movDialog.item.quantidade + movQtd : Math.max(0, movDialog.item.quantidade - movQtd);
     const { error } = await supabase.from("estoque").update({ quantidade: newQtd }).eq("id", movDialog.item.id);
-    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     toast({ title: `${movDialog.tipo === "entrada" ? "Entrada" : "Saída"} registrada: ${movQtd} ${movDialog.item.unidade}` });
     setMovDialog(null);
     setMovQtd(0);

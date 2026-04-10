@@ -3,12 +3,12 @@ import { Check, Crown, Rocket, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlano, PlanTier, PLAN_LABELS, PLAN_PRICES, PLAN_DESCRIPTIONS, STRIPE_TIERS } from "@/hooks/use-plano";
 import { useSearchParams, useLocation } from "react-router-dom";
 import { BILLING_DISABLED_MESSAGE, BILLING_ENABLED } from "@/lib/billing";
+import { toast } from "sonner";
 
 const PLAN_ICONS: Record<PlanTier, React.ReactNode> = {
   basico: <Sparkles className="h-6 w-6" />,
@@ -68,10 +68,10 @@ const Planos = () => {
     if (!BILLING_ENABLED) return;
 
     if (searchParams.get("success") === "true") {
-      toast({ title: "Pagamento realizado com sucesso!", description: "Seu plano foi atualizado." });
+      toast.success("Pagamento realizado com sucesso!", { description: "Seu plano foi atualizado." });
       refreshSubscription();
     } else if (searchParams.get("canceled") === "true") {
-      toast({ title: "Pagamento cancelado", variant: "destructive" });
+      toast.error("Pagamento cancelado");
     }
   }, [searchParams, refreshSubscription]);
 
@@ -79,7 +79,7 @@ const Planos = () => {
     if (!user || tier === "basico") return;
 
     if (!BILLING_ENABLED) {
-      toast({ title: "Stripe temporariamente desativado", description: BILLING_DISABLED_MESSAGE });
+      toast.success("Stripe temporariamente desativado", { description: BILLING_DISABLED_MESSAGE });
       return;
     }
 
@@ -97,7 +97,7 @@ const Planos = () => {
         window.open(data.url, "_blank");
       }
     } catch {
-      toast({ title: "Erro ao iniciar checkout", variant: "destructive" });
+      toast.error("Erro ao iniciar checkout");
     } finally {
       setCheckingOut(null);
     }
@@ -105,7 +105,7 @@ const Planos = () => {
 
   const handleManageSubscription = async () => {
     if (!BILLING_ENABLED) {
-      toast({ title: "Stripe temporariamente desativado", description: BILLING_DISABLED_MESSAGE });
+      toast.success("Stripe temporariamente desativado", { description: BILLING_DISABLED_MESSAGE });
       return;
     }
 
@@ -117,7 +117,7 @@ const Planos = () => {
         window.open(data.url, "_blank");
       }
     } catch {
-      toast({ title: "Erro ao abrir portal", description: "Voce precisa ter uma assinatura ativa.", variant: "destructive" });
+      toast.error("Erro ao abrir portal", { description: "Voce precisa ter uma assinatura ativa." });
     } finally {
       setManagingPortal(false);
     }

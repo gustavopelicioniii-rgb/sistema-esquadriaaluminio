@@ -8,8 +8,8 @@ import {
   RefreshCcw, CreditCard, FileText, Printer,
   Eye, Pencil, ListChecks, Share2,
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 type DialogType = "reagendar" | "pagamentos" | "contrato" | "impressoes" | "etapa" | "custos" | "editar" | "tarefas" | "compartilhar";
 
@@ -58,7 +58,7 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
         navigator.share({ title: `Pedido ${op.pedido_num}`, text });
       } else {
         navigator.clipboard.writeText(text);
-        toast({ title: "Copiado!", description: "Informações do pedido copiadas." });
+        toast.success("Copiado!", { description: "Informações do pedido copiadas." });
       }
     } else if (key === "custos") {
       onOpenDialog("pagamentos", op);

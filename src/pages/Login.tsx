@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import {
   LogIn, Calculator, ClipboardList, Scissors, BarChart3,
@@ -15,6 +14,7 @@ import {
 import { lovable } from "@/integrations/lovable/index";
 import { Separator } from "@/components/ui/separator";
 import logoLight from "@/assets/aluflow-logo.png";
+import { toast } from "sonner";
 
 const features = [
   {
@@ -70,7 +70,7 @@ const Login = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      toast({ title: "Erro no login", description: error.message, variant: "destructive" });
+      toast.error("Erro no login", { description: error.message });
     } else {
       navigate("/");
     }
@@ -200,7 +200,7 @@ const Login = () => {
                         redirect_uri: window.location.origin,
                       });
                       if (result.error) {
-                        toast({ title: "Erro ao entrar com Google", description: String(result.error), variant: "destructive" });
+                        toast.error("Erro ao entrar com Google", { description: String(result.error) });
                         setLoading(false);
                         return;
                       }

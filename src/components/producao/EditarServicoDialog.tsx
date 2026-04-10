@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
 import type { Pedido } from "@/pages/Producao";
+import { toast } from "sonner";
 
 interface EditarServicoDialogProps {
   open: boolean;
@@ -53,7 +53,7 @@ export default function EditarServicoDialog({ open, onOpenChange, pedido }: Edit
 
     setSaving(false);
     if (error) {
-      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+      toast.error("Erro ao salvar", { description: error.message });
     } else {
       toast({ title: "Serviço atualizado", description: `Pedido ${pedido.pedido_num} foi atualizado.` });
       onOpenChange(false);

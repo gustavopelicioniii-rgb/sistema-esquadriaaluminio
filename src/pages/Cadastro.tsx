@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { usePageTitle } from "@/hooks/use-page-title";
 import {
   UserPlus, CheckCircle2, Shield, Zap, Calculator, ArrowLeft,
 } from "lucide-react";
 import logoLight from "@/assets/aluflow-logo.png";
+import { toast } from "sonner";
 
 const benefits = [
   "Cálculo automático de esquadrias com precisão milimétrica",
@@ -31,11 +31,11 @@ const Cadastro = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({ title: "Senhas não coincidem", variant: "destructive" });
+      toast.error("Senhas não coincidem");
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Senha deve ter pelo menos 6 caracteres", variant: "destructive" });
+      toast.error("Senha deve ter pelo menos 6 caracteres");
       return;
     }
     setLoading(true);
@@ -46,9 +46,9 @@ const Cadastro = () => {
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Erro no cadastro", description: error.message, variant: "destructive" });
+      toast.error("Erro no cadastro", { description: error.message });
     } else {
-      toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
+      toast.success("Conta criada!", { description: "Verifique seu e-mail para confirmar o cadastro." });
       navigate("/login");
     }
   };
