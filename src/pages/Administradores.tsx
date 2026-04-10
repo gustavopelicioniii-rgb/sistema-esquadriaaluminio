@@ -56,7 +56,7 @@ const Administradores = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.success) {
-        toast({ title: data.message || "Admin concedido com sucesso" });
+        toast.success(data.message || "Admin concedido com sucesso");
         // Also add to administradores display table
         await supabase.from("administradores").upsert(
           { email: email.trim().toLowerCase(), nome: email.trim().split("@")[0], role: "Admin", ativo: true },
@@ -66,7 +66,7 @@ const Administradores = () => {
         setDialogOpen(false);
         fetchAdmins();
       } else {
-        toast({ title: data?.message || "Operação falhou", variant: "destructive" });
+        toast.error(data?.message || "Operação falhou");
       }
     } catch (err: any) {
       toast.error("Erro", { description: err.message });
@@ -86,11 +86,11 @@ const Administradores = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.success) {
-        toast({ title: data.message || "Admin removido" });
+        toast.success(data.message || "Admin removido");
         await supabase.from("administradores").delete().eq("id", admin.id);
         fetchAdmins();
       } else {
-        toast({ title: data?.message || "Operação falhou", variant: "destructive" });
+        toast.error(data?.message || "Operação falhou");
       }
     } catch (err: any) {
       toast.error("Erro", { description: err.message });

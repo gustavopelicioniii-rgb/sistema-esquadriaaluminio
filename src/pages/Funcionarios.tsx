@@ -55,7 +55,7 @@ const Funcionarios = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["funcionarios"] });
-      toast({ title: editing ? "Funcionário atualizado" : "Funcionário adicionado" });
+      toast.success(editing ? "Funcionário atualizado" : "Funcionário adicionado");
       closeDialog();
     },
     onError: () => toast.error("Erro ao salvar"),
