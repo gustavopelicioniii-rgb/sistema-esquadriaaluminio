@@ -185,7 +185,7 @@ const Relatorios = () => {
       } else {
         generateExcel({ ...previewData, filename: `${previewKey}.xlsx` });
       }
-      toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${previewData.rows.length} registros exportados` });
+      toast.success(`${fmt === "pdf" ? "PDF" : "Excel"} gerado`, { description: `${previewData.rows.length} registros exportados` });
     } catch (e: any) {
       toast.error("Erro", { description: e.message });
     } finally {
@@ -202,7 +202,7 @@ const Relatorios = () => {
       } else {
         generateExcel({ ...data, filename: `${key}.xlsx` });
       }
-      toast({ title: `${fmt === "pdf" ? "PDF" : "Excel"} gerado`, description: `${data.rows.length} registros exportados` });
+      toast.success(`${fmt === "pdf" ? "PDF" : "Excel"} gerado`, { description: `${data.rows.length} registros exportados` });
     } catch (e: any) {
       toast.error("Erro", { description: e.message });
     } finally {

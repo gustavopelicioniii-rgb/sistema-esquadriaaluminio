@@ -150,14 +150,14 @@ const Producao = () => {
 
   const handleConcluir = async (op: Pedido) => {
     await supabase.from("pedidos").update({ status: "concluido", etapa: "Finalizado" } as any).eq("id", op.id);
-    toast({ title: "Pedido concluído", description: `Pedido ${op.pedido_num} foi finalizado.` });
+    toast.success("Pedido concluído", { description: `Pedido ${op.pedido_num} foi finalizado.` });
     fetchPedidos();
   };
 
   const handleCancelar = async () => {
     if (!cancelConfirm) return;
     await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
-    toast({ title: "Pedido cancelado", description: `Pedido ${cancelConfirm.pedido_num} foi removido.`, variant: "destructive" });
+    toast.error("Pedido cancelado", { description: `Pedido ${cancelConfirm.pedido_num} foi removido.` });
     setCancelConfirm(null);
     fetchPedidos();
   };

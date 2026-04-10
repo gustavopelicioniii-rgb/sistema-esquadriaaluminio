@@ -112,7 +112,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
           status_anterior: previousStatus,
           status_novo: status,
         });
-        toast({ title: `Status alterado para ${status}` });
+        toast.success(`Status alterado para ${status}`);
 
         // Auto-create pedido when approved
         if (status === "aprovado") {
@@ -149,7 +149,7 @@ const OrcamentoDetailDialog = ({ orc, open, onClose }: { orc: any; open: boolean
             if (pedidoError) {
               toast.error("Erro ao gerar pedido", { description: pedidoError.message });
             } else {
-              toast({ title: "Pedido gerado", description: `Pedido #${nextNum} criado automaticamente a partir do orçamento ${orc.numero}.` });
+              toast.success("Pedido gerado", { description: `Pedido #${nextNum} criado automaticamente a partir do orçamento ${orc.numero}.` });
             }
           } catch (e: any) {
             toast.error("Erro ao gerar pedido", { description: e.message });

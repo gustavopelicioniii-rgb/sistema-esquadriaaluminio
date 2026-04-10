@@ -185,7 +185,7 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
 
         const orc = orcamentos?.[0];
         if (!orc) {
-          toast({ title: "Nenhum orçamento encontrado", description: `Não há orçamento cadastrado para o cliente "${pedido.cliente}".`, variant: "destructive" });
+          toast.error("Nenhum orçamento encontrado", { description: `Não há orçamento cadastrado para o cliente "${pedido.cliente}".` });
           return;
         }
 
@@ -219,7 +219,7 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
           itensMultiplos: itensMultiplos.length > 0 ? itensMultiplos : undefined,
         });
 
-        toast({ title: "PDF gerado", description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
+        toast.success("PDF gerado", { description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
       } catch (err) {
         console.error("Erro ao gerar orçamento:", err);
         toast.error("Erro", { description: "Falha ao gerar o PDF do orçamento." });
@@ -239,7 +239,7 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
 
     printWindow.document.write(content);
     printWindow.document.close();
-    toast({ title: "Impressão enviada", description: `${tipo} do pedido ${pedido.pedido_num}` });
+    toast.success("Impressão enviada", { description: `${tipo} do pedido ${pedido.pedido_num}` });
   };
 
   return (

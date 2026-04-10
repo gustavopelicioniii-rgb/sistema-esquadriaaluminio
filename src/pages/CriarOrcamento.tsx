@@ -230,14 +230,14 @@ const CriarOrcamento = () => {
     try {
       if (isEditing && editId) {
         await updateOrcamento.mutateAsync({ ...payload, id: editId });
-        toast({ title: "Orçamento atualizado!", description: `Orçamento para ${cliente} atualizado.` });
+        toast.success("Orçamento atualizado!", { description: `Orçamento para ${cliente} atualizado.` });
       } else {
         const result = await createOrcamento.mutateAsync(payload);
         // Add history entry for creation
         if (result?.id) {
           addHistorico.mutate({ orcamento_id: result.id, status_anterior: null, status_novo: "pendente" });
         }
-        toast({ title: "Orçamento criado!", description: `Orçamento para ${cliente} salvo com sucesso.` });
+        toast.success("Orçamento criado!", { description: `Orçamento para ${cliente} salvo com sucesso.` });
       }
       navigate("/orcamentos");
     } catch (err: any) {

@@ -108,7 +108,7 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
       toast.error("Erro ao criar pedido", { description: error.message });
       return;
     }
-    toast({ title: "Pedido criado", description: `Pedido #${nextNum} criado com sucesso.` });
+    toast.success("Pedido criado", { description: `Pedido #${nextNum} criado com sucesso.` });
     onClose();
   };
 

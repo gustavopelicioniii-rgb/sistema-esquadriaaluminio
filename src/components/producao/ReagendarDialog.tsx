@@ -35,7 +35,7 @@ export default function ReagendarDialog({ open, onOpenChange, pedido }: Props) {
       toast.error("Erro", { description: error.message });
       return;
     }
-    toast({ title: "Reagendado", description: `Pedido ${pedido.pedido_num} reagendado para ${novaData}.` });
+    toast.success("Reagendado", { description: `Pedido ${pedido.pedido_num} reagendado para ${novaData}.` });
     setNovaData("");
     setMotivo("");
     onOpenChange(false);

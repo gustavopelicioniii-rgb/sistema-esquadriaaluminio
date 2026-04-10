@@ -61,7 +61,7 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
       return;
     }
 
-    toast({ title: "Etapa alterada", description: `Pedido ${pedido.pedido_num} → ${etapa?.label}` });
+    toast.success("Etapa alterada", { description: `Pedido ${pedido.pedido_num} → ${etapa?.label}` });
     setObs("");
     onOpenChange(false);
   };

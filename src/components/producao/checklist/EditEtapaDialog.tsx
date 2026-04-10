@@ -65,7 +65,7 @@ export default function EditEtapaDialog({ open, onOpenChange, etapa, onSaved }: 
     await supabase.from("pedido_custom_items").insert(itemsToInsert as any);
 
     setSaving(false);
-    toast({ title: "Etapa atualizada", description: `"${label}" salva com sucesso.` });
+    toast.success("Etapa atualizada", { description: `"${label}" salva com sucesso.` });
     onOpenChange(false);
     onSaved();
   };

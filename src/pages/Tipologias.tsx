@@ -508,7 +508,7 @@ const Tipologias = () => {
                         { label: "Linhas", value: String(new Set(filteredCatalog.map(t => t.product_line_id)).size) },
                       ],
                     });
-                    toast({ title: "PDF gerado", description: `${filteredCatalog.length} tipologias exportadas` });
+                    toast.success("PDF gerado", { description: `${filteredCatalog.length} tipologias exportadas` });
                   }}>
                     <FileDown className="h-3.5 w-3.5" /> Exportar PDF
                   </Button>

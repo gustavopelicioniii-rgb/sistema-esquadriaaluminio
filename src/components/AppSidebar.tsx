@@ -91,10 +91,7 @@ export function AppSidebar() {
                 const handleLockedClick = (e: React.MouseEvent) => {
                   if (locked) {
                     e.preventDefault();
-                    toast({
-                      title: "Funcao bloqueada",
-                      description: `Disponivel no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.`,
-                    });
+                    toast.success("Funcao bloqueada", { description: `Disponivel no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.` });
                     navigate("/configuracoes?tab=planos");
                   }
                 };

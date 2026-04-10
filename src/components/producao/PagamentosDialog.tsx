@@ -68,7 +68,7 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
     }
     setValor("");
     setData("");
-    toast({ title: "Pagamento registrado", description: `${formatCurrency(v)} via ${forma}` });
+    toast.success("Pagamento registrado", { description: `${formatCurrency(v)} via ${forma}` });
     fetchPagamentos();
   };
 

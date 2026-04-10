@@ -55,7 +55,7 @@ export default function EditarServicoDialog({ open, onOpenChange, pedido }: Edit
     if (error) {
       toast.error("Erro ao salvar", { description: error.message });
     } else {
-      toast({ title: "Serviço atualizado", description: `Pedido ${pedido.pedido_num} foi atualizado.` });
+      toast.success("Serviço atualizado", { description: `Pedido ${pedido.pedido_num} foi atualizado.` });
       onOpenChange(false);
     }
   };

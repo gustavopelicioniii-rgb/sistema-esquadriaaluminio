@@ -31,7 +31,7 @@ export function ExportButtons({ getConfig }: ExportButtonsProps) {
       } else {
         generateExcel(config);
       }
-      toast({ title: `${format === "pdf" ? "PDF" : "Excel"} gerado`, description: `${config.rows.length} registros exportados` });
+      toast.success(`${format === "pdf" ? "PDF" : "Excel"} gerado`, { description: `${config.rows.length} registros exportados` });
     } catch (e: any) {
       toast.error("Erro", { description: e.message });
     } finally {

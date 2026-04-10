@@ -52,7 +52,7 @@ export default function ContratoDialog({ open, onOpenChange, pedido }: Props) {
     a.download = `contrato_pedido_${pedido.pedido_num}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-    toast({ title: "Contrato baixado", description: `Contrato do pedido ${pedido.pedido_num} exportado.` });
+    toast.success("Contrato baixado", { description: `Contrato do pedido ${pedido.pedido_num} exportado.` });
   };
 
   return (

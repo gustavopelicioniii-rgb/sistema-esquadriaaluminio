@@ -67,7 +67,7 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
       return;
     }
 
-    toast({ title: "Etapa criada", description: `"${label}" adicionada com ${validItems.length} itens.` });
+    toast.success("Etapa criada", { description: `"${label}" adicionada com ${validItems.length} itens.` });
     setLabel("");
     setItems([""]);
     onOpenChange(false);

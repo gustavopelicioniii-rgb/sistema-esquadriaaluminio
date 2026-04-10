@@ -85,7 +85,7 @@ const Estoque = () => {
     const newQtd = movDialog.tipo === "entrada" ? movDialog.item.quantidade + movQtd : Math.max(0, movDialog.item.quantidade - movQtd);
     const { error } = await supabase.from("estoque").update({ quantidade: newQtd }).eq("id", movDialog.item.id);
     if (error) { toast.error("Erro", { description: error.message }); return; }
-    toast({ title: `${movDialog.tipo === "entrada" ? "Entrada" : "Saída"} registrada: ${movQtd} ${movDialog.item.unidade}` });
+    toast.success(`${movDialog.tipo === "entrada" ? "Entrada" : "Saída"} registrada: ${movQtd} ${movDialog.item.unidade}`);
     setMovDialog(null);
     setMovQtd(0);
     fetchItens();

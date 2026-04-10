@@ -142,7 +142,7 @@ export default function OrdemServicoDetail({ pedido, onBack }: Props) {
     if (!etapa.dbId) return;
     await supabase.from("pedido_custom_etapas").delete().eq("id", etapa.dbId);
     await supabase.from("pedido_checklists").delete().eq("pedido_id", pedido.id).eq("etapa", etapa.id);
-    toast({ title: "Etapa excluída", description: `"${etapa.label}" foi removida.` });
+    toast.success("Etapa excluída", { description: `"${etapa.label}" foi removida.` });
     loadAll();
   };
 
