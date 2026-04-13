@@ -32,6 +32,7 @@ export async function fetchProjetos(): Promise<ProjetoVidro[]> {
     precoM2: Number(p.preco_m2),
     areaMinimaM2: Number(p.area_minima_m2 ?? 0),
     criadoEm: new Date(p.created_at).toLocaleDateString("pt-BR"),
+    archived: !!p.archived,
     itens: (itensByProjeto.get(p.id) || []).map((it: any) => ({
       id: it.id,
       descricao: it.descricao,
