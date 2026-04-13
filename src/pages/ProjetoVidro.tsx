@@ -322,9 +322,20 @@ const ProjetoVidroPage = () => {
                         <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => setSelected(projeto)}>
                           <Eye className="h-3 w-3" /> Detalhes
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
-                          <Copy className="h-3 w-3" /> Duplicar
-                        </Button>
+                        {showArchived ? (
+                          <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, false)}>
+                            <ArchiveRestore className="h-3 w-3" /> Restaurar
+                          </Button>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
+                              <Copy className="h-3 w-3" /> Duplicar
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, true)}>
+                              <Archive className="h-3 w-3" /> Arquivar
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
