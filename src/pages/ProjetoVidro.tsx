@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Loader2, Copy, Eye, X } from "lucide-react";
+import { Plus, Search, Loader2, Copy, Eye, X, Archive, ArchiveRestore } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,7 @@ const ProjetoVidroPage = () => {
   const [filterTipo, setFilterTipo] = useState<string | null>(null);
   const [filterCor, setFilterCor] = useState<string | null>(null);
   const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24;
 
@@ -46,7 +47,12 @@ const ProjetoVidroPage = () => {
   useEffect(() => { load(); }, [load]);
 
   const filtered = projetos.filter(
-    (p) => !search || p.titulo.toLowerCase().includes(search.toLowerCase())
+    (p) => {
+      if (!showArchived && p.archived) return false;
+      if (showArchived && !p.archived) return false;
+      if (search && !p.titulo.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    }
   );
 
   useEffect(() => { setCurrentPage(1); }, [search, filterTipo, filterCor, filterEspessura]);
@@ -87,6 +93,14 @@ const ProjetoVidroPage = () => {
     const { error } = await supabase.from("projetos_vidro").delete().eq("id", id);
     if (error) throw error;
     toast.success("Projeto excluído");
+    await load();
+  };
+
+  const handleArchive = async (id: string, archive: boolean) => {
+    const { error } = await supabase.from("projetos_vidro").update({ archived: archive } as any).eq("id", id);
+    if (error) throw error;
+    toast.success(archive ? "Projeto arquivado" : "Projeto restaurado");
+    if (selected?.id === id) setSelected(null);
     await load();
   };
 
