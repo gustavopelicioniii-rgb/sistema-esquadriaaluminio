@@ -1,4 +1,4 @@
-import { Home, FileText, Wrench, DollarSign, LayoutGrid } from "lucide-react";
+import { Home, FileText, Wrench, DollarSign, LayoutGrid, BarChart3, Users, CalendarDays, GlassWater, Settings } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -11,11 +11,11 @@ const navItems = [
 ];
 
 const moreItems = [
-  { to: "/relatorios", label: "Relatórios" },
-  { to: "/clientes", label: "Clientes" },
-  { to: "/agenda", label: "Agenda" },
-  { to: "/projeto-vidro", label: "Projeto Vidro" },
-  { to: "/configuracoes", label: "Configurações" },
+  { to: "/relatorios", icon: BarChart3, label: "Relatórios" },
+  { to: "/clientes", icon: Users, label: "Clientes" },
+  { to: "/agenda", icon: CalendarDays, label: "Agenda" },
+  { to: "/projeto-vidro", icon: GlassWater, label: "Projeto Vidro" },
+  { to: "/configuracoes", icon: Settings, label: "Configurações" },
 ];
 
 export function BottomNav() {
@@ -40,10 +40,11 @@ export function BottomNav() {
                   to={item.to}
                   onClick={() => setMoreOpen(false)}
                   className={cn(
-                    "flex items-center justify-center py-3 px-2 rounded-xl text-xs font-medium transition-colors",
+                    "flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl text-xs font-medium transition-colors",
                     isActive(item.to) ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                   )}
                 >
+                  <item.icon className="h-4 w-4" />
                   {item.label}
                 </NavLink>
               ))}
