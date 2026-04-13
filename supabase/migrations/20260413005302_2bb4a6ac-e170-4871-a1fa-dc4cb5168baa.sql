@@ -1,0 +1,1 @@
+ALTER TABLE public.projetos_vidro ADD COLUMN archived boolean NOT NULL DEFAULT false;

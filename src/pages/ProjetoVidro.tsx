@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Loader2, Copy, Eye, X } from "lucide-react";
+import { Plus, Search, Loader2, Copy, Eye, X, Archive, ArchiveRestore } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,7 @@ const ProjetoVidroPage = () => {
   const [filterTipo, setFilterTipo] = useState<string | null>(null);
   const [filterCor, setFilterCor] = useState<string | null>(null);
   const [filterEspessura, setFilterEspessura] = useState<string | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24;
 
@@ -46,7 +47,12 @@ const ProjetoVidroPage = () => {
   useEffect(() => { load(); }, [load]);
 
   const filtered = projetos.filter(
-    (p) => !search || p.titulo.toLowerCase().includes(search.toLowerCase())
+    (p) => {
+      if (!showArchived && p.archived) return false;
+      if (showArchived && !p.archived) return false;
+      if (search && !p.titulo.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    }
   );
 
   useEffect(() => { setCurrentPage(1); }, [search, filterTipo, filterCor, filterEspessura]);
@@ -87,6 +93,14 @@ const ProjetoVidroPage = () => {
     const { error } = await supabase.from("projetos_vidro").delete().eq("id", id);
     if (error) throw error;
     toast.success("Projeto excluído");
+    await load();
+  };
+
+  const handleArchive = async (id: string, archive: boolean) => {
+    const { error } = await supabase.from("projetos_vidro").update({ archived: archive } as any).eq("id", id);
+    if (error) throw error;
+    toast.success(archive ? "Projeto arquivado" : "Projeto restaurado");
+    if (selected?.id === id) setSelected(null);
     await load();
   };
 
@@ -149,6 +163,7 @@ const ProjetoVidroPage = () => {
         onUpdate={handleUpdate}
         onDelete={handleDelete}
         onDuplicate={handleDuplicate}
+        onArchive={handleArchive}
         onAddItem={handleAddItem}
         onUpdateItem={handleUpdateItem}
         onRemoveItem={handleRemoveItem}
@@ -177,12 +192,18 @@ const ProjetoVidroPage = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Projeto Vidro</h1>
           <p className="text-muted-foreground text-sm">
-            {projetos.length} projeto{projetos.length !== 1 ? "s" : ""} de vidro
+            {projetos.filter(p => !p.archived).length} projeto{projetos.filter(p => !p.archived).length !== 1 ? "s" : ""} de vidro
+            {projetos.filter(p => p.archived).length > 0 && ` · ${projetos.filter(p => p.archived).length} arquivado${projetos.filter(p => p.archived).length !== 1 ? "s" : ""}`}
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setNovoOpen(true)}>
-          <Plus className="h-4 w-4" /> Novo Projeto
-        </Button>
+        <div className="flex gap-2">
+          <Button variant={showArchived ? "secondary" : "outline"} size="sm" className="gap-2" onClick={() => setShowArchived(!showArchived)}>
+            <Archive className="h-4 w-4" /> {showArchived ? "Arquivados" : "Arquivo"}
+          </Button>
+          <Button className="gap-2" onClick={() => setNovoOpen(true)}>
+            <Plus className="h-4 w-4" /> Novo Projeto
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -301,9 +322,20 @@ const ProjetoVidroPage = () => {
                         <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => setSelected(projeto)}>
                           <Eye className="h-3 w-3" /> Detalhes
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
-                          <Copy className="h-3 w-3" /> Duplicar
-                        </Button>
+                        {showArchived ? (
+                          <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, false)}>
+                            <ArchiveRestore className="h-3 w-3" /> Restaurar
+                          </Button>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
+                              <Copy className="h-3 w-3" /> Duplicar
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, true)}>
+                              <Archive className="h-3 w-3" /> Arquivar
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </CardContent>
                   </Card>

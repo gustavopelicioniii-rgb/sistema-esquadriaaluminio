@@ -845,6 +845,7 @@ export type Database = {
       }
       projetos_vidro: {
         Row: {
+          archived: boolean
           area_minima_m2: number
           cor: string
           created_at: string
@@ -857,6 +858,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archived?: boolean
           area_minima_m2?: number
           cor?: string
           created_at?: string
@@ -869,6 +871,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          archived?: boolean
           area_minima_m2?: number
           cor?: string
           created_at?: string
