@@ -47,7 +47,12 @@ const ProjetoVidroPage = () => {
   useEffect(() => { load(); }, [load]);
 
   const filtered = projetos.filter(
-    (p) => !search || p.titulo.toLowerCase().includes(search.toLowerCase())
+    (p) => {
+      if (!showArchived && p.archived) return false;
+      if (showArchived && !p.archived) return false;
+      if (search && !p.titulo.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    }
   );
 
   useEffect(() => { setCurrentPage(1); }, [search, filterTipo, filterCor, filterEspessura]);
@@ -88,6 +93,14 @@ const ProjetoVidroPage = () => {
     const { error } = await supabase.from("projetos_vidro").delete().eq("id", id);
     if (error) throw error;
     toast.success("Projeto excluído");
+    await load();
+  };
+
+  const handleArchive = async (id: string, archive: boolean) => {
+    const { error } = await supabase.from("projetos_vidro").update({ archived: archive } as any).eq("id", id);
+    if (error) throw error;
+    toast.success(archive ? "Projeto arquivado" : "Projeto restaurado");
+    if (selected?.id === id) setSelected(null);
     await load();
   };
 
@@ -308,9 +321,20 @@ const ProjetoVidroPage = () => {
                         <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => setSelected(projeto)}>
                           <Eye className="h-3 w-3" /> Detalhes
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
-                          <Copy className="h-3 w-3" /> Duplicar
-                        </Button>
+                        {showArchived ? (
+                          <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, false)}>
+                            <ArchiveRestore className="h-3 w-3" /> Restaurar
+                          </Button>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleDuplicate(projeto.id)}>
+                              <Copy className="h-3 w-3" /> Duplicar
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-6 text-[10px] px-1.5 flex-1 gap-1" onClick={() => handleArchive(projeto.id, true)}>
+                              <Archive className="h-3 w-3" /> Arquivar
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
