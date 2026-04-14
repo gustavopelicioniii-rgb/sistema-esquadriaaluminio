@@ -177,12 +177,18 @@ const ProjetoVidroPage = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Projeto Vidro</h1>
           <p className="text-muted-foreground text-sm">
-            {projetos.length} projeto{projetos.length !== 1 ? "s" : ""} de vidro
+            {projetos.filter(p => !p.archived).length} projeto{projetos.filter(p => !p.archived).length !== 1 ? "s" : ""} de vidro
+            {projetos.filter(p => p.archived).length > 0 && ` · ${projetos.filter(p => p.archived).length} arquivado${projetos.filter(p => p.archived).length !== 1 ? "s" : ""}`}
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setNovoOpen(true)}>
-          <Plus className="h-4 w-4" /> Novo Projeto
-        </Button>
+        <div className="flex gap-2">
+          <Button variant={showArchived ? "secondary" : "outline"} size="sm" className="gap-2" onClick={() => setShowArchived(!showArchived)}>
+            <Archive className="h-4 w-4" /> {showArchived ? "Arquivados" : "Arquivo"}
+          </Button>
+          <Button className="gap-2" onClick={() => setNovoOpen(true)}>
+            <Plus className="h-4 w-4" /> Novo Projeto
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
