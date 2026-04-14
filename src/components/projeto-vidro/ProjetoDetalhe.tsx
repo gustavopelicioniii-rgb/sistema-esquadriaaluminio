@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import {
   Plus, ArrowLeft, Trash2, Edit2, FileDown, Loader2,
-  Copy, Upload, Check, X, FileSpreadsheet, MessageSquare,
+  Copy, Upload, Check, X, FileSpreadsheet, MessageSquare, Archive, ArchiveRestore,
 } from "lucide-react";
 import { exportProjetoVidroPDF } from "@/utils/projetoVidroPdfGenerator";
 import { toast } from "sonner";
@@ -29,13 +29,14 @@ interface ProjetoDetalheProps {
   onUpdate: (p: Partial<ProjetoVidro> & { id: string }) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   onDuplicate: (id: string) => Promise<void>;
+  onArchive: (id: string, archive: boolean) => Promise<void>;
   onAddItem: (projetoId: string, item: Omit<VidroItem, "id">) => Promise<void>;
   onUpdateItem: (itemId: string, updates: Partial<VidroItem>) => Promise<void>;
   onRemoveItem: (itemId: string) => Promise<void>;
 }
 
 export function ProjetoDetalhe({
-  projeto, onBack, onUpdate, onDelete, onDuplicate, onAddItem, onUpdateItem, onRemoveItem,
+  projeto, onBack, onUpdate, onDelete, onDuplicate, onArchive, onAddItem, onUpdateItem, onRemoveItem,
 }: ProjetoDetalheProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [addItemOpen, setAddItemOpen] = useState(false);
@@ -168,6 +169,10 @@ export function ProjetoDetalhe({
           </Button>
           <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
             <Edit2 className="h-3.5 w-3.5" /> Editar
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={async () => { await onArchive(projeto.id, !projeto.archived); }}>
+            {projeto.archived ? <ArchiveRestore className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
+            {projeto.archived ? "Restaurar" : "Arquivar"}
           </Button>
           <Button variant="destructive" size="sm" className="gap-2" onClick={() => setDeleteConfirmOpen(true)}>
             <Trash2 className="h-3.5 w-3.5" /> Excluir
