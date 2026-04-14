@@ -17,6 +17,7 @@ export interface ProjetoVidro {
   areaMinimaM2: number;
   itens: VidroItem[];
   criadoEm: string;
+  archived?: boolean;
 }
 
 export const tiposVidro = ["Comum", "Temperado", "Laminado", "Temperado Laminado", "Insulado", "Veneziana", "Pivotante", "Maxim-Ar", "Serigrafado", "Espelhado", "Acidato"];

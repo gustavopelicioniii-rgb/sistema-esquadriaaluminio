@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Loader2, Copy, Eye, X } from "lucide-react";
+import { Plus, Search, Loader2, Copy, Eye, X, Archive, ArchiveRestore } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
