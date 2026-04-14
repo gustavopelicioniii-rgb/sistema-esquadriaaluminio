@@ -163,6 +163,7 @@ const ProjetoVidroPage = () => {
         onUpdate={handleUpdate}
         onDelete={handleDelete}
         onDuplicate={handleDuplicate}
+        onArchive={handleArchive}
         onAddItem={handleAddItem}
         onUpdateItem={handleUpdateItem}
         onRemoveItem={handleRemoveItem}
