@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", userId);
 
       if (error) {
-        console.error("Erro ao carregar permissões do usuário:", error.message);
+        // Error loading permissions treated gracefully
         setRole(null);
         return;
       }
