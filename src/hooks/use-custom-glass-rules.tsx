@@ -38,43 +38,55 @@ function toGlassRule(row: CustomGlassRuleRow): GlassRule {
 export function useCustomGlassRules(typologyId: string | null) {
   const [rules, setRules] = useState<CustomGlassRuleRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchRules = useCallback(async () => {
     if (!typologyId) { setRules([]); return; }
-    setLoading(true);
-    const { data } = await supabase
-      .from("regras_vidro_customizadas")
-      .select("*")
-      .eq("typology_id", typologyId)
-      .order("created_at", { ascending: true });
-    if (data) setRules(data as unknown as CustomGlassRuleRow[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError(null);
+      const { data, error: err } = await supabase
+        .from("regras_vidro_customizadas")
+        .select("*")
+        .eq("typology_id", typologyId)
+        .order("created_at", { ascending: true });
+      if (err) {
+        console.error("Error fetching glass rules:", err);
+        setError(err.message);
+      } else {
+        setRules((data as unknown as CustomGlassRuleRow[]) ?? []);
+      }
+    } catch (e) {
+      console.error("Unexpected error:", e);
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
   }, [typologyId]);
 
   useEffect(() => { fetchRules(); }, [fetchRules]);
 
   const addRule = async (rule: Omit<CustomGlassRuleRow, "id" | "user_id">) => {
-    const { error } = await supabase.from("regras_vidro_customizadas").insert(rule as any);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_vidro_customizadas").insert(rule as any);
+    if (err) throw err;
     await fetchRules();
   };
 
   const updateRule = async (id: string, updates: Partial<CustomGlassRuleRow>) => {
-    const { error } = await supabase.from("regras_vidro_customizadas").update(updates as any).eq("id", id);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_vidro_customizadas").update(updates as any).eq("id", id);
+    if (err) throw err;
     await fetchRules();
   };
 
   const deleteRule = async (id: string) => {
-    const { error } = await supabase.from("regras_vidro_customizadas").delete().eq("id", id);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_vidro_customizadas").delete().eq("id", id);
+    if (err) throw err;
     await fetchRules();
   };
 
   const inheritFromBase = async (baseTypologyId: string) => {
     const catalogRules = getGlassRulesForTypology(baseTypologyId);
     if (catalogRules.length === 0) throw new Error("Nenhuma regra de vidro encontrada na tipologia base");
-
     const inserts = catalogRules.map((r) => ({
       typology_id: typologyId!,
       glass_name: r.glass_name,
@@ -88,15 +100,15 @@ export function useCustomGlassRules(typologyId: string | null) {
       max_thickness_mm: r.max_thickness_mm ?? null,
       notes: null,
     }));
-
-    const { error } = await supabase.from("regras_vidro_customizadas").insert(inserts as any);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_vidro_customizadas").insert(inserts as any);
+    if (err) throw err;
     await fetchRules();
   };
 
   return {
     rules,
     loading,
+    error,
     fetchRules,
     addRule,
     updateRule,
@@ -117,7 +129,6 @@ export async function getEffectiveGlassRules(
       .select("*")
       .eq("typology_id", typologyId)
       .order("created_at", { ascending: true });
-
     if (data && data.length > 0) {
       return (data as unknown as CustomGlassRuleRow[]).map(toGlassRule);
     }

@@ -22,9 +22,6 @@ export interface CustomCutRuleRow {
   user_id: string;
 }
 
-/**
- * Converts a DB row to a CutRule compatible with the calculation engine
- */
 function toCutRule(row: CustomCutRuleRow): CutRule {
   return {
     id: row.id,
@@ -45,58 +42,58 @@ function toCutRule(row: CustomCutRuleRow): CutRule {
   };
 }
 
-/**
- * Hook to fetch and manage custom cut rules for a specific custom typology.
- */
 export function useCustomCutRules(typologyId: string | null) {
   const [rules, setRules] = useState<CustomCutRuleRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchRules = useCallback(async () => {
     if (!typologyId) { setRules([]); return; }
-    setLoading(true);
-    const { data } = await supabase
-      .from("regras_corte_customizadas")
-      .select("*")
-      .eq("typology_id", typologyId)
-      .order("sort_order", { ascending: true });
-    if (data) setRules(data as unknown as CustomCutRuleRow[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError(null);
+      const { data, error: err } = await supabase
+        .from("regras_corte_customizadas")
+        .select("*")
+        .eq("typology_id", typologyId)
+        .order("sort_order", { ascending: true });
+      if (err) {
+        console.error("Error fetching cut rules:", err);
+        setError(err.message);
+      } else {
+        setRules((data as unknown as CustomCutRuleRow[]) ?? []);
+      }
+    } catch (e) {
+      console.error("Unexpected error:", e);
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
   }, [typologyId]);
 
   useEffect(() => { fetchRules(); }, [fetchRules]);
 
   const addRule = async (rule: Omit<CustomCutRuleRow, "id" | "user_id">) => {
-    const { error } = await supabase.from("regras_corte_customizadas").insert(rule as any);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_corte_customizadas").insert(rule as any);
+    if (err) throw err;
     await fetchRules();
   };
 
   const updateRule = async (id: string, updates: Partial<CustomCutRuleRow>) => {
-    const { error } = await supabase
-      .from("regras_corte_customizadas")
-      .update(updates as any)
-      .eq("id", id);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_corte_customizadas").update(updates as any).eq("id", id);
+    if (err) throw err;
     await fetchRules();
   };
 
   const deleteRule = async (id: string) => {
-    const { error } = await supabase
-      .from("regras_corte_customizadas")
-      .delete()
-      .eq("id", id);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_corte_customizadas").delete().eq("id", id);
+    if (err) throw err;
     await fetchRules();
   };
 
-  /**
-   * Copy all catalog cut rules from the base typology into custom rules
-   */
   const inheritFromBase = async (baseTypologyId: string) => {
     const catalogRules = getCutRulesForTypology(baseTypologyId);
     if (catalogRules.length === 0) throw new Error("Nenhuma regra encontrada na tipologia base");
-
     const inserts = catalogRules.map((r) => ({
       typology_id: typologyId!,
       profile_code: r.profile_code ?? "",
@@ -113,48 +110,38 @@ export function useCustomCutRules(typologyId: string | null) {
       weight_per_meter: r.weight_per_meter ?? 0,
       notes: r.notes ?? null,
     }));
-
-    const { error } = await supabase.from("regras_corte_customizadas").insert(inserts as any);
-    if (error) throw error;
+    const { error: err } = await supabase.from("regras_corte_customizadas").insert(inserts as any);
+    if (err) throw err;
     await fetchRules();
   };
 
   return {
     rules,
     loading,
+    error,
     fetchRules,
     addRule,
     updateRule,
     deleteRule,
     inheritFromBase,
-    /** Convert all rules to CutRule[] for the calculation engine */
     asCutRules: rules.map(toCutRule),
   };
 }
 
-/**
- * Gets the effective cut rules for a typology.
- * If it's a custom typology with custom rules in DB, use those.
- * Otherwise fall back to catalog rules via baseTypologyId.
- */
 export async function getEffectiveCutRules(
   typologyId: string,
   isCustom: boolean,
   baseTypologyId?: string,
 ): Promise<CutRule[]> {
   if (isCustom) {
-    // Check if custom rules exist in DB
     const { data } = await supabase
       .from("regras_corte_customizadas")
       .select("*")
       .eq("typology_id", typologyId)
       .order("sort_order", { ascending: true });
-
     if (data && data.length > 0) {
       return (data as unknown as CustomCutRuleRow[]).map(toCutRule);
     }
   }
-
-  // Fall back to catalog rules
   return getCutRulesForTypology(typologyId, baseTypologyId);
 }
