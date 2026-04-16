@@ -127,3 +127,11 @@ CREATE TRIGGER update_api_integracoes_updated_at
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('company-assets', 'company-assets', true)
 ON CONFLICT (id) DO NOTHING;
+
+-- Bucket for production checklist photos
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('checklist-fotos', 'checklist-fotos', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Enable public access to company-assets
+UPDATE storage.buckets SET public = true WHERE id = 'company-assets';
