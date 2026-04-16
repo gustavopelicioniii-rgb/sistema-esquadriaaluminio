@@ -540,3 +540,125 @@ textarea:focus,
     min-height: 40px !important;
   }
 }
+
+/* ===== DESIGN SYSTEM ENHANCEMENTS ===== */
+
+/* Enhanced input focus states */
+input:focus-visible, 
+select:focus-visible, 
+textarea:focus-visible {
+  outline: none;
+  border-color: hsl(263 84% 58%) !important;
+  box-shadow: 0 0 0 3px hsl(263 84% 58% / 0.15) !important;
+  transition: all 0.2s ease;
+}
+
+/* Enhanced button hover */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  transition: all 0.15s ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Better card hover effect */
+[data-slot="card"]:hover {
+  box-shadow: 0 8px 25px -5px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Uniform card padding */
+[data-slot="card"] {
+  padding: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  [data-slot="card"] {
+    padding: 1.5rem;
+  }
+}
+
+/* Better table styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Enhanced modal/dialog animations */
+[data-state="open"] {
+  animation: modal-in 0.2s ease-out;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Better loading states */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(220 14% 96%) 0%,
+    hsl(220 14% 96%) 100%
+  );
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Enhanced badge styles */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+/* Better tooltip styling */
+.tooltip {
+  background: hsl(263 84% 12%);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Consistent section spacing */
+section {
+  padding: 1.5rem 0;
+}
+
+@media (min-width: 640px) {
+  section {
+    padding: 2rem 0;
+  }
+}
+
+/* Enhanced list items */
+li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid hsl(220 13% 91% / 0.3);
+}
+
+li:last-child {
+  border-bottom: none;
+}
