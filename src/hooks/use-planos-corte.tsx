@@ -30,7 +30,7 @@ export function usePlanosCorte() {
         .order("created_at", { ascending: false });
 
       if (err) {
-        console.error("Error fetching planos:", err);
+        // Error fetching planos
         setError(err.message);
         toast.error("Erro ao carregar planos de corte");
       } else {
@@ -48,7 +48,7 @@ export function usePlanosCorte() {
         );
       }
     } catch (e) {
-      console.error("Unexpected error:", e);
+      // Unexpected error
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setLoading(false);
@@ -163,13 +163,13 @@ export function usePlanosCorte() {
         .insert(inserts);
 
       if (err) {
-        console.error("Erro ao sincronizar planos:", err);
+        // Erro ao sincronizar planos
       } else if (missing.length > 0) {
         toast.success(`${missing.length} plano(s) de corte criado(s) automaticamente`);
         await fetchPlanos();
       }
     } catch (e) {
-      console.error("Erro inesperado na sincronização:", e);
+      // Erro inesperado
     }
   }, [fetchPlanos]);
 

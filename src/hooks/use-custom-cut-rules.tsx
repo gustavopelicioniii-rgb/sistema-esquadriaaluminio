@@ -58,13 +58,13 @@ export function useCustomCutRules(typologyId: string | null) {
         .eq("typology_id", typologyId)
         .order("sort_order", { ascending: true });
       if (err) {
-        console.error("Error fetching cut rules:", err);
+        // Error fetching cut rules
         setError(err.message);
       } else {
         setRules((data as unknown as CustomCutRuleRow[]) ?? []);
       }
     } catch (e) {
-      console.error("Unexpected error:", e);
+      // Unexpected error
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setLoading(false);

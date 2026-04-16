@@ -221,7 +221,7 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
 
         toast.success("PDF gerado", { description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
       } catch (err) {
-        console.error("Erro ao gerar orçamento:", err);
+        // Erro ao gerar orçamento
         toast.error("Erro", { description: "Falha ao gerar o PDF do orçamento." });
       }
       return;

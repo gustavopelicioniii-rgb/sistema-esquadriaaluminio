@@ -4,7 +4,7 @@ import html2canvas from "html2canvas";
 export async function generatePdfFromElement(elementId: string, filename: string) {
   const element = document.getElementById(elementId);
   if (!element) {
-    console.error(`Element with ID "${elementId}" not found.`);
+    // Element not found
     return;
   }
 
@@ -230,7 +230,7 @@ export async function generateBudgetPDF(data: BudgetPdfData, svgElementId: strin
       const imgX = margin + (contentWidth - imgW) / 2;
       pdf.addImage(imgData, "PNG", imgX, y, imgW, imgH);
     } catch (err) {
-      console.warn("Could not capture SVG preview for PDF:", err);
+      // Could not capture SVG
     }
   }
 

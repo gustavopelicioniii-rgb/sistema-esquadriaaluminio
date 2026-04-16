@@ -65,7 +65,7 @@ export function useAllTypologies() {
           .eq("active", true);
 
         if (err) {
-          console.error("Error fetching typologies:", err);
+          // Error fetching typologies
           setError(err.message);
         } else if (data) {
           const mapped: ExtendedTypology[] = data.map((row) => {
@@ -92,7 +92,7 @@ export function useAllTypologies() {
           setCustomTypologies(mapped);
         }
       } catch (e) {
-        console.error("Unexpected error:", e);
+        // Unexpected error
         setError(e instanceof Error ? e.message : "Unknown error");
       } finally {
         setLoading(false);

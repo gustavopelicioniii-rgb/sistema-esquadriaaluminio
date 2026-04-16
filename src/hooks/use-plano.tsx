@@ -130,7 +130,7 @@ export function usePlano() {
       const { data, error } = await supabase.functions.invoke("check-subscription");
 
       if (error) {
-        console.error("Error checking subscription:", error);
+        // Error checking subscription
         // Fallback to DB-based plan
         await fallbackToDb();
         return;

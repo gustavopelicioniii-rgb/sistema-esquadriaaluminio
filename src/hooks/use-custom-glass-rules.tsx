@@ -51,13 +51,13 @@ export function useCustomGlassRules(typologyId: string | null) {
         .eq("typology_id", typologyId)
         .order("created_at", { ascending: true });
       if (err) {
-        console.error("Error fetching glass rules:", err);
+        // Error fetching glass rules
         setError(err.message);
       } else {
         setRules((data as unknown as CustomGlassRuleRow[]) ?? []);
       }
     } catch (e) {
-      console.error("Unexpected error:", e);
+      // Unexpected error
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setLoading(false);

@@ -347,7 +347,7 @@ export function useNotifications() {
 
   if (import.meta.env.DEV && !hasWarnedMissingProvider) {
     hasWarnedMissingProvider = true;
-    console.warn("useNotifications renderizado sem NotificationsProvider; usando fallback seguro.");
+    // NotificationsProvider warning
   }
 
   return fallbackNotificationsContext;
