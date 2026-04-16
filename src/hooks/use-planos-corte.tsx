@@ -17,86 +17,113 @@ export interface PlanoCorte {
 export function usePlanosCorte() {
   const [planos, setPlanos] = useState<PlanoCorte[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPlanos = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("planos_corte")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data, error: err } = await supabase
+        .from("planos_corte")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (error) {
-      toast.error("Erro ao carregar planos");
-      console.error(error);
-    } else {
-      setPlanos(
-        (data ?? []).map((d: any) => ({
-          id: d.id,
-          typology_id: d.typology_id,
-          nome: d.nome,
-          responsavel: d.responsavel,
-          largura: d.largura,
-          altura: d.altura,
-          quantidade: d.quantidade,
-          created_at: d.created_at,
-        }))
-      );
+      if (err) {
+        console.error("Error fetching planos:", err);
+        setError(err.message);
+        toast.error("Erro ao carregar planos de corte");
+      } else {
+        setPlanos(
+          (data ?? []).map((d: any) => ({
+            id: d.id,
+            typology_id: d.typology_id,
+            nome: d.nome,
+            responsavel: d.responsavel,
+            largura: d.largura,
+            altura: d.altura,
+            quantidade: d.quantidade,
+            created_at: d.created_at,
+          }))
+        );
+      }
+    } catch (e) {
+      console.error("Unexpected error:", e);
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  useEffect(() => { fetchPlanos(); }, [fetchPlanos]);
+  useEffect(() => { 
+    fetchPlanos(); 
+  }, [fetchPlanos]);
 
   const addPlano = useCallback(async (plano: Omit<PlanoCorte, "id" | "created_at">) => {
-    const { data, error } = await supabase
-      .from("planos_corte")
-      .insert({
-        typology_id: plano.typology_id,
-        nome: plano.nome,
-        responsavel: plano.responsavel,
-        largura: plano.largura,
-        altura: plano.altura,
-        quantidade: plano.quantidade,
-      })
-      .select()
-      .single();
+    try {
+      const { data, error: err } = await supabase
+        .from("planos_corte")
+        .insert({
+          typology_id: plano.typology_id,
+          nome: plano.nome,
+          responsavel: plano.responsavel,
+          largura: plano.largura,
+          altura: plano.altura,
+          quantidade: plano.quantidade,
+        })
+        .select()
+        .single();
 
-    if (error) {
-      toast.error("Erro ao salvar plano");
+      if (err) {
+        toast.error("Erro ao salvar plano");
+        return null;
+      }
+      toast.success("Plano adicionado!");
+      await fetchPlanos();
+      return data;
+    } catch (e) {
+      toast.error("Erro inesperado ao adicionar plano");
       return null;
     }
-    toast.success("Plano adicionado!");
-    await fetchPlanos();
-    return data;
   }, [fetchPlanos]);
 
   const updatePlano = useCallback(async (id: string, updates: Partial<PlanoCorte>) => {
-    const { error } = await supabase
-      .from("planos_corte")
-      .update(updates)
-      .eq("id", id);
+    try {
+      const { error: err } = await supabase
+        .from("planos_corte")
+        .update(updates)
+        .eq("id", id);
 
-    if (error) {
-      toast.error("Erro ao atualizar plano");
+      if (err) {
+        toast.error("Erro ao atualizar plano");
+        return false;
+      }
+      await fetchPlanos();
+      return true;
+    } catch (e) {
+      toast.error("Erro inesperado ao atualizar");
       return false;
     }
-    await fetchPlanos();
-    return true;
   }, [fetchPlanos]);
 
   const deletePlano = useCallback(async (id: string) => {
-    const { error } = await supabase
-      .from("planos_corte")
-      .delete()
-      .eq("id", id);
+    try {
+      const { error: err } = await supabase
+        .from("planos_corte")
+        .delete()
+        .eq("id", id);
 
-    if (error) {
-      toast.error("Erro ao excluir plano");
+      if (err) {
+        toast.error("Erro ao excluir plano");
+        return false;
+      }
+      toast.success("Plano excluído!");
+      await fetchPlanos();
+      return true;
+    } catch (e) {
+      toast.error("Erro inesperado ao excluir");
       return false;
     }
-    toast.success("Plano excluído!");
-    await fetchPlanos();
-    return true;
   }, [fetchPlanos]);
 
   const duplicatePlano = useCallback(async (plano: PlanoCorte) => {
@@ -110,43 +137,41 @@ export function usePlanosCorte() {
     });
   }, [addPlano]);
 
-  /**
-   * Syncs planos_corte with all available typologies.
-   * Creates a default plano for any typology that doesn't have one yet.
-   */
   const syncWithTypologies = useCallback(async (allTypologies: ExtendedTypology[]) => {
-    // Fetch current planos to get existing typology_ids
-    const { data: existingPlanos } = await supabase
-      .from("planos_corte")
-      .select("typology_id");
+    try {
+      const { data: existingPlanos } = await supabase
+        .from("planos_corte")
+        .select("typology_id");
 
-    const existingIds = new Set((existingPlanos ?? []).map((p: any) => p.typology_id));
+      const existingIds = new Set((existingPlanos ?? []).map((p: any) => p.typology_id));
+      const activeTypologies = allTypologies.filter(t => t.active);
+      const missing = activeTypologies.filter(t => !existingIds.has(t.id));
 
-    const activeTypologies = allTypologies.filter(t => t.active);
-    const missing = activeTypologies.filter(t => !existingIds.has(t.id));
+      if (missing.length === 0) return;
 
-    if (missing.length === 0) return;
+      const inserts = missing.map(t => ({
+        typology_id: t.id,
+        nome: t.name,
+        responsavel: "",
+        largura: 1000,
+        altura: 1000,
+        quantidade: 1,
+      }));
 
-    const inserts = missing.map(t => ({
-      typology_id: t.id,
-      nome: t.name,
-      responsavel: "",
-      largura: 1000,
-      altura: 1000,
-      quantidade: 1,
-    }));
+      const { error: err } = await supabase
+        .from("planos_corte")
+        .insert(inserts);
 
-    const { error } = await supabase
-      .from("planos_corte")
-      .insert(inserts);
-
-    if (error) {
-      console.error("Erro ao sincronizar planos:", error);
-    } else if (missing.length > 0) {
-      toast.success(`${missing.length} plano(s) de corte criado(s) automaticamente`);
-      await fetchPlanos();
+      if (err) {
+        console.error("Erro ao sincronizar planos:", err);
+      } else if (missing.length > 0) {
+        toast.success(`${missing.length} plano(s) de corte criado(s) automaticamente`);
+        await fetchPlanos();
+      }
+    } catch (e) {
+      console.error("Erro inesperado na sincronização:", e);
     }
   }, [fetchPlanos]);
 
-  return { planos, loading, addPlano, updatePlano, deletePlano, duplicatePlano, refetch: fetchPlanos, syncWithTypologies };
+  return { planos, loading, error, addPlano, updatePlano, deletePlano, duplicatePlano, refetch: fetchPlanos, syncWithTypologies };
 }
