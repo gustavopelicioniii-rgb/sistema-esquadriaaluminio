@@ -2,6 +2,7 @@ import React from "react";
 import type { AluminumColor } from "./colors";
 
 interface SvgProps {
+  // color is required but we provide a fallback in getTypologySvg
   width: number;
   height: number;
   color: AluminumColor;
@@ -614,17 +615,32 @@ export function getTypologySvg(type: string, props: SvgProps): React.ReactElemen
   const slidingTypes = ["2f", "3f", "4f", "6f", "deslizante"];
   const fixedTypes = ["1f", "2fx", "3fx", "fixa", "maxim_ar"];
   
+  // Safety check: ensure color is never undefined
+  const safeProps = {
+    ...props,
+    color: props.color || {
+      id: "natural",
+      name: "Natural",
+      hex: "#C0C0C0",
+      frameColor: "#B8B8B8",
+      frameDark: "#8A8A8A",
+      frameLight: "#D4D4D4",
+      glassColor: "#B8D4E8",
+      glassOpacity: 0.35,
+    },
+  };
+  
   if (slidingTypes.includes(type)) {
-    return <SlidingWindow {...props} />;
+    return <SlidingWindow {...safeProps} />;
   }
   if (fixedTypes.includes(type)) {
-    return <FixedWindow {...props} />;
+    return <FixedWindow {...safeProps} />;
   }
   if (type === "projetante" || type === "maxim-ar") {
-    return <MaximArWindow {...props} />;
+    return <MaximArWindow {...safeProps} />;
   }
   // Default to sliding 2F
-  return <SlidingWindow {...props} />;
+  return <SlidingWindow {...safeProps} />;
 }
 
 export type { SvgProps };
