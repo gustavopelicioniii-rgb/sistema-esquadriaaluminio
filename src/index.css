@@ -652,13 +652,3 @@ section {
     padding: 2rem 0;
   }
 }
-
-/* Enhanced list items */
-li {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid hsl(220 13% 91% / 0.3);
-}
-
-li:last-child {
-  border-bottom: none;
-}
