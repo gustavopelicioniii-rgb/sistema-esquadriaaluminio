@@ -116,6 +116,7 @@ const App = () => (
                   <Route path="/planos" element={<S><Planos /></S>} />
                 </Route>
 
+                <Route path="/proposta/:token" element={<S><PropostaOnline /></S>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

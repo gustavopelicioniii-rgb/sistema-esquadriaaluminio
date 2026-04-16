@@ -22,6 +22,7 @@ import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 import { optimizeBars } from "@/lib/bar-optimizer";
+import { downloadCutFile, supportedMachines } from "@/utils/cnc/cutFileExporter";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
@@ -227,6 +228,19 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
     }
   }, [result, barResults]);
 
+  const handleExportCNC = useCallback(() => {
+    if (!barResults || barResults.length === 0) {
+      toast.error("Nenhum dado de otimização disponível");
+      return;
+    }
+    try {
+      downloadCutFile(barResults, selectedMachine, "gcode");
+      toast.success("Arquivo CNC exportado!");
+    } catch {
+      toast.error("Erro ao exportar CNC");
+    }
+  }, [barResults, selectedMachine]);
+
   const handleSave = useCallback(async () => {
     await onUpdate(plano.id, { largura, altura, quantidade });
     toast.success("Plano salvo!");
@@ -247,6 +261,19 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
                </Button>
                <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportPadroes}>
                  <Eye className="h-4 w-4" /> Padrões Corte
+               </Button>
+               <Select value={selectedMachine} onValueChange={setSelectedMachine}>
+                 <SelectTrigger className="h-8 w-[130px]">
+                   <SelectValue placeholder="CNC" />
+                 </SelectTrigger>
+                 <SelectContent>
+                   {supportedMachines.map(m => (
+                     <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
+               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportCNC}>
+                 <Boxes className="h-4 w-4" /> CNC
                </Button>
             </>
           )}
@@ -560,6 +587,7 @@ const PlanoCorte = () => {
   const { planos, loading, addPlano, deletePlano, duplicatePlano, updatePlano, syncWithTypologies } = usePlanosCorte();
   const { allTypologies, loading: typLoading } = useAllTypologies();
   const [search, setSearch] = useState("");
+  const [selectedMachine, setSelectedMachine] = useState("generic-gcode");
   const [selectedPlano, setSelectedPlano] = useState<PlanoCorteType | null>(null);
   const [synced, setSynced] = useState(false);
 
