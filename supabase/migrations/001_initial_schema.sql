@@ -344,7 +344,7 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Auto-create basic subscription for new users
-CREATE OR REPLACE FUNCTION public.handle_new_user_subscription()
+CREATE OR REPLACE EXECUTE FUNCTION public.handle_new_user_subscription()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -359,7 +359,7 @@ $$;
 CREATE TRIGGER on_auth_user_created_subscription
   AFTER INSERT ON auth.users
   FOR EACH ROW
-  FUNCTION public.handle_new_user_subscription();
+  EXECUTE FUNCTION public.handle_new_user_subscription();
 
 -- Create conta when pedido is created
 CREATE OR REPLACE FUNCTION public.create_conta_on_pedido()
