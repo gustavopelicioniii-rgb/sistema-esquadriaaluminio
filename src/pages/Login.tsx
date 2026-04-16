@@ -11,7 +11,7 @@ import {
   ArrowRight, Star, Eye, EyeOff, Sparkles, TrendingUp,
   Layers, ChevronRight,
 } from "lucide-react";
-import { lovable } from "@/integrations/lovable/index";
+
 import { Separator } from "@/components/ui/separator";
 import logoLight from "@/assets/aluflow-logo.png";
 import { toast } from "sonner";
@@ -196,16 +196,16 @@ const Login = () => {
                     disabled={loading}
                     onClick={async () => {
                       setLoading(true);
-                      const result = await lovable.auth.signInWithOAuth("google", {
-                        redirect_uri: window.location.origin,
+                      const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                          redirectTo: window.location.origin,
+                        },
                       });
-                      if (result.error) {
-                        toast.error("Erro ao entrar com Google", { description: String(result.error) });
+                      if (error) {
+                        toast.error("Erro ao entrar com Google", { description: error.message });
                         setLoading(false);
-                        return;
                       }
-                      if (result.redirected) return;
-                      navigate("/");
                     }}
                   >
                     <svg className="h-4 w-4" viewBox="0 0 24 24">
