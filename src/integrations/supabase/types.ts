@@ -1,3 +1,4 @@
+// Simplified types - using string instead of enum references
 export type Json =
   | string
   | number
@@ -7,1343 +8,162 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       administradores: {
-        Row: {
-          ativo: boolean
-          created_at: string
-          email: string
-          id: string
-          nome: string
-          role: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          ativo?: boolean
-          created_at?: string
-          email?: string
-          id?: string
-          nome: string
-          role?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          ativo?: boolean
-          created_at?: string
-          email?: string
-          id?: string
-          nome?: string
-          role?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; nome: string; email: string | null; role: string; ativo: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; nome: string; email?: string | null; role?: string; ativo?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; nome?: string; email?: string | null; role?: string; ativo?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       agenda: {
-        Row: {
-          created_at: string
-          data: string
-          hora: string | null
-          id: string
-          local: string | null
-          responsavel: string | null
-          titulo: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          data: string
-          hora?: string | null
-          id?: string
-          local?: string | null
-          responsavel?: string | null
-          titulo: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          data?: string
-          hora?: string | null
-          id?: string
-          local?: string | null
-          responsavel?: string | null
-          titulo?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; titulo: string; data: string; hora: string | null; local: string | null; responsavel: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; titulo: string; data: string; hora?: string | null; local?: string | null; responsavel?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; titulo?: string; data?: string; hora?: string | null; local?: string | null; responsavel?: string | null; created_at?: string; updated_at?: string }
         Relationships: []
       }
       api_integracoes: {
-        Row: {
-          ativa: boolean
-          chave: string
-          created_at: string
-          descricao: string
-          id: string
-          nome: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          ativa?: boolean
-          chave?: string
-          created_at?: string
-          descricao?: string
-          id?: string
-          nome: string
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          ativa?: boolean
-          chave?: string
-          created_at?: string
-          descricao?: string
-          id?: string
-          nome?: string
-          updated_at?: string
-          user_id?: string
-        }
+        Row: { id: string; user_id: string; nome: string; descricao: string; chave: string; ativa: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string; nome: string; descricao?: string; chave?: string; ativa?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; nome?: string; descricao?: string; chave?: string; ativa?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       assinaturas: {
-        Row: {
-          ativo: boolean
-          created_at: string
-          data_fim: string | null
-          data_inicio: string
-          id: string
-          plano: Database["public"]["Enums"]["plan_tier"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          ativo?: boolean
-          created_at?: string
-          data_fim?: string | null
-          data_inicio?: string
-          id?: string
-          plano?: Database["public"]["Enums"]["plan_tier"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          ativo?: boolean
-          created_at?: string
-          data_fim?: string | null
-          data_inicio?: string
-          id?: string
-          plano?: Database["public"]["Enums"]["plan_tier"]
-          updated_at?: string
-          user_id?: string
-        }
+        Row: { id: string; user_id: string; plano: string; ativo: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string; plano?: string; ativo?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; plano?: string; ativo?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       clientes: {
-        Row: {
-          cidade: string | null
-          created_at: string
-          email: string | null
-          endereco: string | null
-          id: string
-          nome: string
-          orcamentos_count: number
-          telefone: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          cidade?: string | null
-          created_at?: string
-          email?: string | null
-          endereco?: string | null
-          id?: string
-          nome: string
-          orcamentos_count?: number
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          cidade?: string | null
-          created_at?: string
-          email?: string | null
-          endereco?: string | null
-          id?: string
-          nome?: string
-          orcamentos_count?: number
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; nome: string; telefone: string; email: string; endereco: string; cidade: string; orcamentos_count: number; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; nome: string; telefone?: string; email?: string; endereco?: string; cidade?: string; orcamentos_count?: number; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; nome?: string; telefone?: string; email?: string; endereco?: string; cidade?: string; orcamentos_count?: number; created_at?: string; updated_at?: string }
         Relationships: []
       }
       configuracoes: {
-        Row: {
-          chave: string
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string | null
-          valor: string
-        }
-        Insert: {
-          chave: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: string
-        }
-        Update: {
-          chave?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: string
-        }
+        Row: { id: string; user_id: string | null; chave: string; valor: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; chave: string; valor?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; chave?: string; valor?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
       contas_financeiras: {
-        Row: {
-          categoria: string
-          cliente: string
-          created_at: string
-          descricao: string
-          id: string
-          status: string
-          tipo: string
-          updated_at: string
-          user_id: string | null
-          valor: number
-          vencimento: string
-        }
-        Insert: {
-          categoria?: string
-          cliente: string
-          created_at?: string
-          descricao?: string
-          id?: string
-          status?: string
-          tipo?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-          vencimento?: string
-        }
-        Update: {
-          categoria?: string
-          cliente?: string
-          created_at?: string
-          descricao?: string
-          id?: string
-          status?: string
-          tipo?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-          vencimento?: string
-        }
+        Row: { id: string; user_id: string | null; cliente: string; descricao: string; valor: number; vencimento: string; status: string; tipo: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; cliente: string; descricao?: string; valor?: number; vencimento?: string; status?: string; tipo?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; cliente?: string; descricao?: string; valor?: number; vencimento?: string; status?: string; tipo?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
       crm_leads: {
-        Row: {
-          created_at: string
-          email: string | null
-          follow_up_date: string | null
-          id: string
-          nome: string
-          observacao: string | null
-          status: string
-          telefone: string | null
-          updated_at: string
-          user_id: string | null
-          valor: number
-        }
-        Insert: {
-          created_at?: string
-          email?: string | null
-          follow_up_date?: string | null
-          id?: string
-          nome: string
-          observacao?: string | null
-          status?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-        }
-        Update: {
-          created_at?: string
-          email?: string | null
-          follow_up_date?: string | null
-          id?: string
-          nome?: string
-          observacao?: string | null
-          status?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-        }
+        Row: { id: string; user_id: string | null; nome: string; valor: number; telefone: string; email: string; status: string; observacao: string; follow_up_date: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; nome: string; valor?: number; telefone?: string; email?: string; status?: string; observacao?: string; follow_up_date?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; nome?: string; valor?: number; telefone?: string; email?: string; status?: string; observacao?: string; follow_up_date?: string | null; created_at?: string; updated_at?: string }
         Relationships: []
       }
       estoque: {
-        Row: {
-          categoria: string
-          codigo: string
-          created_at: string
-          id: string
-          minimo: number
-          produto: string
-          quantidade: number
-          unidade: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          categoria?: string
-          codigo: string
-          created_at?: string
-          id?: string
-          minimo?: number
-          produto: string
-          quantidade?: number
-          unidade?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          categoria?: string
-          codigo?: string
-          created_at?: string
-          id?: string
-          minimo?: number
-          produto?: string
-          quantidade?: number
-          unidade?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; codigo: string; produto: string; quantidade: number; unidade: string; minimo: number; categoria: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; codigo: string; produto: string; quantidade?: number; unidade?: string; minimo?: number; categoria?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; codigo?: string; produto?: string; quantidade?: number; unidade?: string; minimo?: number; categoria?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
       funcionarios: {
-        Row: {
-          ativo: boolean
-          cargo: string
-          created_at: string
-          id: string
-          nome: string
-          setor: string
-          telefone: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          ativo?: boolean
-          cargo?: string
-          created_at?: string
-          id?: string
-          nome: string
-          setor?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          ativo?: boolean
-          cargo?: string
-          created_at?: string
-          id?: string
-          nome?: string
-          setor?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; nome: string; cargo: string; telefone: string; email: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; nome: string; cargo?: string; telefone?: string; email?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; nome?: string; cargo?: string; telefone?: string; email?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
       notification_reads: {
-        Row: {
-          created_at: string
-          id: string
-          notification_key: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          notification_key: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          notification_key?: string
-          user_id?: string
-        }
+        Row: { id: string; user_id: string; notification_id: string; read_at: string }
+        Insert: { id?: string; user_id?: string; notification_id: string; read_at?: string }
+        Update: { id?: string; user_id?: string; notification_id?: string; read_at?: string }
         Relationships: []
       }
       orcamento_historico: {
-        Row: {
-          created_at: string
-          id: string
-          orcamento_id: string
-          status_anterior: string | null
-          status_novo: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          orcamento_id: string
-          status_anterior?: string | null
-          status_novo: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          orcamento_id?: string
-          status_anterior?: string | null
-          status_novo?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; orcamento_id: string; status_anterior: string | null; status_novo: string; created_at: string }
+        Insert: { id?: string; user_id?: string | null; orcamento_id: string; status_anterior?: string | null; status_novo: string; created_at?: string }
+        Update: { id?: string; user_id?: string | null; orcamento_id?: string; status_anterior?: string | null; status_novo?: string; created_at?: string }
         Relationships: []
       }
       orcamentos: {
-        Row: {
-          cliente: string
-          cliente_id: string | null
-          created_at: string
-          data: string
-          id: string
-          itens: Json
-          numero: string
-          produto: string
-          status: string
-          updated_at: string
-          user_id: string | null
-          valor: number
-        }
-        Insert: {
-          cliente: string
-          cliente_id?: string | null
-          created_at?: string
-          data?: string
-          id?: string
-          itens?: Json
-          numero: string
-          produto: string
-          status?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-        }
-        Update: {
-          cliente?: string
-          cliente_id?: string | null
-          created_at?: string
-          data?: string
-          id?: string
-          itens?: Json
-          numero?: string
-          produto?: string
-          status?: string
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "orcamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; user_id: string | null; numero: string; cliente: string; cliente_id: string | null; produto: string; valor: number; status: string; data: string; itens: Json; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; numero: string; cliente: string; cliente_id?: string | null; produto: string; valor?: number; status?: string; data?: string; itens?: Json; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; numero?: string; cliente?: string; cliente_id?: string | null; produto?: string; valor?: number; status?: string; data?: string; itens?: Json; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      pagamento_status: {
+        Row: { id: string; nome: string; cor: string;created_at: string }
+        Insert: { id?: string; nome: string; cor?: string; created_at?: string }
+        Update: { id?: string; nome?: string; cor?: string; created_at?: string }
+        Relationships: []
       }
       pagamentos: {
-        Row: {
-          created_at: string
-          data: string
-          forma: string
-          id: string
-          observacao: string | null
-          pedido_id: string
-          updated_at: string
-          valor: number
-        }
-        Insert: {
-          created_at?: string
-          data: string
-          forma?: string
-          id?: string
-          observacao?: string | null
-          pedido_id: string
-          updated_at?: string
-          valor: number
-        }
-        Update: {
-          created_at?: string
-          data?: string
-          forma?: string
-          id?: string
-          observacao?: string | null
-          pedido_id?: string
-          updated_at?: string
-          valor?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pagamentos_pedido_id_fkey"
-            columns: ["pedido_id"]
-            isOneToOne: false
-            referencedRelation: "pedidos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; pedido_id: string; valor: number; data: string; forma: string; observacao: string; created_at: string; updated_at: string }
+        Insert: { id?: string; pedido_id: string; valor: number; data: string; forma?: string; observacao?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; pedido_id?: string; valor?: number; data?: string; forma?: string; observacao?: string; created_at?: string; updated_at?: string }
+        Relationships: []
       }
       pedido_checklist_fotos: {
-        Row: {
-          created_at: string
-          etapa: string
-          foto_url: string
-          id: string
-          item_key: string | null
-          nome_arquivo: string | null
-          pedido_id: string
-        }
-        Insert: {
-          created_at?: string
-          etapa: string
-          foto_url: string
-          id?: string
-          item_key?: string | null
-          nome_arquivo?: string | null
-          pedido_id: string
-        }
-        Update: {
-          created_at?: string
-          etapa?: string
-          foto_url?: string
-          id?: string
-          item_key?: string | null
-          nome_arquivo?: string | null
-          pedido_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedido_checklist_fotos_pedido_id_fkey"
-            columns: ["pedido_id"]
-            isOneToOne: false
-            referencedRelation: "pedidos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; pedido_id: string; etapa: string; item_key: string | null; foto_url: string; nome_arquivo: string | null; created_at: string }
+        Insert: { id?: string; pedido_id: string; etapa: string; item_key?: string | null; foto_url: string; nome_arquivo?: string | null; created_at?: string }
+        Update: { id?: string; pedido_id?: string; etapa?: string; item_key?: string | null; foto_url?: string; nome_arquivo?: string | null; created_at?: string }
+        Relationships: []
       }
       pedido_checklists: {
-        Row: {
-          anotacao: string | null
-          checked: boolean
-          created_at: string
-          etapa: string
-          id: string
-          item_key: string
-          pedido_id: string
-          updated_at: string
-        }
-        Insert: {
-          anotacao?: string | null
-          checked?: boolean
-          created_at?: string
-          etapa: string
-          id?: string
-          item_key: string
-          pedido_id: string
-          updated_at?: string
-        }
-        Update: {
-          anotacao?: string | null
-          checked?: boolean
-          created_at?: string
-          etapa?: string
-          id?: string
-          item_key?: string
-          pedido_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedido_checklists_pedido_id_fkey"
-            columns: ["pedido_id"]
-            isOneToOne: false
-            referencedRelation: "pedidos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      pedido_custom_etapas: {
-        Row: {
-          created_at: string
-          etapa_key: string
-          id: string
-          label: string
-          ordem: number
-          pedido_id: string
-        }
-        Insert: {
-          created_at?: string
-          etapa_key: string
-          id?: string
-          label: string
-          ordem?: number
-          pedido_id: string
-        }
-        Update: {
-          created_at?: string
-          etapa_key?: string
-          id?: string
-          label?: string
-          ordem?: number
-          pedido_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedido_custom_etapas_pedido_id_fkey"
-            columns: ["pedido_id"]
-            isOneToOne: false
-            referencedRelation: "pedidos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; pedido_id: string; etapa: string; item_key: string; checked: boolean; anotacao: string; created_at: string; updated_at: string }
+        Insert: { id?: string; pedido_id: string; etapa: string; item_key: string; checked?: boolean; anotacao?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; pedido_id?: string; etapa?: string; item_key?: string; checked?: boolean; anotacao?: string; created_at?: string; updated_at?: string }
+        Relationships: []
       }
       pedido_custom_items: {
-        Row: {
-          created_at: string
-          etapa_id: string
-          id: string
-          item_key: string
-          label: string
-          ordem: number
-        }
-        Insert: {
-          created_at?: string
-          etapa_id: string
-          id?: string
-          item_key: string
-          label: string
-          ordem?: number
-        }
-        Update: {
-          created_at?: string
-          etapa_id?: string
-          id?: string
-          item_key?: string
-          label?: string
-          ordem?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedido_custom_items_etapa_id_fkey"
-            columns: ["etapa_id"]
-            isOneToOne: false
-            referencedRelation: "pedido_custom_etapas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; etapa_id: string; item_key: string; label: string; ordem: number; created_at: string }
+        Insert: { id?: string; etapa_id: string; item_key: string; label: string; ordem?: number; created_at?: string }
+        Update: { id?: string; etapa_id?: string; item_key?: string; label?: string; ordem?: number; created_at?: string }
+        Relationships: []
+      }
+      pedido_custom_etapas: {
+        Row: { id: string; pedido_id: string; etapa_key: string; label: string; ordem: number; created_at: string }
+        Insert: { id?: string; pedido_id: string; etapa_key: string; label: string; ordem?: number; created_at?: string }
+        Update: { id?: string; pedido_id?: string; etapa_key?: string; label?: string; ordem?: number; created_at?: string }
+        Relationships: []
       }
       pedido_etapas: {
-        Row: {
-          created_at: string
-          etapa: string
-          id: string
-          observacao: string | null
-          pedido_id: string
-        }
-        Insert: {
-          created_at?: string
-          etapa: string
-          id?: string
-          observacao?: string | null
-          pedido_id: string
-        }
-        Update: {
-          created_at?: string
-          etapa?: string
-          id?: string
-          observacao?: string | null
-          pedido_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedido_etapas_pedido_id_fkey"
-            columns: ["pedido_id"]
-            isOneToOne: false
-            referencedRelation: "pedidos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; pedido_id: string; etapa: string; observacao: string; created_at: string }
+        Insert: { id?: string; pedido_id: string; etapa: string; observacao?: string; created_at?: string }
+        Update: { id?: string; pedido_id?: string; etapa?: string; observacao?: string; created_at?: string }
+        Relationships: []
       }
       pedidos: {
-        Row: {
-          anotacao: string | null
-          cliente: string
-          cliente_id: string | null
-          created_at: string
-          dias_restantes: number | null
-          endereco: string | null
-          etapa: string | null
-          etapa_data: string | null
-          id: string
-          pedido_num: number
-          previsao: string | null
-          status: string
-          telefone: string | null
-          updated_at: string
-          user_id: string | null
-          valor: number
-          vendedor: string | null
-        }
-        Insert: {
-          anotacao?: string | null
-          cliente: string
-          cliente_id?: string | null
-          created_at?: string
-          dias_restantes?: number | null
-          endereco?: string | null
-          etapa?: string | null
-          etapa_data?: string | null
-          id?: string
-          pedido_num: number
-          previsao?: string | null
-          status?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-          vendedor?: string | null
-        }
-        Update: {
-          anotacao?: string | null
-          cliente?: string
-          cliente_id?: string | null
-          created_at?: string
-          dias_restantes?: number | null
-          endereco?: string | null
-          etapa?: string | null
-          etapa_data?: string | null
-          id?: string
-          pedido_num?: number
-          previsao?: string | null
-          status?: string
-          telefone?: string | null
-          updated_at?: string
-          user_id?: string | null
-          valor?: number
-          vendedor?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pedidos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      planos_corte: {
-        Row: {
-          altura: number
-          created_at: string
-          id: string
-          largura: number
-          nome: string
-          quantidade: number
-          responsavel: string
-          typology_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          altura?: number
-          created_at?: string
-          id?: string
-          largura?: number
-          nome: string
-          quantidade?: number
-          responsavel?: string
-          typology_id: string
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          altura?: number
-          created_at?: string
-          id?: string
-          largura?: number
-          nome?: string
-          quantidade?: number
-          responsavel?: string
-          typology_id?: string
-          updated_at?: string
-          user_id?: string
-        }
+        Row: { id: string; user_id: string | null; cliente_id: string | null; pedido_num: number; cliente: string; endereco: string; telefone: string; vendedor: string; previsao: string | null; valor: number; status: string; dias_restantes: number; etapa: string; etapa_data: string; anotacao: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; cliente_id?: string | null; pedido_num: number; cliente: string; endereco?: string; telefone?: string; vendedor?: string; previsao?: string | null; valor?: number; status?: string; dias_restantes?: number; etapa?: string; etapa_data?: string; anotacao?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; cliente_id?: string | null; pedido_num?: number; cliente?: string; endereco?: string; telefone?: string; vendedor?: string; previsao?: string | null; valor?: number; status?: string; dias_restantes?: number; etapa?: string; etapa_data?: string; anotacao?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
       produtos: {
-        Row: {
-          ativo: boolean
-          categoria: string
-          codigo: string
-          created_at: string
-          id: string
-          nome: string
-          preco: number
-          unidade: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          ativo?: boolean
-          categoria?: string
-          codigo: string
-          created_at?: string
-          id?: string
-          nome: string
-          preco?: number
-          unidade?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          ativo?: boolean
-          categoria?: string
-          codigo?: string
-          created_at?: string
-          id?: string
-          nome?: string
-          preco?: number
-          unidade?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+        Row: { id: string; user_id: string | null; codigo: string; nome: string; categoria: string; preco: number; unidade: string; ativo: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; codigo: string; nome: string; categoria?: string; preco?: number; unidade?: string; ativo?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; codigo?: string; nome?: string; categoria?: string; preco?: number; unidade?: string; ativo?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       projetos_vidro: {
-        Row: {
-          archived: boolean
-          area_minima_m2: number
-          cor: string
-          created_at: string
-          espessura: string
-          id: string
-          preco_m2: number
-          tipo: string
-          titulo: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          archived?: boolean
-          area_minima_m2?: number
-          cor?: string
-          created_at?: string
-          espessura?: string
-          id?: string
-          preco_m2?: number
-          tipo?: string
-          titulo: string
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          archived?: boolean
-          area_minima_m2?: number
-          cor?: string
-          created_at?: string
-          espessura?: string
-          id?: string
-          preco_m2?: number
-          tipo?: string
-          titulo?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      regras_componentes_customizadas: {
-        Row: {
-          component_code: string | null
-          component_name: string
-          component_type: string
-          created_at: string
-          id: string
-          length_constant_mm: number | null
-          length_reference: string | null
-          notes: string | null
-          quantity_formula: string
-          sort_order: number
-          typology_id: string
-          unit: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          component_code?: string | null
-          component_name: string
-          component_type?: string
-          created_at?: string
-          id?: string
-          length_constant_mm?: number | null
-          length_reference?: string | null
-          notes?: string | null
-          quantity_formula?: string
-          sort_order?: number
-          typology_id: string
-          unit?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          component_code?: string | null
-          component_name?: string
-          component_type?: string
-          created_at?: string
-          id?: string
-          length_constant_mm?: number | null
-          length_reference?: string | null
-          notes?: string | null
-          quantity_formula?: string
-          sort_order?: number
-          typology_id?: string
-          unit?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "regras_componentes_customizadas_typology_id_fkey"
-            columns: ["typology_id"]
-            isOneToOne: false
-            referencedRelation: "tipologias_customizadas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      regras_corte_customizadas: {
-        Row: {
-          coefficient: number
-          constant_mm: number
-          created_at: string
-          cut_angle_left: number
-          cut_angle_right: number
-          fixed_value_mm: number | null
-          id: string
-          notes: string | null
-          piece_function: string
-          piece_name: string
-          profile_code: string
-          quantity_formula: string
-          reference_dimension: string
-          sort_order: number
-          typology_id: string
-          updated_at: string
-          user_id: string
-          weight_per_meter: number
-        }
-        Insert: {
-          coefficient?: number
-          constant_mm?: number
-          created_at?: string
-          cut_angle_left?: number
-          cut_angle_right?: number
-          fixed_value_mm?: number | null
-          id?: string
-          notes?: string | null
-          piece_function?: string
-          piece_name: string
-          profile_code: string
-          quantity_formula?: string
-          reference_dimension?: string
-          sort_order?: number
-          typology_id: string
-          updated_at?: string
-          user_id?: string
-          weight_per_meter?: number
-        }
-        Update: {
-          coefficient?: number
-          constant_mm?: number
-          created_at?: string
-          cut_angle_left?: number
-          cut_angle_right?: number
-          fixed_value_mm?: number | null
-          id?: string
-          notes?: string | null
-          piece_function?: string
-          piece_name?: string
-          profile_code?: string
-          quantity_formula?: string
-          reference_dimension?: string
-          sort_order?: number
-          typology_id?: string
-          updated_at?: string
-          user_id?: string
-          weight_per_meter?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "regras_corte_customizadas_typology_id_fkey"
-            columns: ["typology_id"]
-            isOneToOne: false
-            referencedRelation: "tipologias_customizadas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      regras_vidro_customizadas: {
-        Row: {
-          created_at: string
-          glass_name: string
-          glass_type: string | null
-          height_constant_mm: number
-          height_reference: string
-          id: string
-          max_thickness_mm: number | null
-          min_thickness_mm: number | null
-          notes: string | null
-          quantity: number
-          typology_id: string
-          updated_at: string
-          user_id: string
-          width_constant_mm: number
-          width_reference: string
-        }
-        Insert: {
-          created_at?: string
-          glass_name: string
-          glass_type?: string | null
-          height_constant_mm?: number
-          height_reference?: string
-          id?: string
-          max_thickness_mm?: number | null
-          min_thickness_mm?: number | null
-          notes?: string | null
-          quantity?: number
-          typology_id: string
-          updated_at?: string
-          user_id?: string
-          width_constant_mm?: number
-          width_reference?: string
-        }
-        Update: {
-          created_at?: string
-          glass_name?: string
-          glass_type?: string | null
-          height_constant_mm?: number
-          height_reference?: string
-          id?: string
-          max_thickness_mm?: number | null
-          min_thickness_mm?: number | null
-          notes?: string | null
-          quantity?: number
-          typology_id?: string
-          updated_at?: string
-          user_id?: string
-          width_constant_mm?: number
-          width_reference?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "regras_vidro_customizadas_typology_id_fkey"
-            columns: ["typology_id"]
-            isOneToOne: false
-            referencedRelation: "tipologias_customizadas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tipologias_customizadas: {
-        Row: {
-          active: boolean
-          category: string
-          created_at: string
-          has_bandeira: boolean
-          has_veneziana: boolean
-          id: string
-          max_height_mm: number | null
-          max_width_mm: number | null
-          min_height_mm: number | null
-          min_width_mm: number | null
-          name: string
-          notes: string | null
-          num_folhas: number
-          product_line_id: string
-          subcategory: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          active?: boolean
-          category?: string
-          created_at?: string
-          has_bandeira?: boolean
-          has_veneziana?: boolean
-          id?: string
-          max_height_mm?: number | null
-          max_width_mm?: number | null
-          min_height_mm?: number | null
-          min_width_mm?: number | null
-          name: string
-          notes?: string | null
-          num_folhas?: number
-          product_line_id: string
-          subcategory?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          active?: boolean
-          category?: string
-          created_at?: string
-          has_bandeira?: boolean
-          has_veneziana?: boolean
-          id?: string
-          max_height_mm?: number | null
-          max_width_mm?: number | null
-          min_height_mm?: number | null
-          min_width_mm?: number | null
-          name?: string
-          notes?: string | null
-          num_folhas?: number
-          product_line_id?: string
-          subcategory?: string | null
-          updated_at?: string
-          user_id?: string
-        }
+        Row: { id: string; user_id: string | null; titulo: string; tipo: string; espessura: string; cor: string; preco_m2: number; area_minima_m2: number; archived: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id?: string | null; titulo: string; tipo?: string; espessura?: string; cor?: string; preco_m2?: number; area_minima_m2?: number; archived?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string | null; titulo?: string; tipo?: string; espessura?: string; cor?: string; preco_m2?: number; area_minima_m2?: number; archived?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
+        Row: { id: string; user_id: string; role: string; created_at: string }
+        Insert: { id?: string; user_id: string; role: string; created_at?: string }
+        Update: { id?: string; user_id?: string; role?: string; created_at?: string }
         Relationships: []
       }
       vidro_itens: {
-        Row: {
-          altura_mm: number
-          created_at: string
-          descricao: string
-          id: string
-          largura_mm: number
-          observacao: string | null
-          projeto_id: string
-          quantidade: number
-        }
-        Insert: {
-          altura_mm?: number
-          created_at?: string
-          descricao: string
-          id?: string
-          largura_mm?: number
-          observacao?: string | null
-          projeto_id: string
-          quantidade?: number
-        }
-        Update: {
-          altura_mm?: number
-          created_at?: string
-          descricao?: string
-          id?: string
-          largura_mm?: number
-          observacao?: string | null
-          projeto_id?: string
-          quantidade?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vidro_itens_projeto_id_fkey"
-            columns: ["projeto_id"]
-            isOneToOne: false
-            referencedRelation: "projetos_vidro"
-            referencedColumns: ["id"]
-          },
-        ]
+        Row: { id: string; projeto_id: string; descricao: string; largura_mm: number; altura_mm: number; quantidade: number; observacao: string; created_at: string }
+        Insert: { id?: string; projeto_id: string; descricao: string; largura_mm?: number; altura_mm?: number; quantidade?: number; observacao?: string; created_at?: string }
+        Update: { id?: string; projeto_id?: string; descricao?: string; largura_mm?: number; altura_mm?: number; quantidade?: number; observacao?: string; created_at?: string }
+        Relationships: []
       }
     }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-    }
-    Enums: {
-      app_role: "admin" | "funcionario"
-      plan_tier: "basico" | "profissional" | "premium"
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    Views: {}
+    Functions: {}
+    Enums: {}
+    CompositeTypes: {}
   }
 }
-
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
-
-export type Tables<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
-
-export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
-
-export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
-
-export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
-
-export const Constants = {
-  public: {
-    Enums: {
-      app_role: ["admin", "funcionario"],
-      plan_tier: ["basico", "profissional", "premium"],
-    },
-  },
-} as const
