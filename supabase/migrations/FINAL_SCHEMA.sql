@@ -1,7 +1,6 @@
 -- ================================================
--- ALUFLOW - SCHEMA FINAL (SEM BUGS)
+-- ALUFLOW - SCHEMA FINAL CORRIGIDO
 -- Execute TODO este arquivo
--- Supabase Dashboard > SQL Editor > New Query
 -- ================================================
 
 -- ============================================
@@ -366,6 +365,8 @@ ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.funcionarios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.administradores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.assinaturas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notification_reads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orcamento_historico ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projetos_vidro ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.vidro_itens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tipologias_customizadas ENABLE ROW LEVEL SECURITY;
@@ -375,9 +376,10 @@ ALTER TABLE public.regras_componentes_customizadas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.api_integracoes ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
--- 3. POLICIES (simplificado)
+-- 3. POLICIES
 -- ============================================
 
+-- Tables with direct user_id
 CREATE POLICY "Users manage own clientes" ON public.clientes FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own orcamentos" ON public.orcamentos FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own estoque" ON public.estoque FOR ALL TO authenticated USING (auth.uid() = user_id);
@@ -387,22 +389,28 @@ CREATE POLICY "Users manage own produtos" ON public.produtos FOR ALL TO authenti
 CREATE POLICY "Users manage own crm_leads" ON public.crm_leads FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own contas_financeiras" ON public.contas_financeiras FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own pedidos" ON public.pedidos FOR ALL TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own pagamentos" ON public.pagamentos FOR ALL TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own pedido_etapas" ON public.pedido_etapas FOR ALL TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own pedido_checklists" ON public.pedido_checklists FOR ALL TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own pedido_checklist_fotos" ON public.pedido_checklist_fotos FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own planos_corte" ON public.planos_corte FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own user_roles" ON public.user_roles FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own funcionarios" ON public.funcionarios FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own administradores" ON public.administradores FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own assinaturas" ON public.assinaturas FOR ALL TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users manage own notification_reads" ON public.notification_reads FOR ALL TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users manage own orcamento_historico" ON public.orcamento_historico FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own projetos_vidro" ON public.projetos_vidro FOR ALL TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own vidro_itens" ON public.vidro_itens FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own tipologias_customizadas" ON public.tipologias_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own regras_corte_customizadas" ON public.regras_corte_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own regras_vidro_customizadas" ON public.regras_vidro_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own regras_componentes_customizadas" ON public.regras_componentes_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own api_integracoes" ON public.api_integracoes FOR ALL TO authenticated USING (auth.uid() = user_id);
+
+-- Tables linked to pedidos via pedido_id
+CREATE POLICY "Users manage own pagamentos" ON public.pagamentos FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pagamentos.pedido_id AND pedidos.user_id = auth.uid()));
+CREATE POLICY "Users manage own pedido_etapas" ON public.pedido_etapas FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_etapas.pedido_id AND pedidos.user_id = auth.uid()));
+CREATE POLICY "Users manage own pedido_checklists" ON public.pedido_checklists FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_checklists.pedido_id AND pedidos.user_id = auth.uid()));
+CREATE POLICY "Users manage own pedido_checklist_fotos" ON public.pedido_checklist_fotos FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_checklist_fotos.pedido_id AND pedidos.user_id = auth.uid()));
+
+-- vidro_itens via projeto_id -> projetos_vidro -> user_id
+CREATE POLICY "Users manage own vidro_itens" ON public.vidro_itens FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.projetos_vidro WHERE projetos_vidro.id = vidro_itens.projeto_id AND projetos_vidro.user_id = auth.uid()));
 
 -- ============================================
 -- 4. STORAGE BUCKETS
