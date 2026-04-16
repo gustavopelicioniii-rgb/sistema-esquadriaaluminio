@@ -1,352 +1,67 @@
 -- ================================================
--- ALUFLOW - SCHEMA FINAL CORRIGIDO
+-- ALUFLOW - SCHEMA COMPLETO (COM DROP)
 -- Execute TODO este arquivo
 -- ================================================
 
--- ============================================
--- 1. TODAS AS TABELAS
--- ============================================
+-- 1. DROPAR TABELAS EXISTENTES (para recriar corretamente)
+DROP TABLE IF EXISTS public.vidro_itens CASCADE;
+DROP TABLE IF EXISTS public.projetos_vidro CASCADE;
+DROP TABLE IF EXISTS public.orcamento_historico CASCADE;
+DROP TABLE IF EXISTS public.notification_reads CASCADE;
+DROP TABLE IF EXISTS public.assinaturas CASCADE;
+DROP TABLE IF EXISTS public.administradores CASCADE;
+DROP TABLE IF EXISTS public.funcionarios CASCADE;
+DROP TABLE IF EXISTS public.user_roles CASCADE;
+DROP TABLE IF EXISTS public.planos_corte CASCADE;
+DROP TABLE IF EXISTS public.pedido_checklist_fotos CASCADE;
+DROP TABLE IF EXISTS public.pedido_checklists CASCADE;
+DROP TABLE IF EXISTS public.pedido_etapas CASCADE;
+DROP TABLE IF EXISTS public.pagamentos CASCADE;
+DROP TABLE IF EXISTS public.pedidos CASCADE;
+DROP TABLE IF EXISTS public.contas_financeiras CASCADE;
+DROP TABLE IF EXISTS public.crm_leads CASCADE;
+DROP TABLE IF EXISTS public.produtos CASCADE;
+DROP TABLE IF EXISTS public.configuracoes CASCADE;
+DROP TABLE IF EXISTS public.agenda CASCADE;
+DROP TABLE IF EXISTS public.estoque CASCADE;
+DROP TABLE IF EXISTS public.orcamentos CASCADE;
+DROP TABLE IF EXISTS public.clientes CASCADE;
+DROP TABLE IF EXISTS public.tipologias_customizadas CASCADE;
+DROP TABLE IF EXISTS public.regras_corte_customizadas CASCADE;
+DROP TABLE IF EXISTS public.regras_vidro_customizadas CASCADE;
+DROP TABLE IF EXISTS public.regras_componentes_customizadas CASCADE;
+DROP TABLE IF EXISTS public.api_integracoes CASCADE;
 
-CREATE TABLE IF NOT EXISTS public.clientes (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  nome TEXT NOT NULL,
-  telefone TEXT DEFAULT '',
-  email TEXT DEFAULT '',
-  endereco TEXT DEFAULT '',
-  cidade TEXT DEFAULT '',
-  orcamentos_count INTEGER NOT NULL DEFAULT 0,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+-- 2. RECRIAR TODAS AS TABELAS
+CREATE TABLE public.clientes (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), nome TEXT NOT NULL, telefone TEXT DEFAULT '', email TEXT DEFAULT '', endereco TEXT DEFAULT '', cidade TEXT DEFAULT '', orcamentos_count INTEGER NOT NULL DEFAULT 0, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.orcamentos (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), numero TEXT NOT NULL, cliente TEXT NOT NULL, cliente_id UUID REFERENCES public.clientes(id) ON DELETE SET NULL, produto TEXT NOT NULL, valor NUMERIC(12,2) NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'pendente', data DATE NOT NULL DEFAULT CURRENT_DATE, itens JSONB NOT NULL DEFAULT '[]'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.estoque (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), codigo TEXT NOT NULL UNIQUE, produto TEXT NOT NULL, quantidade INTEGER NOT NULL DEFAULT 0, unidade TEXT NOT NULL DEFAULT 'pçs', minimo INTEGER NOT NULL DEFAULT 0, categoria TEXT NOT NULL DEFAULT 'Outros', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.agenda (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), titulo TEXT NOT NULL, data DATE NOT NULL, hora TEXT DEFAULT '', local TEXT DEFAULT '', responsavel TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.configuracoes (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), chave TEXT NOT NULL UNIQUE, valor TEXT NOT NULL DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.produtos (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), codigo TEXT NOT NULL, nome TEXT NOT NULL, categoria TEXT NOT NULL DEFAULT 'Outros', preco NUMERIC NOT NULL DEFAULT 0, unidade TEXT NOT NULL DEFAULT 'm²', ativo BOOLEAN NOT NULL DEFAULT true, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now());
+CREATE TABLE public.crm_leads (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), nome TEXT NOT NULL, valor NUMERIC NOT NULL DEFAULT 0, telefone TEXT DEFAULT '', email TEXT DEFAULT '', status TEXT NOT NULL DEFAULT 'novo', observacao TEXT DEFAULT '', follow_up_date DATE, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now());
+CREATE TABLE public.contas_financeiras (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), cliente TEXT NOT NULL, descricao TEXT NOT NULL DEFAULT '', valor NUMERIC NOT NULL DEFAULT 0, vencimento DATE NOT NULL DEFAULT CURRENT_DATE, status TEXT NOT NULL DEFAULT 'pendente', tipo TEXT NOT NULL DEFAULT 'receber', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.pedidos (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), cliente_id UUID REFERENCES public.clientes(id) ON DELETE SET NULL, pedido_num TEXT NOT NULL, cliente TEXT NOT NULL, endereco TEXT DEFAULT '', telefone TEXT DEFAULT '', vendedor TEXT DEFAULT '', previsao DATE, valor NUMERIC(12,2) NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'pendente', dias_restantes INTEGER, etapa TEXT DEFAULT 'pedido', etapa_data TIMESTAMPTZ, anotacao TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.pagamentos (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE, valor NUMERIC NOT NULL DEFAULT 0, data DATE NOT NULL DEFAULT CURRENT_DATE, forma TEXT DEFAULT '', observacao TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.pedido_etapas (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE, etapa TEXT NOT NULL, observacao TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.pedido_checklists (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE, etapa TEXT NOT NULL, item_key TEXT NOT NULL, checked BOOLEAN DEFAULT false, anotacao TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.pedido_checklist_fotos (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE, etapa TEXT NOT NULL, item_key TEXT DEFAULT '', foto_url TEXT NOT NULL, nome_arquivo TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.planos_corte (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), typology_id TEXT NOT NULL, nome TEXT NOT NULL, responsavel TEXT DEFAULT '', largura INTEGER NOT NULL DEFAULT 0, altura INTEGER NOT NULL DEFAULT 0, quantidade INTEGER NOT NULL DEFAULT 1, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.user_roles (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, role TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE (user_id, role));
+CREATE TABLE public.funcionarios (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), nome TEXT NOT NULL, cargo TEXT DEFAULT '', telefone TEXT DEFAULT '', email TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.administradores (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), nome TEXT NOT NULL, email TEXT DEFAULT '', role TEXT DEFAULT '', ativo BOOLEAN DEFAULT true, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.assinaturas (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, plano TEXT NOT NULL DEFAULT 'basico', ativo BOOLEAN NOT NULL DEFAULT true, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.notification_reads (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), notification_id TEXT NOT NULL, read_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.orcamento_historico (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), orcamento_id UUID, status_anterior TEXT DEFAULT '', status_novo TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.projetos_vidro (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, user_id UUID DEFAULT auth.uid(), titulo TEXT NOT NULL, tipo TEXT DEFAULT '', espessura INTEGER DEFAULT 4, cor TEXT DEFAULT 'incolor', preco_m2 NUMERIC DEFAULT 0, area_minima_m2 NUMERIC DEFAULT 0.5, archived BOOLEAN DEFAULT false, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.vidro_itens (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, projeto_id UUID REFERENCES public.projetos_vidro(id) ON DELETE CASCADE, descricao TEXT NOT NULL, largura_mm INTEGER NOT NULL, altura_mm INTEGER NOT NULL, quantidade INTEGER NOT NULL DEFAULT 1, observacao TEXT DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE public.tipologias_customizadas (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID DEFAULT auth.uid(), product_line_id TEXT NOT NULL, name TEXT NOT NULL, category TEXT NOT NULL DEFAULT 'janela', subcategory TEXT DEFAULT 'correr', num_folhas INTEGER NOT NULL DEFAULT 2, has_veneziana BOOLEAN DEFAULT false, has_bandeira BOOLEAN DEFAULT false, notes TEXT, active BOOLEAN DEFAULT true, min_width_mm INTEGER DEFAULT 400, max_width_mm INTEGER DEFAULT 6000, min_height_mm INTEGER DEFAULT 300, max_height_mm INTEGER DEFAULT 3000, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE public.regras_corte_customizadas (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID DEFAULT auth.uid(), typology_id TEXT NOT NULL, profile_code TEXT NOT NULL, piece_name TEXT NOT NULL, piece_function TEXT DEFAULT '', reference_dimension TEXT DEFAULT 'L', coefficient NUMERIC DEFAULT 1, constant_mm INTEGER DEFAULT 0, fixed_value_mm INTEGER, cut_angle_left INTEGER DEFAULT 90, cut_angle_right INTEGER DEFAULT 90, quantity_formula TEXT DEFAULT '1', sort_order INTEGER DEFAULT 0, weight_per_meter NUMERIC DEFAULT 0, notes TEXT, created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE public.regras_vidro_customizadas (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID DEFAULT auth.uid(), typology_id TEXT NOT NULL, glass_name TEXT NOT NULL, width_reference TEXT DEFAULT 'L', width_constant_mm INTEGER DEFAULT 0, height_reference TEXT DEFAULT 'H', height_constant_mm INTEGER DEFAULT 0, quantity INTEGER DEFAULT 1, glass_type TEXT, min_thickness_mm INTEGER, max_thickness_mm INTEGER, created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE public.regras_componentes_customizadas (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID DEFAULT auth.uid(), typology_id TEXT NOT NULL, component_name TEXT NOT NULL, component_code TEXT, component_type TEXT DEFAULT '', quantity_formula TEXT DEFAULT '1', unit TEXT DEFAULT 'un', length_reference TEXT, length_constant_mm INTEGER DEFAULT 0, created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE public.api_integracoes (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID DEFAULT auth.uid(), nome TEXT NOT NULL, descricao TEXT DEFAULT '', chave TEXT NOT NULL, ativa BOOLEAN DEFAULT false, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now());
 
-CREATE TABLE IF NOT EXISTS public.orcamentos (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  numero TEXT NOT NULL,
-  cliente TEXT NOT NULL,
-  cliente_id UUID REFERENCES public.clientes(id) ON DELETE SET NULL,
-  produto TEXT NOT NULL,
-  valor NUMERIC(12,2) NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'pendente',
-  data DATE NOT NULL DEFAULT CURRENT_DATE,
-  itens JSONB NOT NULL DEFAULT '[]'::jsonb,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.estoque (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  codigo TEXT NOT NULL UNIQUE,
-  produto TEXT NOT NULL,
-  quantidade INTEGER NOT NULL DEFAULT 0,
-  unidade TEXT NOT NULL DEFAULT 'pçs',
-  minimo INTEGER NOT NULL DEFAULT 0,
-  categoria TEXT NOT NULL DEFAULT 'Outros',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.agenda (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  titulo TEXT NOT NULL,
-  data DATE NOT NULL,
-  hora TEXT DEFAULT '',
-  local TEXT DEFAULT '',
-  responsavel TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.configuracoes (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  chave TEXT NOT NULL UNIQUE,
-  valor TEXT NOT NULL DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.produtos (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  codigo TEXT NOT NULL,
-  nome TEXT NOT NULL,
-  categoria TEXT NOT NULL DEFAULT 'Outros',
-  preco NUMERIC NOT NULL DEFAULT 0,
-  unidade TEXT NOT NULL DEFAULT 'm²',
-  ativo BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.crm_leads (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  nome TEXT NOT NULL,
-  valor NUMERIC NOT NULL DEFAULT 0,
-  telefone TEXT DEFAULT '',
-  email TEXT DEFAULT '',
-  status TEXT NOT NULL DEFAULT 'novo',
-  observacao TEXT DEFAULT '',
-  follow_up_date DATE,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.contas_financeiras (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  cliente TEXT NOT NULL,
-  descricao TEXT NOT NULL DEFAULT '',
-  valor NUMERIC NOT NULL DEFAULT 0,
-  vencimento DATE NOT NULL DEFAULT CURRENT_DATE,
-  status TEXT NOT NULL DEFAULT 'pendente',
-  tipo TEXT NOT NULL DEFAULT 'receber',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.pedidos (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  cliente_id UUID REFERENCES public.clientes(id) ON DELETE SET NULL,
-  pedido_num TEXT NOT NULL,
-  cliente TEXT NOT NULL,
-  endereco TEXT DEFAULT '',
-  telefone TEXT DEFAULT '',
-  vendedor TEXT DEFAULT '',
-  previsao DATE,
-  valor NUMERIC(12,2) NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'pendente',
-  dias_restantes INTEGER,
-  etapa TEXT DEFAULT 'pedido',
-  etapa_data TIMESTAMPTZ,
-  anotacao TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.pagamentos (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE,
-  valor NUMERIC NOT NULL DEFAULT 0,
-  data DATE NOT NULL DEFAULT CURRENT_DATE,
-  forma TEXT DEFAULT '',
-  observacao TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.pedido_etapas (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE,
-  etapa TEXT NOT NULL,
-  observacao TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.pedido_checklists (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE,
-  etapa TEXT NOT NULL,
-  item_key TEXT NOT NULL,
-  checked BOOLEAN DEFAULT false,
-  anotacao TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.pedido_checklist_fotos (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID REFERENCES public.pedidos(id) ON DELETE CASCADE,
-  etapa TEXT NOT NULL,
-  item_key TEXT DEFAULT '',
-  foto_url TEXT NOT NULL,
-  nome_arquivo TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.planos_corte (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  typology_id TEXT NOT NULL,
-  nome TEXT NOT NULL,
-  responsavel TEXT DEFAULT '',
-  largura INTEGER NOT NULL DEFAULT 0,
-  altura INTEGER NOT NULL DEFAULT 0,
-  quantidade INTEGER NOT NULL DEFAULT 1,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.user_roles (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  role TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE (user_id, role)
-);
-
-CREATE TABLE IF NOT EXISTS public.funcionarios (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  nome TEXT NOT NULL,
-  cargo TEXT DEFAULT '',
-  telefone TEXT DEFAULT '',
-  email TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.administradores (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  nome TEXT NOT NULL,
-  email TEXT DEFAULT '',
-  role TEXT DEFAULT '',
-  ativo BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.assinaturas (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  plano TEXT NOT NULL DEFAULT 'basico',
-  ativo BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.notification_reads (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  notification_id TEXT NOT NULL,
-  read_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.orcamento_historico (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  orcamento_id UUID,
-  status_anterior TEXT DEFAULT '',
-  status_novo TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.projetos_vidro (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID DEFAULT auth.uid(),
-  titulo TEXT NOT NULL,
-  tipo TEXT DEFAULT '',
-  espessura INTEGER DEFAULT 4,
-  cor TEXT DEFAULT 'incolor',
-  preco_m2 NUMERIC DEFAULT 0,
-  area_minima_m2 NUMERIC DEFAULT 0.5,
-  archived BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.vidro_itens (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  projeto_id UUID REFERENCES public.projetos_vidro(id) ON DELETE CASCADE,
-  descricao TEXT NOT NULL,
-  largura_mm INTEGER NOT NULL,
-  altura_mm INTEGER NOT NULL,
-  quantidade INTEGER NOT NULL DEFAULT 1,
-  observacao TEXT DEFAULT '',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.tipologias_customizadas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID DEFAULT auth.uid(),
-  product_line_id TEXT NOT NULL,
-  name TEXT NOT NULL,
-  category TEXT NOT NULL DEFAULT 'janela',
-  subcategory TEXT DEFAULT 'correr',
-  num_folhas INTEGER NOT NULL DEFAULT 2,
-  has_veneziana BOOLEAN DEFAULT false,
-  has_bandeira BOOLEAN DEFAULT false,
-  notes TEXT,
-  active BOOLEAN DEFAULT true,
-  min_width_mm INTEGER DEFAULT 400,
-  max_width_mm INTEGER DEFAULT 6000,
-  min_height_mm INTEGER DEFAULT 300,
-  max_height_mm INTEGER DEFAULT 3000,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.regras_corte_customizadas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID DEFAULT auth.uid(),
-  typology_id TEXT NOT NULL,
-  profile_code TEXT NOT NULL,
-  piece_name TEXT NOT NULL,
-  piece_function TEXT DEFAULT '',
-  reference_dimension TEXT DEFAULT 'L',
-  coefficient NUMERIC DEFAULT 1,
-  constant_mm INTEGER DEFAULT 0,
-  fixed_value_mm INTEGER,
-  cut_angle_left INTEGER DEFAULT 90,
-  cut_angle_right INTEGER DEFAULT 90,
-  quantity_formula TEXT DEFAULT '1',
-  sort_order INTEGER DEFAULT 0,
-  weight_per_meter NUMERIC DEFAULT 0,
-  notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.regras_vidro_customizadas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID DEFAULT auth.uid(),
-  typology_id TEXT NOT NULL,
-  glass_name TEXT NOT NULL,
-  width_reference TEXT DEFAULT 'L',
-  width_constant_mm INTEGER DEFAULT 0,
-  height_reference TEXT DEFAULT 'H',
-  height_constant_mm INTEGER DEFAULT 0,
-  quantity INTEGER DEFAULT 1,
-  glass_type TEXT,
-  min_thickness_mm INTEGER,
-  max_thickness_mm INTEGER,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.regras_componentes_customizadas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID DEFAULT auth.uid(),
-  typology_id TEXT NOT NULL,
-  component_name TEXT NOT NULL,
-  component_code TEXT,
-  component_type TEXT DEFAULT '',
-  quantity_formula TEXT DEFAULT '1',
-  unit TEXT DEFAULT 'un',
-  length_reference TEXT,
-  length_constant_mm INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.api_integracoes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID DEFAULT auth.uid(),
-  nome TEXT NOT NULL,
-  descricao TEXT DEFAULT '',
-  chave TEXT NOT NULL,
-  ativa BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-
--- ============================================
--- 2. RLS (Row Level Security)
--- ============================================
-
+-- 3. HABILITAR RLS
 ALTER TABLE public.clientes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orcamentos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.estoque ENABLE ROW LEVEL SECURITY;
@@ -375,11 +90,7 @@ ALTER TABLE public.regras_vidro_customizadas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.regras_componentes_customizadas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.api_integracoes ENABLE ROW LEVEL SECURITY;
 
--- ============================================
--- 3. POLICIES
--- ============================================
-
--- Tables with direct user_id
+-- 4. POLICIES
 CREATE POLICY "Users manage own clientes" ON public.clientes FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own orcamentos" ON public.orcamentos FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own estoque" ON public.estoque FOR ALL TO authenticated USING (auth.uid() = user_id);
@@ -402,26 +113,15 @@ CREATE POLICY "Users manage own regras_corte_customizadas" ON public.regras_cort
 CREATE POLICY "Users manage own regras_vidro_customizadas" ON public.regras_vidro_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own regras_componentes_customizadas" ON public.regras_componentes_customizadas FOR ALL TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own api_integracoes" ON public.api_integracoes FOR ALL TO authenticated USING (auth.uid() = user_id);
-
--- Tables linked to pedidos via pedido_id
 CREATE POLICY "Users manage own pagamentos" ON public.pagamentos FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pagamentos.pedido_id AND pedidos.user_id = auth.uid()));
 CREATE POLICY "Users manage own pedido_etapas" ON public.pedido_etapas FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_etapas.pedido_id AND pedidos.user_id = auth.uid()));
 CREATE POLICY "Users manage own pedido_checklists" ON public.pedido_checklists FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_checklists.pedido_id AND pedidos.user_id = auth.uid()));
 CREATE POLICY "Users manage own pedido_checklist_fotos" ON public.pedido_checklist_fotos FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.pedidos WHERE pedidos.id = pedido_checklist_fotos.pedido_id AND pedidos.user_id = auth.uid()));
-
--- vidro_itens via projeto_id -> projetos_vidro -> user_id
 CREATE POLICY "Users manage own vidro_itens" ON public.vidro_itens FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM public.projetos_vidro WHERE projetos_vidro.id = vidro_itens.projeto_id AND projetos_vidro.user_id = auth.uid()));
 
--- ============================================
--- 4. STORAGE BUCKETS
--- ============================================
-
+-- 5. STORAGE BUCKETS
 INSERT INTO storage.buckets (id, name, public) VALUES ('company-assets', 'company-assets', true) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('checklist-fotos', 'checklist-fotos', false) ON CONFLICT (id) DO NOTHING;
 
--- ============================================
--- 5. FUNCTION updated_at
--- ============================================
-
+-- 6. FUNCTION
 CREATE OR REPLACE FUNCTION public.update_updated_at_column() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
-
