@@ -39,18 +39,54 @@ const Cadastro = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: window.location.origin },
     });
-    setLoading(false);
+    
     if (error) {
+      setLoading(false);
       toast.error("Erro no cadastro", { description: error.message });
-    } else {
-      toast.success("Conta criada!", { description: "Verifique seu e-mail para confirmar o cadastro." });
-      navigate("/login");
+      return;
     }
+    
+    // If signup successful, create user_roles and assinaturas records
+    if (data.user) {
+      // Check if user_roles already exists for this user
+      const { data: existingRole } = await supabase
+        .from("user_roles")
+        .select("id")
+        .eq("user_id", data.user.id)
+        .single();
+      
+      if (!existingRole) {
+        // Get current user count to determine role
+        const { count } = await supabase
+          .from("user_roles")
+          .select("*", { count: "exact", head: true });
+        
+        const role = (count ?? 0) === 0 ? "admin" : "funcionario";
+        
+        // Insert user_roles
+        await supabase.from("user_roles").insert({
+          user_id: data.user.id,
+          role: role,
+        });
+        
+        // Insert assinatura
+        await supabase.from("assinaturas").insert({
+          user_id: data.user.id,
+          plano: "basico",
+          ativo: true,
+        });
+      }
+    }
+    
+    setLoading(false);
+    toast.success("Conta criada!", { description: "Verifique seu e-mail para confirmar o cadastro." });
+    navigate("/login");
   };
 
   return (
