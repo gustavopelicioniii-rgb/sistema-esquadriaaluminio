@@ -50,6 +50,25 @@ export default function FramePreview({
   const dimFontSize = Math.max(9, Math.min(11, svgW * 0.03));
   const [hovered, setHovered] = useState(false);
 
+  // Determine type based on category and subcategory
+  const svgType = useMemo(() => {
+    // Fixed types
+    if (category === "fixa" || category === "basculante") return "fixa";
+    if (category === "maxim_ar") return "maxim_ar";
+    
+    // Sliding types based on number of leaves
+    if (subcategory === "correr" || category === "porta") {
+      if (num_folhas === 1) return "1f";
+      if (num_folhas === 2) return "2f";
+      if (num_folhas === 3) return "3f";
+      if (num_folhas === 4) return "4f";
+      if (num_folhas >= 6) return "6f";
+    }
+    
+    // Default to 2f (most common)
+    return "2f";
+  }, [category, subcategory, num_folhas]);
+
   // Determine animation type based on typology
   const animationType = useMemo(() => {
     if (category === "maxim_ar") return "maxim-ar";
@@ -102,19 +121,13 @@ export default function FramePreview({
 
         {/* Frame offset for dimension labels */}
         <g transform="translate(25, 10)">
-          {getTypologySvg({
+          {getTypologySvg(svgType, {
             width: width_mm,
             height: height_mm,
             color,
             numFolhas: num_folhas,
             svgWidth: svgW,
             svgHeight: svgH,
-            category,
-            subcategory,
-            num_folhas,
-            has_veneziana,
-            has_bandeira,
-            notes,
           })}
         </g>
 
