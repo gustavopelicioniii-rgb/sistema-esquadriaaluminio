@@ -24,6 +24,9 @@ const CriarOrcamento = lazy(() => import("./pages/CriarOrcamento"));
 const Producao = lazy(() => import("./pages/Producao"));
 const PlanoCorte = lazy(() => import("./pages/PlanoCorte"));
 const ConfiguracaoMarca = lazy(() => import("./pages/ConfiguracaoMarca"));
+const ConfiguracaoMarkup = lazy(() => import("./pages/ConfiguracaoMarkup"));
+const PortalCliente = lazy(() => import("./pages/portal-cliente/PortalCliente"));
+const GestaoEstoque = lazy(() => import("./pages/estoque/GestaoEstoque"));
 const ProjetoVidro = lazy(() => import("./pages/ProjetoVidro"));
 const RelacaoMateriais = lazy(() => import("./pages/RelacaoMateriais"));
 const Estoque = lazy(() => import("./pages/Estoque"));
@@ -108,6 +111,9 @@ const App = () => (
                   <Route path="/nota-fiscal" element={<S><NotaFiscal /></S>} />
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
                   <Route path="/configuracao-marca" element={<S><ConfiguracaoMarca /></S>} />
+                  <Route path="/configuracao-markup" element={<S><ConfiguracaoMarkup /></S>} />
+                  <Route path="/portal-cliente" element={<S><PortalCliente /></S>} />
+                  <Route path="/gestao-estoque" element={<S><GestaoEstoque /></S>} />
                   <Route path="/catalogo-mof" element={<S><CatalogoMOF /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />
