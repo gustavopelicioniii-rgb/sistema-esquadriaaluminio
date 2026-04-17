@@ -106,6 +106,7 @@ const App = () => (
                   <Route path="/mapa" element={<S><Mapa /></S>} />
                   <Route path="/nota-fiscal" element={<S><NotaFiscal /></S>} />
                   <Route path="/calculo-esquadrias" element={<S><CalculoEsquadrias /></S>} />
+                  <Route path="/configuracao-marca" element={<S><ConfiguracaoMarca /></S>} />
                   <Route path="/catalogo-mof" element={<S><CatalogoMOF /></S>} />
                   <Route path="/importar-csv" element={<S><ImportarCSV /></S>} />
                   <Route path="/notificacoes" element={<S><Notificacoes /></S>} />

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers,
+  Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers, Palette,
   Lock, Crown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -41,6 +41,7 @@ const menuItems = [
   { title: "Catálogo Vidros", url: "/catalogo-vidros", icon: Monitor },
   
   { title: "Configurações", url: "/configuracoes", icon: Settings },
+  { title: "Configuração de Marca", url: "/configuracao-marca", icon: Palette },
 ];
 
 export function AppSidebar() {
