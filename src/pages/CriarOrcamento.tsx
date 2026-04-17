@@ -13,7 +13,7 @@ import { useAddOrcamentoHistorico } from "@/hooks/use-orcamento-historico";
 import { FramePreview } from "@/components/frame-preview";
 import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
-import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
+import { generateProposalPDF } from "@/utils/generateProposalPdf";
 import { cn } from "@/lib/utils";
 import MaterialDetailDialog from "@/components/orcamento/MaterialDetailDialog";
 import { OrcamentoAiHelper } from "@/components/ai/OrcamentoAiHelper";
@@ -651,26 +651,30 @@ const CriarOrcamento = () => {
                 onClick={async () => {
                   if (!calculo || !produtoSelecionado) return;
                   toast.info("Gerando PDF profissional...");
-                  await generateProfessionalBudgetPDF(
-                    {
-                      cliente,
-                      produto: produtoSelecionado.label,
-                      larguraCm: activeItem.largura,
-                      alturaCm: activeItem.altura,
+                  
+                  const pdf = await generateProposalPDF({
+                    cliente: { nome: cliente || "Cliente" },
+                    vendedor: "AluFlow",
+                    tratamento: getColorById(activeItem.colorId).name,
+                    validadeDias: 15,
+                    prazo: "A combinar",
+                    observacoes: observacoes,
+                    itens: [{
+                      codigo: produtoSelecionado.value.toUpperCase(),
+                      nome: produtoSelecionado.label,
+                      linha: produtoSelecionado.line || "Padrão",
+                      tratamento: getColorById(activeItem.colorId).name,
+                      localizacao: activeItem.ambiente || "-",
+                      larguraMm: activeItem.largura * 10,
+                      alturaMm: activeItem.altura * 10,
                       quantidade: activeItem.quantidade,
-                      areaM2: calculo.totalArea,
-                      custoTotal: calculo.custo,
-                      margem: calculo.lucro,
-                      valorFinal: calculo.total,
-                      corAluminio: getColorById(activeItem.colorId).name,
-                      corFerragem: ferragemColors.find(c => c.id === activeItem.ferragemColorId)?.name,
-                      tipoVidro: activeItem.vidroTipo,
-                      ambiente: activeItem.ambiente,
-                      observacoes,
-                      validadeDias: 15,
-                    },
-                    "budget-frame-preview"
-                  );
+                      valorUnitario: calculo.total / activeItem.quantidade,
+                      valorTotal: calculo.total,
+                      descricaoCompleta: `${produtoSelecionado.label} - ${activeItem.vidroTipo} - ${ferragemColors.find(c => c.id === activeItem.ferragemColorId)?.name || "Cromado"}`,
+                      imagemUrl: produtoSelecionado.imagemUrl
+                    }]
+                  });
+                  pdf.save(`proposta-orcamento-${Date.now()}.pdf`);
                   toast.success("PDF exportado!");
                 }}
               >
