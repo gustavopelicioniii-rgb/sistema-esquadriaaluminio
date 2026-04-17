@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import SafeRender from "@/components/SafeRender";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -260,6 +261,7 @@ const CriarOrcamento = () => {
   };
 
   return (
+    <SafeRender fallback={<div className="flex items-center justify-center h-[calc(100vh-4rem)] text-muted-foreground">Erro ao carregar página. Recarregue.</div>}>
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -722,6 +724,7 @@ const CriarOrcamento = () => {
         />
       )}
     </div>
+    </SafeRender>
   );
 };
 
