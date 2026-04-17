@@ -25,6 +25,7 @@ const Producao = lazy(() => import("./pages/Producao"));
 const PlanoCorte = lazy(() => import("./pages/PlanoCorte"));
 const ConfiguracaoMarca = lazy(() => import("./pages/ConfiguracaoMarca"));
 const ConfiguracaoMarkup = lazy(() => import("./pages/ConfiguracaoMarkup"));
+const CatalogoMOF = lazy(() => import("./pages/CatalogoMOF"));
 const PortalCliente = lazy(() => import("./pages/portal-cliente/PortalCliente"));
 const GestaoEstoque = lazy(() => import("./pages/estoque/GestaoEstoque"));
 const ProjetoVidro = lazy(() => import("./pages/ProjetoVidro"));
