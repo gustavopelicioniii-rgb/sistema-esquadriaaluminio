@@ -23,6 +23,7 @@ const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 const CriarOrcamento = lazy(() => import("./pages/CriarOrcamento"));
 const Producao = lazy(() => import("./pages/Producao"));
 const PlanoCorte = lazy(() => import("./pages/PlanoCorte"));
+const ConfiguracaoMarca = lazy(() => import("./pages/ConfiguracaoMarca"));
 const ProjetoVidro = lazy(() => import("./pages/ProjetoVidro"));
 const RelacaoMateriais = lazy(() => import("./pages/RelacaoMateriais"));
 const Estoque = lazy(() => import("./pages/Estoque"));
