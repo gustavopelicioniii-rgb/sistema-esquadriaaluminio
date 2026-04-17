@@ -66,11 +66,12 @@ function SummaryCards({ result, barResults }: { result: CalculationOutput; barRe
 }
 
 // ============ DETAIL VIEW ============
-function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean>; allTypologies: ExtendedTypology[] }) {
+function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies, selectedMachine, setSelectedMachine }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean>; allTypologies: ExtendedTypology[]; selectedMachine: string; setSelectedMachine: (m: string) => void }) {
   const [largura, setLargura] = useState(plano.largura);
   const [altura, setAltura] = useState(plano.altura);
   const [quantidade, setQuantidade] = useState(plano.quantidade);
   const [folgasOpen, setFolgasOpen] = useState(false);
+  const [cncDialogOpen, setCncDialogOpen] = useState(false);
   const typ = allTypologies.find(t => t.id === plano.typology_id) as ExtendedTypology | undefined;
   const baseId = typ?._baseTypologyId;
 
@@ -96,9 +97,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
     open: false, title: "", blobUrl: null, filename: "", loading: false,
   });
-  const [cncDialogOpen, setCncDialogOpen] = useState(false);
-
-  const folgasKey = `folgas_${plano.typology_id}`;
+    const folgasKey = `folgas_${plano.typology_id}`;
   useEffect(() => {
     const loadFolgas = async () => {
       const { data: perTyp } = await supabase.from("configuracoes").select("valor").eq("chave", folgasKey).maybeSingle();
@@ -636,7 +635,7 @@ const PlanoCorte = () => {
   };
 
   if (selectedPlano) {
-    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} allTypologies={allTypologies} />;
+    return <PlanoDetalhe plano={selectedPlano} onBack={() => setSelectedPlano(null)} onUpdate={updatePlano} allTypologies={allTypologies} selectedMachine={selectedMachine} setSelectedMachine={setSelectedMachine} />;
   }
 
   if (loading || typLoading) {
