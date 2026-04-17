@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, Plus, Search, Save, Settings2, ChevronDown, FileDown, Copy, Trash2, Boxes, Scissors, Weight, BarChart3, Eye } from "lucide-react";
 import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
+import { CNCExportDialog } from "@/components/plano-corte/CNCExportDialog";
 import { toast } from "sonner";
 import { FramePreview } from "@/components/frame-preview";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +23,7 @@ import { calculateTypology } from "@/lib/calculation-engine";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import type { CalculationOutput, CutPiece, OptimizationResult } from "@/types/calculation";
 import { optimizeBars } from "@/lib/bar-optimizer";
-import { downloadCutFile, supportedMachines } from "@/utils/cnc/cutFileExporter";
+import { supportedMachines } from "@/utils/cnc/cutFileExporter";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
@@ -95,6 +96,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
   const [pdfPreview, setPdfPreview] = useState<{ open: boolean; title: string; blobUrl: string | null; filename: string; loading: boolean }>({
     open: false, title: "", blobUrl: null, filename: "", loading: false,
   });
+  const [cncDialogOpen, setCncDialogOpen] = useState(false);
 
   const folgasKey = `folgas_${plano.typology_id}`;
   useEffect(() => {
@@ -233,13 +235,8 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
       toast.error("Nenhum dado de otimização disponível");
       return;
     }
-    try {
-      downloadCutFile(barResults, selectedMachine, "gcode");
-      toast.success("Arquivo CNC exportado!");
-    } catch {
-      toast.error("Erro ao exportar CNC");
-    }
-  }, [barResults, selectedMachine]);
+    setCncDialogOpen(true);
+  }, [barResults]);
 
   const handleSave = useCallback(async () => {
     await onUpdate(plano.id, { largura, altura, quantidade });
@@ -577,6 +574,12 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies }: { plano: Plano
             a.click();
           }
         }}
+      />
+      <CNCExportDialog
+        open={cncDialogOpen}
+        onOpenChange={setCncDialogOpen}
+        barResults={barResults}
+        defaultMachine={selectedMachine}
       />
     </>
   );
