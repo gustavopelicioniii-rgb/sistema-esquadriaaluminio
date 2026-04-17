@@ -3,7 +3,7 @@ import {
   Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
   CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
   Calculator, Receipt, Package, Upload, Kanban, Bell, Settings, Layers, Palette,
-  Lock, Crown,
+  Lock, Crown, TrendingUp, Warehouse, UserCircle,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -42,6 +42,13 @@ const menuItems = [
   
   { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Configuração de Marca", url: "/configuracao-marca", icon: Palette },
+  { title: "Configuração de Markup", url: "/configuracao-markup", icon: TrendingUp },
+  { title: "Gestão de Estoque", url: "/gestao-estoque", icon: Warehouse },
+];
+
+// Portal routes (public, no auth required)
+export const portalMenuItems = [
+  { title: "Portal do Cliente", url: "/portal-cliente", icon: UserCircle },
 ];
 
 export function AppSidebar() {
