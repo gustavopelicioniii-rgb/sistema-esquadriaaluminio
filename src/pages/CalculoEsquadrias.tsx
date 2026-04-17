@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
 import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import SafeRender from "@/components/SafeRender";
 import ProfileCrossSectionPanel from "@/components/frame-preview/ProfileCrossSectionPanel";
 import { getColorById } from "@/components/frame-preview/colors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -321,19 +322,21 @@ export default function CalculoEsquadrias() {
           <CardContent>
             <div className="flex flex-col items-center gap-6">
               <div id="frame-preview-for-pdf">
-              <FramePreview
-                width_mm={parseFloat(width) || 1200}
-                height_mm={parseFloat(height) || 1200}
-                category={filteredTypologies.find(t => t.id === selectedTypology)?.category ?? "janela"}
-                subcategory={filteredTypologies.find(t => t.id === selectedTypology)?.subcategory ?? "correr"}
-                num_folhas={filteredTypologies.find(t => t.id === selectedTypology)?.num_folhas ?? 2}
-                has_veneziana={filteredTypologies.find(t => t.id === selectedTypology)?.has_veneziana}
-                has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
-                notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
-                colorId={selectedColor}
-                maxWidth={280}
-                maxHeight={220}
-              />
+              <SafeRender fallback={<div className="h-48 flex items-center justify-center text-muted-foreground text-sm">Prévia não disponível</div>}>
+                <FramePreview
+                  width_mm={parseFloat(width) || 1200}
+                  height_mm={parseFloat(height) || 1200}
+                  category={filteredTypologies.find(t => t.id === selectedTypology)?.category ?? "janela"}
+                  subcategory={filteredTypologies.find(t => t.id === selectedTypology)?.subcategory ?? "correr"}
+                  num_folhas={filteredTypologies.find(t => t.id === selectedTypology)?.num_folhas ?? 2}
+                  has_veneziana={filteredTypologies.find(t => t.id === selectedTypology)?.has_veneziana}
+                  has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
+                  notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
+                  colorId={selectedColor}
+                  maxWidth={280}
+                  maxHeight={220}
+                />
+              </SafeRender>
                </div>
               <div className="space-y-3">
                 <div>
@@ -350,15 +353,17 @@ export default function CalculoEsquadrias() {
                 <Separator />
               )}
               {result && result.cuts.length > 0 && (
-                <ProfileCrossSectionPanel
-                  profiles={(() => {
-                    const seen = new Set<string>();
-                    return result.cuts
-                      .filter(c => { if (seen.has(c.profile_code)) return false; seen.add(c.profile_code); return true; })
-                      .map(c => ({ code: c.profile_code, name: c.piece_name, type: c.piece_function, weight_per_meter: c.weight_kg > 0 && c.cut_length_mm > 0 ? (c.weight_kg / c.quantity) / (c.cut_length_mm / 1000) : undefined }));
-                  })()}
-                  color={getColorById(selectedColor)}
-                />
+                <SafeRender fallback={null}>
+                  <ProfileCrossSectionPanel
+                    profiles={(() => {
+                      const seen = new Set<string>();
+                      return result.cuts
+                        .filter(c => { if (seen.has(c.profile_code)) return false; seen.add(c.profile_code); return true; })
+                        .map(c => ({ code: c.profile_code, name: c.piece_name, type: c.piece_function, weight_per_meter: c.weight_kg > 0 && c.cut_length_mm > 0 ? (c.weight_kg / c.quantity) / (c.cut_length_mm / 1000) : undefined }));
+                    })()}
+                    color={getColorById(selectedColor)}
+                  />
+                </SafeRender>
               )}
             </div>
           </CardContent>
