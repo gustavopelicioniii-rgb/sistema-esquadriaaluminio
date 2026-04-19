@@ -18,9 +18,6 @@ interface PhotorealisticPreviewProps {
   className?: string;
 }
 
-// Colors that match the photorealistic images (natural/white tones)
-const MATCHES_PHOTOREALISTIC = ["natural", "branco", "Branco", "White"];
-
 export default function PhotorealisticPreview({
   imagemUrl,
   width_mm,
@@ -44,9 +41,6 @@ export default function PhotorealisticPreview({
   const aspectRatio = width_mm / height_mm;
   const displayWidth = Math.min(maxWidth, maxHeight * aspectRatio);
   const displayHeight = Math.min(maxHeight, maxWidth / aspectRatio);
-
-  // Check if selected color matches the photorealistic image
-  const colorMatchesPhoto = MATCHES_PHOTOREALISTIC.includes(colorId);
 
   // Determine animation type based on typology (for hover effect)
   const animationType = (() => {
@@ -74,9 +68,9 @@ export default function PhotorealisticPreview({
     }
   })();
 
-  // If we have a valid image URL and haven't errored AND color matches, show the photo
-  // Otherwise, show SVG preview with the selected color
-  if (imagemUrl && !imageError && colorMatchesPhoto) {
+  // If we have a valid image URL and haven't errored, show the photo
+  // (Always show photorealistic, regardless of color selection)
+  if (imagemUrl && !imageError) {
     return (
       <div
         className={cn(
@@ -135,7 +129,7 @@ export default function PhotorealisticPreview({
     );
   }
 
-  // Fallback to SVG preview (shows the correct color)
+  // Fallback to SVG preview (only if image fails to load)
   return (
     <FramePreview
       width_mm={width_mm}
