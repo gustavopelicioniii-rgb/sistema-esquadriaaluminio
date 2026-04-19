@@ -55,7 +55,7 @@ const typologyImages: Record<string, string> = {
   "typ-su-jc2fv": `${IMG_CDN}/tipologia-janela-persiana---photorealistic-11.png`,
   "typ-su-jc4fv": `${IMG_CDN}/tipologia-janela-persiana---photorealistic-11.png`,
   "typ-go-jc2fv": `${IMG_CDN}/tipologia-janela-persiana---photorealistic-11.png`,
-  "typ-su-jc6f": `${IMG_CDN}/tipologia-janela-persiana---photorealistic-11.png`,
+  "typ-su-jc6f": `${IMG_CDN}/tipologia-janela-correr-4p---photorealistic-02.png`,
   // Janela Fixa
   "typ-su-vfix": `${IMG_CDN}/tipologia-janela-fixa---photorealistic-12.png`,
   "typ-go-vfix": `${IMG_CDN}/tipologia-janela-fixa---photorealistic-12.png`,
