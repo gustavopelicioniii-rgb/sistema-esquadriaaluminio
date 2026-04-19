@@ -24,6 +24,7 @@ import { GlassRulesManager } from "@/components/tipologias/GlassRulesManager";
 import { ComponentRulesManager } from "@/components/tipologias/ComponentRulesManager";
 import { RulesValidatorWrapper } from "@/components/ai/RulesValidatorWrapper";
 import { FramePreview } from "@/components/frame-preview";
+import PhotorealisticPreview from "@/components/frame-preview/PhotorealisticPreview";
 import { toast } from "sonner";
 
 const CATEGORIES = [
@@ -524,7 +525,8 @@ const Tipologias = () => {
                   <Card key={t.id} className="group hover:shadow-md transition-shadow border-border/60 overflow-hidden">
                     <div className="bg-muted/30 p-4 flex items-center justify-center aspect-square cursor-pointer"
                       onClick={() => setDetailTypology(t)}>
-                      <FramePreview
+                      <PhotorealisticPreview
+                        imagemUrl={(t as any).imagem_url}
                         width_mm={t.max_width_mm || 1200}
                         height_mm={t.max_height_mm || 1400}
                         category={t.category}
@@ -532,7 +534,6 @@ const Tipologias = () => {
                         num_folhas={t.num_folhas}
                         has_veneziana={t.has_veneziana}
                         has_bandeira={t.has_bandeira}
-                        notes={t.notes || undefined}
                         maxWidth={180}
                         maxHeight={180}
                         showDimensions={false}
