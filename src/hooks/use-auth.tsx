@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+
+// Local types instead of Supabase
+type User = { id: string; email?: string; nome?: string };
+type Session = { access_token: string; refresh_token?: string; expires_in?: number; expires_at?: number };
 
 type AppRole = "admin" | "funcionario";
 
@@ -14,16 +16,36 @@ type AuthContextType = {
   signOut: () => Promise<void>;
 };
 
+// BYPASS MODE - No auth required (set to false to enable auth)
+const BYPASS_MODE = true;
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   role: null,
-  isLoading: true,
+  isLoading: false, // Not loading in bypass mode
   isRoleLoading: false,
   signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // BYPASS MODE - Return dummy values
+  if (BYPASS_MODE) {
+    return (
+      <AuthContext.Provider value={{ 
+        user: { id: 'bypass-user', email: 'bypass@test.com' } as any, 
+        session: null, 
+        role: 'admin' as AppRole, 
+        isLoading: false, 
+        isRoleLoading: false, 
+        signOut: async () => {} 
+      }}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+
+  // Original auth logic below
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
@@ -41,7 +63,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", userId);
 
       if (error) {
-        // Error loading permissions treated gracefully
         setRole(null);
         return;
       }

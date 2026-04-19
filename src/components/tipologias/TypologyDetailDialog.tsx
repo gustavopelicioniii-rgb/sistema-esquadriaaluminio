@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FramePreview } from "@/components/frame-preview";
+import PhotorealisticPreview from "@/components/frame-preview/PhotorealisticPreview";
 import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology } from "@/data/catalog";
 import { productLines } from "@/data/catalog/manufacturers";
 import { Scissors, GlassWater, Package, Ruler, FileDown } from "lucide-react";
@@ -68,7 +69,8 @@ export function TypologyDetailDialog({ typology, open, onOpenChange }: Props) {
             {/* Header: Preview + Info */}
             <div className="flex gap-5 pt-2">
               <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center shrink-0">
-                <FramePreview
+                <PhotorealisticPreview
+                  imagemUrl={(typology as any).imagem_url}
                   width_mm={typology.max_width_mm || 1200}
                   height_mm={typology.max_height_mm || 1400}
                   category={typology.category}
@@ -76,7 +78,6 @@ export function TypologyDetailDialog({ typology, open, onOpenChange }: Props) {
                   num_folhas={typology.num_folhas}
                   has_veneziana={typology.has_veneziana}
                   has_bandeira={typology.has_bandeira}
-                  notes={typology.notes || undefined}
                   maxWidth={160}
                   maxHeight={160}
                   showDimensions={false}

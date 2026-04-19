@@ -3,7 +3,8 @@ import { useState, useCallback } from "react";
 type Message = { role: "user" | "assistant"; content: string };
 type AiContext = "assistant" | "dashboard" | "crm" | "orcamento";
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
+// AI Chat desabilitado - dependia do Supabase Cloud
+// Para reabilitar, configure um endpoint de chat (OpenAI, MiniMax, etc)
 
 export function useAiChat(context: AiContext = "assistant") {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -12,76 +13,20 @@ export function useAiChat(context: AiContext = "assistant") {
 
   const sendMessage = useCallback(async (input: string) => {
     const userMsg: Message = { role: "user", content: input };
-    const allMessages = [...messages, userMsg];
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
     setError(null);
 
-    let assistantSoFar = "";
-    const upsertAssistant = (chunk: string) => {
-      assistantSoFar += chunk;
-      setMessages(prev => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant") {
-          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
-        }
-        return [...prev, { role: "assistant", content: assistantSoFar }];
-      });
-    };
-
-    try {
-      const resp = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ messages: allMessages, context }),
-      });
-
-      if (!resp.ok) {
-        const data = await resp.json().catch(() => ({}));
-        throw new Error(data.error || `Erro ${resp.status}`);
-      }
-
-      if (!resp.body) throw new Error("Sem resposta do servidor");
-
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) upsertAssistant(content);
-          } catch {
-            textBuffer = line + "\n" + textBuffer;
-            break;
-          }
-        }
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Erro desconhecido";
-      setError(msg);
-      setMessages(prev => [...prev, { role: "assistant", content: `❌ ${msg}` }]);
-    } finally {
+    // Simular resposta do AI ( placeholder - desabilitado )
+    setTimeout(() => {
+      const response: Message = {
+        role: "assistant",
+        content: "🤖 AI Chat temporariamente desabilitado. Configure um provedor de chat para reabilitar (OpenAI, MiniMax, etc).",
+      };
+      setMessages(prev => [...prev, response]);
       setIsLoading(false);
-    }
-  }, [messages, context]);
+    }, 500);
+  }, []);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -92,50 +37,6 @@ export function useAiChat(context: AiContext = "assistant") {
 }
 
 export async function aiOneShot(context: AiContext, userMessage: string): Promise<string> {
-  const resp = await fetch(CHAT_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-    },
-    body: JSON.stringify({
-      messages: [{ role: "user", content: userMessage }],
-      context,
-    }),
-  });
-
-  if (!resp.ok) {
-    const data = await resp.json().catch(() => ({}));
-    throw new Error(data.error || `Erro ${resp.status}`);
-  }
-
-  if (!resp.body) throw new Error("Sem resposta");
-
-  const reader = resp.body.getReader();
-  const decoder = new TextDecoder();
-  let result = "";
-  let textBuffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    textBuffer += decoder.decode(value, { stream: true });
-
-    let idx: number;
-    while ((idx = textBuffer.indexOf("\n")) !== -1) {
-      let line = textBuffer.slice(0, idx);
-      textBuffer = textBuffer.slice(idx + 1);
-      if (line.endsWith("\r")) line = line.slice(0, -1);
-      if (!line.startsWith("data: ")) continue;
-      const jsonStr = line.slice(6).trim();
-      if (jsonStr === "[DONE]") break;
-      try {
-        const parsed = JSON.parse(jsonStr);
-        const content = parsed.choices?.[0]?.delta?.content;
-        if (content) result += content;
-      } catch { break; }
-    }
-  }
-
-  return result;
+  // Placeholder - AI desabilitado
+  return "🤖 AI Chat temporariamente desabilitado. Configure um provedor de chat para reabilitar.";
 }

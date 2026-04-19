@@ -8,26 +8,27 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+// TEMPORARILY DISABLED - PWA install banner removed
 export function PwaInstallBanner() {
+  return null;
+  
+  // Original code disabled below
+  /*
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isIos, setIsIos] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Don't show if already installed as standalone
     if (window.matchMedia("(display-mode: standalone)").matches) return;
-    // Don't show if dismissed before
     if (localStorage.getItem("pwa-install-dismissed")) return;
     if (!isMobile) return;
 
-    // iOS detection
     const ua = navigator.userAgent;
     const isIosDevice = /iphone|ipad|ipod/i.test(ua) && !(window as any).MSStream;
     setIsIos(isIosDevice);
 
     if (isIosDevice) {
-      // iOS doesn't support beforeinstallprompt, show manual instructions
       setShowBanner(true);
       return;
     }
@@ -87,4 +88,5 @@ export function PwaInstallBanner() {
       </div>
     </div>
   );
+  */
 }

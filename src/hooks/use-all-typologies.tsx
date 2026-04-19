@@ -46,7 +46,7 @@ export function findBaseTypologyId(
   return null;
 }
 
-export type ExtendedTypology = Typology & { _baseTypologyId?: string; _isCustom?: boolean };
+export type ExtendedTypology = Typology & { _baseTypologyId?: string; _isCustom?: boolean; imagem_url?: string };
 
 export function useAllTypologies() {
   const [customTypologies, setCustomTypologies] = useState<ExtendedTypology[]>([]);
@@ -68,7 +68,7 @@ export function useAllTypologies() {
           // Error fetching typologies
           setError(err.message);
         } else if (data) {
-          const mapped: ExtendedTypology[] = data.map((row) => {
+          const mapped: ExtendedTypology[] = data.map((row: any) => {
             const typology: ExtendedTypology = {
               id: row.id,
               product_line_id: row.product_line_id,
@@ -85,6 +85,7 @@ export function useAllTypologies() {
               min_height_mm: row.min_height_mm ?? undefined,
               max_height_mm: row.max_height_mm ?? undefined,
               _isCustom: true,
+              imagem_url: row.imagem_url ?? undefined,
             };
             typology._baseTypologyId = findBaseTypologyId(typology) ?? undefined;
             return typology;

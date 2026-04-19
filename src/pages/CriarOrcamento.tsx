@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useCreateOrcamento, useUpdateOrcamento, useOrcamentoById } from "@/hooks/use-orcamentos";
 import { useAddOrcamentoHistorico } from "@/hooks/use-orcamento-historico";
 import { FramePreview } from "@/components/frame-preview";
+import PhotorealisticPreview from "@/components/frame-preview/PhotorealisticPreview";
 import { getColorById, aluminumColors } from "@/components/frame-preview/colors";
 import Frame3DWrapper from "@/components/frame-preview/Frame3DWrapper";
 import { generateProposalPDF } from "@/utils/generateProposalPdf";
@@ -285,7 +286,8 @@ const CriarOrcamento = () => {
           <div className="flex-1 flex items-center justify-center p-4">
             <Frame3DWrapper className="flex items-center justify-center">
               <div id="budget-frame-preview">
-                <FramePreview
+                <PhotorealisticPreview
+                  imagemUrl={produtoSelecionado?.imagem_url}
                   width_mm={activeItem.largura * 10}
                   height_mm={activeItem.altura * 10}
                   category={produtoSelecionado?.category ?? "janela_correr"}
@@ -652,6 +654,20 @@ const CriarOrcamento = () => {
                   if (!calculo || !produtoSelecionado) return;
                   toast.info("Gerando PDF profissional...");
                   
+                  // Map product type to image URL
+                  const imageUrlByType: Record<string, string> = {
+                    'janela_correr_2f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-correr-2p---photorealistic-01.png',
+                    'janela_correr_4f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-correr-4p---photorealistic-02.png',
+                    'porta_correr_2f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-porta-correr-2p---photorealistic-03.png',
+                    'porta_correr_4f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-porta-correr-4p---photorealistic-04.png',
+                    'janela_maximar_1f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-maxair---photorealistic-07.png',
+                    'janela_maximar_2f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-maxair---photorealistic-07.png',
+                    'porta_giro_1f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-giro---photorealistic-05.png',
+                    'porta_giro_2f': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-giro---photorealistic-05.png',
+                    'janela_veneziana': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-persiana---photorealistic-11.png',
+                    'janela_camarao': 'https://aluflow-landing.vercel.app/images/typologies/tipologia-janela-persiana---photorealistic-11.png',
+                  };
+                  
                   const pdf = await generateProposalPDF({
                     cliente: { nome: cliente || "Cliente" },
                     vendedor: "AluFlow",
@@ -671,7 +687,7 @@ const CriarOrcamento = () => {
                       valorUnitario: calculo.total / activeItem.quantidade,
                       valorTotal: calculo.total,
                       descricaoCompleta: `${produtoSelecionado.label} - ${activeItem.vidroTipo} - ${ferragemColors.find(c => c.id === activeItem.ferragemColorId)?.name || "Cromado"}`,
-                      imagemUrl: produtoSelecionado.imagemUrl
+                      imagemUrl: imageUrlByType[produtoSelecionado.value] || null
                     }]
                   });
                   pdf.save(`proposta-orcamento-${Date.now()}.pdf`);

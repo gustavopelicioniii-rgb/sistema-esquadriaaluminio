@@ -34,6 +34,7 @@ const menuItems = [
   { title: "Financeiro", url: "/financeiro", icon: DollarSign, badgeKey: "pagamento" as const },
   { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+  { title: "Dashboard Avançado", url: "/dashboard-avancado", icon: TrendingUp },
   { title: "Mapa", url: "/mapa", icon: MapPin },
   { title: "Importar Planilha", url: "/importar-csv", icon: Upload },
   { title: "Tipologias", url: "/tipologias", icon: Layers },

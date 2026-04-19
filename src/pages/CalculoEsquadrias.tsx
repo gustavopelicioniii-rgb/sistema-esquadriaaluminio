@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Calculator, Ruler, Weight, Grid3X3, Package, Layers, FileDown, RotateCcw, Eye, ChevronsUpDown, Check, Search } from "lucide-react";
 import { PdfPreviewDialog } from "@/components/PdfPreviewDialog";
 import { FramePreview, ColorSelector } from "@/components/frame-preview";
+import PhotorealisticPreview from "@/components/frame-preview/PhotorealisticPreview";
 import SafeRender from "@/components/SafeRender";
 import ProfileCrossSectionPanel from "@/components/frame-preview/ProfileCrossSectionPanel";
 import { getColorById } from "@/components/frame-preview/colors";
@@ -323,7 +324,8 @@ export default function CalculoEsquadrias() {
             <div className="flex flex-col items-center gap-6">
               <div id="frame-preview-for-pdf">
               <SafeRender fallback={<div className="h-48 flex items-center justify-center text-muted-foreground text-sm">Prévia não disponível</div>}>
-                <FramePreview
+                <PhotorealisticPreview
+                  imagemUrl={filteredTypologies.find(t => t.id === selectedTypology)?.imagem_url}
                   width_mm={parseFloat(width) || 1200}
                   height_mm={parseFloat(height) || 1200}
                   category={filteredTypologies.find(t => t.id === selectedTypology)?.category ?? "janela"}
@@ -331,7 +333,6 @@ export default function CalculoEsquadrias() {
                   num_folhas={filteredTypologies.find(t => t.id === selectedTypology)?.num_folhas ?? 2}
                   has_veneziana={filteredTypologies.find(t => t.id === selectedTypology)?.has_veneziana}
                   has_bandeira={filteredTypologies.find(t => t.id === selectedTypology)?.has_bandeira}
-                  notes={filteredTypologies.find(t => t.id === selectedTypology)?.notes}
                   colorId={selectedColor}
                   maxWidth={280}
                   maxHeight={220}

@@ -281,22 +281,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     return () => { clearInterval(interval); clearInterval(cleanupInterval); };
   }, [fetchNotifications]);
 
-  // Single realtime subscription
+  // Realtime disabled - using local API without realtime support
   useEffect(() => {
-    if (!user) return;
-
-    const channel = supabase.channel(`notifications-singleton-${user.id}`);
-
-    channel
-      .on("postgres_changes", { event: "*", schema: "public", table: "estoque" }, () => fetchNotifications())
-      .on("postgres_changes", { event: "*", schema: "public", table: "contas_financeiras" }, () => fetchNotifications())
-      .on("postgres_changes", { event: "*", schema: "public", table: "pedidos" }, () => fetchNotifications())
-      .on("postgres_changes", { event: "*", schema: "public", table: "crm_leads" }, () => fetchNotifications())
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // No realtime subscriptions in local API mode
   }, [user, fetchNotifications]);
 
   const markAsRead = useCallback(async (id: string) => {

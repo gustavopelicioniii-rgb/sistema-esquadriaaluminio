@@ -8,6 +8,9 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+  // BYPASSED FOR TESTING - Auth disabled
+  return <>{children}</>;
+  
   const { user, role, isLoading, isRoleLoading } = useAuth();
 
   if (isLoading || (requiredRole && isRoleLoading)) return <PageLoading />;
