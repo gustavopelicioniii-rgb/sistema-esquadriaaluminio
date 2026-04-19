@@ -18,19 +18,22 @@ export interface ProdutoOrcamento {
 // URL base para imagens fotorrealistas
 const IMG_CDN = "https://aluflow-landing.vercel.app/images/typologies";
 
-// Mapeamento de typologyId para imagem
+// Mapeamento de typologyId para imagem (mesmo do catalog/typologies.ts)
 const typologyImages: Record<string, string> = {
   "typ-su-jc2f": `${IMG_CDN}/tipologia-janela-correr-2p---photorealistic-01.png`,
   "typ-su-jc4f": `${IMG_CDN}/tipologia-janela-correr-4p---photorealistic-02.png`,
+  "typ-su-jc6f": `${IMG_CDN}/tipologia-janela-correr-6p---photorealistic.png`,
   "typ-su-pc2f": `${IMG_CDN}/tipologia-porta-correr-2p---photorealistic-03.png`,
   "typ-su-pc4f": `${IMG_CDN}/tipologia-porta-correr-4p---photorealistic-04.png`,
-  "typ-su-pg1f": `${IMG_CDN}/tipologia-janela-giro---photorealistic-05.png`,
-  "typ-su-pg2f": `${IMG_CDN}/tipologia-janela-giro---photorealistic-05.png`,
-  "typ-su-jpiv": `${IMG_CDN}/tipologia-porta-pivotante---photorealistic-06.png`,
-  "typ-su-jma1": `${IMG_CDN}/tipologia-janela-maxair---photorealistic-07.png`,
-  "typ-su-jma2": `${IMG_CDN}/tipologia-janela-maxair---photorealistic-07.png`,
+  "typ-su-pg1f": `${IMG_CDN}/tipologia-porta-giro-1p---photorealistic.png`,
+  "typ-su-pg2f": `${IMG_CDN}/tipologia-porta-giro-2p---photorealistic.png`,
+  "typ-su-jpiv": `${IMG_CDN}/tipologia-porta-pivotante---photorealistic.png`,
+  "typ-su-jma1": `${IMG_CDN}/tipologia-janela-maxair---photorealistic.png`,
+  "typ-su-jma2": `${IMG_CDN}/tipologia-janela-maxair---photorealistic.png`,
   "typ-su-jc2fv": `${IMG_CDN}/tipologia-janela-persiana---photorealistic-11.png`,
-  "typ-su-vfix": `${IMG_CDN}/tipologia-janela-fixa---photorealistic-12.png`,
+  "typ-su-jcam": `${IMG_CDN}/tipologia-janela-correr-4p---photorealistic-02.png`,
+  "typ-su-vfix": `${IMG_CDN}/tipologia-janela-fixa---photorealistic.png`,
+  "typ-su-jc3f": `${IMG_CDN}/tipologia-janela-correr-3p---photorealistic.png`,
 };
 
 export const tiposProduto: ProdutoOrcamento[] = [
@@ -43,7 +46,7 @@ export const tiposProduto: ProdutoOrcamento[] = [
   { value: "porta_correr_2f", label: "Porta de Correr 2F", precoM2: 1050, category: "porta_correr", subcategory: "2_folhas", numFolhas: 2, typologyId: "typ-su-pc2f", imagem_url: typologyImages["typ-su-pc2f"], minLarguraCm: 100, maxLarguraCm: 400, minAlturaCm: 180, maxAlturaCm: 280 },
   { value: "porta_correr_4f", label: "Porta de Correr 4F", precoM2: 1100, category: "porta_correr", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-pc4f", imagem_url: typologyImages["typ-su-pc4f"], minLarguraCm: 200, maxLarguraCm: 600, minAlturaCm: 180, maxAlturaCm: 280 },
   { value: "janela_veneziana", label: "Janela c/ Veneziana 2F", precoM2: 1200, category: "janela_correr", subcategory: "2_folhas", numFolhas: 2, veneziana: true, typologyId: "typ-su-jc2fv", imagem_url: typologyImages["typ-su-jc2fv"], minLarguraCm: 80, maxLarguraCm: 400, minAlturaCm: 40, maxAlturaCm: 250 },
-  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-jcam", imagem_url: typologyImages["typ-su-jc4f"], minLarguraCm: 100, maxLarguraCm: 400, minAlturaCm: 40, maxAlturaCm: 200 },
+  { value: "janela_camarao", label: "Janela Camarão", precoM2: 1300, category: "janela_camarao", subcategory: "4_folhas", numFolhas: 4, typologyId: "typ-su-jcam", imagem_url: typologyImages["typ-su-jcam"], minLarguraCm: 100, maxLarguraCm: 400, minAlturaCm: 40, maxAlturaCm: 200 },
 ];
 
 export const getProdutoByValue = (value: string) =>
