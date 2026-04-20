@@ -1,27 +1,6 @@
 import { useState } from "react";
 import FramePreview from "./FramePreview";
 import { cn } from "@/lib/utils";
-import { getColorById } from "./colors";
-
-// Helper to calculate hue rotation for color tinting
-function getHueRotation(hexColor: string): number {
-  const hex = hexColor.replace("#", "");
-  const r = parseInt(hex.substring(0, 2), 16) / 255;
-  const g = parseInt(hex.substring(2, 4), 16) / 255;
-  const b = parseInt(hex.substring(4, 6), 16) / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  if (max !== min) {
-    const d = max - min;
-    switch (max) {
-      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-      case g: h = ((b - r) / d + 2) / 6; break;
-      case b: h = ((r - g) / d + 4) / 6; break;
-    }
-  }
-  return h * 360;
-}
 
 interface PhotorealisticPreviewProps {
   imagemUrl?: string;
@@ -89,12 +68,11 @@ export default function PhotorealisticPreview({
     }
   })();
 
-  // Get color info for tinting
-  const colorInfo = getColorById(colorId || "natural");
-  const isNaturalColor = colorId === "natural" || !colorId;
+  // Only show photorealistic image if color is natural (default)
+  // Otherwise fall back to SVG which can render colors correctly
+  const isNaturalColor = !colorId || colorId === "natural";
   
-  // If we have a valid image URL, show the photo (with color tint if selected)
-  if (imagemUrl && !imageError) {
+  if (imagemUrl && !imageError && isNaturalColor) {
     return (
       <div
         className={cn(
@@ -117,23 +95,14 @@ export default function PhotorealisticPreview({
         <img
           src={imagemUrl}
           alt={`${category} - ${num_folhas} folhas`}
-          className={cn(
-            "max-w-full max-h-full object-contain transition-all duration-300",
-            !isNaturalColor && "transition-all duration-500"
-          )}
+          className="max-w-full max-h-full object-contain transition-all duration-300"
           style={{
             width: displayWidth,
             height: displayHeight,
             objectFit: "contain",
             transform: hovered ? hoverTransform : "",
-            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s, filter 0.5s",
-            filter: hovered 
-              ? isNaturalColor 
-                ? "brightness(1.05)" 
-                : `brightness(0.95) sepia(0.3) saturate(1.5) hue-rotate(${getHueRotation(colorInfo.hex)}deg)`
-              : isNaturalColor 
-                ? "brightness(1)" 
-                : `brightness(0.95) sepia(0.3) saturate(1.5) hue-rotate(${getHueRotation(colorInfo.hex)}deg)`,
+            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s",
+            filter: hovered ? "brightness(1.05)" : "brightness(1)",
           }}
           onLoad={() => setIsLoading(false)}
           onError={() => {
@@ -141,18 +110,6 @@ export default function PhotorealisticPreview({
             setIsLoading(false);
           }}
         />
-        {/* Color tint overlay for non-natural colors */}
-        {!isNaturalColor && (
-          <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-500"
-            style={{
-              backgroundColor: colorInfo.hex,
-              opacity: 0.25,
-              mixBlendMode: "multiply",
-            }}
-          />
-        )}
-        {/* Dimension badge */}
         {showDimensions && (
           <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded font-mono">
             {width_mm} x {height_mm} mm
@@ -162,7 +119,7 @@ export default function PhotorealisticPreview({
     );
   }
 
-  // Fallback to SVG preview (only if image fails to load)
+  // Fall back to SVG preview when color is not natural
   return (
     <FramePreview
       width_mm={width_mm}
