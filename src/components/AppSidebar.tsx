@@ -67,27 +67,31 @@ const menuGroups = [
     ],
   },
   {
-    label: "Configurações",
+    label: "Analytics",
     items: [
-      { title: "Configurações", url: "/configuracoes", icon: Settings },
-      { title: "Marca", url: "/configuracao-marca", icon: Palette },
-      { title: "Markup", url: "/configuracao-markup", icon: TrendingUp },
       { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
-      { title: "Dashboard", url: "/dashboard-avancado", icon: TrendingUp },
       { title: "Mapa", url: "/mapa", icon: MapPin },
-      { title: "Importar", url: "/importar-csv", icon: Upload },
+    ],
+  },
+  {
+    label: "Catálogo",
+    items: [
       { title: "Produtos", url: "/produtos", icon: ShoppingBag },
       { title: "Catálogo MOF", url: "/catalogo-mof", icon: Package },
       { title: "Catálogo Vidros", url: "/catalogo-vidros", icon: Monitor },
     ],
   },
+  {
+    label: "Sistema",
+    items: [
+      { title: "Configurações", url: "/configuracoes", icon: Settings },
+      { title: "Importar CSV", url: "/importar-csv", icon: Upload },
+      { title: "Notificações", url: "/notificacoes", icon: Bell },
+    ],
+  },
 ];
 
 // Single items outside groups
-const singleItems = [
-  { title: "Notificações", url: "/notificacoes", icon: Bell },
-];
-
 // Portal routes (public, no auth required)
 export const portalMenuItems = [
   { title: "Portal do Cliente", url: "/portal-cliente", icon: Users },
@@ -204,52 +208,6 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
-
-        {/* Single items outside groups */}
-        <SidebarGroup>
-          {!collapsed && (
-            <SidebarGroupLabel className="px-2 py-2 text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted/60">
-              Extra
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {singleItems.map((item) => {
-                const count = item.url === "/notificacoes" ? unreadCount : 0;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                      <NavLink
-                        to={item.url}
-                        className="hover:bg-sidebar-accent/50 transition-colors"
-                        activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
-                      >
-                        <div className="relative">
-                          <item.icon className="h-4 w-4" />
-                          {count > 0 && collapsed && (
-                            <span className="absolute -top-1.5 -right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground flex items-center justify-center">
-                              {count > 9 ? "9+" : count}
-                            </span>
-                          )}
-                        </div>
-                        {!collapsed && (
-                          <>
-                            <span className="flex-1">{item.title}</span>
-                            {count > 0 && (
-                              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive/15 text-destructive text-[10px] font-bold px-1">
-                                {count}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
