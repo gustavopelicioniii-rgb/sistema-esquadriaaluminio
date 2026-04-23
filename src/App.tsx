@@ -20,7 +20,7 @@ const CRM = lazy(() => import("./pages/CRM"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Orcamentos = lazy(() => import("./pages/Orcamentos"));
 const OrcamentoDetail = lazy(() => import("./pages/OrcamentoDetail"));
-const CriarOrcamento = lazy(() => import("./pages/CriarOrcamento"));
+const CriarOrcamento = lazy(() => import("./components/orcamento/wizard/CriarOrcamentoWizard"));
 const Producao = lazy(() => import("./pages/Producao"));
 const PlanoCorte = lazy(() => import("./pages/PlanoCorte"));
 const ConfiguracaoMarca = lazy(() => import("./pages/ConfiguracaoMarca"));
