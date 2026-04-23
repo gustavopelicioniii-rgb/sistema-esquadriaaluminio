@@ -15,7 +15,6 @@ const Cadastro = lazy(() => import("./pages/Cadastro"));
 const EsqueciSenha = lazy(() => import("./pages/EsqueciSenha"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const AdvancedDashboard = lazy(() => import("./pages/AdvancedDashboard"));
 
 const CRM = lazy(() => import("./pages/CRM"));
 const Clientes = lazy(() => import("./pages/Clientes"));
@@ -94,7 +93,6 @@ const App = () => (
                 {/* Protected routes - shared layout */}
                 <Route element={<ProtectedLayout />}>
                   <Route index element={<S><Dashboard /></S>} />
-                  <Route path="/dashboard-avancado" element={<S><AdvancedDashboard /></S>} />
                   <Route path="/crm" element={<S><CRM /></S>} />
                   <Route path="/clientes" element={<S><Clientes /></S>} />
                   <Route path="/orcamentos" element={<S><Orcamentos /></S>} />

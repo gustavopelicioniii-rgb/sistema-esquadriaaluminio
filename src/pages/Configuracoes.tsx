@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Building2, Users, UserCog, Key, Wand2, Crown } from "lucide-react";
+import { Building2, Users, UserCog, Key, Wand2, Crown, Palette, DollarSign } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Planos from "./Planos";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import { EquipeTab } from "@/components/configuracoes/EquipeTab";
 import { AdminsTab } from "@/components/configuracoes/AdminsTab";
 import { ApisTab } from "@/components/configuracoes/ApisTab";
 import { SetupTab } from "@/components/configuracoes/SetupTab";
+import { MarcaTab } from "@/components/configuracoes/MarcaTab";
+import { MarkupTab } from "@/components/configuracoes/MarkupTab";
 
 const defaultConfig: Record<string, string> = {
   nome: "AlumPRO Esquadrias", cnpj: "12.345.678/0001-90", telefone: "(11) 3456-7890",
@@ -94,10 +96,18 @@ const Configuracoes = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={`grid w-full h-auto ${isAdmin ? 'grid-cols-6' : 'grid-cols-4'}`}>
+        <TabsList className={`grid w-full h-auto ${isAdmin ? 'grid-cols-8' : 'grid-cols-6'}`}>
           <TabsTrigger value="empresa" className="gap-1.5 text-xs sm:text-sm py-2">
             <Building2 className="h-4 w-4 hidden sm:block" /> Empresa
           </TabsTrigger>
+          <TabsTrigger value="marca" className="gap-1.5 text-xs sm:text-sm py-2">
+            <Palette className="h-4 w-4 hidden sm:block" /> Marca
+          </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="markup" className="gap-1.5 text-xs sm:text-sm py-2">
+              <DollarSign className="h-4 w-4 hidden sm:block" /> Markup
+            </TabsTrigger>
+          )}
           {isAdmin && (
             <TabsTrigger value="funcionarios" className="gap-1.5 text-xs sm:text-sm py-2">
               <Users className="h-4 w-4 hidden sm:block" /> Equipe
@@ -129,6 +139,20 @@ const Configuracoes = () => {
             onSave={handleSave}
           />
         </TabsContent>
+
+        <TabsContent value="marca" className="mt-6">
+          <MarcaTab
+            config={config}
+            onConfigChange={updateConfig}
+            onSave={handleSave}
+          />
+        </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="markup" className="mt-6">
+            <MarkupTab />
+          </TabsContent>
+        )}
 
         <TabsContent value="funcionarios" className="mt-6">
           <EquipeTab funcionarios={funcionarios} setFuncionarios={setFuncionarios} />
