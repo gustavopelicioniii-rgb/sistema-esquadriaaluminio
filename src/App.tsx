@@ -20,6 +20,7 @@ const AdvancedDashboard = lazy(() => import("./pages/AdvancedDashboard"));
 const CRM = lazy(() => import("./pages/CRM"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Orcamentos = lazy(() => import("./pages/Orcamentos"));
+const OrcamentoDetail = lazy(() => import("./pages/OrcamentoDetail"));
 const CriarOrcamento = lazy(() => import("./pages/CriarOrcamento"));
 const Producao = lazy(() => import("./pages/Producao"));
 const PlanoCorte = lazy(() => import("./pages/PlanoCorte"));
@@ -97,6 +98,7 @@ const App = () => (
                   <Route path="/crm" element={<S><CRM /></S>} />
                   <Route path="/clientes" element={<S><Clientes /></S>} />
                   <Route path="/orcamentos" element={<S><Orcamentos /></S>} />
+                  <Route path="/orcamentos/:id" element={<S><OrcamentoDetail /></S>} />
                   <Route path="/orcamentos/novo" element={<S><CriarOrcamento /></S>} />
                   <Route path="/orcamentos/editar/:id" element={<S><CriarOrcamento /></S>} />
                   <Route path="/producao" element={<S><Producao /></S>} />

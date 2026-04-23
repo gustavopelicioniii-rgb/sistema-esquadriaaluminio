@@ -575,7 +575,7 @@ const Orcamentos = () => {
                 <TableCell><StatusBadge status={orc.status} /></TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-0.5" onClick={(e) => e.stopPropagation()}>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => setSelectedOrcamento(orc)} title="Visualizar">
+                    <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => navigate(`/orcamentos/${orc.id}`)} title="Visualizar">
                       <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8" onClick={() => navigate(`/orcamentos/editar/${orc.id}`)} title="Editar">
