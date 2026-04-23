@@ -37,8 +37,13 @@ import {
   Truck,
   CreditCard,
 } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleDateString("pt-BR");
+};
 import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
 import { StatusBadge } from "@/components/StatusBadge";
 
