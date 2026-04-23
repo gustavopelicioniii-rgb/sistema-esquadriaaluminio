@@ -29,7 +29,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleReset = () => {
     this.setState({ hasError: false, error: null });
-    window.location.reload();
   };
 
   public render() {
@@ -60,7 +59,7 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
               <Button onClick={this.handleReset} className="w-full gap-2">
                 <RefreshCw className="h-4 w-4" />
-                Recarregar Página
+                Tentar Novamente
               </Button>
             </CardContent>
           </Card>
