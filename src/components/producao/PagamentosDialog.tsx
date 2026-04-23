@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogFooter } from "@/components/ui/responsive-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -79,84 +79,82 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Pagamentos – Pedido {pedido.pedido_num}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
-            <div className="rounded-lg bg-muted/50 p-3">
-              <p className="text-xs text-muted-foreground">Total</p>
-              <p className="font-bold text-sm">{formatCurrency(pedido.valor)}</p>
-            </div>
-            <div className="rounded-lg bg-primary/10 p-3">
-              <p className="text-xs text-muted-foreground">Pago</p>
-              <p className="font-bold text-sm text-primary">{formatCurrency(totalPago)}</p>
-            </div>
-            <div className="rounded-lg bg-destructive/10 p-3">
-              <p className="text-xs text-muted-foreground">Restante</p>
-              <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
-            </div>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="md">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle>Pagamentos – Pedido {pedido.pedido_num}</ResponsiveDialogTitle>
+      </ResponsiveDialogHeader>
+      <div className="space-y-4 py-2">
+        <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="rounded-lg bg-muted/50 p-3">
+            <p className="text-xs text-muted-foreground">Total</p>
+            <p className="font-bold text-sm">{formatCurrency(pedido.valor)}</p>
           </div>
-
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Progresso do pagamento</span>
-              <span className="font-medium">{percentPago.toFixed(0)}%</span>
-            </div>
-            <Progress value={percentPago} className="h-2.5" />
+          <div className="rounded-lg bg-primary/10 p-3">
+            <p className="text-xs text-muted-foreground">Pago</p>
+            <p className="font-bold text-sm text-primary">{formatCurrency(totalPago)}</p>
           </div>
-
-          {pagamentos.length > 0 && (
-            <div className="space-y-1 max-h-32 overflow-y-auto">
-              {pagamentos.map((p) => (
-                <div key={p.id} className="flex items-center justify-between text-xs p-2 bg-muted/30 rounded">
-                  <span className="flex items-center gap-1"><Check className="h-3 w-3 text-primary" />{p.data}</span>
-                  <span className="capitalize">{p.forma}</span>
-                  <span className="font-medium">{formatCurrency(Number(p.valor))}</span>
-                  <button onClick={() => handleDelete(p.id)} className="text-destructive hover:text-destructive/80">
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="border-t pt-3 space-y-3">
-            <p className="text-sm font-medium">Novo pagamento</p>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-1">
-                <Label className="text-xs">Valor (R$)</Label>
-                <Input type="number" placeholder="0,00" value={valor} onChange={(e) => setValor(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Data</Label>
-                <Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Forma</Label>
-                <Select value={forma} onValueChange={setForma}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pix">PIX</SelectItem>
-                    <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                    <SelectItem value="cartao">Cartão</SelectItem>
-                    <SelectItem value="boleto">Boleto</SelectItem>
-                    <SelectItem value="transferencia">Transferência</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <Button size="sm" className="gap-1" onClick={handleAdd} disabled={loading}>
-              <Plus className="h-3 w-3" /> Registrar pagamento
-            </Button>
+          <div className="rounded-lg bg-destructive/10 p-3">
+            <p className="text-xs text-muted-foreground">Restante</p>
+            <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>Progresso do pagamento</span>
+            <span className="font-medium">{percentPago.toFixed(0)}%</span>
+          </div>
+          <Progress value={percentPago} className="h-2.5" />
+        </div>
+
+        {pagamentos.length > 0 && (
+          <div className="space-y-1 max-h-32 overflow-y-auto">
+            {pagamentos.map((p) => (
+              <div key={p.id} className="flex items-center justify-between text-xs p-2 bg-muted/30 rounded">
+                <span className="flex items-center gap-1"><Check className="h-3 w-3 text-primary" />{p.data}</span>
+                <span className="capitalize">{p.forma}</span>
+                <span className="font-medium">{formatCurrency(Number(p.valor))}</span>
+                <button onClick={() => handleDelete(p.id)} className="text-destructive hover:text-destructive/80">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="border-t pt-3 space-y-3">
+          <p className="text-sm font-medium">Novo pagamento</p>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Valor (R$)</Label>
+              <Input type="number" placeholder="0,00" value={valor} onChange={(e) => setValor(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Data</Label>
+              <Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Forma</Label>
+              <Select value={forma} onValueChange={setForma}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pix">PIX</SelectItem>
+                  <SelectItem value="dinheiro">Dinheiro</SelectItem>
+                  <SelectItem value="cartao">Cartão</SelectItem>
+                  <SelectItem value="boleto">Boleto</SelectItem>
+                  <SelectItem value="transferencia">Transferência</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button size="sm" className="gap-1" onClick={handleAdd} disabled={loading}>
+            <Plus className="h-3 w-3" /> Registrar pagamento
+          </Button>
+        </div>
+      </div>
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }

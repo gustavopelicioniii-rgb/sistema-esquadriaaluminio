@@ -174,7 +174,6 @@ function buildGenericHTML(tipo: string, pedido: Pedido): string {
 export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) {
   const handleImprimir = async (tipo: string, id: string) => {
     if (id === "orcamento") {
-      // Fetch real orcamento from database matching this pedido's client
       try {
         const { data: orcamentos } = await supabase
           .from("orcamentos")
@@ -221,7 +220,6 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
 
         toast.success("PDF gerado", { description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
       } catch (err) {
-        // Erro ao gerar orçamento
         toast.error("Erro", { description: "Falha ao gerar o PDF do orçamento." });
       }
       return;

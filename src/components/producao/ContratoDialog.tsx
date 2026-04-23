@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogFooter } from "@/components/ui/responsive-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -56,24 +56,22 @@ export default function ContratoDialog({ open, onOpenChange, pedido }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="h-4 w-4" /> Contrato – Pedido {pedido.pedido_num}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-3 py-2">
-          <Label>Texto do contrato (editável)</Label>
-          <Textarea className="min-h-[300px] font-mono text-xs" value={texto} onChange={(e) => setTexto(e.target.value)} />
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button>
-          <Button className="gap-1" onClick={handleDownload}>
-            <Download className="h-4 w-4" /> Baixar contrato
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="md">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle className="flex items-center gap-2">
+          <FileText className="h-4 w-4" /> Contrato – Pedido {pedido.pedido_num}
+        </ResponsiveDialogTitle>
+      </ResponsiveDialogHeader>
+      <div className="space-y-3 py-2">
+        <Label>Texto do contrato (editável)</Label>
+        <Textarea className="min-h-[300px] font-mono text-xs" value={texto} onChange={(e) => setTexto(e.target.value)} />
+      </div>
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button>
+        <Button className="gap-1" onClick={handleDownload}>
+          <Download className="h-4 w-4" /> Baixar contrato
+        </Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }
