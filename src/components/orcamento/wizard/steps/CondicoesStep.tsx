@@ -58,10 +58,10 @@ export function CondicoesStep({
   total,
 }: CondicoesStepProps) {
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-xl font-bold">Condições Comerciais</h2>
-        <p className="text-muted-foreground text-sm">Configure margem, desconto e forma de pagamento</p>
+    <div className="max-w-xl mx-auto p-3 space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-bold">Condições Comerciais</h2>
+        <p className="text-muted-foreground text-xs">Margem, desconto e pagamento</p>
       </div>
 
       {/* Margem */}

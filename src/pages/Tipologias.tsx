@@ -198,12 +198,14 @@ const Tipologias = () => {
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from("tipologias_customizadas").delete().eq("id", id);
+    const { error } = await supabase.from("tipologias_customizadas").delete().eq("id", id);
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     toast.error("Tipologia removida"); fetchCustoms();
   };
 
   const handleToggle = async (id: string, active: boolean) => {
-    await supabase.from("tipologias_customizadas").update({ active: !active }).eq("id", id);
+    const { error } = await supabase.from("tipologias_customizadas").update({ active: !active }).eq("id", id);
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     fetchCustoms();
   };
 

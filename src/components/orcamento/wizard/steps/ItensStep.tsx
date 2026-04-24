@@ -144,8 +144,8 @@ export function ItensStep({
                 num_folhas={produtoSelecionado?.numFolhas ?? 2}
                 has_veneziana={produtoSelecionado?.veneziana}
                 colorId={activeItem.colorId}
-                maxWidth={200}
-                maxHeight={180}
+                maxWidth={380}
+                maxHeight={300}
               />
             </Frame3DWrapper>
           </div>
@@ -186,14 +186,14 @@ export function ItensStep({
           <div className="space-y-2">
             <Label>Quantidade</Label>
             <div className="flex items-center gap-0">
-              <Button variant="outline" size="icon" className="h-10 w-10 rounded-r-none"
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-r-none"
                 onClick={() => onItemUpdate(activeItemIdx, { quantidade: Math.max(1, activeItem.quantidade - 1) })}>
                 <Minus className="h-4 w-4" />
               </Button>
               <Input type="number" value={activeItem.quantidade}
                 onChange={(e) => onItemUpdate(activeItemIdx, { quantidade: Math.max(1, Number(e.target.value)) })}
-                className="rounded-none text-center border-x-0" min={1} />
-              <Button variant="outline" size="icon" className="h-10 w-10 rounded-l-none"
+                className="rounded-none text-center border-x-0 h-8" min={1} />
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-l-none"
                 onClick={() => onItemUpdate(activeItemIdx, { quantidade: activeItem.quantidade + 1 })}>
                 <Plus className="h-4 w-4" />
               </Button>

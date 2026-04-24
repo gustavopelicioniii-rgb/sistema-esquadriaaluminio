@@ -54,10 +54,10 @@ export function RevisaoStep({
   onWhatsApp,
 }: RevisaoStepProps) {
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-xl font-bold">Revisão do Orçamento</h2>
-        <p className="text-muted-foreground text-sm">Verifique os dados antes de salvar</p>
+    <div className="max-w-2xl mx-auto p-3 space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-bold">Revisão do Orçamento</h2>
+        <p className="text-muted-foreground text-xs">Verifique antes de salvar</p>
       </div>
 
       {/* Cliente card */}

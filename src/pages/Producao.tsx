@@ -149,21 +149,24 @@ const Producao = () => {
     key === "todos" ? pedidos.length : pedidos.filter((o) => o.status === key).length;
 
   const handleConcluir = async (op: Pedido) => {
-    await supabase.from("pedidos").update({ status: "concluido", etapa: "Finalizado" } as any).eq("id", op.id);
+    const { error } = await supabase.from("pedidos").update({ status: "concluido", etapa: "Finalizado" } as any).eq("id", op.id);
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     toast.success("Pedido concluído", { description: `Pedido ${op.pedido_num} foi finalizado.` });
     fetchPedidos();
   };
 
   const handleCancelar = async () => {
     if (!cancelConfirm) return;
-    await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
+    const { error } = await supabase.from("pedidos").delete().eq("id", cancelConfirm.id);
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     toast.error("Pedido cancelado", { description: `Pedido ${cancelConfirm.pedido_num} foi removido.` });
     setCancelConfirm(null);
     fetchPedidos();
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-    await supabase.from("pedidos").update({ status: newStatus } as any).eq("id", id);
+    const { error } = await supabase.from("pedidos").update({ status: newStatus } as any).eq("id", id);
+    if (error) { toast.error("Erro", { description: error.message }); return; }
     toast.success("Status atualizado");
     fetchPedidos();
   };

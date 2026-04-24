@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // BYPASS MODE - Return bypass values when BYPASS_MODE is true
-  const BYPASS_MODE = true;
+  const BYPASS_MODE = false;
   if (BYPASS_MODE) {
     return (
       <AuthContext.Provider value={{ user: { id: 'bypass-user', email: 'bypass@test.com' } as User, session: null, role: 'admin' as AppRole, isLoading: false, isRoleLoading: false, signOut: async () => {} }}>

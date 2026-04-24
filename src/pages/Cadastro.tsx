@@ -70,17 +70,19 @@ const Cadastro = () => {
         const role = (count ?? 0) === 0 ? "admin" : "funcionario";
         
         // Insert user_roles
-        await supabase.from("user_roles").insert({
+        const { error: roleError } = await supabase.from("user_roles").insert({
           user_id: data.user.id,
           role: role,
         });
+        if (roleError) { setLoading(false); toast.error("Erro", { description: roleError.message }); return; }
         
         // Insert assinatura
-        await supabase.from("assinaturas").insert({
+        const { error: assError } = await supabase.from("assinaturas").insert({
           user_id: data.user.id,
           plano: "basico",
           ativo: true,
         });
+        if (assError) { setLoading(false); toast.error("Erro", { description: assError.message }); return; }
       }
     }
     

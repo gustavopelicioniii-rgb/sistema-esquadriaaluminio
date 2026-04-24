@@ -74,14 +74,17 @@ const Configuracoes = () => {
   const handleSave = async () => {
     for (const [chave, valor] of Object.entries(config)) {
       if (chave === "folgas_global") continue;
-      await supabase.from("configuracoes").upsert({ chave, valor }, { onConflict: "chave" });
+      const { error: upsertError } = await supabase.from("configuracoes").upsert({ chave, valor }, { onConflict: "chave" });
+      if (upsertError) { toast.error("Erro", { description: upsertError.message }); return; }
     }
     const folgasPayload = JSON.stringify(folgas);
     const { data: existing } = await supabase.from("configuracoes").select("id").eq("chave", "folgas_global").maybeSingle();
     if (existing) {
-      await supabase.from("configuracoes").update({ valor: folgasPayload }).eq("chave", "folgas_global");
+      const { error: updateError } = await supabase.from("configuracoes").update({ valor: folgasPayload }).eq("chave", "folgas_global");
+      if (updateError) { toast.error("Erro", { description: updateError.message }); return; }
     } else {
-      await supabase.from("configuracoes").insert({ chave: "folgas_global", valor: folgasPayload });
+      const { error: insertError } = await supabase.from("configuracoes").insert({ chave: "folgas_global", valor: folgasPayload });
+      if (insertError) { toast.error("Erro", { description: insertError.message }); return; }
     }
     toast.success("Configurações salvas", { description: "Suas alterações foram salvas." });
   };

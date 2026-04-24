@@ -139,12 +139,13 @@ const Estoque = () => {
       : movQtd;
 
     // Record movement
-    await supabase.from("estoque_movimentos").insert({
+    const { error: movError } = await supabase.from("estoque_movimentos").insert({
       produto_id: movDialog.item.id,
       tipo_movimento: tipo,
       quantidade: movQtd,
       observacao: movObs,
     });
+    if (movError) { toast.error("Erro", { description: movError.message }); return; }
 
     // Update stock
     const { error } = await supabase.from("estoque").update({ quantidade: newQtd }).eq("id", movDialog.item.id);
@@ -170,6 +171,8 @@ const Estoque = () => {
       quantidade: movimentoData.quantidade,
       observacao: movimentoData.observacao,
     });
+    const { error: movError2 } = await supabase.from("estoque").update({ quantidade: newQty }).eq("id", item.id);
+    if (movError2) { toast.error("Erro", { description: movError2.message }); return; }
 
     let newQty = item.quantidade;
     if (movimentoData.tipo_movimento === "entrada") newQty += movimentoData.quantidade;

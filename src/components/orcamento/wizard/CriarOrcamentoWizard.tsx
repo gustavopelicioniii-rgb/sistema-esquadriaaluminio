@@ -377,7 +377,7 @@ export default function CriarOrcamentoWizard() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b">
+      <div className="flex items-center justify-between px-3 py-2 border-b">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("/orcamentos")}>
             <ArrowLeft className="h-4 w-4" />
@@ -393,7 +393,7 @@ export default function CriarOrcamentoWizard() {
       </div>
 
       {/* Stepper */}
-      <div className="border-b px-4 py-3">
+      <div className="border-b px-3 py-1.5">
         <div className="flex items-center justify-center gap-2">
           {STEPS.map((step, idx) => (
             <div key={step.id} className="flex items-center">
@@ -427,7 +427,7 @@ export default function CriarOrcamentoWizard() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="overflow-y-auto">
         {currentStep === "cliente" && (
           <ClienteStep cliente={cliente} onClienteChange={setCliente} />
         )}
@@ -488,7 +488,7 @@ export default function CriarOrcamentoWizard() {
       </div>
 
       {/* Footer navigation */}
-      <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
+      <div className="flex items-center justify-between px-4 py-2 border-t">
         <Button variant="outline" onClick={goBack} disabled={!canGoBack} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
