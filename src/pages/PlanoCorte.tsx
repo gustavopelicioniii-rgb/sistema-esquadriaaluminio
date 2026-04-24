@@ -26,44 +26,16 @@ import { optimizeBars } from "@/lib/bar-optimizer";
 import { supportedMachines } from "@/utils/cnc/cutFileExporter";
 import { generateCutListPDF } from "@/utils/cutListPdfGenerator";
 import { generatePadroesCortesPDF } from "@/utils/padroesCortePdfGenerator";
+import { GlassComponentsCard } from "@/components/plano-corte/GlassComponentsCard";
 import { BarVisualization } from "@/components/plano-corte/BarVisualization";
+import { PlanoSummaryCards } from "@/components/plano-corte/SummaryCards";
+import { CutsTable } from "@/components/plano-corte/CutsTable";
 import { usePlanosCorte, type PlanoCorte as PlanoCorteType } from "@/hooks/use-planos-corte";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
 
-// ============ SUMMARY CARDS ============
-function SummaryCards({ result, barResults }: { result: CalculationOutput; barResults: OptimizationResult[] }) {
-  const totalPieces = result.cuts.reduce((s, c) => s + c.quantity, 0);
-  const totalBars = barResults.reduce((s, o) => s + o.total_bars, 0);
-  const totalWaste = barResults.reduce((s, o) => s + o.total_waste_mm, 0);
-  const totalBarLength = barResults.reduce((s, o) => s + o.total_bars * o.bar_length_mm, 0);
-  const wastePct = totalBarLength > 0 ? ((totalWaste / totalBarLength) * 100).toFixed(1) : "0";
-
-  const cards = [
-    { icon: Scissors, label: "Total Peças", value: String(totalPieces), color: "text-blue-600" },
-    { icon: Boxes, label: "Barras", value: String(totalBars), color: "text-indigo-600" },
-    { icon: BarChart3, label: "Desperdício", value: `${wastePct}%`, color: "text-amber-600" },
-    { icon: Weight, label: "Peso Total", value: `${result.total_aluminum_weight_kg.toFixed(2)} kg`, color: "text-emerald-600" },
-  ];
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {cards.map((c) => (
-        <Card key={c.label}>
-          <CardContent className="p-3 flex items-center gap-3">
-            <div className={`p-2 rounded-lg bg-muted/50 ${c.color}`}>
-              <c.icon className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{c.label}</p>
-              <p className="text-lg font-bold leading-tight">{c.value}</p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
+// Backward compat alias
+const SummaryCards = PlanoSummaryCards;
 
 // ============ DETAIL VIEW ============
 function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies, selectedMachine, setSelectedMachine }: { plano: PlanoCorteType; onBack: () => void; onUpdate: (id: string, u: Partial<PlanoCorteType>) => Promise<boolean>; allTypologies: ExtendedTypology[]; selectedMachine: string; setSelectedMachine: (m: string) => void }) {
@@ -396,61 +368,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies, selectedMachine,
 
       {result && (
         <>
-          {/* Cuts Table - responsive */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold">Lista de Corte</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Perfil</TableHead>
-                      <TableHead className="text-center">Medida (mm)</TableHead>
-                      <TableHead className="text-center hidden sm:table-cell">Qtd</TableHead>
-                      <TableHead className="text-center hidden md:table-cell">Ângulo</TableHead>
-                      <TableHead className="text-right hidden sm:table-cell">Peso (kg)</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {result.cuts.map((cut) => (
-                      <TableRow key={cut.cut_rule_id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2.5">
-                            <div className="shrink-0 w-9 h-9 rounded-md bg-muted/50 flex items-center justify-center text-primary">
-                              <ProfileCrossSection profileType={cut.piece_function || cut.piece_name} profileCode={cut.profile_code} size={32} />
-                            </div>
-                            <div>
-                              <span className="font-bold text-xs">{cut.profile_code}</span>
-                              <p className="text-[10px] text-muted-foreground">{cut.piece_name}</p>
-                              <div className="flex gap-2 sm:hidden text-[10px] text-muted-foreground mt-0.5">
-                                <span>×{cut.quantity}</span>
-                                <span>{cut.weight_kg.toFixed(2)}kg</span>
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center font-semibold font-mono">{cut.cut_length_mm}</TableCell>
-                        <TableCell className="text-center font-semibold hidden sm:table-cell">{cut.quantity}</TableCell>
-                        <TableCell className="text-center hidden md:table-cell">
-                          <div className="flex justify-center gap-1">
-                            <Badge variant={cut.cut_angle_left === 45 ? "default" : "secondary"} className="text-[10px] px-2">{cut.cut_angle_left}°</Badge>
-                            <Badge variant={cut.cut_angle_right === 45 ? "default" : "secondary"} className="text-[10px] px-2">{cut.cut_angle_right}°</Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right font-mono hidden sm:table-cell">{cut.weight_kg.toFixed(3)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="px-4 py-2.5 bg-muted/30 border-t text-xs text-muted-foreground flex justify-between">
-                <span>{result.profiles_summary.length} perfis • {result.cuts.reduce((s, c) => s + c.quantity, 0)} peças</span>
-                <span>Peso: {result.total_aluminum_weight_kg.toFixed(2)} kg</span>
-              </div>
-            </CardContent>
-          </Card>
+          <CutsTable result={result} />
 
           {/* Bar Visualization */}
           {barResults.length > 0 && (
@@ -464,94 +382,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies, selectedMachine,
             </Card>
           )}
 
-          {/* Glass Table */}
-          {result.glasses.length > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-bold">Vidros</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Descrição</TableHead>
-                        <TableHead className="text-center">Largura</TableHead>
-                        <TableHead className="text-center">Altura</TableHead>
-                        <TableHead className="text-center">Qtd</TableHead>
-                        <TableHead className="text-right">Área (m²)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {result.glasses.map(g => (
-                        <TableRow key={g.glass_rule_id}>
-                          <TableCell>
-                            <div className="flex items-center gap-2.5">
-                              <div className="shrink-0 w-9 h-9 rounded-md bg-muted/50 flex items-center justify-center text-primary">
-                                <ProfileCrossSection profileType="vidro" profileCode="" size={32} />
-                              </div>
-                              <span className="font-medium">{g.glass_name}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-center font-mono">{g.width_mm}</TableCell>
-                          <TableCell className="text-center font-mono">{g.height_mm}</TableCell>
-                          <TableCell className="text-center font-semibold">{g.quantity}</TableCell>
-                          <TableCell className="text-right font-mono font-semibold text-primary">{g.area_m2.toFixed(2)} m²</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Components */}
-          {result.components.length > 0 && (
-            <Card>
-              <CardContent className="p-4 sm:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-bold text-sm mb-3">Ferragens</h4>
-                    <div className="space-y-2">
-                      {result.components.filter(c => c.component_type === "ferragem" || c.component_type === "acessorio").map((comp, i) => (
-                        <div key={i} className="flex items-center gap-2.5 text-sm">
-                          <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
-                            <ProfileCrossSection profileType={comp.component_type === "acessorio" ? "acessorio" : "ferragem"} profileCode={comp.component_code || ''} size={22} />
-                          </div>
-                          <span className="text-muted-foreground flex-1">{comp.component_name}</span>
-                          <span className="font-semibold">{comp.quantity} {comp.unit}</span>
-                        </div>
-                      ))}
-                      {result.components.filter(c => c.component_type === "ferragem" || c.component_type === "acessorio").length === 0 && (
-                        <p className="text-xs text-muted-foreground">Nenhuma ferragem</p>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm mb-3">Materiais Auxiliares</h4>
-                    <div className="space-y-2">
-                      {result.components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type)).map((comp, i) => {
-                        const iconType = comp.component_type === "vedacao" ? "vedacao" : comp.component_type === "fixacao" ? "parafuso" : "arremate";
-                        return (
-                          <div key={i} className="flex items-center gap-2.5 text-sm">
-                            <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
-                              <ProfileCrossSection profileType={iconType} profileCode={comp.component_code || ''} size={22} />
-                            </div>
-                            <span className="text-muted-foreground flex-1">{comp.component_name}</span>
-                            <span className="font-semibold text-primary">{comp.quantity} {comp.unit}</span>
-                          </div>
-                        );
-                      })}
-                      {result.components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type)).length === 0 && (
-                        <p className="text-xs text-muted-foreground">Nenhum material auxiliar</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <GlassComponentsCard result={result} />
         </>
       )}
       </div>
