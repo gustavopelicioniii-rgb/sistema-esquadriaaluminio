@@ -279,7 +279,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
     const cleanupInterval = setInterval(cleanupOldReads, 24 * 60 * 60 * 1000); // Daily cleanup
     return () => { clearInterval(interval); clearInterval(cleanupInterval); };
-  }, [fetchNotifications]);
+  }, [fetchNotifications, cleanupOldReads]);
 
   // Realtime disabled - using local API without realtime support
   useEffect(() => {

@@ -56,26 +56,27 @@ const Estoque = () => {
     produto_id: "", tipo_movimento: "", quantidade: 0, observacao: "",
   });
 
-  const fetchItens = async () => {
+  const fetchItens = useCallback(async () => {
     const { data, error } = await supabase.from("estoque").select("*").order("codigo");
     if (!error && data) setItens(data);
     setLoading(false);
-  };
+  }, []);
 
-  const fetchMovimentos = async () => {
+  const fetchMovimentos = useCallback(async () => {
     const { data } = await supabase
       .from("estoque_movimentos")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(100);
     if (data) setMovimentos(data);
-  };
+  }, []);
 
-  useEffect(() => { fetchItens(); fetchMovimentos(); }, []);
-
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     await Promise.all([fetchItens(), fetchMovimentos()]);
-  };
+  }, [fetchItens, fetchMovimentos]);
+
+  useEffect(() => { void fetchAll(); }, [fetchAll]);
+
 
   const filtered = useMemo(() => itens.filter((item) => {
     const matchSearch = !search || item.produto.toLowerCase().includes(search.toLowerCase()) || item.codigo.toLowerCase().includes(search.toLowerCase());
@@ -182,7 +183,7 @@ const Estoque = () => {
     fetchAll();
   };
 
-  const handleRefresh = useCallback(async () => { await fetchAll(); }, []);
+  const handleRefresh = useCallback(async () => { await fetchAll(); }, [fetchAll]);
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>

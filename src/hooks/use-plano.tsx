@@ -108,53 +108,7 @@ export function usePlano() {
   const [isLoading, setIsLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
 
-  const checkSubscription = useCallback(async () => {
-    if (!user) {
-      setPlano("basico");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!BILLING_ENABLED) {
-      setIsLoading(true);
-      try {
-        await fallbackToDb();
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke("check-subscription");
-
-      if (error) {
-        // Error checking subscription
-        // Fallback to DB-based plan
-        await fallbackToDb();
-        return;
-      }
-
-      if (data?.subscribed && data?.product_id) {
-        const tier = productIdToTier(data.product_id);
-        setPlano(tier);
-        setSubscriptionEnd(data.subscription_end);
-
-        // Sync to DB
-        await syncPlanToDb(tier);
-      } else {
-        // No Stripe subscription — check DB
-        await fallbackToDb();
-      }
-    } catch {
-      await fallbackToDb();
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  const fallbackToDb = async () => {
+  const fallbackToDb = useCallback(async () => {
     if (!user) return;
     const { data, error } = await supabase
       .from("assinaturas")
@@ -162,7 +116,6 @@ export function usePlano() {
       .eq("user_id", user.id)
       .eq("ativo", true)
       .maybeSingle();
-
     if (!error && data) {
       setPlano(data.plano as PlanTier);
     } else if (!error && !data) {
@@ -171,11 +124,10 @@ export function usePlano() {
         .insert({ user_id: user.id, plano: "basico", ativo: true } as any);
       setPlano("basico");
     }
-  };
+  }, [user]);
 
-  const syncPlanToDb = async (tier: PlanTier) => {
+  const syncPlanToDb = useCallback(async (tier: PlanTier) => {
     if (!user) return;
-    // Deactivate old, insert new
     await supabase
       .from("assinaturas")
       .update({ ativo: false } as any)
@@ -184,7 +136,29 @@ export function usePlano() {
     await supabase
       .from("assinaturas")
       .insert({ user_id: user.id, plano: tier, ativo: true } as any);
-  };
+  }, [user]);
+
+  const checkSubscription = useCallback(async () => {
+    if (!user) { setPlano("basico"); setIsLoading(false); return; }
+    if (!BILLING_ENABLED) {
+      setIsLoading(true);
+      try { await fallbackToDb(); } finally { setIsLoading(false); }
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) { await fallbackToDb(); return; }
+      if (data?.subscribed && data?.product_id) {
+        const tier = productIdToTier(data.product_id);
+        setPlano(tier);
+        setSubscriptionEnd(data.subscription_end);
+        await syncPlanToDb(tier);
+      } else {
+        await fallbackToDb();
+      }
+    } catch { await fallbackToDb(); } finally { setIsLoading(false); }
+  }, [user, fallbackToDb, syncPlanToDb]);
 
   useEffect(() => {
     checkSubscription();

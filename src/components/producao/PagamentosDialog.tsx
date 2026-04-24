@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogFooter } from "@/components/ui/responsive-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,18 +31,18 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
   const [forma, setForma] = useState("pix");
   const [loading, setLoading] = useState(false);
 
-  const fetchPagamentos = async () => {
+  const fetchPagamentos = useCallback(async () => {
     const { data: rows } = await supabase
       .from("pagamentos")
       .select("id, valor, data, forma")
       .eq("pedido_id", pedido.id)
       .order("data", { ascending: true });
     setPagamentos((rows as Pagamento[]) || []);
-  };
+  }, [pedido.id]);
 
   useEffect(() => {
-    if (open) fetchPagamentos();
-  }, [open, pedido.id]);
+    if (open) void fetchPagamentos();
+  }, [open, fetchPagamentos]);
 
   const totalPago = pagamentos.reduce((s, p) => s + Number(p.valor), 0);
   const restante = pedido.valor - totalPago;

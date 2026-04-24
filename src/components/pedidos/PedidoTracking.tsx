@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,26 +100,25 @@ export default function PedidoTracking({ pedido, onClose, embedded }: PedidoTrac
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({ etapa: "", status: "andamento", observacao: "", notify_client: false });
 
-  useEffect(() => {
-    loadEvents();
-  }, [pedido.id]);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("tracking_events")
         .select("*")
         .eq("pedido_id", pedido.id)
         .order("created_at", { ascending: true });
-
       if (error) throw error;
       setEvents(data || []);
-    } catch (err: any) {
-      toast.error("Erro ao carregar eventos:", err.message);
+    } catch (err: unknown) {
+      toast.error("Erro ao carregar eventos:", err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    void loadEvents();
+  }, [pedido.id, loadEvents]);
 
   const handleAddEvent = async () => {
     if (!newEvent.etapa) {

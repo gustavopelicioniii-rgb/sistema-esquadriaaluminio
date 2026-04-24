@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -24,38 +24,36 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchFotos();
-  }, [pedidoId, etapaId]);
-
-  const resolveSignedUrls = async (items: Foto[]): Promise<Foto[]> => {
+  const resolveSignedUrls = useCallback(async (items: Foto[]): Promise<Foto[]> => {
     const results = await Promise.all(
       items.map(async (foto) => {
-        // If foto_url is already an absolute URL (legacy data), use it directly
         if (foto.foto_url.startsWith("http")) {
           return { ...foto, signedUrl: foto.foto_url };
         }
         const { data } = await supabase.storage
           .from("checklist-fotos")
-          .createSignedUrl(foto.foto_url, 60 * 60); // 1 hour
+          .createSignedUrl(foto.foto_url, 60 * 60);
         return { ...foto, signedUrl: data?.signedUrl || "" };
       })
     );
     return results;
-  };
+  }, []);
 
-  const fetchFotos = async () => {
+  const fetchFotos = useCallback(async () => {
     const { data } = await supabase
       .from("pedido_checklist_fotos")
       .select("*")
       .eq("pedido_id", pedidoId)
       .eq("etapa", etapaId)
       .order("created_at", { ascending: false });
-
-    const raw = (data as any[]) || [];
+    const raw = (data as unknown as Foto[]) || [];
     const resolved = await resolveSignedUrls(raw);
     setFotos(resolved);
-  };
+  }, [pedidoId, etapaId, resolveSignedUrls]);
+
+  useEffect(() => {
+    void fetchFotos();
+  }, [fetchFotos]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

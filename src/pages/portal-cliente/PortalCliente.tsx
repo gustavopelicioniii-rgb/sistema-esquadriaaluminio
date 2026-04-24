@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -79,81 +79,62 @@ export default function PortalCliente() {
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [aprovacaoObs, setAprovacaoObs] = useState("");
 
-  useEffect(() => {
-    loadEmpresaConfig();
-  }, []);
-
-  useEffect(() => {
-    if (token) {
-      searchOrcamentos();
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (selectedOrcamento?.pedido_id) {
-      loadPedidoEtapas(selectedOrcamento.pedido_id);
-    }
-  }, [selectedOrcamento]);
-
-  const loadEmpresaConfig = async () => {
+  const loadEmpresaConfig = useCallback(async () => {
     const { data } = await supabase.from("configuracoes").select("chave, valor");
     if (data) {
       const map: Record<string, string> = {};
       data.forEach((r) => { map[r.chave] = r.valor; });
       setEmpresaData(map);
     }
-  };
+  }, []);
 
-  const loadPedidoEtapas = async (pedidoId: string) => {
+  const loadPedidoEtapas = useCallback(async (pedidoId: string) => {
     try {
       const { data } = await supabase
         .from("pedido_etapas")
         .select("*")
         .eq("pedido_id", pedidoId)
         .order("created_at", { ascending: true });
-
       if (data) {
         setPedidoEtapas(data.map((e) => ({
           ...e,
-          completed: e.observacao && e.observacao.includes("[OK]"),
+          completed: Boolean(e.observacao && e.observacao.includes("[OK]")),
         })));
       }
     } catch (err) {
       console.error("Erro ao carregar etapas:", err);
     }
-  };
+  }, []);
 
-  const searchOrcamentos = async () => {
-    if (!email && !token) return;
+  const searchOrcamentos = useCallback(async () => {
+    if (!token) return;
     setLoading(true);
+    const { data } = await supabase
+      .from("orcamentos")
+      .select("id, numero, cliente, telefone, email, produto, valor, status, data, itens, pedido_id")
+      .ilike("cliente", "%" + email + "%")
+      .order("data", { ascending: false });
+    const filtered = (data || []).filter((o) => {
+      if (!email) return true;
+      return o.cliente.toLowerCase().includes(email.toLowerCase()) ||
+        (o.telefone && o.telefone.includes(email)) ||
+        (o.email && o.email.toLowerCase().includes(email.toLowerCase()));
+    });
+    setOrcamentos(filtered as OrcamentoPortal[]);
+    setLoading(false);
+  }, [token, email]);
 
-    try {
-      let query = supabase.from("orcamentos").select("*").order("data", { ascending: false });
+  useEffect(() => { void loadEmpresaConfig(); }, [loadEmpresaConfig]);
 
-      if (token) {
-        const { data: tokenData } = await supabase
-          .from("client_portal_tokens")
-          .select("orcamento_id, client_email")
-          .eq("token", token)
-          .single();
+  useEffect(() => {
+    if (token) void searchOrcamentos();
+  }, [token, searchOrcamentos]);
 
-        if (tokenData) {
-          query = query.eq("id", tokenData.orcamento_id);
-        }
-      } else {
-        query = query.ilike("cliente", `%${email}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setOrcamentos(data || []);
-    } catch (err: any) {
-      toast.error("Erro ao buscar orçamentos:", err.message);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (selectedOrcamento?.pedido_id) {
+      void loadPedidoEtapas(selectedOrcamento.pedido_id);
     }
-  };
-
+  }, [selectedOrcamento, loadPedidoEtapas]);
   const handleAprovar = async (orcamento: OrcamentoPortal) => {
     try {
       const { error } = await supabase

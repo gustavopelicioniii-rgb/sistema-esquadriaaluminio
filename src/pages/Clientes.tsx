@@ -160,7 +160,7 @@ const Clientes = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchClientes(); }, []);
+  useEffect(() => { void fetchClientes(); }, [fetchClientes]);
 
   const filtered = clientes.filter((c) => {
     if (!search) return true;

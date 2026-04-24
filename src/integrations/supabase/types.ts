@@ -36,8 +36,20 @@ export type Database = {
       }
       clientes: {
         Row: { id: string; user_id: string | null; nome: string; telefone: string; email: string; endereco: string; cidade: string; orcamentos_count: number; created_at: string; updated_at: string }
-        Insert: { id?: string; user_id?: string | null; nome: string; telefone?: string; email?: string; endereco?: string; cidade?: string; orcamentos_count?: number; created_at?: string; updated_at?: string }
+        Insert: { id?: string; user_id?: string | null; nome: string; telefone?: string; email: string; endereco?: string; cidade?: string; orcamentos_count?: number; created_at?: string; updated_at?: string }
         Update: { id?: string; user_id?: string | null; nome?: string; telefone?: string; email?: string; endereco?: string; cidade?: string; orcamentos_count?: number; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      client_portal_tokens: {
+        Row: { id: string; client_email: string; client_phone: string | null; token: string; orcamento_id: string | null; expires_at: string | null; created_at: string }
+        Insert: { id?: string; client_email: string; client_phone?: string | null; token: string; orcamento_id?: string | null; expires_at?: string | null; created_at?: string }
+        Update: { id?: string; client_email?: string; client_phone?: string | null; token?: string; orcamento_id?: string | null; expires_at?: string | null; created_at?: string }
+        Relationships: []
+      }
+      componentes_customizados: {
+        Row: { id: string; typology_id: string; component_name: string; component_code: string | null; component_type: string; quantity_formula: string; unit: string; length_reference: string | null; length_constant_mm: number | null; created_at: string }
+        Insert: { id?: string; typology_id: string; component_name: string; component_code?: string | null; component_type?: string; quantity_formula?: string; unit?: string; length_reference?: string | null; length_constant_mm?: number | null; created_at?: string }
+        Update: { id?: string; typology_id?: string; component_name?: string; component_code?: string | null; component_type?: string; quantity_formula?: string; unit?: string; length_reference?: string | null; length_constant_mm?: number | null; created_at?: string }
         Relationships: []
       }
       configuracoes: {
@@ -64,10 +76,16 @@ export type Database = {
         Update: { id?: string; user_id?: string | null; codigo?: string; produto?: string; quantidade?: number; unidade?: string; minimo?: number; categoria?: string; created_at?: string; updated_at?: string }
         Relationships: []
       }
-      funcionarios: {
-        Row: { id: string; user_id: string | null; nome: string; cargo: string; telefone: string; email: string; created_at: string; updated_at: string }
-        Insert: { id?: string; user_id?: string | null; nome: string; cargo?: string; telefone?: string; email?: string; created_at?: string; updated_at?: string }
-        Update: { id?: string; user_id?: string | null; nome?: string; cargo?: string; telefone?: string; email?: string; created_at?: string; updated_at?: string }
+      estoque_movimentos: {
+        Row: { id: string; produto_id: string; tipo_movimento: string; quantidade: number; observacao: string | null; pedido_id: string | null; user_id: string | null; created_at: string }
+        Insert: { id?: string; produto_id: string; tipo_movimento: string; quantidade: number; observacao?: string | null; pedido_id?: string | null; user_id?: string | null; created_at?: string }
+        Update: { id?: string; produto_id?: string; tipo_movimento?: string; quantidade?: number; observacao?: string | null; pedido_id?: string | null; user_id?: string | null; created_at?: string }
+        Relationships: []
+      }
+      fiscais_notas: {
+        Row: { id: string; pedido_id: string | null; numero: string; serie: string; chave_acesso: string | null; valor_total: number; created_at: string; updated_at: string }
+        Insert: { id?: string; pedido_id?: string | null; numero: string; serie?: string; chave_acesso?: string | null; valor_total?: number; created_at?: string; updated_at?: string }
+        Update: { id?: string; pedido_id?: string | null; numero?: string; serie?: string; chave_acesso?: string | null; valor_total?: number; created_at?: string; updated_at?: string }
         Relationships: []
       }
       notification_reads: {
@@ -89,7 +107,7 @@ export type Database = {
         Relationships: []
       }
       pagamento_status: {
-        Row: { id: string; nome: string; cor: string;created_at: string }
+        Row: { id: string; nome: string; cor: string; created_at: string }
         Insert: { id?: string; nome: string; cor?: string; created_at?: string }
         Update: { id?: string; nome?: string; cor?: string; created_at?: string }
         Relationships: []
@@ -148,6 +166,36 @@ export type Database = {
         Update: { id?: string; user_id?: string | null; titulo?: string; tipo?: string; espessura?: string; cor?: string; preco_m2?: number; area_minima_m2?: number; archived?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
+      regras_corte_customizadas: {
+        Row: { id: string; typology_id: string; profile_id: string; piece_name: string; piece_function: string; reference_dimension: string; coefficient: number; constant_mm: number; fixed_value_mm: number | null; cut_angle_left: number; cut_angle_right: number; quantity_formula: string; sort_order: number; notes: string | null; created_at: string }
+        Insert: { id?: string; typology_id: string; profile_id: string; piece_name: string; piece_function?: string; reference_dimension?: string; coefficient?: number; constant_mm?: number; fixed_value_mm?: number | null; cut_angle_left?: number; cut_angle_right?: number; quantity_formula?: string; sort_order?: number; notes?: string | null; created_at?: string }
+        Update: { id?: string; typology_id?: string; profile_id?: string; piece_name?: string; piece_function?: string; reference_dimension?: string; coefficient?: number; constant_mm?: number; fixed_value_mm?: number | null; cut_angle_left?: number; cut_angle_right?: number; quantity_formula?: string; sort_order?: number; notes?: string | null; created_at?: string }
+        Relationships: []
+      }
+      regras_vidro_customizadas: {
+        Row: { id: string; typology_id: string; glass_name: string; width_reference: string; width_constant_mm: number; height_reference: string; height_constant_mm: number; quantity: number; glass_type: string | null; min_thickness_mm: number | null; max_thickness_mm: number | null; created_at: string }
+        Insert: { id?: string; typology_id: string; glass_name: string; width_reference?: string; width_constant_mm?: number; height_reference?: string; height_constant_mm?: number; quantity?: number; glass_type?: string | null; min_thickness_mm?: number | null; max_thickness_mm?: number | null; created_at?: string }
+        Update: { id?: string; typology_id?: string; glass_name?: string; width_reference?: string; width_constant_mm?: number; height_reference?: string; height_constant_mm?: number; quantity?: number; glass_type?: string | null; min_thickness_mm?: number | null; max_thickness_mm?: number | null; created_at?: string }
+        Relationships: []
+      }
+      markup_config: {
+        Row: { id: string; product_line_id: string | null; product_type: string | null; margem_percent: number; custo_base_m2: number | null; obs: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; product_line_id?: string | null; product_type?: string | null; margem_percent?: number; custo_base_m2?: number | null; obs?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; product_line_id?: string | null; product_type?: string | null; margem_percent?: number; custo_base_m2?: number | null; obs?: string | null; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      tipologias_customizadas: {
+        Row: { id: string; product_line_id: string; name: string; category: string; subcategory: string | null; num_folhas: number; has_veneziana: boolean; has_bandeira: boolean; notes: string | null; active: boolean; min_width_mm: number | null; max_width_mm: number | null; min_height_mm: number | null; max_height_mm: number | null; created_at: string; updated_at: string }
+        Insert: { id?: string; product_line_id: string; name: string; category: string; subcategory?: string | null; num_folhas?: number; has_veneziana?: boolean; has_bandeira?: boolean; notes?: string | null; active?: boolean; min_width_mm?: number | null; max_width_mm?: number | null; min_height_mm?: number | null; max_height_mm?: number | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; product_line_id?: string; name?: string; category?: string; subcategory?: string | null; num_folhas?: number; has_veneziana?: boolean; has_bandeira?: boolean; notes?: string | null; active?: boolean; min_width_mm?: number | null; max_width_mm?: number | null; min_height_mm?: number | null; max_height_mm?: number | null; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      tracking_events: {
+        Row: { id: string; pedido_id: string | null; etapa: string; status: string; observacao: string | null; notify_client: boolean; created_at: string }
+        Insert: { id?: string; pedido_id?: string | null; etapa: string; status: string; observacao?: string | null; notify_client?: boolean; created_at?: string }
+        Update: { id?: string; pedido_id?: string | null; etapa?: string; status?: string; observacao?: string | null; notify_client?: boolean; created_at?: string }
+        Relationships: []
+      }
       user_roles: {
         Row: { id: string; user_id: string; role: string; created_at: string }
         Insert: { id?: string; user_id: string; role: string; created_at?: string }
@@ -167,53 +215,3 @@ export type Database = {
     CompositeTypes: {}
   }
 }
-
-      // Custom tables for features
-      tipologias_customizadas: {
-        Row: { id: string; product_line_id: string; name: string; category: string; subcategory: string | null; num_folhas: number; has_veneziana: boolean; has_bandeira: boolean; notes: string | null; active: boolean; min_width_mm: number | null; max_width_mm: number | null; min_height_mm: number | null; max_height_mm: number | null; created_at: string; updated_at: string }
-        Insert: { id?: string; product_line_id: string; name: string; category: string; subcategory?: string | null; num_folhas?: number; has_veneziana?: boolean; has_bandeira?: boolean; notes?: string | null; active?: boolean; min_width_mm?: number | null; max_width_mm?: number | null; min_height_mm?: number | null; max_height_mm?: number | null; created_at?: string; updated_at?: string }
-        Update: { id?: string; product_line_id?: string; name?: string; category?: string; subcategory?: string | null; num_folhas?: number; has_veneziana?: boolean; has_bandeira?: boolean; notes?: string | null; active?: boolean; min_width_mm?: number | null; max_width_mm?: number | null; min_height_mm?: number | null; max_height_mm?: number | null; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      regras_corte_customizadas: {
-        Row: { id: string; typology_id: string; profile_id: string; piece_name: string; piece_function: string; reference_dimension: string; coefficient: number; constant_mm: number; fixed_value_mm: number | null; cut_angle_left: number; cut_angle_right: number; quantity_formula: string; sort_order: number; notes: string | null; created_at: string }
-        Insert: { id?: string; typology_id: string; profile_id: string; piece_name: string; piece_function?: string; reference_dimension?: string; coefficient?: number; constant_mm?: number; fixed_value_mm?: number | null; cut_angle_left?: number; cut_angle_right?: number; quantity_formula?: string; sort_order?: number; notes?: string | null; created_at?: string }
-        Update: { id?: string; typology_id?: string; profile_id?: string; piece_name?: string; piece_function?: string; reference_dimension?: string; coefficient?: number; constant_mm?: number; fixed_value_mm?: number | null; cut_angle_left?: number; cut_angle_right?: number; quantity_formula?: string; sort_order?: number; notes?: string | null; created_at?: string }
-        Relationships: []
-      }
-      regras_vidro_customizadas: {
-        Row: { id: string; typology_id: string; glass_name: string; width_reference: string; width_constant_mm: number; height_reference: string; height_constant_mm: number; quantity: number; glass_type: string | null; min_thickness_mm: number | null; max_thickness_mm: number | null; created_at: string }
-        Insert: { id?: string; typology_id: string; glass_name: string; width_reference?: string; width_constant_mm?: number; height_reference?: string; height_constant_mm?: number; quantity?: number; glass_type?: string | null; min_thickness_mm?: number | null; max_thickness_mm?: number | null; created_at?: string }
-        Update: { id?: string; typology_id?: string; glass_name?: string; width_reference?: string; width_constant_mm?: number; height_reference?: string; height_constant_mm?: number; quantity?: number; glass_type?: string | null; min_thickness_mm?: number | null; max_thickness_mm?: number | null; created_at?: string }
-        Relationships: []
-      }
-      componentes_customizados: {
-        Row: { id: string; typology_id: string; component_name: string; component_code: string | null; component_type: string; quantity_formula: string; unit: string; length_reference: string | null; length_constant_mm: number | null; created_at: string }
-        Insert: { id?: string; typology_id: string; component_name: string; component_code?: string | null; component_type?: string; quantity_formula?: string; unit?: string; length_reference?: string | null; length_constant_mm?: number | null; created_at?: string }
-        Update: { id?: string; typology_id?: string; component_name?: string; component_code?: string | null; component_type?: string; quantity_formula?: string; unit?: string; length_reference?: string | null; length_constant_mm?: number | null; created_at?: string }
-        Relationships: []
-      }
-      markup_config: {
-        Row: { id: string; product_line_id: string | null; product_type: string | null; margem_percent: number; custo_base_m2: number | null; obs: string | null; created_at: string; updated_at: string }
-        Insert: { id?: string; product_line_id?: string | null; product_type?: string | null; margem_percent?: number; custo_base_m2?: number | null; obs?: string | null; created_at?: string; updated_at?: string }
-        Update: { id?: string; product_line_id?: string | null; product_type?: string | null; margem_percent?: number; custo_base_m2?: number | null; obs?: string | null; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      client_portal_tokens: {
-        Row: { id: string; client_email: string; client_phone: string | null; token: string; orcamento_id: string | null; expires_at: string | null; created_at: string }
-        Insert: { id?: string; client_email: string; client_phone?: string | null; token: string; orcamento_id?: string | null; expires_at?: string | null; created_at?: string }
-        Update: { id?: string; client_email?: string; client_phone?: string | null; token?: string; orcamento_id?: string | null; expires_at?: string | null; created_at?: string }
-        Relationships: []
-      }
-      estoque_movimentos: {
-        Row: { id: string; produto_id: string; tipo_movimento: string; quantidade: number; observacao: string | null; pedido_id: string | null; user_id: string | null; created_at: string }
-        Insert: { id?: string; produto_id: string; tipo_movimento: string; quantidade: number; observacao?: string | null; pedido_id?: string | null; user_id?: string | null; created_at?: string }
-        Update: { id?: string; produto_id?: string; tipo_movimento?: string; quantidade?: number; observacao?: string | null; pedido_id?: string | null; user_id?: string | null; created_at?: string }
-        Relationships: []
-      }
-      tracking_events: {
-        Row: { id: string; pedido_id: string | null; etapa: string; status: string; observacao: string | null; notify_client: boolean; created_at: string }
-        Insert: { id?: string; pedido_id?: string | null; etapa: string; status: string; observacao?: string | null; notify_client?: boolean; created_at?: string }
-        Update: { id?: string; pedido_id?: string | null; etapa?: string; status?: string; observacao?: string | null; notify_client?: boolean; created_at?: string }
-        Relationships: []
-      }

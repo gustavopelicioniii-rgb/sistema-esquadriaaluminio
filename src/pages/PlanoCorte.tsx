@@ -152,7 +152,7 @@ function PlanoDetalhe({ plano, onBack, onUpdate, allTypologies, selectedMachine,
         adjustedCutRules, adjustedGlassRules, components, typ.name, typ.num_folhas
       );
     } catch { return null; }
-  }, [plano.typology_id, largura, altura, quantidade, typ, cutFolgas, glassFolgas, originalCutRules, originalGlassRules]);
+  }, [plano.typology_id, largura, altura, quantidade, typ, baseId, cutFolgas, glassFolgas, originalCutRules, originalGlassRules]);
 
   const barResults: OptimizationResult[] = useMemo(() => {
     if (!result) return [];
