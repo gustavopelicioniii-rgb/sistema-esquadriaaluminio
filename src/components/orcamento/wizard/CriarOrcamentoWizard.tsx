@@ -89,13 +89,22 @@ export default function CriarOrcamentoWizard() {
       descontoTipo, descontoValor, formaPagamento, parcelas, observacoes,
       lastUpdate: Date.now(),
     };
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {
+      // localStorage unavailable (private mode, full, etc)
+    }
   }, [cliente, items, margemPercent, acrescimo, temAcrescimo, descontoTipo, descontoValor, formaPagamento, parcelas, observacoes, isEditing]);
 
   // Load draft on mount (only for new orçamento)
   useEffect(() => {
     if (!isEditing && !loaded) {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem(DRAFT_KEY);
+      } catch {
+        // localStorage unavailable
+      }
       if (saved) {
         try {
           const draft: DraftData = JSON.parse(saved);
@@ -277,7 +286,11 @@ export default function CriarOrcamentoWizard() {
           addHistorico.mutate({ orcamento_id: result.id, status_anterior: null, status_novo: "pendente" });
         }
         toast.success("Orçamento criado!");
-        localStorage.removeItem(DRAFT_KEY);
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch {
+          // localStorage unavailable
+        }
       }
       navigate("/orcamentos");
     } catch (err: any) {
@@ -359,7 +372,11 @@ export default function CriarOrcamentoWizard() {
 
   // Clear draft
   const handleLimpar = () => {
-    localStorage.removeItem(DRAFT_KEY);
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      // localStorage unavailable
+    }
     setCliente("");
     setItems([createEmptyItem()]);
     setActiveItemIdx(0);

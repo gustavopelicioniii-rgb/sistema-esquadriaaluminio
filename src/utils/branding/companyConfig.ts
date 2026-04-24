@@ -90,7 +90,11 @@ export const aluminumColorOptions = [
 
 // Save/Load branding from localStorage
 export function saveBranding(branding: CompanyBranding): void {
-  localStorage.setItem("aluflow_branding", JSON.stringify(branding));
+  try {
+    localStorage.setItem("aluflow_branding", JSON.stringify(branding));
+  } catch {
+    // localStorage unavailable
+  }
 }
 
 export function loadBranding(): CompanyBranding {
@@ -100,7 +104,7 @@ export function loadBranding(): CompanyBranding {
       return { ...defaultBranding, ...JSON.parse(stored) };
     }
   } catch {
-    // ignore
+    // ignore parse errors or localStorage unavailability
   }
   return defaultBranding;
 }

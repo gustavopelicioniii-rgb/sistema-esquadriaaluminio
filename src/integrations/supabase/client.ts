@@ -7,16 +7,42 @@ const AUTH_URL = `${API_BASE}/auth/v1`;
 const TOKEN_KEY = 'aluflow_token';
 const USER_KEY = 'aluflow_user';
 
-export const getStoredToken = () => localStorage.getItem(TOKEN_KEY);
-export const setStoredToken = (token: string) => localStorage.setItem(TOKEN_KEY, token);
-export const getStoredUser = () => {
-  const user = localStorage.getItem(USER_KEY);
-  return user ? JSON.parse(user) : null;
+export const getStoredToken = () => {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 };
-export const setStoredUser = (user: any) => localStorage.setItem(USER_KEY, JSON.stringify(user));
+export const setStoredToken = (token: string) => {
+  try {
+    localStorage.setItem(TOKEN_KEY, token);
+  } catch {
+    // localStorage unavailable
+  }
+};
+export const getStoredUser = () => {
+  try {
+    const user = localStorage.getItem(USER_KEY);
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+};
+export const setStoredUser = (user: any) => {
+  try {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } catch {
+    // localStorage unavailable
+  }
+};
 export const clearStoredAuth = () => {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  } catch {
+    // localStorage unavailable
+  }
 };
 
 const getHeaders = () => {

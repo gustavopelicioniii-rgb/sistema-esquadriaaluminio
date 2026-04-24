@@ -37,6 +37,7 @@ export default function FramePreview({
 
   // Scale proportionally to fit maxWidth/maxHeight
   const { svgW, svgH } = useMemo(() => {
+    if (height_mm === 0) return { svgW: 0, svgH: 0 };
     const aspect = width_mm / height_mm;
     let w = maxWidth;
     let h = w / aspect;

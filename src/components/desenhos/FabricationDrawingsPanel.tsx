@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -174,7 +175,7 @@ export function FabricationDrawingsPanel({
               <div className="flex justify-center bg-gray-50 rounded-lg p-4 overflow-auto">
                 {svgContent && (
                   <div 
-                    dangerouslySetInnerHTML={{ __html: svgContent }} 
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(svgContent) }} 
                     className="max-w-full"
                     style={{ maxHeight: "500px" }}
                   />

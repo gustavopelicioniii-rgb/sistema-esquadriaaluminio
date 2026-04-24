@@ -139,7 +139,9 @@ export function generateTypologyDetailPdf(data: TypologyPdfData) {
   if (cutRules.length > 0) {
     const headers = ["Peça", "Perfil", "Ref.", "Constante", "Ângulos", "Qtd"];
     const widths = [38, 28, 22, 26, 30, 18];
-    const factor = CW / widths.reduce((a, b) => a + b, 0);
+    const sum = widths.reduce((a, b) => a + b, 0);
+    if (sum === 0) return;
+    const factor = CW / sum;
     const scaled = widths.map(w => w * factor);
     const rows = cutRules.map(r => [
       r.piece_name,
@@ -156,7 +158,9 @@ export function generateTypologyDetailPdf(data: TypologyPdfData) {
   if (glassRules.length > 0) {
     const headers = ["Nome", "Largura", "Altura", "Qtd", "Tipo", "Espessura"];
     const widths = [34, 28, 28, 14, 30, 28];
-    const factor = CW / widths.reduce((a, b) => a + b, 0);
+    const sum = widths.reduce((a, b) => a + b, 0);
+    if (sum === 0) return;
+    const factor = CW / sum;
     const scaled = widths.map(w => w * factor);
     const rows = glassRules.map(r => [
       r.glass_name,
@@ -173,7 +177,9 @@ export function generateTypologyDetailPdf(data: TypologyPdfData) {
   if (components.length > 0) {
     const headers = ["Componente", "Código", "Tipo", "Qtd", "Unidade"];
     const widths = [40, 30, 32, 20, 20];
-    const factor = CW / widths.reduce((a, b) => a + b, 0);
+    const sum = widths.reduce((a, b) => a + b, 0);
+    if (sum === 0) return;
+    const factor = CW / sum;
     const scaled = widths.map(w => w * factor);
     const rows = components.map(c => [
       c.component_name,
