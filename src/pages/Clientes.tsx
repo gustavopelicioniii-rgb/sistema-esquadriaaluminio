@@ -155,6 +155,7 @@ const Clientes = () => {
 
   // ── Client logic ──
   const fetchClientes = useCallback(async () => {
+    setLoading(true);
     const { data, error } = await supabase.from("clientes").select("*").order("nome");
     if (!error && data) setClientes(data);
     setLoading(false);

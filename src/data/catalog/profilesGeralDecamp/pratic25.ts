@@ -1,0 +1,13 @@
+import type { Profile } from "@/types/calculation";
+// ===================== PRATIC 25 =====================
+export const decampDecampPratic25Profiles: Profile[] = [
+  { id: "p-dc-pr-25-204", product_line_id: "line-decamp-pratic25", code: "PR-25.204", name: "Perfil Pratic 25 PR-25.204", profile_type: "marco", weight_per_meter: 0.545, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-270", product_line_id: "line-decamp-pratic25", code: "PR-25.270", name: "Perfil Pratic 25 PR-25.270", profile_type: "marco", weight_per_meter: 0.978, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-519", product_line_id: "line-decamp-pratic25", code: "PR-25.519", name: "Perfil Pratic 25 PR-25.519", profile_type: "marco", weight_per_meter: 0.534, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-601", product_line_id: "line-decamp-pratic25", code: "PR-25.601", name: "Perfil Pratic 25 PR-25.601", profile_type: "marco", weight_per_meter: 1.0, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-602", product_line_id: "line-decamp-pratic25", code: "PR-25.602", name: "Perfil Pratic 25 PR-25.602", profile_type: "marco", weight_per_meter: 0.846, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-603", product_line_id: "line-decamp-pratic25", code: "PR-25.603", name: "Perfil Pratic 25 PR-25.603", profile_type: "marco", weight_per_meter: 1.588, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-606", product_line_id: "line-decamp-pratic25", code: "PR-25.606", name: "Perfil Pratic 25 PR-25.606", profile_type: "marco", weight_per_meter: 1.013, bar_length_mm: 6000, material: "AL 6063-T5", active: true },
+  { id: "p-dc-pr-25-918", product_line_id: "line-decamp-pratic25", code: "PR-25.918", name: "Perfil Pratic 25 PR-25.918", profile_type: "marco", weight_per_meter: 0.998, bar_length_mm: 6000, material: "AL 6063-T5", active: true }
+];
+

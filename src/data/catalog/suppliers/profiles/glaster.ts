@@ -1,0 +1,41 @@
+// ===== GLASTER (Beaut/Arazil) =====
+import type { SupplierProfile } from "../types";
+export const glasterProfiles: SupplierProfile[] = [
+  {
+    id: "gls-mf-40",
+    name: "Glaster Main Frame 40mm",
+    manufacturer: "Glaster (Beaut/Arazil)",
+    line: "Glaster",
+    profile_type: "main_frame",
+    code: "GLS-MF-40",
+    description: "Batente 40mm Glaster",
+    weight_kg_m: 0.68,
+    standard_mm: 6000,
+    color_finishes: ["natural", "branco", "bronze"],
+    available: true,
+    thickness_mm: 1.3,
+    width_mm: 40,
+    height_mm: 40,
+    inertia_x: 3.8,
+    inertia_y: 3.4,
+  },
+  {
+    id: "gls-mf-55",
+    name: "Glaster Main Frame 55mm",
+    manufacturer: "Glaster (Beaut/Arazil)",
+    line: "Glaster",
+    profile_type: "main_frame_60",
+    code: "GLS-MF-55",
+    description: "Batente 55mm Glaster",
+    weight_kg_m: 0.88,
+    standard_mm: 6000,
+    color_finishes: ["natural", "branco", "bronze"],
+    available: true,
+    thickness_mm: 1.5,
+    width_mm: 55,
+    height_mm: 55,
+    inertia_x: 8.5,
+    inertia_y: 7.4,
+  },
+];
+

@@ -107,10 +107,10 @@ export async function generateProfessionalProposalPDF(config: ProposalConfig): P
   const SECTION_BG = [25, 25, 25] as const;
   const INFO_BG = [245, 245, 245] as const;
 
-  const safeText = (text: any, x: number, yPos: number, options?: any) => {
+  const safeText = (text: string | string[] | null | undefined, x: number, yPos: number, options?: Record<string, unknown>) => {
     let str: string | string[];
     if (Array.isArray(text)) {
-      str = text.map((t: any) => (t == null ? "" : String(t)));
+      str = text.map((t) => (t == null ? "" : String(t)));
     } else {
       str = text == null ? "" : String(text);
     }

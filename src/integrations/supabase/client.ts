@@ -29,7 +29,7 @@ export const getStoredUser = () => {
     return null;
   }
 };
-export const setStoredUser = (user: any) => {
+export const setStoredUser = (user: Record<string, unknown>) => {
   try {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   } catch {
@@ -84,28 +84,28 @@ const query = (table: string) => {
     },
     
     // Filters
-    eq: (column: string, value: any) => {
+    eq: (column: string, value: string | number | boolean) => {
       const op = encodeURIComponent(value);
       url += url.includes('?') ? `&${column}=eq.${op}` : `?${column}=eq.${op}`;
       return api;
     },
-    neq: (column: string, value: any) => {
+    neq: (column: string, value: string | number | boolean) => {
       url += url.includes('?') ? `&${column}=neq.${value}` : `?${column}=neq.${value}`;
       return api;
     },
-    gt: (column: string, value: any) => {
+    gt: (column: string, value: string | number | boolean) => {
       url += url.includes('?') ? `&${column}=gt.${value}` : `?${column}=gt.${value}`;
       return api;
     },
-    lt: (column: string, value: any) => {
+    lt: (column: string, value: string | number | boolean) => {
       url += url.includes('?') ? `&${column}=lt.${value}` : `?${column}=lt.${value}`;
       return api;
     },
-    gte: (column: string, value: any) => {
+    gte: (column: string, value: string | number | boolean) => {
       url += url.includes('?') ? `&${column}=gte.${value}` : `?${column}=gte.${value}`;
       return api;
     },
-    lte: (column: string, value: any) => {
+    lte: (column: string, value: string | number | boolean) => {
       url += url.includes('?') ? `&${column}=lte.${value}` : `?${column}=lte.${value}`;
       return api;
     },
@@ -129,7 +129,7 @@ const query = (table: string) => {
     },
     
     // Insert
-    insert: (data: any) => {
+    insert: (data: Record<string, unknown>) => {
       method = 'POST';
       body = data;
       hasData = true;
@@ -137,7 +137,7 @@ const query = (table: string) => {
     },
     
     // Update
-    update: (data: any) => {
+    update: (data: Record<string, unknown>) => {
       method = 'PATCH';
       body = data;
       hasData = true;
@@ -151,7 +151,7 @@ const query = (table: string) => {
     },
     
     // Promise then
-    then: (resolve: Function, reject: Function) => {
+    then: (resolve: (value: unknown) => void, reject: (reason: unknown) => void) => {
       const opts: RequestInit = { method };
       if (body) opts.body = JSON.stringify(body);
       execute(url, opts).then(resolve).catch(reject);
@@ -217,7 +217,7 @@ export const supabase = {
       }
     },
     
-    signUp: async ({ email, password, options }: { email: string; password: string; options?: any }) => {
+    signUp: async ({ email, password, options }: { email: string; password: string; options?: { nome?: string } }) => {
       try {
         const response = await fetch(`${AUTH_URL}/signup`, {
           method: 'POST',
@@ -259,7 +259,7 @@ export const supabase = {
       return { data: { session: { access_token: token }, user }, error: null };
     },
     
-    onAuthStateChange: (callback: (event: string, session: any) => void) => {
+    onAuthStateChange: (callback: (event: string, session: { access_token: string } | null) => void) => {
       const token = getStoredToken();
       const user = getStoredUser();
       if (token && user) callback('SIGNED_IN', { access_token: token });
@@ -278,8 +278,8 @@ export const supabase = {
   
   from: (table: string) => query(table),
   
-  rpc: (fn: string, params: any = {}) => ({
-    then: (resolve: Function, reject: Function) => {
+  rpc: (fn: string, params: Record<string, unknown> = {}) => ({
+    then: (resolve: (value: unknown) => void, reject: (reason: unknown) => void) => {
       execute(`${REST_URL}/rpc/${fn}`, { method: 'POST', body: params }, true).then(resolve).catch(reject);
     },
   }),

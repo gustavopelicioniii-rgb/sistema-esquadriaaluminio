@@ -35,6 +35,7 @@ const Agenda = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchEventos = async () => {
+    setLoading(true);
     const { data, error } = await supabase.from("agenda").select("*").order("data");
     if (!error && data) setEventos(data);
     setLoading(false);

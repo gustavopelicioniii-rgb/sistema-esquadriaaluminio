@@ -43,6 +43,7 @@ const Configuracoes = () => {
 
   useEffect(() => {
     const fetchAll = async () => {
+      setLoading(true);
       const [configRes, funcRes, adminRes, apisRes] = await Promise.all([
         supabase.from("configuracoes").select("chave, valor"),
         supabase.from("funcionarios").select("*").order("created_at"),
@@ -78,14 +79,8 @@ const Configuracoes = () => {
       if (upsertError) { toast.error("Erro", { description: upsertError.message }); return; }
     }
     const folgasPayload = JSON.stringify(folgas);
-    const { data: existing } = await supabase.from("configuracoes").select("id").eq("chave", "folgas_global").maybeSingle();
-    if (existing) {
-      const { error: updateError } = await supabase.from("configuracoes").update({ valor: folgasPayload }).eq("chave", "folgas_global");
-      if (updateError) { toast.error("Erro", { description: updateError.message }); return; }
-    } else {
-      const { error: insertError } = await supabase.from("configuracoes").insert({ chave: "folgas_global", valor: folgasPayload });
-      if (insertError) { toast.error("Erro", { description: insertError.message }); return; }
-    }
+    const { error: upsertError } = await supabase.from("configuracoes").upsert({ chave: "folgas_global", valor: folgasPayload }, { onConflict: "chave" });
+    if (upsertError) { toast.error("Erro", { description: upsertError.message }); return; }
     toast.success("Configurações salvas", { description: "Suas alterações foram salvas." });
   };
 

@@ -1,0 +1,39 @@
+// ===== DECA =====
+import type { SupplierProfile } from "../types";
+export const decaProfiles: SupplierProfile[] = [
+  {
+    id: "dec-mf-45",
+    name: "Deca Main Frame 45mm",
+    manufacturer: "Deca",
+    line: "Deca",
+    profile_type: "main_frame",
+    code: "DEC-MF-45",
+    description: "Batente 45mm Deca",
+    weight_kg_m: 0.75,
+    standard_mm: 6000,
+    color_finishes: ["branco", "bronze"],
+    available: true,
+    thickness_mm: 1.4,
+    width_mm: 45,
+    height_mm: 45,
+    inertia_x: 5.8,
+    inertia_y: 5.2,
+  },
+  {
+    id: "dec-guid-35",
+    name: "Deca Guideline 35mm",
+    manufacturer: "Deca",
+    line: "Deca",
+    profile_type: "guideline",
+    code: "DEC-GUID-35",
+    description: "Guideline 35mm Deca",
+    weight_kg_m: 0.55,
+    standard_mm: 6000,
+    color_finishes: ["branco", "bronze"],
+    available: true,
+    thickness_mm: 1.3,
+    width_mm: 35,
+    height_mm: 42,
+  },
+];
+

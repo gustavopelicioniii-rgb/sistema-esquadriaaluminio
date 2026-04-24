@@ -1,4 +1,4 @@
-import { jsPDF } from "jspdf";
+import { jsPDF, GState } from "jspdf";
 
 interface ReportOptions {
   title: string;
@@ -102,9 +102,9 @@ function addSummaryCards(doc: jsPDF, cards: { label: string; value: string }[], 
 
     // Card shadow
     doc.setFillColor(0, 0, 0);
-    doc.setGState(new (doc as any).GState({ opacity: 0.04 }));
+    doc.setGState(new GState({ opacity: 0.04 }));
     drawRoundedRect(doc, x + 0.5, startY + 0.8, cardWidth, cardHeight, 3, "F");
-    doc.setGState(new (doc as any).GState({ opacity: 1 }));
+    doc.setGState(new GState({ opacity: 1 }));
 
     // Card background
     doc.setFillColor(...COLORS.white);

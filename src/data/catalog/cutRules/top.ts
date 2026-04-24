@@ -1,0 +1,182 @@
+import type { CutRule } from "@/types/calculation";
+import { profiles } from "@/data/catalog/profiles";
+import { createCutRule } from "./helpers";
+
+const T = "line-top";
+
+// ============================================
+// TOP (40mm) - 12 TIPOLOGIAS FACHADA
+// ============================================
+
+const topCutRules: CutRule[] = [
+  // T1: Janela Correr 2F Top
+  createCutRule("tp-jc2f-01","typ-tp-jc2f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jc2f-02","typ-tp-jc2f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jc2f-03","typ-tp-jc2f","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jc2f-04","typ-tp-jc2f","TP-039",T,"Montante Folha","montante","H",-168,90,90,"4",4,profiles),
+  createCutRule("tp-jc2f-05","typ-tp-jc2f","TP-053",T,"Travessa Superior Folha","travessa_sup","L/2",-98,90,90,"2",5,profiles),
+  createCutRule("tp-jc2f-06","typ-tp-jc2f","TP-053",T,"Travessa Inferior Folha","travessa_inf","L/2",-98,90,90,"2",6,profiles),
+  createCutRule("tp-jc2f-07","typ-tp-jc2f","ITP-502",T,"Baguete Vertical","baguete_v","H",-185,90,90,"4",7,profiles),
+  createCutRule("tp-jc2f-08","typ-tp-jc2f","ITP-502",T,"Baguete Horizontal","baguete_h","L/2",-115,90,90,"4",8,profiles),
+
+  // T2: Janela Correr 4F Top
+  createCutRule("tp-jc4f-01","typ-tp-jc4f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jc4f-02","typ-tp-jc4f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jc4f-03","typ-tp-jc4f","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jc4f-04","typ-tp-jc4f","TP-039",T,"Montante Folha","montante","H",-168,90,90,"8",4,profiles),
+  createCutRule("tp-jc4f-05","typ-tp-jc4f","TP-053",T,"Travessa Folha","travessa","L/4",-98,90,90,"8",5,profiles),
+  createCutRule("tp-jc4f-06","typ-tp-jc4f","ITP-502",T,"Baguete V","baguete_v","H",-185,90,90,"8",6,profiles),
+  createCutRule("tp-jc4f-07","typ-tp-jc4f","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"8",7,profiles),
+
+  // T3: Maxim-Ar 1F Top
+  createCutRule("tp-jma1-01","typ-tp-jma1","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jma1-02","typ-tp-jma1","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jma1-03","typ-tp-jma1","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jma1-04","typ-tp-jma1","TP-079",T,"Montante Folha","montante","H",-168,90,90,"2",4,profiles),
+  createCutRule("tp-jma1-05","typ-tp-jma1","TP-080",T,"Travessa Sup Folha","travessa_sup","L",-185,45,45,"1",5,profiles),
+  createCutRule("tp-jma1-06","typ-tp-jma1","TP-080",T,"Travessa Inf Folha","travessa_inf","L",-185,45,45,"1",6,profiles),
+  createCutRule("tp-jma1-07","typ-tp-jma1","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",7,profiles),
+  createCutRule("tp-jma1-08","typ-tp-jma1","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",8,profiles),
+
+  // T4: Porta Correr 2F Top
+  createCutRule("tp-pc2f-01","typ-tp-pc2f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-pc2f-02","typ-tp-pc2f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-pc2f-03","typ-tp-pc2f","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3,profiles),
+  createCutRule("tp-pc2f-04","typ-tp-pc2f","TP-111",T,"Montante Folha Porta","montante","H",-145,90,90,"4",4,profiles),
+  createCutRule("tp-pc2f-05","typ-tp-pc2f","TP-053",T,"Travessa Sup Folha","travessa_sup","L/2",-98,90,90,"2",5,profiles),
+  createCutRule("tp-pc2f-06","typ-tp-pc2f","TP-053",T,"Travessa Inf Folha","travessa_inf","L/2",-98,90,90,"2",6,profiles),
+  createCutRule("tp-pc2f-07","typ-tp-pc2f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"4",7,profiles),
+  createCutRule("tp-pc2f-08","typ-tp-pc2f","ITP-502",T,"Baguete H","baguete_h","L/2",-115,90,90,"4",8,profiles),
+
+  // T5: Porta Correr 4F Top
+  createCutRule("tp-pc4f-01","typ-tp-pc4f","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-pc4f-02","typ-tp-pc4f","TP-012",T,"Marco Inferior (Trilho)","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-pc4f-03","typ-tp-pc4f","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3,profiles),
+  createCutRule("tp-pc4f-04","typ-tp-pc4f","TP-111",T,"Montante Folha Porta","montante","H",-145,90,90,"8",4,profiles),
+  createCutRule("tp-pc4f-05","typ-tp-pc4f","TP-053",T,"Travessa Folha","travessa","L/4",-98,90,90,"8",5,profiles),
+  createCutRule("tp-pc4f-06","typ-tp-pc4f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"8",6,profiles),
+  createCutRule("tp-pc4f-07","typ-tp-pc4f","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"8",7,profiles),
+
+  // T6: Porta Giro 1F Top
+  createCutRule("tp-pg1f-01","typ-tp-pg1f","TP-089",T,"Marco Superior","marco_sup","L",-12,90,90,"1",1,profiles),
+  createCutRule("tp-pg1f-02","typ-tp-pg1f","TP-089",T,"Marco Lateral","marco_lat","H",-48,90,90,"2",2,profiles),
+  createCutRule("tp-pg1f-03","typ-tp-pg1f","TP-111",T,"Montante Folha","montante","H",-140,45,45,"2",3,profiles),
+  createCutRule("tp-pg1f-04","typ-tp-pg1f","TP-111",T,"Travessa Sup Folha","travessa_sup","L",-148,45,45,"1",4,profiles),
+  createCutRule("tp-pg1f-05","typ-tp-pg1f","TP-111",T,"Travessa Inf Folha","travessa_inf","L",-148,45,45,"1",5,profiles),
+  createCutRule("tp-pg1f-06","typ-tp-pg1f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"2",6,profiles),
+  createCutRule("tp-pg1f-07","typ-tp-pg1f","ITP-502",T,"Baguete H","baguete_h","L",-168,90,90,"2",7,profiles),
+
+  // T7: Porta Giro 2F Top
+  createCutRule("tp-pg2f-01","typ-tp-pg2f","TP-089",T,"Marco Superior","marco_sup","L",-12,90,90,"1",1,profiles),
+  createCutRule("tp-pg2f-02","typ-tp-pg2f","TP-089",T,"Marco Lateral","marco_lat","H",-48,90,90,"2",2,profiles),
+  createCutRule("tp-pg2f-03","typ-tp-pg2f","TP-111",T,"Montante Folha","montante","H",-140,45,45,"4",3,profiles),
+  createCutRule("tp-pg2f-04","typ-tp-pg2f","TP-111",T,"Travessa Folha","travessa","L/2",-148,45,45,"4",4,profiles),
+  createCutRule("tp-pg2f-05","typ-tp-pg2f","ITP-502",T,"Baguete V","baguete_v","H",-160,90,90,"4",5,profiles),
+  createCutRule("tp-pg2f-06","typ-tp-pg2f","ITP-502",T,"Baguete H","baguete_h","L/2",-168,90,90,"4",6,profiles),
+
+  // T8: Vitrô Fixo Fachada Top
+  createCutRule("tp-vfix-01","typ-tp-vfix","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-vfix-02","typ-tp-vfix","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-vfix-03","typ-tp-vfix","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-vfix-04","typ-tp-vfix","ITP-502",T,"Baguete V","baguete_v","H",-95,90,90,"2",4,profiles),
+  createCutRule("tp-vfix-05","typ-tp-vfix","ITP-502",T,"Baguete H","baguete_h","L",-95,90,90,"2",5,profiles),
+
+  // T9: Porta Integrada Top
+  createCutRule("tp-pint-01","typ-tp-pint","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-pint-02","typ-tp-pint","TP-012",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-pint-03","typ-tp-pint","TP-014",T,"Marco Lateral","marco_lat","H",-55,90,90,"2",3,profiles),
+  createCutRule("tp-pint-04","typ-tp-pint","TP-292",T,"Montante Fixo","montante_fixo","H",-78,90,90,"1",4,profiles),
+  createCutRule("tp-pint-05","typ-tp-pint","TP-111",T,"Montante Folha","montante","H",-145,90,90,"4",5,profiles),
+  createCutRule("tp-pint-06","typ-tp-pint","TP-053",T,"Travessa Folha","travessa","L/3",-98,90,90,"4",6,profiles),
+  createCutRule("tp-pint-07","typ-tp-pint","ITP-502",T,"Baguete V Folha","baguete_v","H",-160,90,90,"4",7,profiles),
+  createCutRule("tp-pint-08","typ-tp-pint","ITP-502",T,"Baguete H Folha","baguete_h","L/3",-115,90,90,"4",8,profiles),
+  createCutRule("tp-pint-09","typ-tp-pint","ITP-502",T,"Baguete V Fixo","baguete_vf","H",-95,90,90,"2",9,profiles),
+  createCutRule("tp-pint-10","typ-tp-pint","ITP-502",T,"Baguete H Fixo","baguete_hf","L/3",-115,90,90,"2",10,profiles),
+
+  // T10: Porta Camarão Fachada Top
+  createCutRule("tp-jcam-01","typ-tp-jcam","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jcam-02","typ-tp-jcam","TP-012",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jcam-03","typ-tp-jcam","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jcam-04","typ-tp-jcam","TP-072",T,"Montante Camarão","montante","H",-168,90,90,"6",4,profiles),
+  createCutRule("tp-jcam-05","typ-tp-jcam","TP-073",T,"Travessa Camarão","travessa","L/4",-98,90,90,"8",5,profiles),
+  createCutRule("tp-jcam-06","typ-tp-jcam","ITP-502",T,"Baguete V","baguete_v","H",-185,90,90,"6",6,profiles),
+  createCutRule("tp-jcam-07","typ-tp-jcam","ITP-502",T,"Baguete H","baguete_h","L/4",-115,90,90,"6",7,profiles),
+
+  // T11: Janela Pivotante Fachada Top
+  createCutRule("tp-jpiv-01","typ-tp-jpiv","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jpiv-02","typ-tp-jpiv","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jpiv-03","typ-tp-jpiv","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jpiv-04","typ-tp-jpiv","TP-095",T,"Montante Pivotante","montante","H",-168,90,90,"2",4,profiles),
+  createCutRule("tp-jpiv-05","typ-tp-jpiv","TP-096",T,"Travessa Pivotante","travessa","L",-185,90,90,"2",5,profiles),
+  createCutRule("tp-jpiv-06","typ-tp-jpiv","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",6,profiles),
+  createCutRule("tp-jpiv-07","typ-tp-jpiv","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",7,profiles),
+
+  // T12: Janela Giro-Tomba Fachada Top
+  createCutRule("tp-jgiro-01","typ-tp-jgiro","TP-010",T,"Marco Superior","marco_sup","L",-10,90,90,"1",1,profiles),
+  createCutRule("tp-jgiro-02","typ-tp-jgiro","TP-010",T,"Marco Inferior","marco_inf","L",-10,90,90,"1",2,profiles),
+  createCutRule("tp-jgiro-03","typ-tp-jgiro","TP-014",T,"Marco Lateral","marco_lat","H",-78,90,90,"2",3,profiles),
+  createCutRule("tp-jgiro-04","typ-tp-jgiro","TP-111",T,"Montante Folha","montante","H",-168,45,45,"2",4,profiles),
+  createCutRule("tp-jgiro-05","typ-tp-jgiro","TP-111",T,"Travessa Sup Folha","travessa_sup","L",-185,45,45,"1",5,profiles),
+  createCutRule("tp-jgiro-06","typ-tp-jgiro","TP-111",T,"Travessa Inf Folha","travessa_inf","L",-185,45,45,"1",6,profiles),
+  createCutRule("tp-jgiro-07","typ-tp-jgiro","ITP-502",T,"Baguete V","baguete_v","H",-190,90,90,"2",7,profiles),
+  createCutRule("tp-jgiro-08","typ-tp-jgiro","ITP-502",T,"Baguete H","baguete_h","L",-200,90,90,"2",8,profiles),
+
+  // ===== PELE DE VIDRO (CURTAIN WALL) =====
+
+  // CW1: Pele de Vidro 1 Módulo — 2 montantes + 2 travessas + 4 pressões
+  createCutRule("tp-cw1-01","typ-tp-cw1","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1,profiles),
+  createCutRule("tp-cw1-02","typ-tp-cw1","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2,profiles),
+  createCutRule("tp-cw1-03","typ-tp-cw1","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",3,profiles),
+  createCutRule("tp-cw1-04","typ-tp-cw1","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",4,profiles),
+  createCutRule("tp-cw1-05","typ-tp-cw1","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"2",5,profiles),
+  createCutRule("tp-cw1-06","typ-tp-cw1","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L",-50,90,90,"2",6,profiles),
+
+  // CW2: Pele de Vidro 2 Módulos
+  createCutRule("tp-cw2-01","typ-tp-cw2","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1,profiles),
+  createCutRule("tp-cw2-02","typ-tp-cw2","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2,profiles),
+  createCutRule("tp-cw2-03","typ-tp-cw2","TP-603",T,"Montante Intermediário","montante_int","H",-20,90,90,"1",3,profiles),
+  createCutRule("tp-cw2-04","typ-tp-cw2","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",4,profiles),
+  createCutRule("tp-cw2-05","typ-tp-cw2","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",5,profiles),
+  createCutRule("tp-cw2-06","typ-tp-cw2","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"4",6,profiles),
+  createCutRule("tp-cw2-07","typ-tp-cw2","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L/2",-50,90,90,"4",7,profiles),
+
+  // CW3: Pele de Vidro 3 Módulos
+  createCutRule("tp-cw3-01","typ-tp-cw3","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-20,90,90,"1",1,profiles),
+  createCutRule("tp-cw3-02","typ-tp-cw3","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-20,90,90,"1",2,profiles),
+  createCutRule("tp-cw3-03","typ-tp-cw3","TP-603",T,"Montante Intermediário","montante_int","H",-20,90,90,"2",3,profiles),
+  createCutRule("tp-cw3-04","typ-tp-cw3","TP-602",T,"Travessa Superior","travessa_sup","L",-40,90,90,"1",4,profiles),
+  createCutRule("tp-cw3-05","typ-tp-cw3","TP-602",T,"Travessa Inferior","travessa_inf","L",-40,90,90,"1",5,profiles),
+  createCutRule("tp-cw3-06","typ-tp-cw3","TP-604",T,"Pressão Vidro Vertical","pressao_v","H",-30,90,90,"6",6,profiles),
+  createCutRule("tp-cw3-07","typ-tp-cw3","TP-604",T,"Pressão Vidro Horizontal","pressao_h","L/3",-50,90,90,"6",7,profiles),
+
+  // ===== MURO CORTINA =====
+
+  // MC1: Muro Cortina 1 Módulo — montantes contínuos piso-a-piso
+  createCutRule("tp-mc1-01","typ-tp-mc1","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1,profiles),
+  createCutRule("tp-mc1-02","typ-tp-mc1","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2,profiles),
+  createCutRule("tp-mc1-03","typ-tp-mc1","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",3,profiles),
+  createCutRule("tp-mc1-04","typ-tp-mc1","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",4,profiles),
+  createCutRule("tp-mc1-05","typ-tp-mc1","TP-604",T,"Pressão Vidro V","pressao_v","H",-20,90,90,"2",5,profiles),
+  createCutRule("tp-mc1-06","typ-tp-mc1","TP-604",T,"Pressão Vidro H","pressao_h","L",-40,90,90,"2",6,profiles),
+
+  // MC2: Muro Cortina 2 Módulos
+  createCutRule("tp-mc2-01","typ-tp-mc2","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1,profiles),
+  createCutRule("tp-mc2-02","typ-tp-mc2","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2,profiles),
+  createCutRule("tp-mc2-03","typ-tp-mc2","TP-603",T,"Montante Central Estrutural","montante_central","H",-10,90,90,"1",3,profiles),
+  createCutRule("tp-mc2-04","typ-tp-mc2","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",4,profiles),
+  createCutRule("tp-mc2-05","typ-tp-mc2","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",5,profiles),
+  createCutRule("tp-mc2-06","typ-tp-mc2","TP-604",T,"Pressão Vidro V","pressao_v","H",-20,90,90,"4",6,profiles),
+  createCutRule("tp-mc2-07","typ-tp-mc2","TP-604",T,"Pressão Vidro H","pressao_h","L/2",-40,90,90,"4",7,profiles),
+
+  // MC2T: Muro Cortina 2 Módulos c/ Travessa Intermediária (4 panos de vidro)
+  createCutRule("tp-mc2t-01","typ-tp-mc2t","TP-601",T,"Montante Estrutural Esq","montante_esq","H",-10,90,90,"1",1,profiles),
+  createCutRule("tp-mc2t-02","typ-tp-mc2t","TP-601",T,"Montante Estrutural Dir","montante_dir","H",-10,90,90,"1",2,profiles),
+  createCutRule("tp-mc2t-03","typ-tp-mc2t","TP-603",T,"Montante Central Estrutural","montante_central","H",-10,90,90,"1",3,profiles),
+  createCutRule("tp-mc2t-04","typ-tp-mc2t","TP-602",T,"Travessa Superior","travessa_sup","L",-30,90,90,"1",4,profiles),
+  createCutRule("tp-mc2t-05","typ-tp-mc2t","TP-602",T,"Travessa Inferior","travessa_inf","L",-30,90,90,"1",5,profiles),
+  createCutRule("tp-mc2t-06","typ-tp-mc2t","TP-605",T,"Travessa Intermediária","travessa_int","L",-30,90,90,"1",6,profiles),
+  createCutRule("tp-mc2t-07","typ-tp-mc2t","TP-604",T,"Pressão Vidro V","pressao_v","H/2",-20,90,90,"8",7,profiles),
+  createCutRule("tp-mc2t-08","typ-tp-mc2t","TP-604",T,"Pressão Vidro H","pressao_h","L/2",-40,90,90,"8",8,profiles),
+];
+
+export { topCutRules };

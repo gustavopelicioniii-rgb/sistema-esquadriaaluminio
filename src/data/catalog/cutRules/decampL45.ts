@@ -1,0 +1,185 @@
+import type { CutRule } from "@/types/calculation";
+import { profiles } from "@/data/catalog/profiles";
+import { createCutRule } from "./helpers";
+// ============================================
+const DC = "line-decamp45";
+
+export const decampL45CutRules: CutRule[] = [
+  // T1: Janela Correr 2F
+  createCutRule("dc-jc2f-01","typ-dc-jc2f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc2f-02","typ-dc-jc2f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc2f-03","typ-dc-jc2f","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc2f-04","typ-dc-jc2f","TMG-002",DC,"Montante Folha","montante","H",-140,90,90,"4",4, profiles),
+  createCutRule("dc-jc2f-05","typ-dc-jc2f","TMG-006",DC,"Travessa Superior Folha","travessa_sup","L/2",-85,90,90,"2",5, profiles),
+  createCutRule("dc-jc2f-06","typ-dc-jc2f","TMG-006",DC,"Travessa Inferior Folha","travessa_inf","L/2",-85,90,90,"2",6, profiles),
+  createCutRule("dc-jc2f-07","typ-dc-jc2f","PF-45.017",DC,"Baguete Vertical","baguete_v","H",-152,90,90,"4",7, profiles),
+  createCutRule("dc-jc2f-08","typ-dc-jc2f","PF-45.017",DC,"Baguete Horizontal","baguete_h","L/2",-97,90,90,"4",8, profiles),
+
+  // T2: Janela Correr 3F
+  createCutRule("dc-jc3f-01","typ-dc-jc3f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc3f-02","typ-dc-jc3f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc3f-03","typ-dc-jc3f","PF-45.043",DC,"Marco Lateral 3F","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc3f-04","typ-dc-jc3f","TMG-002",DC,"Montante Folha","montante","H",-140,90,90,"6",4, profiles),
+  createCutRule("dc-jc3f-05","typ-dc-jc3f","TMG-006",DC,"Travessa Superior Folha","travessa_sup","L/3",-85,90,90,"3",5, profiles),
+  createCutRule("dc-jc3f-06","typ-dc-jc3f","TMG-006",DC,"Travessa Inferior Folha","travessa_inf","L/3",-85,90,90,"3",6, profiles),
+  createCutRule("dc-jc3f-07","typ-dc-jc3f","PF-45.017",DC,"Baguete Vertical","baguete_v","H",-152,90,90,"6",7, profiles),
+  createCutRule("dc-jc3f-08","typ-dc-jc3f","PF-45.017",DC,"Baguete Horizontal","baguete_h","L/3",-97,90,90,"6",8, profiles),
+
+  // T3: Janela Correr 4F
+  createCutRule("dc-jc4f-01","typ-dc-jc4f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc4f-02","typ-dc-jc4f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc4f-03","typ-dc-jc4f","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc4f-04","typ-dc-jc4f","TMG-002",DC,"Montante Folha","montante","H",-140,90,90,"8",4, profiles),
+  createCutRule("dc-jc4f-05","typ-dc-jc4f","TMG-006",DC,"Travessa Superior Folha","travessa_sup","L/4",-85,90,90,"4",5, profiles),
+  createCutRule("dc-jc4f-06","typ-dc-jc4f","TMG-006",DC,"Travessa Inferior Folha","travessa_inf","L/4",-85,90,90,"4",6, profiles),
+  createCutRule("dc-jc4f-07","typ-dc-jc4f","PF-45.017",DC,"Baguete Vertical","baguete_v","H",-152,90,90,"8",7, profiles),
+  createCutRule("dc-jc4f-08","typ-dc-jc4f","PF-45.017",DC,"Baguete Horizontal","baguete_h","L/4",-97,90,90,"8",8, profiles),
+
+  // T4: Janela Correr 6F
+  createCutRule("dc-jc6f-01","typ-dc-jc6f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc6f-02","typ-dc-jc6f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc6f-03","typ-dc-jc6f","PF-45.043",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc6f-04","typ-dc-jc6f","TMG-002",DC,"Montante Folha","montante","H",-140,90,90,"12",4, profiles),
+  createCutRule("dc-jc6f-05","typ-dc-jc6f","TMG-006",DC,"Travessa Folha","travessa","L/6",-85,90,90,"12",5, profiles),
+  createCutRule("dc-jc6f-06","typ-dc-jc6f","PF-45.017",DC,"Baguete V","baguete_v","H",-152,90,90,"12",6, profiles),
+  createCutRule("dc-jc6f-07","typ-dc-jc6f","PF-45.017",DC,"Baguete H","baguete_h","L/6",-97,90,90,"12",7, profiles),
+
+  // T5: Maxim-Ar 1F
+  createCutRule("dc-jma1-01","typ-dc-jma1","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jma1-02","typ-dc-jma1","PF-45.018",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jma1-03","typ-dc-jma1","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jma1-04","typ-dc-jma1","TMG-018",DC,"Montante Maxim-Ar","montante","H",-140,90,90,"2",4, profiles),
+  createCutRule("dc-jma1-05","typ-dc-jma1","TMG-050",DC,"Travessa Superior","travessa_sup","L",-155,45,45,"1",5, profiles),
+  createCutRule("dc-jma1-06","typ-dc-jma1","TMG-050",DC,"Travessa Inferior","travessa_inf","L",-155,45,45,"1",6, profiles),
+  createCutRule("dc-jma1-07","typ-dc-jma1","PF-45.017",DC,"Baguete V","baguete_v","H",-160,90,90,"2",7, profiles),
+  createCutRule("dc-jma1-08","typ-dc-jma1","PF-45.017",DC,"Baguete H","baguete_h","L",-167,90,90,"2",8, profiles),
+
+  // T6: Maxim-Ar 2F
+  createCutRule("dc-jma2-01","typ-dc-jma2","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jma2-02","typ-dc-jma2","PF-45.018",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jma2-03","typ-dc-jma2","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jma2-04","typ-dc-jma2","TMG-007",DC,"Montante Central","montante_central","H",-65,90,90,"1",4, profiles),
+  createCutRule("dc-jma2-05","typ-dc-jma2","TMG-018",DC,"Montante Folha","montante","H",-140,90,90,"4",5, profiles),
+  createCutRule("dc-jma2-06","typ-dc-jma2","TMG-050",DC,"Travessa Sup Folha","travessa_sup","L/2",-155,45,45,"2",6, profiles),
+  createCutRule("dc-jma2-07","typ-dc-jma2","TMG-050",DC,"Travessa Inf Folha","travessa_inf","L/2",-155,45,45,"2",7, profiles),
+  createCutRule("dc-jma2-08","typ-dc-jma2","PF-45.017",DC,"Baguete V","baguete_v","H",-160,90,90,"4",8, profiles),
+  createCutRule("dc-jma2-09","typ-dc-jma2","PF-45.017",DC,"Baguete H","baguete_h","L/2",-167,90,90,"4",9, profiles),
+
+  // T7: Janela Camarão
+  createCutRule("dc-jcam-01","typ-dc-jcam","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jcam-02","typ-dc-jcam","PF-45.024",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jcam-03","typ-dc-jcam","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jcam-04","typ-dc-jcam","TMG-020",DC,"Montante Camarão","montante","H",-140,90,90,"6",4, profiles),
+  createCutRule("dc-jcam-05","typ-dc-jcam","TMG-043",DC,"Travessa Camarão","travessa","L/4",-85,90,90,"8",5, profiles),
+  createCutRule("dc-jcam-06","typ-dc-jcam","PF-45.017",DC,"Baguete V","baguete_v","H",-152,90,90,"6",6, profiles),
+  createCutRule("dc-jcam-07","typ-dc-jcam","PF-45.017",DC,"Baguete H","baguete_h","L/4",-97,90,90,"6",7, profiles),
+
+  // T8: Porta Correr 2F
+  createCutRule("dc-pc2f-01","typ-dc-pc2f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-pc2f-02","typ-dc-pc2f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-pc2f-03","typ-dc-pc2f","PF-45.044",DC,"Marco Lateral","marco_lat","H",-45,90,90,"2",3, profiles),
+  createCutRule("dc-pc2f-04","typ-dc-pc2f","TMG-044",DC,"Montante Folha Porta","montante","H",-120,90,90,"4",4, profiles),
+  createCutRule("dc-pc2f-05","typ-dc-pc2f","TMG-006",DC,"Travessa Superior Folha","travessa_sup","L/2",-85,90,90,"2",5, profiles),
+  createCutRule("dc-pc2f-06","typ-dc-pc2f","TMG-006",DC,"Travessa Inferior Folha","travessa_inf","L/2",-85,90,90,"2",6, profiles),
+  createCutRule("dc-pc2f-07","typ-dc-pc2f","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"4",7, profiles),
+  createCutRule("dc-pc2f-08","typ-dc-pc2f","PF-45.017",DC,"Baguete H","baguete_h","L/2",-97,90,90,"4",8, profiles),
+
+  // T9: Porta Correr 3F
+  createCutRule("dc-pc3f-01","typ-dc-pc3f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-pc3f-02","typ-dc-pc3f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-pc3f-03","typ-dc-pc3f","PF-45.043",DC,"Marco Lateral 3F","marco_lat","H",-45,90,90,"2",3, profiles),
+  createCutRule("dc-pc3f-04","typ-dc-pc3f","TMG-044",DC,"Montante Folha Porta","montante","H",-120,90,90,"6",4, profiles),
+  createCutRule("dc-pc3f-05","typ-dc-pc3f","TMG-006",DC,"Travessa Sup Folha","travessa_sup","L/3",-85,90,90,"3",5, profiles),
+  createCutRule("dc-pc3f-06","typ-dc-pc3f","TMG-006",DC,"Travessa Inf Folha","travessa_inf","L/3",-85,90,90,"3",6, profiles),
+  createCutRule("dc-pc3f-07","typ-dc-pc3f","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"6",7, profiles),
+  createCutRule("dc-pc3f-08","typ-dc-pc3f","PF-45.017",DC,"Baguete H","baguete_h","L/3",-97,90,90,"6",8, profiles),
+
+  // T10: Porta Correr 4F
+  createCutRule("dc-pc4f-01","typ-dc-pc4f","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-pc4f-02","typ-dc-pc4f","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-pc4f-03","typ-dc-pc4f","PF-45.044",DC,"Marco Lateral","marco_lat","H",-45,90,90,"2",3, profiles),
+  createCutRule("dc-pc4f-04","typ-dc-pc4f","TMG-044",DC,"Montante Folha Porta","montante","H",-120,90,90,"8",4, profiles),
+  createCutRule("dc-pc4f-05","typ-dc-pc4f","TMG-006",DC,"Travessa Sup Folha","travessa_sup","L/4",-85,90,90,"4",5, profiles),
+  createCutRule("dc-pc4f-06","typ-dc-pc4f","TMG-006",DC,"Travessa Inf Folha","travessa_inf","L/4",-85,90,90,"4",6, profiles),
+  createCutRule("dc-pc4f-07","typ-dc-pc4f","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"8",7, profiles),
+  createCutRule("dc-pc4f-08","typ-dc-pc4f","PF-45.017",DC,"Baguete H","baguete_h","L/4",-97,90,90,"8",8, profiles),
+
+  // T11: Porta Giro 1F
+  createCutRule("dc-pg1f-01","typ-dc-pg1f","PR-001",DC,"Marco Superior","marco_sup","L",-10,90,90,"1",1, profiles),
+  createCutRule("dc-pg1f-02","typ-dc-pg1f","PR-001",DC,"Marco Lateral","marco_lat","H",-42,90,90,"2",2, profiles),
+  createCutRule("dc-pg1f-03","typ-dc-pg1f","TMG-044",DC,"Montante Folha","montante","H",-118,45,45,"2",3, profiles),
+  createCutRule("dc-pg1f-04","typ-dc-pg1f","TMG-051",DC,"Travessa Superior Folha","travessa_sup","L",-125,45,45,"1",4, profiles),
+  createCutRule("dc-pg1f-05","typ-dc-pg1f","TMG-051",DC,"Travessa Inferior Folha","travessa_inf","L",-125,45,45,"1",5, profiles),
+  createCutRule("dc-pg1f-06","typ-dc-pg1f","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"2",6, profiles),
+  createCutRule("dc-pg1f-07","typ-dc-pg1f","PF-45.017",DC,"Baguete H","baguete_h","L",-138,90,90,"2",7, profiles),
+
+  // T12: Porta Giro 2F
+  createCutRule("dc-pg2f-01","typ-dc-pg2f","PR-001",DC,"Marco Superior","marco_sup","L",-10,90,90,"1",1, profiles),
+  createCutRule("dc-pg2f-02","typ-dc-pg2f","PR-001",DC,"Marco Lateral","marco_lat","H",-42,90,90,"2",2, profiles),
+  createCutRule("dc-pg2f-03","typ-dc-pg2f","TMG-044",DC,"Montante Folha","montante","H",-118,45,45,"4",3, profiles),
+  createCutRule("dc-pg2f-04","typ-dc-pg2f","TMG-051",DC,"Travessa Sup Folha","travessa_sup","L/2",-125,45,45,"2",4, profiles),
+  createCutRule("dc-pg2f-05","typ-dc-pg2f","TMG-051",DC,"Travessa Inf Folha","travessa_inf","L/2",-125,45,45,"2",5, profiles),
+  createCutRule("dc-pg2f-06","typ-dc-pg2f","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"4",6, profiles),
+  createCutRule("dc-pg2f-07","typ-dc-pg2f","PF-45.017",DC,"Baguete H","baguete_h","L/2",-138,90,90,"4",7, profiles),
+
+  // T13: Janela Correr 2F c/ Veneziana
+  createCutRule("dc-jc2fv-01","typ-dc-jc2fv","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc2fv-02","typ-dc-jc2fv","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc2fv-03","typ-dc-jc2fv","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc2fv-04","typ-dc-jc2fv","TMG-002",DC,"Montante Folha Vidro","montante","H",-140,90,90,"4",4, profiles),
+  createCutRule("dc-jc2fv-05","typ-dc-jc2fv","TMG-006",DC,"Travessa Folha Vidro","travessa","L/2",-85,90,90,"4",5, profiles),
+  createCutRule("dc-jc2fv-06","typ-dc-jc2fv","TMS-003",DC,"Montante Folha Veneziana","montante_ven","H",-140,90,90,"4",6, profiles),
+  createCutRule("dc-jc2fv-07","typ-dc-jc2fv","TMG-068",DC,"Travessa Folha Veneziana","travessa_ven","L/2",-85,90,90,"4",7, profiles),
+  createCutRule("dc-jc2fv-08","typ-dc-jc2fv","TMS-004",DC,"Palheta Veneziana","palheta","L/2",-92,90,90,"12",8, profiles),
+  createCutRule("dc-jc2fv-09","typ-dc-jc2fv","PF-45.017",DC,"Baguete V","baguete_v","H",-152,90,90,"4",9, profiles),
+  createCutRule("dc-jc2fv-10","typ-dc-jc2fv","PF-45.017",DC,"Baguete H","baguete_h","L/2",-97,90,90,"4",10, profiles),
+
+  // T14: Janela Correr 4F c/ Veneziana
+  createCutRule("dc-jc4fv-01","typ-dc-jc4fv","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jc4fv-02","typ-dc-jc4fv","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jc4fv-03","typ-dc-jc4fv","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jc4fv-04","typ-dc-jc4fv","TMG-002",DC,"Montante Folha Vidro","montante","H",-140,90,90,"8",4, profiles),
+  createCutRule("dc-jc4fv-05","typ-dc-jc4fv","TMG-006",DC,"Travessa Folha Vidro","travessa","L/4",-85,90,90,"8",5, profiles),
+  createCutRule("dc-jc4fv-06","typ-dc-jc4fv","TMS-003",DC,"Montante Folha Veneziana","montante_ven","H",-140,90,90,"8",6, profiles),
+  createCutRule("dc-jc4fv-07","typ-dc-jc4fv","TMG-068",DC,"Travessa Folha Veneziana","travessa_ven","L/4",-85,90,90,"8",7, profiles),
+  createCutRule("dc-jc4fv-08","typ-dc-jc4fv","TMS-004",DC,"Palheta Veneziana","palheta","L/4",-92,90,90,"24",8, profiles),
+  createCutRule("dc-jc4fv-09","typ-dc-jc4fv","PF-45.017",DC,"Baguete V","baguete_v","H",-152,90,90,"8",9, profiles),
+  createCutRule("dc-jc4fv-10","typ-dc-jc4fv","PF-45.017",DC,"Baguete H","baguete_h","L/4",-97,90,90,"8",10, profiles),
+
+  // T15: Basculante 1F
+  createCutRule("dc-jbas1-01","typ-dc-jbas1","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jbas1-02","typ-dc-jbas1","PF-45.018",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jbas1-03","typ-dc-jbas1","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jbas1-04","typ-dc-jbas1","TMG-028",DC,"Montante Folha","montante","H",-140,90,90,"2",4, profiles),
+  createCutRule("dc-jbas1-05","typ-dc-jbas1","TMG-050",DC,"Travessa Folha","travessa","L",-155,90,90,"2",5, profiles),
+  createCutRule("dc-jbas1-06","typ-dc-jbas1","PF-45.017",DC,"Baguete V","baguete_v","H",-152,90,90,"2",6, profiles),
+  createCutRule("dc-jbas1-07","typ-dc-jbas1","PF-45.017",DC,"Baguete H","baguete_h","L",-167,90,90,"2",7, profiles),
+
+  // T16: Vitrô Fixo
+  createCutRule("dc-vfix-01","typ-dc-vfix","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-vfix-02","typ-dc-vfix","PF-45.018",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-vfix-03","typ-dc-vfix","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-vfix-04","typ-dc-vfix","PF-45.017",DC,"Baguete V","baguete_v","H",-77,90,90,"2",4, profiles),
+  createCutRule("dc-vfix-05","typ-dc-vfix","PF-45.017",DC,"Baguete H","baguete_h","L",-20,90,90,"2",5, profiles),
+
+  // T17: Janela Pivotante
+  createCutRule("dc-jpiv-01","typ-dc-jpiv","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-jpiv-02","typ-dc-jpiv","PF-45.018",DC,"Marco Inferior","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-jpiv-03","typ-dc-jpiv","PF-45.044",DC,"Marco Lateral","marco_lat","H",-65,90,90,"2",3, profiles),
+  createCutRule("dc-jpiv-04","typ-dc-jpiv","TMG-018",DC,"Montante Pivotante","montante","H",-140,90,90,"2",4, profiles),
+  createCutRule("dc-jpiv-05","typ-dc-jpiv","TMG-072",DC,"Travessa Pivotante","travessa","L",-155,45,45,"2",5, profiles),
+  createCutRule("dc-jpiv-06","typ-dc-jpiv","PF-45.017",DC,"Baguete V","baguete_v","H",-160,90,90,"2",6, profiles),
+  createCutRule("dc-jpiv-07","typ-dc-jpiv","PF-45.017",DC,"Baguete H","baguete_h","L",-167,90,90,"2",7, profiles),
+
+  // T18: Porta Balcão 2F (Vidro+Veneziana)
+  createCutRule("dc-pbal-01","typ-dc-pbal","PF-45.018",DC,"Marco Superior","marco_sup","L",-8,90,90,"1",1, profiles),
+  createCutRule("dc-pbal-02","typ-dc-pbal","PF-45.024",DC,"Marco Inferior (Trilho)","marco_inf","L",-8,90,90,"1",2, profiles),
+  createCutRule("dc-pbal-03","typ-dc-pbal","PF-45.044",DC,"Marco Lateral","marco_lat","H",-45,90,90,"2",3, profiles),
+  createCutRule("dc-pbal-04","typ-dc-pbal","TMG-044",DC,"Montante Folha Vidro","montante","H",-120,90,90,"4",4, profiles),
+  createCutRule("dc-pbal-05","typ-dc-pbal","TMG-006",DC,"Travessa Folha Vidro","travessa","L/2",-85,90,90,"4",5, profiles),
+  createCutRule("dc-pbal-06","typ-dc-pbal","TMS-003",DC,"Montante Folha Veneziana","montante_ven","H",-120,90,90,"4",6, profiles),
+  createCutRule("dc-pbal-07","typ-dc-pbal","TMG-068",DC,"Travessa Folha Veneziana","travessa_ven","L/2",-85,90,90,"4",7, profiles),
+  createCutRule("dc-pbal-08","typ-dc-pbal","TMS-004",DC,"Palheta Veneziana","palheta","L/2",-92,90,90,"12",8, profiles),
+  createCutRule("dc-pbal-09","typ-dc-pbal","PF-45.017",DC,"Baguete V","baguete_v","H",-132,90,90,"4",9, profiles),
+  createCutRule("dc-pbal-10","typ-dc-pbal","PF-45.017",DC,"Baguete H","baguete_h","L/2",-97,90,90,"4",10, profiles),
+];

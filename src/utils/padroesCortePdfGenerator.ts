@@ -19,7 +19,7 @@ const formatDateBR = () => {
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}  ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
-const safe = (pdf: jsPDF, text: any, x: number, y: number, opts?: any) => {
+const safe = (pdf: jsPDF, text: string | number | null | undefined, x: number, y: number, opts?: Record<string, unknown>) => {
   const s = text == null ? "" : String(text);
   if (opts) pdf.text(s, x, y, opts);
   else pdf.text(s, x, y);
