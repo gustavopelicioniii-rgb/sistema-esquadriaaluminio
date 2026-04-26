@@ -4,7 +4,7 @@ import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck,
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile-device";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate, useLocation } from "react-router-dom";

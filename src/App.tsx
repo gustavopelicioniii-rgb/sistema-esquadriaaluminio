@@ -55,7 +55,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const P = ({ children }: { children: React.ReactNode }) => <ProtectedRoute>{children}</ProtectedRoute>;
+const P = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 function ProtectedLayout() {
   return (

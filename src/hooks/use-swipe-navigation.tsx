@@ -1,6 +1,6 @@
 import { useRef, useCallback, type TouchEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile-device";
 
 const navOrder = ["/", "/orcamentos", "/producao", "/financeiro", "/relatorios"];
 

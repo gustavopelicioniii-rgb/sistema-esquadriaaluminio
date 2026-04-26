@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, type ReactNode } from "react";
 import { Loader2, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile-device";
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
