@@ -1,12 +1,12 @@
-import { jsPDF } from "jspdf";
-import type { CalculationOutput, OptimizationResult } from "@/types/calculation";
+import { jsPDF } from 'jspdf';
+import type { CalculationOutput, OptimizationResult } from '@/types/calculation';
 
 const A4_W = 210;
 const A4_H = 297;
 const ML = 8;
 const MR = 8;
 const CW = A4_W - ML - MR;
-const FONT = "helvetica";
+const FONT = 'helvetica';
 
 const BLACK = [0, 0, 0] as const;
 const DARK = [40, 40, 40] as const;
@@ -16,11 +16,17 @@ const GREEN = [0, 100, 0] as const;
 
 const formatDateBR = () => {
   const d = new Date();
-  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}  ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}  ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 };
 
-const safe = (pdf: jsPDF, text: string | number | null | undefined, x: number, y: number, opts?: Record<string, unknown>) => {
-  const s = text == null ? "" : String(text);
+const safe = (
+  pdf: jsPDF,
+  text: string | number | null | undefined,
+  x: number,
+  y: number,
+  opts?: Record<string, unknown>
+) => {
+  const s = text == null ? '' : String(text);
   if (opts) pdf.text(s, x, y, opts);
   else pdf.text(s, x, y);
 };
@@ -39,7 +45,7 @@ export async function generatePadroesCortesPDF(
   config?: PadroesCorteConfig,
   options?: { preview?: boolean }
 ): Promise<{ blob: Blob; filename: string } | void> {
-  const pdf = new jsPDF("p", "mm", "a4");
+  const pdf = new jsPDF('p', 'mm', 'a4');
   const dateStr = formatDateBR();
   const cfg = config || {};
   let y = 0;
@@ -54,30 +60,30 @@ export async function generatePadroesCortesPDF(
 
   // ═══════════ HEADER ═══════════
   pdf.setFillColor(...GREEN);
-  pdf.rect(0, 0, A4_W, 1.2, "F");
+  pdf.rect(0, 0, A4_W, 1.2, 'F');
   y = 6;
 
   // Logo placeholder
   pdf.setFontSize(9);
-  pdf.setFont(FONT, "bold");
+  pdf.setFont(FONT, 'bold');
   pdf.setTextColor(...GREEN);
-  safe(pdf, cfg.empresaNome || "EMPRESA", ML, y + 4);
+  safe(pdf, cfg.empresaNome || 'EMPRESA', ML, y + 4);
 
   // Title
   pdf.setFontSize(14);
-  pdf.setFont(FONT, "bold");
+  pdf.setFont(FONT, 'bold');
   pdf.setTextColor(...BLACK);
-  safe(pdf, "Padrões de Cortes", A4_W / 2, y + 3, { align: "center" });
+  safe(pdf, 'Padrões de Cortes', A4_W / 2, y + 3, { align: 'center' });
 
   // Right: emitido por + date
   pdf.setFontSize(6.5);
-  pdf.setFont(FONT, "normal");
+  pdf.setFont(FONT, 'normal');
   pdf.setTextColor(...MID);
-  safe(pdf, "Emitido por:", A4_W - MR - 52, y);
-  pdf.setFont(FONT, "bold");
+  safe(pdf, 'Emitido por:', A4_W - MR - 52, y);
+  pdf.setFont(FONT, 'bold');
   pdf.setTextColor(...BLACK);
-  safe(pdf, "ADMINISTRADOR", A4_W - MR - 32, y);
-  safe(pdf, dateStr, A4_W - MR, y + 4, { align: "right" });
+  safe(pdf, 'ADMINISTRADOR', A4_W - MR - 32, y);
+  safe(pdf, dateStr, A4_W - MR, y + 4, { align: 'right' });
 
   y = 15;
   pdf.setDrawColor(...LIGHT);
@@ -88,22 +94,22 @@ export async function generatePadroesCortesPDF(
   // ═══════════ INFO BLOCK ═══════════
   pdf.setFontSize(6.5);
   const infoRow = (label: string, value: string, x: number, iy: number, lw = 24) => {
-    pdf.setFont(FONT, "bold");
+    pdf.setFont(FONT, 'bold');
     pdf.setTextColor(...MID);
     safe(pdf, `${label}:`, x, iy);
-    pdf.setFont(FONT, "normal");
+    pdf.setFont(FONT, 'normal');
     pdf.setTextColor(...DARK);
-    safe(pdf, value || "-", x + lw, iy);
+    safe(pdf, value || '-', x + lw, iy);
   };
 
-  infoRow("Código Obra", cfg.codigoObra || "-", ML, y);
-  infoRow("Calc.", dateStr, A4_W / 2 + 20, y, 12);
+  infoRow('Código Obra', cfg.codigoObra || '-', ML, y);
+  infoRow('Calc.', dateStr, A4_W / 2 + 20, y, 12);
   y += 3.5;
-  infoRow("Tratamento", cfg.tratamento || "-", ML, y);
+  infoRow('Tratamento', cfg.tratamento || '-', ML, y);
   y += 3.5;
-  infoRow("Nome da Obra", cfg.nomeObra || result.typology_name, ML, y);
+  infoRow('Nome da Obra', cfg.nomeObra || result.typology_name, ML, y);
   y += 3.5;
-  infoRow("Nome do Cliente", cfg.nomeCliente || "-", ML, y);
+  infoRow('Nome do Cliente', cfg.nomeCliente || '-', ML, y);
   y += 5;
 
   // ═══════════ PROFILE SECTIONS ═══════════
@@ -142,18 +148,18 @@ export async function generatePadroesCortesPDF(
 
     // Header row
     const hdrCols = [
-      { label: "Código", w: 22 },
-      { label: "ID", w: 30 },
-      { label: "Tratamento", w: 38 },
-      { label: "Barras", w: 24 },
-      { label: "GLC", w: 12 },
-      { label: "Part.", w: 12 },
+      { label: 'Código', w: 22 },
+      { label: 'ID', w: 30 },
+      { label: 'Tratamento', w: 38 },
+      { label: 'Barras', w: 24 },
+      { label: 'GLC', w: 12 },
+      { label: 'Part.', w: 12 },
     ];
 
     pdf.setFillColor(240, 240, 240);
-    pdf.rect(tblX, y, tblW, 5, "F");
+    pdf.rect(tblX, y, tblW, 5, 'F');
     pdf.setFontSize(6);
-    pdf.setFont(FONT, "bold");
+    pdf.setFont(FONT, 'bold');
     pdf.setTextColor(...DARK);
     let cx = tblX + 1;
     for (const col of hdrCols) {
@@ -164,15 +170,15 @@ export async function generatePadroesCortesPDF(
     // Values row
     const valY = y + 5;
     pdf.setFontSize(6.5);
-    pdf.setFont(FONT, "bold");
+    pdf.setFont(FONT, 'bold');
     pdf.setTextColor(...BLACK);
     cx = tblX + 1;
     safe(pdf, profileCode, cx, valY + 3.5);
     cx += hdrCols[0].w;
-    pdf.setFont(FONT, "normal");
+    pdf.setFont(FONT, 'normal');
     safe(pdf, profSummary?.profile_name || profileCode, cx, valY + 3.5);
     cx += hdrCols[1].w;
-    safe(pdf, cfg.tratamento || "-", cx, valY + 3.5);
+    safe(pdf, cfg.tratamento || '-', cx, valY + 3.5);
     cx += hdrCols[2].w;
     safe(pdf, `${totalBars} x ${barLen}`, cx, valY + 3.5);
     cx += hdrCols[3].w;
@@ -183,13 +189,13 @@ export async function generatePadroesCortesPDF(
     // Profile function name below code
     pdf.setFontSize(5.5);
     pdf.setTextColor(...MID);
-    safe(pdf, profileCuts[0]?.piece_function || "", tblX + 1, valY + 7);
+    safe(pdf, profileCuts[0]?.piece_function || '', tblX + 1, valY + 7);
 
     // Nº Barras/Feixes
     pdf.setFontSize(5.5);
     pdf.setTextColor(...MID);
-    safe(pdf, "Nº Barras/Feixes:", tblX + hdrCols[0].w + hdrCols[1].w + hdrCols[2].w + 1, valY + 7);
-    safe(pdf, "N/A", tblX + hdrCols[0].w + hdrCols[1].w + hdrCols[2].w + 30, valY + 7);
+    safe(pdf, 'Nº Barras/Feixes:', tblX + hdrCols[0].w + hdrCols[1].w + hdrCols[2].w + 1, valY + 7);
+    safe(pdf, 'N/A', tblX + hdrCols[0].w + hdrCols[1].w + hdrCols[2].w + 30, valY + 7);
 
     y += sketchH + 3;
 
@@ -198,16 +204,16 @@ export async function generatePadroesCortesPDF(
 
     // Header
     const pieceCols = [
-      { x: ML + 5, w: 14, label: "Qtde" },
-      { x: ML + 20, w: 20, label: "Tam" },
-      { x: ML + 41, w: 16, label: "Corte" },
-      { x: ML + 58, w: 22, label: "Tipo" },
+      { x: ML + 5, w: 14, label: 'Qtde' },
+      { x: ML + 20, w: 20, label: 'Tam' },
+      { x: ML + 41, w: 16, label: 'Corte' },
+      { x: ML + 58, w: 22, label: 'Tipo' },
     ];
 
     pdf.setFillColor(245, 245, 245);
-    pdf.rect(ML, y - 1, 80, 4.5, "F");
+    pdf.rect(ML, y - 1, 80, 4.5, 'F');
     pdf.setFontSize(6);
-    pdf.setFont(FONT, "bold");
+    pdf.setFont(FONT, 'bold');
     pdf.setTextColor(...DARK);
     for (const col of pieceCols) {
       safe(pdf, col.label, col.x, y + 2);
@@ -219,12 +225,12 @@ export async function generatePadroesCortesPDF(
     for (const cut of profileCuts) {
       checkPage(5);
       pdf.setFontSize(6.5);
-      pdf.setFont(FONT, "normal");
+      pdf.setFont(FONT, 'normal');
       pdf.setTextColor(...BLACK);
-      safe(pdf, String(cut.quantity), pieceCols[0].x + pieceCols[0].w, y, { align: "right" });
-      safe(pdf, String(cut.cut_length_mm), pieceCols[1].x + pieceCols[1].w, y, { align: "right" });
+      safe(pdf, String(cut.quantity), pieceCols[0].x + pieceCols[0].w, y, { align: 'right' });
+      safe(pdf, String(cut.cut_length_mm), pieceCols[1].x + pieceCols[1].w, y, { align: 'right' });
       safe(pdf, `${cut.cut_angle_left}/${cut.cut_angle_right}`, pieceCols[2].x, y);
-      safe(pdf, `CX-${String(cxTypeCounter).padStart(2, "0")}`, pieceCols[3].x, y);
+      safe(pdf, `CX-${String(cxTypeCounter).padStart(2, '0')}`, pieceCols[3].x, y);
       cxTypeCounter++;
       y += 3.8;
     }
@@ -233,9 +239,9 @@ export async function generatePadroesCortesPDF(
     pdf.setDrawColor(200, 200, 200);
     pdf.setLineWidth(0.2);
     pdf.line(ML + 5, y - 0.5, ML + 20, y - 0.5);
-    pdf.setFont(FONT, "bold");
+    pdf.setFont(FONT, 'bold');
     pdf.setFontSize(6.5);
-    safe(pdf, String(totalPieces), pieceCols[0].x + pieceCols[0].w, y + 2, { align: "right" });
+    safe(pdf, String(totalPieces), pieceCols[0].x + pieceCols[0].w, y + 2, { align: 'right' });
     y += 5;
 
     // ─── Separar (Optimization) section ───
@@ -244,16 +250,16 @@ export async function generatePadroesCortesPDF(
 
       // Section header
       const sepCols = [
-        { x: ML + 5, label: "Separar" },
-        { x: ML + 30, label: "pl/Cortar" },
-        { x: ML + 60, label: "Corte" },
-        { x: ML + 80, label: "Sobras" },
+        { x: ML + 5, label: 'Separar' },
+        { x: ML + 30, label: 'pl/Cortar' },
+        { x: ML + 60, label: 'Corte' },
+        { x: ML + 80, label: 'Sobras' },
       ];
 
       pdf.setFillColor(245, 245, 245);
-      pdf.rect(ML, y - 1, CW, 4.5, "F");
+      pdf.rect(ML, y - 1, CW, 4.5, 'F');
       pdf.setFontSize(6);
-      pdf.setFont(FONT, "bold");
+      pdf.setFont(FONT, 'bold');
       pdf.setTextColor(...DARK);
       for (const col of sepCols) {
         safe(pdf, col.label, col.x, y + 2);
@@ -266,19 +272,19 @@ export async function generatePadroesCortesPDF(
       for (const bar of barOpt.bars) {
         checkPage(5);
         pdf.setFontSize(6.5);
-        pdf.setFont(FONT, "normal");
+        pdf.setFont(FONT, 'normal');
         pdf.setTextColor(...BLACK);
 
         // "1 x 6000"
         safe(pdf, `1 x ${barLen}`, sepCols[0].x, y);
 
         // Pieces summary for this bar
-        const piecesSummary = bar.pieces.map(p => `${p.length_mm}`).join(" + ");
+        const piecesSummary = bar.pieces.map(p => `${p.length_mm}`).join(' + ');
         const piecesCount = bar.pieces.length;
         safe(pdf, `${piecesCount} x ${bar.pieces[0]?.length_mm || 0}`, sepCols[1].x, y);
 
         // Cut angles
-        safe(pdf, "90/90", sepCols[2].x, y);
+        safe(pdf, '90/90', sepCols[2].x, y);
 
         // Waste
         safe(pdf, `1 x ${bar.waste_mm}`, sepCols[3].x, y);
@@ -305,17 +311,17 @@ export async function generatePadroesCortesPDF(
 
   // Summary header
   const sumHdrCols = [
-    { x: ML + 2, label: "Quantidade" },
-    { x: ML + 30, label: "p/ Cortar" },
-    { x: ML + 60, label: "Corte" },
-    { x: ML + 82, label: "Sobras" },
-    { x: ML + 110, label: "Barra Útil" },
+    { x: ML + 2, label: 'Quantidade' },
+    { x: ML + 30, label: 'p/ Cortar' },
+    { x: ML + 60, label: 'Corte' },
+    { x: ML + 82, label: 'Sobras' },
+    { x: ML + 110, label: 'Barra Útil' },
   ];
 
   pdf.setFillColor(240, 240, 240);
-  pdf.rect(ML, y, CW, 4.5, "F");
+  pdf.rect(ML, y, CW, 4.5, 'F');
   pdf.setFontSize(6);
-  pdf.setFont(FONT, "bold");
+  pdf.setFont(FONT, 'bold');
   pdf.setTextColor(...DARK);
   for (const col of sumHdrCols) {
     safe(pdf, col.label, col.x, y + 3);
@@ -327,16 +333,19 @@ export async function generatePadroesCortesPDF(
   for (const bLen of barLengths) {
     const barsWithLen = barResults.filter(b => b.bar_length_mm === bLen);
     const totalBarsCount = barsWithLen.reduce((s, b) => s + b.total_bars, 0);
-    const totalPiecesCount = barsWithLen.reduce((s, b) => s + b.bars.reduce((s2, bar) => s2 + bar.pieces.length, 0), 0);
+    const totalPiecesCount = barsWithLen.reduce(
+      (s, b) => s + b.bars.reduce((s2, bar) => s2 + bar.pieces.length, 0),
+      0
+    );
     const totalWaste = barsWithLen.reduce((s, b) => s + b.total_waste_mm, 0);
 
     checkPage(5);
     pdf.setFontSize(6.5);
-    pdf.setFont(FONT, "normal");
+    pdf.setFont(FONT, 'normal');
     pdf.setTextColor(...BLACK);
     safe(pdf, `${totalBarsCount} x ${bLen}`, sumHdrCols[0].x, y);
     safe(pdf, `${totalPiecesCount} peças`, sumHdrCols[1].x, y);
-    safe(pdf, "90/90", sumHdrCols[2].x, y);
+    safe(pdf, '90/90', sumHdrCols[2].x, y);
     safe(pdf, `${totalWaste}`, sumHdrCols[3].x, y);
     safe(pdf, String(bLen), sumHdrCols[4].x, y);
     y += 4;
@@ -352,20 +361,20 @@ export async function generatePadroesCortesPDF(
     pdf.line(ML, footY - 3, A4_W - MR, footY - 3);
 
     pdf.setFontSize(7);
-    pdf.setFont(FONT, "normal");
+    pdf.setFont(FONT, 'normal');
     pdf.setTextColor(...MID);
-    safe(pdf, `${i} / ${totalPages}`, A4_W - MR, footY, { align: "right" });
+    safe(pdf, `${i} / ${totalPages}`, A4_W - MR, footY, { align: 'right' });
 
     pdf.setFontSize(6);
     pdf.setTextColor(...LIGHT);
-    safe(pdf, "Sistema AluFlow - Alumínio® Sistemas", A4_W / 2, footY, { align: "center" });
+    safe(pdf, 'Sistema AluFlow - Alumínio® Sistemas', A4_W / 2, footY, { align: 'center' });
   }
 
-  const safeName = result.typology_name.replace(/\s+/g, "-").toLowerCase();
+  const safeName = result.typology_name.replace(/\s+/g, '-').toLowerCase();
   const filename = `padroes-cortes-${safeName}-${result.input.width_mm}x${result.input.height_mm}.pdf`;
 
   if (options?.preview) {
-    return { blob: pdf.output("blob"), filename };
+    return { blob: pdf.output('blob'), filename };
   }
   pdf.save(filename);
 }

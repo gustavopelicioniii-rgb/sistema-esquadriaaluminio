@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
   Legend,
   Cell,
-} from "recharts";
+} from 'recharts';
 
 interface BarChartComponentProps {
   data: any[];
@@ -21,7 +21,7 @@ interface BarChartComponentProps {
   showValues?: boolean;
 }
 
-const defaultColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+const defaultColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export function BarChartComponent({
   data,
@@ -41,7 +41,7 @@ export function BarChartComponent({
       <ResponsiveContainer width="100%" height={height}>
         <BarChart
           data={data}
-          layout={horizontal ? "vertical" : "horizontal"}
+          layout={horizontal ? 'vertical' : 'horizontal'}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -59,21 +59,16 @@ export function BarChartComponent({
             </>
           ) : (
             <>
-              <XAxis
-                dataKey={xAxisKey}
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-              />
+              <XAxis dataKey={xAxisKey} tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
               <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
             </>
           )}
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
-              fontSize: "12px",
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '8px',
+              fontSize: '12px',
             }}
           />
           {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
@@ -86,13 +81,13 @@ export function BarChartComponent({
               label={
                 showValues
                   ? {
-                      position: "top",
+                      position: 'top',
                       fontSize: 10,
                       formatter: (v: any) =>
-                        typeof v === "number"
-                          ? v.toLocaleString("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
+                        typeof v === 'number'
+                          ? v.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
                               maximumFractionDigits: 0,
                             })
                           : v,
@@ -101,9 +96,7 @@ export function BarChartComponent({
               }
             >
               {keys.length === 1 &&
-                data.map((entry, i) => (
-                  <Cell key={i} fill={colors[i % colors.length]} />
-                ))}
+                data.map((entry, i) => <Cell key={i} fill={colors[i % colors.length]} />)}
             </Bar>
           ))}
         </BarChart>

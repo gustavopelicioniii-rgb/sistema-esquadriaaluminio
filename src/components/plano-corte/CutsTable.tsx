@@ -1,8 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
-import type { CalculationOutput } from "@/types/calculation";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { ProfileCrossSection } from '@/components/orcamento/ProfileCrossSection';
+import type { CalculationOutput } from '@/types/calculation';
 
 interface Props {
   result: CalculationOutput;
@@ -27,7 +34,7 @@ export function CutsTable({ result }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {result.cuts.map((cut) => (
+              {result.cuts.map(cut => (
                 <TableRow key={cut.cut_rule_id}>
                   <TableCell>
                     <div className="flex items-center gap-2.5">
@@ -48,22 +55,41 @@ export function CutsTable({ result }: Props) {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-center font-semibold font-mono">{cut.cut_length_mm}</TableCell>
-                  <TableCell className="text-center font-semibold hidden sm:table-cell">{cut.quantity}</TableCell>
+                  <TableCell className="text-center font-semibold font-mono">
+                    {cut.cut_length_mm}
+                  </TableCell>
+                  <TableCell className="text-center font-semibold hidden sm:table-cell">
+                    {cut.quantity}
+                  </TableCell>
                   <TableCell className="text-center hidden md:table-cell">
                     <div className="flex justify-center gap-1">
-                      <Badge variant={cut.cut_angle_left === 45 ? "default" : "secondary"} className="text-[10px] px-2">{cut.cut_angle_left}°</Badge>
-                      <Badge variant={cut.cut_angle_right === 45 ? "default" : "secondary"} className="text-[10px] px-2">{cut.cut_angle_right}°</Badge>
+                      <Badge
+                        variant={cut.cut_angle_left === 45 ? 'default' : 'secondary'}
+                        className="text-[10px] px-2"
+                      >
+                        {cut.cut_angle_left}°
+                      </Badge>
+                      <Badge
+                        variant={cut.cut_angle_right === 45 ? 'default' : 'secondary'}
+                        className="text-[10px] px-2"
+                      >
+                        {cut.cut_angle_right}°
+                      </Badge>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right font-mono hidden sm:table-cell">{cut.weight_kg.toFixed(3)}</TableCell>
+                  <TableCell className="text-right font-mono hidden sm:table-cell">
+                    {cut.weight_kg.toFixed(3)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
         <div className="px-4 py-2.5 bg-muted/30 border-t text-xs text-muted-foreground flex justify-between">
-          <span>{result.profiles_summary.length} perfis • {result.cuts.reduce((s, c) => s + c.quantity, 0)} peças</span>
+          <span>
+            {result.profiles_summary.length} perfis •{' '}
+            {result.cuts.reduce((s, c) => s + c.quantity, 0)} peças
+          </span>
           <span>Peso: {result.total_aluminum_weight_kg.toFixed(2)} kg</span>
         </div>
       </CardContent>

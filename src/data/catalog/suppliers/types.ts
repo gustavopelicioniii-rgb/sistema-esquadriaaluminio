@@ -6,7 +6,15 @@ export interface SupplierProfile {
   name: string;
   manufacturer: string;
   line: string;
-  profile_type: "pingadeira" | "guideline" | "main_frame" | "main_frame_60" | "batente" | "requadro" | "veneziana" | "complementar";
+  profile_type:
+    | 'pingadeira'
+    | 'guideline'
+    | 'main_frame'
+    | 'main_frame_60'
+    | 'batente'
+    | 'requadro'
+    | 'veneziana'
+    | 'complementar';
   code: string;
   description: string;
   weight_kg_m: number;
@@ -23,9 +31,9 @@ export interface SupplierProfile {
 
 export interface CutRule {
   profile_id: string;
-  cut_type: "straight" | "45deg" | "45deg_inverse" | "compound";
-  allowance_mm: number;  // milimeters to add for cut
-  blade_thickness_mm: number;  // saw blade thickness
+  cut_type: 'straight' | '45deg' | '45deg_inverse' | 'compound';
+  allowance_mm: number; // milimeters to add for cut
+  blade_thickness_mm: number; // saw blade thickness
   description: string;
 }
 
@@ -33,7 +41,7 @@ export interface SupplierGlass {
   id: string;
   name: string;
   manufacturer: string;
-  type: "temperado" | "laminado" | "refletivo" | "fantasia" | "insulado";
+  type: 'temperado' | 'laminado' | 'refletivo' | 'fantasia' | 'insulado';
   thickness_mm: number;
   color: string;
   price_m2: number;
@@ -44,7 +52,17 @@ export interface SupplierComponent {
   id: string;
   name: string;
   manufacturer: string;
-  type: "rolamento" | "trinco" | "cantoneira" | "borracha" | "parafuso" | "guarnicao" | "fecho" | "cremalheira" | "roldana" | "puxador";
+  type:
+    | 'rolamento'
+    | 'trinco'
+    | 'cantoneira'
+    | 'borracha'
+    | 'parafuso'
+    | 'guarnicao'
+    | 'fecho'
+    | 'cremalheira'
+    | 'roldana'
+    | 'puxador';
   code: string;
   unit: string;
   price: number;

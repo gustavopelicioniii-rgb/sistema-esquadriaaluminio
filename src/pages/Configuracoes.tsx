@@ -1,41 +1,67 @@
-import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePageTitle } from "@/hooks/use-page-title";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
-import { Building2, Users, UserCog, Key, Wand2, Crown, Palette, DollarSign } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
-import Planos from "./Planos";
-import { toast } from "sonner";
-import { EmpresaTab } from "@/components/configuracoes/EmpresaTab";
-import { EquipeTab } from "@/components/configuracoes/EquipeTab";
-import { AdminsTab } from "@/components/configuracoes/AdminsTab";
-import { ApisTab } from "@/components/configuracoes/ApisTab";
-import { SetupTab } from "@/components/configuracoes/SetupTab";
-import { MarcaTab } from "@/components/configuracoes/MarcaTab";
-import { MarkupTab } from "@/components/configuracoes/MarkupTab";
+import { useState, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { usePageTitle } from '@/hooks/use-page-title';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
+import { Building2, Users, UserCog, Key, Wand2, Crown, Palette, DollarSign } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import Planos from './Planos';
+import { toast } from 'sonner';
+import { EmpresaTab } from '@/components/configuracoes/EmpresaTab';
+import { EquipeTab } from '@/components/configuracoes/EquipeTab';
+import { AdminsTab } from '@/components/configuracoes/AdminsTab';
+import { ApisTab } from '@/components/configuracoes/ApisTab';
+import { SetupTab } from '@/components/configuracoes/SetupTab';
+import { MarcaTab } from '@/components/configuracoes/MarcaTab';
+import { MarkupTab } from '@/components/configuracoes/MarkupTab';
 
 const defaultConfig: Record<string, string> = {
-  nome: "AlumPRO Esquadrias", cnpj: "12.345.678/0001-90", telefone: "(11) 3456-7890",
-  email: "contato@alumpro.com", margem: "35", descontoMax: "15",
-  endereco: "", cidade: "", estado: "", logo_url: "",
+  nome: 'AlumPRO Esquadrias',
+  cnpj: '12.345.678/0001-90',
+  telefone: '(11) 3456-7890',
+  email: 'contato@alumpro.com',
+  margem: '35',
+  descontoMax: '15',
+  endereco: '',
+  cidade: '',
+  estado: '',
+  logo_url: '',
 };
 
 const defaultFolgas = { perfil_offset: 0, vidro_largura_offset: 0, vidro_altura_offset: 0 };
 
-interface Funcionario { id: string; nome: string; cargo: string; telefone: string; setor: string; ativo: boolean; }
-interface Admin { id: string; nome: string; email: string; role: string; ativo: boolean; }
-interface ApiConfig { id: string; nome: string; chave: string; ativa: boolean; descricao: string; }
+interface Funcionario {
+  id: string;
+  nome: string;
+  cargo: string;
+  telefone: string;
+  setor: string;
+  ativo: boolean;
+}
+interface Admin {
+  id: string;
+  nome: string;
+  email: string;
+  role: string;
+  ativo: boolean;
+}
+interface ApiConfig {
+  id: string;
+  nome: string;
+  chave: string;
+  ativa: boolean;
+  descricao: string;
+}
 
 const Configuracoes = () => {
-  usePageTitle("Configurações");
+  usePageTitle('Configurações');
   const { role } = useAuth();
-  const isAdmin = role === "admin";
+  const isAdmin = role === 'admin';
   const [config, setConfig] = useState<Record<string, string>>(defaultConfig);
   const [folgas, setFolgas] = useState(defaultFolgas);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "empresa");
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'empresa');
 
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -45,20 +71,24 @@ const Configuracoes = () => {
     const fetchAll = async () => {
       setLoading(true);
       const [configRes, funcRes, adminRes, apisRes] = await Promise.all([
-        supabase.from("configuracoes").select("chave, valor"),
-        supabase.from("funcionarios").select("*").order("created_at"),
-        supabase.from("administradores").select("*").order("created_at"),
-        supabase.from("api_integracoes").select("*").order("created_at"),
+        supabase.from('configuracoes').select('chave, valor'),
+        supabase.from('funcionarios').select('*').order('created_at'),
+        supabase.from('administradores').select('*').order('created_at'),
+        supabase.from('api_integracoes').select('*').order('created_at'),
       ]);
       if (configRes.data && configRes.data.length > 0) {
         const map: Record<string, string> = {};
-        configRes.data.forEach((r) => { map[r.chave] = r.valor; });
-        setConfig((prev) => ({ ...prev, ...map }));
+        configRes.data.forEach(r => {
+          map[r.chave] = r.valor;
+        });
+        setConfig(prev => ({ ...prev, ...map }));
         if (map.folgas_global) {
           try {
             const parsed = JSON.parse(map.folgas_global);
-            setFolgas((prev) => ({ ...prev, ...parsed }));
-          } catch { /* ignore */ }
+            setFolgas(prev => ({ ...prev, ...parsed }));
+          } catch {
+            /* ignore */
+          }
         }
       }
       if (funcRes.data) setFuncionarios(funcRes.data as unknown as Funcionario[]);
@@ -69,19 +99,31 @@ const Configuracoes = () => {
     fetchAll();
   }, []);
 
-  const updateConfig = (key: string, value: string) => setConfig((prev) => ({ ...prev, [key]: value }));
-  const updateFolga = (key: keyof typeof defaultFolgas, value: number) => setFolgas((prev) => ({ ...prev, [key]: value }));
+  const updateConfig = (key: string, value: string) =>
+    setConfig(prev => ({ ...prev, [key]: value }));
+  const updateFolga = (key: keyof typeof defaultFolgas, value: number) =>
+    setFolgas(prev => ({ ...prev, [key]: value }));
 
   const handleSave = async () => {
     for (const [chave, valor] of Object.entries(config)) {
-      if (chave === "folgas_global") continue;
-      const { error: upsertError } = await supabase.from("configuracoes").upsert({ chave, valor }, { onConflict: "chave" });
-      if (upsertError) { toast.error("Erro", { description: upsertError.message }); return; }
+      if (chave === 'folgas_global') continue;
+      const { error: upsertError } = await supabase
+        .from('configuracoes')
+        .upsert({ chave, valor }, { onConflict: 'chave' });
+      if (upsertError) {
+        toast.error('Erro', { description: upsertError.message });
+        return;
+      }
     }
     const folgasPayload = JSON.stringify(folgas);
-    const { error: upsertError } = await supabase.from("configuracoes").upsert({ chave: "folgas_global", valor: folgasPayload }, { onConflict: "chave" });
-    if (upsertError) { toast.error("Erro", { description: upsertError.message }); return; }
-    toast.success("Configurações salvas", { description: "Suas alterações foram salvas." });
+    const { error: upsertError } = await supabase
+      .from('configuracoes')
+      .upsert({ chave: 'folgas_global', valor: folgasPayload }, { onConflict: 'chave' });
+    if (upsertError) {
+      toast.error('Erro', { description: upsertError.message });
+      return;
+    }
+    toast.success('Configurações salvas', { description: 'Suas alterações foram salvas.' });
   };
 
   if (loading) return <div className="p-6 text-muted-foreground">Carregando...</div>;
@@ -139,11 +181,7 @@ const Configuracoes = () => {
         </TabsContent>
 
         <TabsContent value="marca" className="mt-6">
-          <MarcaTab
-            config={config}
-            onConfigChange={updateConfig}
-            onSave={handleSave}
-          />
+          <MarcaTab config={config} onConfigChange={updateConfig} onSave={handleSave} />
         </TabsContent>
 
         {isAdmin && (
@@ -170,8 +208,8 @@ const Configuracoes = () => {
 
         <TabsContent value="setup" className="mt-6">
           <SetupTab
-            onComplete={(entries) => setConfig((prev) => ({ ...prev, ...entries }))}
-            onSwitchToEmpresa={() => setActiveTab("empresa")}
+            onComplete={entries => setConfig(prev => ({ ...prev, ...entries }))}
+            onSwitchToEmpresa={() => setActiveTab('empresa')}
           />
         </TabsContent>
       </Tabs>

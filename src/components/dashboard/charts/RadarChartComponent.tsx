@@ -6,7 +6,7 @@ import {
   Radar,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 interface RadarChartComponentProps {
   data: any[];
@@ -17,7 +17,7 @@ interface RadarChartComponentProps {
   height?: number;
 }
 
-const defaultColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+const defaultColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
 export function RadarChartComponent({
   data,
@@ -51,9 +51,7 @@ export function RadarChartComponent({
               fillOpacity={0.2}
             />
           ))}
-          {keys.length > 1 && (
-            <Legend wrapperStyle={{ fontSize: 12 }} />
-          )}
+          {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
         </RadarChart>
       </ResponsiveContainer>
     </div>

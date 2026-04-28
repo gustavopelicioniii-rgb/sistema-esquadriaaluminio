@@ -28,4 +28,4 @@ export {
   sidebarMenuButtonVariants,
   SidebarContext,
   useSidebar,
-} from "./sidebar/index";
+} from './sidebar/index';

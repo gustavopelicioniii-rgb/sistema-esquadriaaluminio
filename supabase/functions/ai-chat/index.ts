@@ -5,6 +5,28 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Simple in-memory rate limiter (resets on cold start)
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 20; // requests per minute
+const RATE_WINDOW = 60 * 1000; // 1 minute in ms
+
+function checkRateLimit(identifier: string): { allowed: boolean; remaining: number; resetAt: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(identifier);
+
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(identifier, { count: 1, resetAt: now + RATE_WINDOW });
+    return { allowed: true, remaining: RATE_LIMIT - 1, resetAt: now + RATE_WINDOW };
+  }
+
+  if (record.count >= RATE_LIMIT) {
+    return { allowed: false, remaining: 0, resetAt: record.resetAt };
+  }
+
+  record.count++;
+  return { allowed: true, remaining: RATE_LIMIT - record.count, resetAt: record.resetAt };
+}
+
 const SYSTEM_PROMPTS: Record<string, string> = {
   assistant: `Você é o AluFlow AI, assistente inteligente de um sistema de cálculo de esquadrias de alumínio.
 Você ajuda com:
@@ -40,6 +62,30 @@ Responda em português brasileiro com uma lista estruturada de itens para o orç
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  // Rate limiting
+  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0] || "anonymous";
+  const rateLimit = checkRateLimit(clientIp);
+
+  if (!rateLimit.allowed) {
+    return new Response(
+      JSON.stringify({
+        error: "Limite de requisições excedido",
+        message: `Você excedeu o limite de ${RATE_LIMIT} requisições por minuto. Tente novamente em alguns instantes.`,
+        retryAfter: Math.ceil((rateLimit.resetAt - Date.now()) / 1000),
+      }),
+      {
+        status: 429,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+          "X-RateLimit-Limit": String(RATE_LIMIT),
+          "X-RateLimit-Remaining": String(rateLimit.remaining),
+          "X-RateLimit-Reset": String(rateLimit.resetAt),
+        },
+      }
+    );
+  }
 
   try {
     const { messages, context = "assistant" } = await req.json();

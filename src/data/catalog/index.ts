@@ -1,15 +1,15 @@
 // Central export for all catalog data
-export { manufacturers, productLines } from "./manufacturers";
-export { profiles, getProfileByCode, getProfileById } from "./profiles";
-export { typologies } from "./typologies";
-export { cutRules } from "./cutRules";
-export { glassRules, typologyComponents } from "./glassAndComponents";
+export { manufacturers, productLines } from './manufacturers';
+export { profiles, getProfileByCode, getProfileById } from './profiles';
+export { typologies } from './typologies';
+export { cutRules } from './cutRules';
+export { glassRules, typologyComponents } from './glassAndComponents';
 
-import { typologies } from "./typologies";
-import { cutRules } from "./cutRules";
-import { glassRules, typologyComponents } from "./glassAndComponents";
-import { profiles } from "./profiles";
-import type { Typology, CutRule, GlassRule, TypologyComponent, Profile } from "@/types/calculation";
+import { typologies } from './typologies';
+import { cutRules } from './cutRules';
+import { glassRules, typologyComponents } from './glassAndComponents';
+import { profiles } from './profiles';
+import type { Typology, CutRule, GlassRule, TypologyComponent, Profile } from '@/types/calculation';
 
 export function getTypologyById(id: string): Typology | undefined {
   return typologies.find(t => t.id === id);
@@ -29,7 +29,10 @@ export function getGlassRulesForTypology(typologyId: string, baseTypologyId?: st
   return glassRules.filter(r => r.typology_id === id);
 }
 
-export function getComponentsForTypology(typologyId: string, baseTypologyId?: string): TypologyComponent[] {
+export function getComponentsForTypology(
+  typologyId: string,
+  baseTypologyId?: string
+): TypologyComponent[] {
   const id = baseTypologyId ?? typologyId;
   return typologyComponents.filter(c => c.typology_id === id);
 }

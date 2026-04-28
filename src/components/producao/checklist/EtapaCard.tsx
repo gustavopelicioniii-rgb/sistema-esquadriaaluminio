@@ -1,11 +1,19 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { ChevronDown, CheckCircle2, Circle, Printer, Trash2, GripVertical, Pencil } from "lucide-react";
-import ChecklistPhotos from "./ChecklistPhotos";
-import type { Etapa } from "./etapasConfig";
-import { toast } from "sonner";
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import {
+  ChevronDown,
+  CheckCircle2,
+  Circle,
+  Printer,
+  Trash2,
+  GripVertical,
+  Pencil,
+} from 'lucide-react';
+import ChecklistPhotos from './ChecklistPhotos';
+import type { Etapa } from './etapasConfig';
+import { toast } from 'sonner';
 
 interface Props {
   etapa: Etapa;
@@ -38,11 +46,11 @@ export default function EtapaCard({
   onEditEtapa,
   dragHandleProps,
 }: Props) {
-  const checked = etapa.items.filter((i) => checkStates[i.key]).length;
+  const checked = etapa.items.filter(i => checkStates[i.key]).length;
   const total = etapa.items.length;
   const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
   const isComplete = pct === 100;
-  const allChecked = etapa.items.every((i) => checkStates[i.key]);
+  const allChecked = etapa.items.every(i => checkStates[i.key]);
 
   return (
     <div className="rounded-lg border bg-card overflow-hidden">
@@ -83,14 +91,17 @@ export default function EtapaCard({
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <span
               className={cn(
-                "rounded-full px-1.5 sm:px-2.5 py-0.5 text-[8px] sm:text-[10px] font-bold hidden sm:inline-flex",
-                isComplete ? "bg-emerald-500/10 text-emerald-600" : "bg-primary/10 text-primary"
+                'rounded-full px-1.5 sm:px-2.5 py-0.5 text-[8px] sm:text-[10px] font-bold hidden sm:inline-flex',
+                isComplete ? 'bg-emerald-500/10 text-emerald-600' : 'bg-primary/10 text-primary'
               )}
             >
-              {isComplete ? "Concluído" : "Pendente"}
+              {isComplete ? 'Concluído' : 'Pendente'}
             </span>
             <ChevronDown
-              className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")}
+              className={cn(
+                'h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground transition-transform',
+                isExpanded && 'rotate-180'
+              )}
             />
           </div>
         </button>
@@ -99,7 +110,10 @@ export default function EtapaCard({
       {/* Progress bar */}
       <div className="h-1 bg-muted">
         <div
-          className={cn("h-full transition-all duration-300", isComplete ? "bg-emerald-500" : "bg-primary")}
+          className={cn(
+            'h-full transition-all duration-300',
+            isComplete ? 'bg-emerald-500' : 'bg-primary'
+          )}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -110,7 +124,7 @@ export default function EtapaCard({
           {/* Select all + actions */}
           <div className="flex items-center justify-between flex-wrap gap-2">
             <label className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
-              <Checkbox checked={allChecked} onCheckedChange={(v) => onSelectAll(!!v)} />
+              <Checkbox checked={allChecked} onCheckedChange={v => onSelectAll(!!v)} />
               Selecionar todos
             </label>
             <div className="flex items-center gap-2">
@@ -121,7 +135,12 @@ export default function EtapaCard({
                 </Button>
               )}
               {etapa.isCustom && onDeleteEtapa && (
-                <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-destructive" onClick={onDeleteEtapa}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5 text-xs text-destructive"
+                  onClick={onDeleteEtapa}
+                >
                   <Trash2 className="h-3.5 w-3.5" />
                   Excluir
                 </Button>
@@ -130,7 +149,11 @@ export default function EtapaCard({
                 variant="outline"
                 size="sm"
                 className="gap-1.5 text-xs"
-                onClick={() => toast.success("Checklist enviado", { description: `Etapa "${etapa.label}" enviada.` })}
+                onClick={() =>
+                  toast.success('Checklist enviado', {
+                    description: `Etapa "${etapa.label}" enviada.`,
+                  })
+                }
               >
                 <Printer className="h-3.5 w-3.5" />
                 Enviar
@@ -140,18 +163,28 @@ export default function EtapaCard({
 
           {/* Items */}
           <div className="space-y-2">
-            {etapa.items.map((item) => {
+            {etapa.items.map(item => {
               const isChecked = checkStates[item.key] ?? false;
               return (
                 <label
                   key={item.key}
                   className={cn(
-                    "flex items-center gap-2 sm:gap-3 rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 cursor-pointer transition-colors",
-                    isChecked ? "bg-emerald-500/5 border-emerald-500/20" : "hover:bg-muted/30 border-border/50"
+                    'flex items-center gap-2 sm:gap-3 rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 cursor-pointer transition-colors',
+                    isChecked
+                      ? 'bg-emerald-500/5 border-emerald-500/20'
+                      : 'hover:bg-muted/30 border-border/50'
                   )}
                 >
-                  <Checkbox checked={isChecked} onCheckedChange={() => onToggleCheck(item.key, isChecked)} />
-                  <span className={cn("text-xs sm:text-sm", isChecked && "line-through text-muted-foreground")}>
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={() => onToggleCheck(item.key, isChecked)}
+                  />
+                  <span
+                    className={cn(
+                      'text-xs sm:text-sm',
+                      isChecked && 'line-through text-muted-foreground'
+                    )}
+                  >
                     {item.label}
                   </span>
                 </label>
@@ -164,12 +197,14 @@ export default function EtapaCard({
 
           {/* Annotation */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Anotação</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Anotação
+            </p>
             <Textarea
               placeholder="Observações sobre esta etapa..."
               value={annotation}
-              onChange={(e) => onAnnotationChange(e.target.value)}
-              onBlur={(e) => onAnnotationBlur(e.target.value)}
+              onChange={e => onAnnotationChange(e.target.value)}
+              onBlur={e => onAnnotationBlur(e.target.value)}
               className="min-h-[80px]"
             />
           </div>

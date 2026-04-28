@@ -1,12 +1,18 @@
-import { useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/formatters";
-import { calculateTypology } from "@/lib/calculation-engine";
-import { getCutRulesForTypology, getGlassRulesForTypology, getComponentsForTypology, getTypologyById, profiles } from "@/data/catalog";
-import { cn } from "@/lib/utils";
-import { ProfileCrossSection } from "./ProfileCrossSection";
-import type { CalculationOutput } from "@/types/calculation";
+import { useMemo } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { formatCurrency } from '@/lib/formatters';
+import { calculateTypology } from '@/lib/calculation-engine';
+import {
+  getCutRulesForTypology,
+  getGlassRulesForTypology,
+  getComponentsForTypology,
+  getTypologyById,
+  profiles,
+} from '@/data/catalog';
+import { cn } from '@/lib/utils';
+import { ProfileCrossSection } from './ProfileCrossSection';
+import type { CalculationOutput } from '@/types/calculation';
 
 interface MaterialDetailDialogProps {
   open: boolean;
@@ -84,9 +90,7 @@ export default function MaterialDetailDialog({
             {calcResult.glasses.map((g, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
                 <div>
-                  <p className="font-medium uppercase text-xs tracking-wide">
-                    {g.glass_name}
-                  </p>
+                  <p className="font-medium uppercase text-xs tracking-wide">{g.glass_name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span
                       className="w-3 h-3 rounded-full border border-border/50 inline-block"
@@ -118,13 +122,16 @@ export default function MaterialDetailDialog({
                 const pricePerCut = (cut.weight_kg / cut.quantity) * precoPerfilKg;
                 const totalPrice = cut.weight_kg * precoPerfilKg;
                 return (
-                  <div key={i} className="flex items-start gap-3 pb-3 border-b border-border/30 last:border-0">
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 pb-3 border-b border-border/30 last:border-0"
+                  >
                     {/* Profile cross-section illustration */}
                     <div className="w-10 h-10 rounded-md bg-muted/40 flex items-center justify-center shrink-0 mt-0.5">
                       <ProfileCrossSection
                         profileType={(() => {
                           const profile = profiles.find(p => p.code === cut.profile_code);
-                          return profile?.profile_type || "marco";
+                          return profile?.profile_type || 'marco';
                         })()}
                         profileCode={cut.profile_code}
                         size={32}
@@ -143,22 +150,16 @@ export default function MaterialDetailDialog({
                           style={{ backgroundColor: colorHex }}
                         />
                         <span className="text-xs text-muted-foreground">{colorName}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {cut.piece_name}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{cut.piece_name}</span>
                       </div>
                     </div>
                     {/* Right side metrics */}
                     <div className="text-right shrink-0 space-y-0.5">
-                      <p className="text-xs text-muted-foreground">
-                        {(cut.weight_kg).toFixed(1)} Kg
-                      </p>
+                      <p className="text-xs text-muted-foreground">{cut.weight_kg.toFixed(1)} Kg</p>
                       <p className="text-xs text-muted-foreground">
                         {cut.cut_length_mm.toFixed(1)} mm
                       </p>
-                      <p className="font-semibold text-sm">
-                        {formatCurrency(totalPrice)}
-                      </p>
+                      <p className="font-semibold text-sm">{formatCurrency(totalPrice)}</p>
                     </div>
                   </div>
                 );
@@ -172,9 +173,7 @@ export default function MaterialDetailDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Voltar
           </Button>
-          <Button className="bg-primary">
-            Alterar valores
-          </Button>
+          <Button className="bg-primary">Alterar valores</Button>
         </div>
       </DialogContent>
     </Dialog>

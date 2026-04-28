@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface PieChartComponentProps {
   data: any[];
@@ -11,7 +11,16 @@ interface PieChartComponentProps {
   donut?: boolean;
 }
 
-const defaultColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"];
+const defaultColors = [
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#ef4444',
+  '#8b5cf6',
+  '#ec4899',
+  '#06b6d4',
+  '#84cc16',
+];
 
 export function PieChartComponent({
   data,
@@ -42,7 +51,7 @@ export function PieChartComponent({
             nameKey={nameKey}
             cx="50%"
             cy="50%"
-            innerRadius={donut ? "40%" : 0}
+            innerRadius={donut ? '40%' : 0}
             outerRadius="80%"
             paddingAngle={2}
             labelLine={false}
@@ -59,21 +68,21 @@ export function PieChartComponent({
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
-              fontSize: "12px",
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '8px',
+              fontSize: '12px',
             }}
             formatter={(value: any) => [
-              typeof value === "number"
-                ? value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+              typeof value === 'number'
+                ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                 : value,
-              "",
+              '',
             ]}
           />
           <Legend
             wrapperStyle={{ fontSize: 12 }}
-            formatter={(value) => <span className="text-foreground">{value}</span>}
+            formatter={value => <span className="text-foreground">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

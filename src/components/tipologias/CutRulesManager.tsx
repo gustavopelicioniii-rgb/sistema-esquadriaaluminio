@@ -1,44 +1,63 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCustomCutRules, type CustomCutRuleRow } from "@/hooks/use-custom-cut-rules";
-import { findBaseTypologyId } from "@/hooks/use-all-typologies";
-import { Plus, Trash2, Edit2, Download, Loader2, Scissors } from "lucide-react";
-import type { Typology } from "@/types/calculation";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCustomCutRules, type CustomCutRuleRow } from '@/hooks/use-custom-cut-rules';
+import { findBaseTypologyId } from '@/hooks/use-all-typologies';
+import { Plus, Trash2, Edit2, Download, Loader2, Scissors } from 'lucide-react';
+import type { Typology } from '@/types/calculation';
+import { toast } from 'sonner';
 
 const REFERENCE_DIMENSIONS = [
-  { value: "L", label: "L (Largura)" },
-  { value: "H", label: "H (Altura)" },
-  { value: "L/2", label: "L/2" },
-  { value: "L/3", label: "L/3" },
-  { value: "L/4", label: "L/4" },
-  { value: "L/6", label: "L/6" },
-  { value: "H/2", label: "H/2" },
-  { value: "H/3", label: "H/3" },
-  { value: "FIXED", label: "Fixo" },
+  { value: 'L', label: 'L (Largura)' },
+  { value: 'H', label: 'H (Altura)' },
+  { value: 'L/2', label: 'L/2' },
+  { value: 'L/3', label: 'L/3' },
+  { value: 'L/4', label: 'L/4' },
+  { value: 'L/6', label: 'L/6' },
+  { value: 'H/2', label: 'H/2' },
+  { value: 'H/3', label: 'H/3' },
+  { value: 'FIXED', label: 'Fixo' },
 ];
 
 const emptyRule = {
-  profile_code: "",
-  piece_name: "",
-  piece_function: "",
-  reference_dimension: "L",
+  profile_code: '',
+  piece_name: '',
+  piece_function: '',
+  reference_dimension: 'L',
   coefficient: 1,
   constant_mm: 0,
   fixed_value_mm: null as number | null,
   cut_angle_left: 90,
   cut_angle_right: 90,
-  quantity_formula: "1",
+  quantity_formula: '1',
   sort_order: 0,
   weight_per_meter: 0,
-  notes: "",
+  notes: '',
 };
 
 interface Props {
@@ -53,7 +72,9 @@ interface Props {
 }
 
 export function CutRulesManager({ typology }: Props) {
-  const { rules, loading, addRule, updateRule, deleteRule, inheritFromBase } = useCustomCutRules(typology.id);
+  const { rules, loading, addRule, updateRule, deleteRule, inheritFromBase } = useCustomCutRules(
+    typology.id
+  );
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyRule);
@@ -61,7 +82,7 @@ export function CutRulesManager({ typology }: Props) {
 
   const handleSave = async () => {
     if (!form.piece_name.trim() || !form.profile_code.trim()) {
-      toast.error("Preencha código do perfil e nome da peça");
+      toast.error('Preencha código do perfil e nome da peça');
       return;
     }
     try {
@@ -73,7 +94,7 @@ export function CutRulesManager({ typology }: Props) {
           reference_dimension: form.reference_dimension,
           coefficient: form.coefficient,
           constant_mm: form.constant_mm,
-          fixed_value_mm: form.reference_dimension === "FIXED" ? form.fixed_value_mm : null,
+          fixed_value_mm: form.reference_dimension === 'FIXED' ? form.fixed_value_mm : null,
           cut_angle_left: form.cut_angle_left,
           cut_angle_right: form.cut_angle_right,
           quantity_formula: form.quantity_formula,
@@ -81,7 +102,7 @@ export function CutRulesManager({ typology }: Props) {
           weight_per_meter: form.weight_per_meter,
           notes: form.notes || null,
         } as Partial<CustomCutRuleRow>);
-        toast.success("Regra atualizada");
+        toast.success('Regra atualizada');
       } else {
         await addRule({
           typology_id: typology.id,
@@ -91,21 +112,21 @@ export function CutRulesManager({ typology }: Props) {
           reference_dimension: form.reference_dimension,
           coefficient: form.coefficient,
           constant_mm: form.constant_mm,
-          fixed_value_mm: form.reference_dimension === "FIXED" ? form.fixed_value_mm : null,
+          fixed_value_mm: form.reference_dimension === 'FIXED' ? form.fixed_value_mm : null,
           cut_angle_left: form.cut_angle_left,
           cut_angle_right: form.cut_angle_right,
           quantity_formula: form.quantity_formula,
           sort_order: rules.length + 1,
           weight_per_meter: form.weight_per_meter,
           notes: form.notes || null,
-        } as Omit<CustomCutRuleRow, "id" | "user_id">);
-        toast.success("Regra adicionada");
+        } as Omit<CustomCutRuleRow, 'id' | 'user_id'>);
+        toast.success('Regra adicionada');
       }
       setForm(emptyRule);
       setEditId(null);
       setShowForm(false);
     } catch (err: any) {
-      toast.error("Erro", { description: err.message });
+      toast.error('Erro', { description: err.message });
     }
   };
 
@@ -123,7 +144,7 @@ export function CutRulesManager({ typology }: Props) {
       quantity_formula: r.quantity_formula,
       sort_order: r.sort_order,
       weight_per_meter: Number(r.weight_per_meter),
-      notes: r.notes || "",
+      notes: r.notes || '',
     });
     setEditId(r.id);
     setShowForm(true);
@@ -132,9 +153,9 @@ export function CutRulesManager({ typology }: Props) {
   const handleDelete = async (id: string) => {
     try {
       await deleteRule(id);
-      toast.error("Regra removida");
+      toast.error('Regra removida');
     } catch (err: any) {
-      toast.error("Erro", { description: err.message });
+      toast.error('Erro', { description: err.message });
     }
   };
 
@@ -143,18 +164,18 @@ export function CutRulesManager({ typology }: Props) {
     try {
       const baseId = findBaseTypologyId({
         product_line_id: typology.product_line_id,
-        category: typology.category as Typology["category"],
-        subcategory: (typology.subcategory ?? undefined) as Typology["subcategory"],
+        category: typology.category as Typology['category'],
+        subcategory: (typology.subcategory ?? undefined) as Typology['subcategory'],
         num_folhas: typology.num_folhas,
       });
       if (!baseId) {
-        toast.error("Nenhuma tipologia base encontrada no catálogo");
+        toast.error('Nenhuma tipologia base encontrada no catálogo');
         return;
       }
       await inheritFromBase(baseId);
-      toast.success("Regras herdadas do catálogo com sucesso!");
+      toast.success('Regras herdadas do catálogo com sucesso!');
     } catch (err: any) {
-      toast.error("Erro ao herdar regras", { description: err.message });
+      toast.error('Erro ao herdar regras', { description: err.message });
     } finally {
       setInheriting(false);
     }
@@ -178,12 +199,30 @@ export function CutRulesManager({ typology }: Props) {
           </CardTitle>
           <div className="flex gap-2">
             {rules.length === 0 && (
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleInherit} disabled={inheriting}>
-                {inheriting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs"
+                onClick={handleInherit}
+                disabled={inheriting}
+              >
+                {inheriting ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Download className="h-3 w-3" />
+                )}
                 Herdar do Catálogo
               </Button>
             )}
-            <Button size="sm" className="gap-1.5 text-xs" onClick={() => { setForm({ ...emptyRule, sort_order: rules.length + 1 }); setEditId(null); setShowForm(true); }}>
+            <Button
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={() => {
+                setForm({ ...emptyRule, sort_order: rules.length + 1 });
+                setEditId(null);
+                setShowForm(true);
+              }}
+            >
               <Plus className="h-3 w-3" /> Nova Regra
             </Button>
           </div>
@@ -193,7 +232,9 @@ export function CutRulesManager({ typology }: Props) {
         {rules.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground text-sm space-y-3">
             <p>Nenhuma regra de corte definida.</p>
-            <p className="text-xs">Use "Herdar do Catálogo" para copiar regras de uma tipologia similar, ou crie do zero.</p>
+            <p className="text-xs">
+              Use "Herdar do Catálogo" para copiar regras de uma tipologia similar, ou crie do zero.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -213,23 +254,39 @@ export function CutRulesManager({ typology }: Props) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rules.map((r) => (
+                {rules.map(r => (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs">{r.sort_order}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px]">{r.profile_code}</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-[10px]">
+                        {r.profile_code}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="text-xs font-medium">{r.piece_name}</TableCell>
                     <TableCell className="text-xs">{r.reference_dimension}</TableCell>
                     <TableCell className="text-xs">{Number(r.coefficient)}</TableCell>
                     <TableCell className="text-xs">{Number(r.constant_mm)}mm</TableCell>
                     <TableCell className="text-xs">{r.quantity_formula}</TableCell>
-                    <TableCell className="text-xs">{Number(r.cut_angle_left)}°/{Number(r.cut_angle_right)}°</TableCell>
+                    <TableCell className="text-xs">
+                      {Number(r.cut_angle_left)}°/{Number(r.cut_angle_right)}°
+                    </TableCell>
                     <TableCell className="text-xs">{Number(r.weight_per_meter)} kg/m</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-1 justify-end">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(r)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => handleEdit(r)}
+                        >
                           <Edit2 className="h-3 w-3" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(r.id)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive"
+                          onClick={() => handleDelete(r.id)}
+                        >
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
@@ -243,34 +300,64 @@ export function CutRulesManager({ typology }: Props) {
       </CardContent>
 
       {/* Add/Edit Rule Dialog */}
-      <Dialog open={showForm} onOpenChange={(o) => { setShowForm(o); if (!o) { setEditId(null); setForm(emptyRule); } }}>
+      <Dialog
+        open={showForm}
+        onOpenChange={o => {
+          setShowForm(o);
+          if (!o) {
+            setEditId(null);
+            setForm(emptyRule);
+          }
+        }}
+      >
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editId ? "Editar Regra de Corte" : "Nova Regra de Corte"}</DialogTitle>
+            <DialogTitle>{editId ? 'Editar Regra de Corte' : 'Nova Regra de Corte'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs">Código do Perfil *</Label>
-                <Input value={form.profile_code} onChange={(e) => setForm({ ...form, profile_code: e.target.value })} placeholder="Ex: SU-010" />
+                <Input
+                  value={form.profile_code}
+                  onChange={e => setForm({ ...form, profile_code: e.target.value })}
+                  placeholder="Ex: SU-010"
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Nome da Peça *</Label>
-                <Input value={form.piece_name} onChange={(e) => setForm({ ...form, piece_name: e.target.value })} placeholder="Ex: Marco Superior" />
+                <Input
+                  value={form.piece_name}
+                  onChange={e => setForm({ ...form, piece_name: e.target.value })}
+                  placeholder="Ex: Marco Superior"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs">Função</Label>
-                <Input value={form.piece_function} onChange={(e) => setForm({ ...form, piece_function: e.target.value })} placeholder="Ex: marco_sup" />
+                <Input
+                  value={form.piece_function}
+                  onChange={e => setForm({ ...form, piece_function: e.target.value })}
+                  placeholder="Ex: marco_sup"
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Dimensão de Referência</Label>
-                <Select value={form.reference_dimension} onValueChange={(v) => setForm({ ...form, reference_dimension: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={form.reference_dimension}
+                  onValueChange={v => setForm({ ...form, reference_dimension: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
-                    {REFERENCE_DIMENSIONS.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                    {REFERENCE_DIMENSIONS.map(d => (
+                      <SelectItem key={d.value} value={d.value}>
+                        {d.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -279,16 +366,34 @@ export function CutRulesManager({ typology }: Props) {
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs">Coeficiente</Label>
-                <Input type="number" step="0.01" value={form.coefficient} onChange={(e) => setForm({ ...form, coefficient: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={form.coefficient}
+                  onChange={e => setForm({ ...form, coefficient: Number(e.target.value) })}
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Constante (mm)</Label>
-                <Input type="number" value={form.constant_mm} onChange={(e) => setForm({ ...form, constant_mm: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  value={form.constant_mm}
+                  onChange={e => setForm({ ...form, constant_mm: Number(e.target.value) })}
+                />
               </div>
-              {form.reference_dimension === "FIXED" && (
+              {form.reference_dimension === 'FIXED' && (
                 <div className="space-y-2">
                   <Label className="text-xs">Valor Fixo (mm)</Label>
-                  <Input type="number" value={form.fixed_value_mm ?? ""} onChange={(e) => setForm({ ...form, fixed_value_mm: e.target.value ? Number(e.target.value) : null })} />
+                  <Input
+                    type="number"
+                    value={form.fixed_value_mm ?? ''}
+                    onChange={e =>
+                      setForm({
+                        ...form,
+                        fixed_value_mm: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                  />
                 </div>
               )}
             </div>
@@ -296,32 +401,62 @@ export function CutRulesManager({ typology }: Props) {
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs">Ângulo Esq. (°)</Label>
-                <Input type="number" value={form.cut_angle_left} onChange={(e) => setForm({ ...form, cut_angle_left: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  value={form.cut_angle_left}
+                  onChange={e => setForm({ ...form, cut_angle_left: Number(e.target.value) })}
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Ângulo Dir. (°)</Label>
-                <Input type="number" value={form.cut_angle_right} onChange={(e) => setForm({ ...form, cut_angle_right: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  value={form.cut_angle_right}
+                  onChange={e => setForm({ ...form, cut_angle_right: Number(e.target.value) })}
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Fórmula Qtd</Label>
-                <Input value={form.quantity_formula} onChange={(e) => setForm({ ...form, quantity_formula: e.target.value })} placeholder="Ex: 2 ou num_folhas*2" />
+                <Input
+                  value={form.quantity_formula}
+                  onChange={e => setForm({ ...form, quantity_formula: e.target.value })}
+                  placeholder="Ex: 2 ou num_folhas*2"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs">Peso/metro (kg)</Label>
-                <Input type="number" step="0.001" value={form.weight_per_meter} onChange={(e) => setForm({ ...form, weight_per_meter: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  step="0.001"
+                  value={form.weight_per_meter}
+                  onChange={e => setForm({ ...form, weight_per_meter: Number(e.target.value) })}
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Ordem</Label>
-                <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  value={form.sort_order}
+                  onChange={e => setForm({ ...form, sort_order: Number(e.target.value) })}
+                />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowForm(false); setEditId(null); setForm(emptyRule); }}>Cancelar</Button>
-            <Button onClick={handleSave}>{editId ? "Salvar" : "Adicionar"}</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowForm(false);
+                setEditId(null);
+                setForm(emptyRule);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleSave}>{editId ? 'Salvar' : 'Adicionar'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

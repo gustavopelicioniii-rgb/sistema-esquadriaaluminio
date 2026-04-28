@@ -1,6 +1,6 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
-export type NotificationType = "estoque" | "pagamento" | "producao" | "crm";
+export type NotificationType = 'estoque' | 'pagamento' | 'producao' | 'crm';
 
 export interface AppNotification {
   id: string;
@@ -9,7 +9,7 @@ export interface AppNotification {
   detail?: string;
   time: string;
   read: boolean;
-  severity: "info" | "warning" | "critical";
+  severity: 'info' | 'warning' | 'critical';
 }
 
 export interface NotificationsContextValue {

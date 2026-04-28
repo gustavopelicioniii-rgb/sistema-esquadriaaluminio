@@ -1,92 +1,115 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
-  Home, Users, FileText, Wrench, ClipboardList, Scissors, Monitor,
-  CalendarDays, ShoppingBag, DollarSign, BarChart3, MapPin,
-  Calculator, Receipt, Package, Upload, Layers, Palette,
-  Lock, TrendingUp, Warehouse, Bell, Settings, Kanban,
-} from "lucide-react";
-import { NavLink } from "@/components/NavLink";
-import { useLocation, useNavigate } from "react-router-dom";
+  Home,
+  Users,
+  FileText,
+  Wrench,
+  ClipboardList,
+  Scissors,
+  Monitor,
+  CalendarDays,
+  ShoppingBag,
+  DollarSign,
+  BarChart3,
+  MapPin,
+  Calculator,
+  Receipt,
+  Package,
+  Upload,
+  Layers,
+  Palette,
+  Lock,
+  TrendingUp,
+  Warehouse,
+  Bell,
+  Settings,
+  Kanban,
+} from 'lucide-react';
+import { NavLink } from '@/components/NavLink';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { useNotifications } from "@/hooks/use-notifications";
-import { usePlano, PLAN_LABELS } from "@/hooks/use-plano";
-import { useAuth } from "@/hooks/use-auth";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+} from '@/components/ui/sidebar';
+import { useNotifications } from '@/hooks/use-notifications';
+import { usePlano, PLAN_LABELS } from '@/hooks/use-plano';
+import { useAuth } from '@/hooks/use-auth';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 // Organized menu structure - 7 groups (from 27 items)
 const menuGroups = [
   {
-    label: "Principal",
+    label: 'Principal',
+    items: [{ title: 'Início', url: '/', icon: Home }],
+  },
+  {
+    label: 'Vendas',
     items: [
-      { title: "Início", url: "/", icon: Home },
+      { title: 'Orçamentos', url: '/orcamentos', icon: FileText },
+      { title: 'Clientes', url: '/clientes', icon: Users },
+      { title: 'CRM', url: '/crm', icon: Kanban, badgeKey: 'crm' as const },
     ],
   },
   {
-    label: "Vendas",
+    label: 'Operações',
     items: [
-      { title: "Orçamentos", url: "/orcamentos", icon: FileText },
-      { title: "Clientes", url: "/clientes", icon: Users },
-      { title: "CRM", url: "/crm", icon: Kanban, badgeKey: "crm" as const },
+      { title: 'Serviços', url: '/producao', icon: Wrench, badgeKey: 'producao' as const },
+      { title: 'Agenda', url: '/agenda', icon: CalendarDays },
+      { title: 'Cálculo Esquadrias', url: '/calculo-esquadrias', icon: Calculator },
+      { title: 'Projeto Vidro', url: '/projeto-vidro', icon: Monitor },
+      { title: 'Plano de Corte', url: '/plano-corte', icon: Scissors },
     ],
   },
   {
-    label: "Operações",
+    label: 'Produção',
     items: [
-      { title: "Serviços", url: "/producao", icon: Wrench, badgeKey: "producao" as const },
-      { title: "Agenda", url: "/agenda", icon: CalendarDays },
-      { title: "Cálculo Esquadrias", url: "/calculo-esquadrias", icon: Calculator },
-      { title: "Projeto Vidro", url: "/projeto-vidro", icon: Monitor },
-      { title: "Plano de Corte", url: "/plano-corte", icon: Scissors },
+      { title: 'Relação Materiais', url: '/relacao-materiais', icon: ClipboardList },
+      { title: 'Tipologias', url: '/tipologias', icon: Layers },
     ],
   },
   {
-    label: "Produção",
+    label: 'Estoque',
     items: [
-      { title: "Relação Materiais", url: "/relacao-materiais", icon: ClipboardList },
-      { title: "Tipologias", url: "/tipologias", icon: Layers },
+      { title: 'Estoque', url: '/estoque', icon: Package, badgeKey: 'estoque' as const },
+      { title: 'Gestão Estoque', url: '/gestao-estoque', icon: Warehouse },
     ],
   },
   {
-    label: "Estoque",
+    label: 'Financeiro',
     items: [
-      { title: "Estoque", url: "/estoque", icon: Package, badgeKey: "estoque" as const },
-      { title: "Gestão Estoque", url: "/gestao-estoque", icon: Warehouse },
+      { title: 'Financeiro', url: '/financeiro', icon: DollarSign, badgeKey: 'pagamento' as const },
+      { title: 'Nota Fiscal', url: '/nota-fiscal', icon: Receipt },
     ],
   },
   {
-    label: "Financeiro",
+    label: 'Analytics',
     items: [
-      { title: "Financeiro", url: "/financeiro", icon: DollarSign, badgeKey: "pagamento" as const },
-      { title: "Nota Fiscal", url: "/nota-fiscal", icon: Receipt },
+      { title: 'Relatórios', url: '/relatorios', icon: BarChart3 },
+      { title: 'Mapa', url: '/mapa', icon: MapPin },
     ],
   },
   {
-    label: "Analytics",
+    label: 'Catálogo',
     items: [
-      { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
-      { title: "Mapa", url: "/mapa", icon: MapPin },
+      { title: 'Produtos', url: '/produtos', icon: ShoppingBag },
+      { title: 'Catálogo MOF', url: '/catalogo-mof', icon: Package },
+      { title: 'Catálogo Vidros', url: '/catalogo-vidros', icon: Monitor },
     ],
   },
   {
-    label: "Catálogo",
+    label: 'Sistema',
     items: [
-      { title: "Produtos", url: "/produtos", icon: ShoppingBag },
-      { title: "Catálogo MOF", url: "/catalogo-mof", icon: Package },
-      { title: "Catálogo Vidros", url: "/catalogo-vidros", icon: Monitor },
-    ],
-  },
-  {
-    label: "Sistema",
-    items: [
-      { title: "Configurações", url: "/configuracoes", icon: Settings },
-      { title: "Importar CSV", url: "/importar-csv", icon: Upload },
-      { title: "Notificações", url: "/notificacoes", icon: Bell },
+      { title: 'Configurações', url: '/configuracoes', icon: Settings },
+      { title: 'Importar CSV', url: '/importar-csv', icon: Upload },
+      { title: 'Notificações', url: '/notificacoes', icon: Bell },
     ],
   },
 ];
@@ -94,12 +117,12 @@ const menuGroups = [
 // Single items outside groups
 // Portal routes (public, no auth required)
 export const portalMenuItems = [
-  { title: "Portal do Cliente", url: "/portal-cliente", icon: Users },
+  { title: 'Portal do Cliente', url: '/portal-cliente', icon: Users },
 ];
 
 export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
-  const collapsed = state === "collapsed";
+  const collapsed = state === 'collapsed';
   const location = useLocation();
   const navigate = useNavigate();
   const { badgeCounts, unreadCount } = useNotifications();
@@ -107,8 +130,7 @@ export function AppSidebar() {
   const { role } = useAuth();
 
   const isActive = (url: string) =>
-    location.pathname === url ||
-    (url !== "/" && location.pathname.startsWith(url));
+    location.pathname === url || (url !== '/' && location.pathname.startsWith(url));
 
   useEffect(() => {
     if (isMobile) {
@@ -124,10 +146,10 @@ export function AppSidebar() {
     const handleLockedClick = (e: React.MouseEvent) => {
       if (locked) {
         e.preventDefault();
-        toast.error("Função bloqueada", { 
-          description: `Disponível no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : "superior"}. Acesse Planos para fazer upgrade.` 
+        toast.error('Função bloqueada', {
+          description: `Disponível no plano ${requiredPlan ? PLAN_LABELS[requiredPlan] : 'superior'}. Acesse Planos para fazer upgrade.`,
         });
-        navigate("/configuracoes?tab=planos");
+        navigate('/configuracoes?tab=planos');
       }
     };
 
@@ -135,13 +157,13 @@ export function AppSidebar() {
       <SidebarMenuItem key={item.title}>
         <SidebarMenuButton asChild isActive={!locked && isActive(item.url)}>
           <NavLink
-            to={locked ? "#" : item.url}
-            end={item.url === "/"}
+            to={locked ? '#' : item.url}
+            end={item.url === '/'}
             className={cn(
-              "hover:bg-sidebar-accent/50 transition-colors",
-              locked && "opacity-50 cursor-not-allowed"
+              'hover:bg-sidebar-accent/50 transition-colors',
+              locked && 'opacity-50 cursor-not-allowed'
             )}
-            activeClassName={locked ? "" : "bg-sidebar-accent text-sidebar-primary font-medium"}
+            activeClassName={locked ? '' : 'bg-sidebar-accent text-sidebar-primary font-medium'}
             onClick={handleLockedClick}
           >
             <div className="relative">
@@ -152,16 +174,14 @@ export function AppSidebar() {
               )}
               {count > 0 && !locked && collapsed && (
                 <span className="absolute -top-1.5 -right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground flex items-center justify-center">
-                  {count > 9 ? "9+" : count}
+                  {count > 9 ? '9+' : count}
                 </span>
               )}
             </div>
             {!collapsed && (
               <>
                 <span className="flex-1">{item.title}</span>
-                {locked && (
-                  <Lock className="h-3 w-3 text-muted-foreground ml-auto" />
-                )}
+                {locked && <Lock className="h-3 w-3 text-muted-foreground ml-auto" />}
                 {!locked && count > 0 && (
                   <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive/15 text-destructive text-[10px] font-bold px-1">
                     {count}
@@ -186,15 +206,13 @@ export function AppSidebar() {
             <span className="text-base font-extrabold text-sidebar-foreground tracking-tight">
               Alu<span className="text-primary">Flow</span>
             </span>
-            <span className="text-[10px] text-sidebar-muted font-medium">
-              Gestão Inteligente
-            </span>
+            <span className="text-[10px] text-sidebar-muted font-medium">Gestão Inteligente</span>
           </div>
         )}
       </div>
 
       <SidebarContent className="pt-2">
-        {menuGroups.map((group) => (
+        {menuGroups.map(group => (
           <SidebarGroup key={group.label}>
             {!collapsed && (
               <SidebarGroupLabel className="px-2 py-2 text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted/60">
@@ -202,9 +220,7 @@ export function AppSidebar() {
               </SidebarGroupLabel>
             )}
             <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => renderMenuItem(item, collapsed))}
-              </SidebarMenu>
+              <SidebarMenu>{group.items.map(item => renderMenuItem(item, collapsed))}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}

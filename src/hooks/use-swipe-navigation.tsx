@@ -1,22 +1,22 @@
-import { useRef, useCallback, type TouchEvent } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile-device";
+import { useRef, useCallback, type TouchEvent } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile-device';
 
-const navOrder = ["/", "/orcamentos", "/producao", "/financeiro", "/relatorios"];
+const navOrder = ['/', '/orcamentos', '/producao', '/financeiro', '/relatorios'];
 
 const SWIPE_THRESHOLD = 80;
 const SWIPE_MAX_Y = 60;
 const SWIPE_IGNORE_SELECTOR = [
-  "button",
-  "a",
-  "input",
-  "textarea",
-  "select",
-  "label",
+  'button',
+  'a',
+  'input',
+  'textarea',
+  'select',
+  'label',
   "[role='button']",
   "[data-swipe-ignore='true']",
-  "[data-radix-scroll-area-viewport]",
-].join(", ");
+  '[data-radix-scroll-area-viewport]',
+].join(', ');
 
 const shouldIgnoreSwipe = (target: EventTarget | null) =>
   target instanceof Element && Boolean(target.closest(SWIPE_IGNORE_SELECTOR));

@@ -1,9 +1,16 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import type { CalculationOutput } from "@/types/calculation";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import type { CalculationOutput } from '@/types/calculation';
 
 interface Props {
-  glasses: CalculationOutput["glasses"];
+  glasses: CalculationOutput['glasses'];
 }
 
 export function GlassTable({ glasses }: Props) {
@@ -19,7 +26,10 @@ export function GlassTable({ glasses }: Props) {
             const w = aspectRatio >= 1 ? maxW : maxH * aspectRatio;
             const h = aspectRatio >= 1 ? maxW / aspectRatio : maxH;
             return (
-              <div key={glass.glass_rule_id + "-preview-" + i} className="flex flex-col items-center gap-1.5">
+              <div
+                key={glass.glass_rule_id + '-preview-' + i}
+                className="flex flex-col items-center gap-1.5"
+              >
                 <div
                   className="relative border-2 border-sky-300/60 bg-sky-100/40 dark:bg-sky-900/20 rounded-sm flex items-center justify-center"
                   style={{ width: w, height: h }}
@@ -34,7 +44,9 @@ export function GlassTable({ glasses }: Props) {
                     {glass.height_mm} mm
                   </span>
                 </div>
-                <span className="text-[10px] text-muted-foreground font-medium mt-1">{glass.glass_name} ×{glass.quantity}</span>
+                <span className="text-[10px] text-muted-foreground font-medium mt-1">
+                  {glass.glass_name} ×{glass.quantity}
+                </span>
               </div>
             );
           })}
@@ -53,7 +65,7 @@ export function GlassTable({ glasses }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {glasses.map((glass) => (
+            {glasses.map(glass => (
               <TableRow key={glass.glass_rule_id}>
                 <TableCell className="font-medium">{glass.glass_name}</TableCell>
                 <TableCell className="text-right font-mono">{glass.width_mm}</TableCell>
@@ -63,7 +75,9 @@ export function GlassTable({ glasses }: Props) {
                   {glass.area_m2.toFixed(4)}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="text-xs capitalize">{glass.glass_name}</Badge>
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {glass.glass_name}
+                  </Badge>
                 </TableCell>
               </TableRow>
             ))}

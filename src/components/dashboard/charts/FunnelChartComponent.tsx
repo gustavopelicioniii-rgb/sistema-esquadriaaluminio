@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface FunnelStage {
   name: string;
@@ -14,7 +14,7 @@ interface FunnelChartComponentProps {
   showPercent?: boolean;
 }
 
-const defaultColors = ["#3b82f6", "#6366f1", "#8b5cf6", "#a855f7", "#c084fc", "#d8b4fe"];
+const defaultColors = ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#d8b4fe'];
 
 export function FunnelChartComponent({
   data,
@@ -22,7 +22,7 @@ export function FunnelChartComponent({
   showValues = true,
   showPercent = true,
 }: FunnelChartComponentProps) {
-  const maxValue = Math.max(...data.map((d) => d.value));
+  const maxValue = Math.max(...data.map(d => d.value));
 
   return (
     <div className="w-full">
@@ -49,7 +49,7 @@ export function FunnelChartComponent({
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xs font-semibold text-white drop-shadow-sm">
-                      {showValues && stage.value.toLocaleString("pt-BR")}
+                      {showValues && stage.value.toLocaleString('pt-BR')}
                       {showPercent && ` (${percent}%)`}
                     </span>
                   </div>

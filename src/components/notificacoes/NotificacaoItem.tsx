@@ -1,7 +1,7 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
-import type { AppNotification } from "@/hooks/use-notifications";
-import { typeConfig, severityConfig } from "./notificacoes-config";
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
+import type { AppNotification } from '@/hooks/use-notifications';
+import { typeConfig, severityConfig } from './notificacoes-config';
 
 interface NotificacaoItemProps {
   notification: AppNotification;
@@ -10,7 +10,12 @@ interface NotificacaoItemProps {
   onClick: (n: AppNotification) => void;
 }
 
-export function NotificacaoItem({ notification: n, isSelected, onToggleSelect, onClick }: NotificacaoItemProps) {
+export function NotificacaoItem({
+  notification: n,
+  isSelected,
+  onToggleSelect,
+  onClick,
+}: NotificacaoItemProps) {
   const tc = typeConfig[n.type];
   const sc = severityConfig[n.severity];
   const Icon = tc.icon;
@@ -19,16 +24,22 @@ export function NotificacaoItem({ notification: n, isSelected, onToggleSelect, o
   return (
     <div
       className={cn(
-        "flex items-start gap-3 px-4 py-3 border-b last:border-0 transition-colors group",
-        n.read ? "opacity-60 bg-muted/20" : "bg-card",
-        isSelected && "bg-primary/5"
+        'flex items-start gap-3 px-4 py-3 border-b last:border-0 transition-colors group',
+        n.read ? 'opacity-60 bg-muted/20' : 'bg-card',
+        isSelected && 'bg-primary/5'
       )}
     >
       <div className="pt-0.5">
         <Checkbox checked={isSelected} onCheckedChange={() => onToggleSelect(n.id)} />
       </div>
 
-      <div className={cn("mt-0.5 shrink-0 h-9 w-9 rounded-full flex items-center justify-center", tc.bgColor, tc.color)}>
+      <div
+        className={cn(
+          'mt-0.5 shrink-0 h-9 w-9 rounded-full flex items-center justify-center',
+          tc.bgColor,
+          tc.color
+        )}
+      >
         <Icon className="h-4 w-4" />
       </div>
 
@@ -39,10 +50,22 @@ export function NotificacaoItem({ notification: n, isSelected, onToggleSelect, o
         </div>
         {n.detail && <p className="text-xs text-muted-foreground mt-0.5 truncate">{n.detail}</p>}
         <div className="flex items-center gap-2 mt-1.5">
-          <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded-full", tc.bgColor, tc.color)}>
+          <span
+            className={cn(
+              'text-[10px] font-semibold px-1.5 py-0.5 rounded-full',
+              tc.bgColor,
+              tc.color
+            )}
+          >
             {tc.label}
           </span>
-          <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5", sc.bgColor, sc.color)}>
+          <span
+            className={cn(
+              'text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5',
+              sc.bgColor,
+              sc.color
+            )}
+          >
             <SevIcon className="h-2.5 w-2.5" />
             {sc.label}
           </span>

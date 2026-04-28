@@ -1,15 +1,38 @@
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { 
-  Search, Filter, Package, Grid3x3, List, ChevronRight, 
-  Scale, Ruler, Palette, Info, ExternalLink, Check
-} from "lucide-react";
+import { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Search,
+  Filter,
+  Package,
+  Grid3x3,
+  List,
+  ChevronRight,
+  Scale,
+  Ruler,
+  Palette,
+  Info,
+  ExternalLink,
+  Check,
+} from 'lucide-react';
 import {
   allSupplierProfiles,
   supplierGlasses,
@@ -20,7 +43,7 @@ import {
   type SupplierProfile,
   type SupplierGlass,
   type SupplierComponent,
-} from "@/data/catalog/suppliers";
+} from '@/data/catalog/suppliers';
 
 interface CatalogBrowserProps {
   onSelectProfile?: (profile: SupplierProfile) => void;
@@ -39,28 +62,29 @@ export function CatalogBrowser({
   selectedGlassId,
   selectedComponentId,
 }: CatalogBrowserProps) {
-  const [search, setSearch] = useState("");
-  const [selectedLine, setSelectedLine] = useState<string>("all");
-  const [selectedType, setSelectedType] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [search, setSearch] = useState('');
+  const [selectedLine, setSelectedLine] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [detailProfile, setDetailProfile] = useState<SupplierProfile | null>(null);
 
   const lines = useMemo(() => getAllLines(), []);
 
   const filteredProfiles = useMemo(() => {
-    let profiles = selectedLine === "all" ? allSupplierProfiles : getProfilesByLine(selectedLine);
-    
+    let profiles = selectedLine === 'all' ? allSupplierProfiles : getProfilesByLine(selectedLine);
+
     if (search) {
       const searchLower = search.toLowerCase();
-      profiles = profiles.filter(p => 
-        p.name.toLowerCase().includes(searchLower) ||
-        p.code.toLowerCase().includes(searchLower) ||
-        p.manufacturer.toLowerCase().includes(searchLower) ||
-        p.description.toLowerCase().includes(searchLower)
+      profiles = profiles.filter(
+        p =>
+          p.name.toLowerCase().includes(searchLower) ||
+          p.code.toLowerCase().includes(searchLower) ||
+          p.manufacturer.toLowerCase().includes(searchLower) ||
+          p.description.toLowerCase().includes(searchLower)
       );
     }
 
-    if (selectedType !== "all") {
+    if (selectedType !== 'all') {
       profiles = profiles.filter(p => p.profile_type === selectedType);
     }
 
@@ -70,23 +94,25 @@ export function CatalogBrowser({
   const filteredGlasses = useMemo(() => {
     if (search) {
       const searchLower = search.toLowerCase();
-      return supplierGlasses.filter(g => 
-        g.name.toLowerCase().includes(searchLower) ||
-        g.manufacturer.toLowerCase().includes(searchLower)
+      return supplierGlasses.filter(
+        g =>
+          g.name.toLowerCase().includes(searchLower) ||
+          g.manufacturer.toLowerCase().includes(searchLower)
       );
     }
     return supplierGlasses;
   }, [search]);
 
   const filteredComponents = useMemo(() => {
-    let comps = selectedType === "all" ? supplierComponents : getComponentsByType(selectedType);
-    
+    let comps = selectedType === 'all' ? supplierComponents : getComponentsByType(selectedType);
+
     if (search) {
       const searchLower = search.toLowerCase();
-      comps = comps.filter(c => 
-        c.name.toLowerCase().includes(searchLower) ||
-        c.code.toLowerCase().includes(searchLower) ||
-        c.manufacturer.toLowerCase().includes(searchLower)
+      comps = comps.filter(
+        c =>
+          c.name.toLowerCase().includes(searchLower) ||
+          c.code.toLowerCase().includes(searchLower) ||
+          c.manufacturer.toLowerCase().includes(searchLower)
       );
     }
     return comps;
@@ -94,26 +120,26 @@ export function CatalogBrowser({
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      pingadeira: "Pingadeira",
-      guideline: "Guideline",
-      main_frame: "Batente",
-      main_frame_60: "Batente 60",
-      veneziana: "Veneziana",
-      complementar: "Complementar",
+      pingadeira: 'Pingadeira',
+      guideline: 'Guideline',
+      main_frame: 'Batente',
+      main_frame_60: 'Batente 60',
+      veneziana: 'Veneziana',
+      complementar: 'Complementar',
     };
     return labels[type] || type;
   };
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      pingadeira: "bg-blue-100 text-blue-800",
-      guideline: "bg-green-100 text-green-800",
-      main_frame: "bg-purple-100 text-purple-800",
-      main_frame_60: "bg-purple-100 text-purple-800",
-      veneziana: "bg-amber-100 text-amber-800",
-      complementar: "bg-gray-100 text-gray-800",
+      pingadeira: 'bg-blue-100 text-blue-800',
+      guideline: 'bg-green-100 text-green-800',
+      main_frame: 'bg-purple-100 text-purple-800',
+      main_frame_60: 'bg-purple-100 text-purple-800',
+      veneziana: 'bg-amber-100 text-amber-800',
+      complementar: 'bg-gray-100 text-gray-800',
     };
-    return colors[type] || "bg-gray-100 text-gray-800";
+    return colors[type] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -126,23 +152,23 @@ export function CatalogBrowser({
             <Input
               placeholder="Buscar perfil, vidro ou componente..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
         </div>
         <div className="flex gap-2">
           <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
+            variant={viewMode === 'grid' ? 'default' : 'outline'}
             size="icon"
-            onClick={() => setViewMode("grid")}
+            onClick={() => setViewMode('grid')}
           >
             <Grid3x3 className="h-4 w-4" />
           </Button>
           <Button
-            variant={viewMode === "table" ? "default" : "outline"}
+            variant={viewMode === 'table' ? 'default' : 'outline'}
             size="icon"
-            onClick={() => setViewMode("table")}
+            onClick={() => setViewMode('table')}
           >
             <List className="h-4 w-4" />
           </Button>
@@ -153,11 +179,11 @@ export function CatalogBrowser({
       <div className="flex flex-wrap gap-2">
         <select
           value={selectedLine}
-          onChange={(e) => setSelectedLine(e.target.value)}
+          onChange={e => setSelectedLine(e.target.value)}
           className="h-9 rounded-md border border-input bg-background px-3 text-sm"
         >
           <option value="all">Todas as Linhas</option>
-          {lines.map((l) => (
+          {lines.map(l => (
             <option key={`${l.manufacturer}-${l.line}`} value={l.line}>
               {l.manufacturer} - {l.line}
             </option>
@@ -165,7 +191,7 @@ export function CatalogBrowser({
         </select>
         <select
           value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
+          onChange={e => setSelectedType(e.target.value)}
           className="h-9 rounded-md border border-input bg-background px-3 text-sm"
         >
           <option value="all">Todos os Tipos</option>
@@ -196,13 +222,13 @@ export function CatalogBrowser({
 
         {/* Profiles Tab */}
         <TabsContent value="profiles" className="mt-4">
-          {viewMode === "grid" ? (
+          {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredProfiles.map((profile) => (
-                <Card 
+              {filteredProfiles.map(profile => (
+                <Card
                   key={profile.id}
                   className={`cursor-pointer hover:shadow-md transition-shadow ${
-                    selectedProfileId === profile.id ? "ring-2 ring-primary" : ""
+                    selectedProfileId === profile.id ? 'ring-2 ring-primary' : ''
                   }`}
                   onClick={() => {
                     onSelectProfile?.(profile);
@@ -229,7 +255,9 @@ export function CatalogBrowser({
                     </div>
                     <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                       <Ruler className="h-3 w-3" />
-                      <span>{profile.width_mm}x{profile.height_mm}mm</span>
+                      <span>
+                        {profile.width_mm}x{profile.height_mm}mm
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -250,10 +278,10 @@ export function CatalogBrowser({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProfiles.map((profile) => (
-                    <TableRow 
+                  {filteredProfiles.map(profile => (
+                    <TableRow
                       key={profile.id}
-                      className={`cursor-pointer ${selectedProfileId === profile.id ? "bg-primary/5" : ""}`}
+                      className={`cursor-pointer ${selectedProfileId === profile.id ? 'bg-primary/5' : ''}`}
                       onClick={() => onSelectProfile?.(profile)}
                     >
                       <TableCell className="font-mono text-xs">{profile.code}</TableCell>
@@ -282,11 +310,11 @@ export function CatalogBrowser({
         {/* Glasses Tab */}
         <TabsContent value="glasses" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredGlasses.map((glass) => (
-              <Card 
+            {filteredGlasses.map(glass => (
+              <Card
                 key={glass.id}
                 className={`cursor-pointer hover:shadow-md transition-shadow ${
-                  selectedGlassId === glass.id ? "ring-2 ring-primary" : ""
+                  selectedGlassId === glass.id ? 'ring-2 ring-primary' : ''
                 }`}
                 onClick={() => onSelectGlass?.(glass)}
               >
@@ -323,11 +351,11 @@ export function CatalogBrowser({
         {/* Components Tab */}
         <TabsContent value="components" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredComponents.map((comp) => (
-              <Card 
+            {filteredComponents.map(comp => (
+              <Card
                 key={comp.id}
                 className={`cursor-pointer hover:shadow-md transition-shadow ${
-                  selectedComponentId === comp.id ? "ring-2 ring-primary" : ""
+                  selectedComponentId === comp.id ? 'ring-2 ring-primary' : ''
                 }`}
                 onClick={() => onSelectComponent?.(comp)}
               >
@@ -351,9 +379,7 @@ export function CatalogBrowser({
                   </div>
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Preço</span>
-                    <span className="font-semibold text-primary">
-                      R$ {comp.price.toFixed(2)}
-                    </span>
+                    <span className="font-semibold text-primary">R$ {comp.price.toFixed(2)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -436,7 +462,7 @@ export function CatalogBrowser({
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Acabamentos Disponíveis</p>
                 <div className="flex flex-wrap gap-1">
-                  {detailProfile.color_finishes.map((color) => (
+                  {detailProfile.color_finishes.map(color => (
                     <Badge key={color} variant="outline" className="capitalize">
                       {color}
                     </Badge>

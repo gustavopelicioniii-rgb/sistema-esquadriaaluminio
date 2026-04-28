@@ -1,22 +1,22 @@
-import { useContext, useEffect, useState, useCallback, useRef, type ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
-import { toast } from "sonner";
+import { useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
+import { toast } from 'sonner';
 import {
   NotificationsContext,
   fallbackNotificationsContext,
   type AppNotification,
   type NotificationType,
-} from "@/hooks/notifications-context";
+} from '@/hooks/notifications-context';
 
-export type { AppNotification, NotificationType } from "@/hooks/notifications-context";
+export type { AppNotification, NotificationType } from '@/hooks/notifications-context';
 
 let hasWarnedMissingProvider = false;
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "agora";
+  if (mins < 1) return 'agora';
   if (mins < 60) return `${mins} min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h`;
@@ -24,7 +24,7 @@ function timeAgo(dateStr: string): string {
 }
 
 function daysUntil(dateStr: string): number {
-  const target = new Date(dateStr + "T00:00:00");
+  const target = new Date(dateStr + 'T00:00:00');
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   return Math.ceil((target.getTime() - now.getTime()) / 86400000);
@@ -37,7 +37,7 @@ function playNotificationSound() {
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
-    osc.type = "sine";
+    osc.type = 'sine';
     gain.gain.value = 0.15;
     osc.frequency.setValueAtTime(880, ctx.currentTime);
     osc.frequency.setValueAtTime(1175, ctx.currentTime + 0.12);
@@ -62,20 +62,20 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
     await supabase
-      .from("notification_reads")
+      .from('notification_reads')
       .delete()
-      .eq("user_id", user.id)
-      .lt("created_at", thirtyDaysAgo);
+      .eq('user_id', user.id)
+      .lt('created_at', thirtyDaysAgo);
   }, [user]);
 
   // Fetch read keys from DB
   const fetchReadKeys = useCallback(async () => {
     if (!user) return new Set<string>();
     const { data } = await supabase
-      .from("notification_reads")
-      .select("notification_key")
-      .eq("user_id", user.id);
-    const keys = new Set((data ?? []).map((r) => r.notification_key));
+      .from('notification_reads')
+      .select('notification_key')
+      .eq('user_id', user.id);
+    const keys = new Set((data ?? []).map(r => r.notification_key));
     setReadKeys(keys);
     return keys;
   }, [user]);
@@ -84,10 +84,23 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     const [estoqueRes, contasRes, pedidosRes, crmRes, currentReadKeys] = await Promise.all([
-      supabase.from("estoque").select("id, produto, quantidade, minimo, updated_at").order("updated_at", { ascending: false }),
-      supabase.from("contas_financeiras").select("id, cliente, valor, vencimento, updated_at, tipo").eq("status", "pendente").order("vencimento", { ascending: true }),
-      supabase.from("pedidos").select("id, pedido_num, cliente, etapa, status, previsao, updated_at").order("updated_at", { ascending: false }),
-      supabase.from("crm_leads").select("id, nome, status, follow_up_date, valor, updated_at").order("updated_at", { ascending: false }),
+      supabase
+        .from('estoque')
+        .select('id, produto, quantidade, minimo, updated_at')
+        .order('updated_at', { ascending: false }),
+      supabase
+        .from('contas_financeiras')
+        .select('id, cliente, valor, vencimento, updated_at, tipo')
+        .eq('status', 'pendente')
+        .order('vencimento', { ascending: true }),
+      supabase
+        .from('pedidos')
+        .select('id, pedido_num, cliente, etapa, status, previsao, updated_at')
+        .order('updated_at', { ascending: false }),
+      supabase
+        .from('crm_leads')
+        .select('id, nome, status, follow_up_date, valor, updated_at')
+        .order('updated_at', { ascending: false }),
       fetchReadKeys(),
     ]);
 
@@ -95,99 +108,99 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     // === ESTOQUE BAIXO ===
     (estoqueRes.data ?? [])
-      .filter((e) => e.quantidade <= e.minimo)
-      .forEach((e) => {
+      .filter(e => e.quantidade <= e.minimo)
+      .forEach(e => {
         const ratio = e.minimo > 0 ? e.quantidade / e.minimo : 0;
         const id = `est-${e.id}`;
         allNotifs.push({
           id,
-          type: "estoque",
+          type: 'estoque',
           msg: `Estoque baixo: ${e.produto}`,
           detail: `${e.quantidade}/${e.minimo} unid.`,
           time: timeAgo(e.updated_at),
           read: currentReadKeys.has(id),
-          severity: ratio <= 0.25 ? "critical" : "warning",
+          severity: ratio <= 0.25 ? 'critical' : 'warning',
         });
       });
 
     // === CONTAS VENCIDAS E PRÓXIMAS DO VENCIMENTO ===
-    (contasRes.data ?? []).forEach((c) => {
+    (contasRes.data ?? []).forEach(c => {
       const days = daysUntil(c.vencimento);
-      const valor = `R$ ${Number(c.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-      const tipoLabel = c.tipo === "receber" ? "A receber" : "A pagar";
+      const valor = `R$ ${Number(c.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      const tipoLabel = c.tipo === 'receber' ? 'A receber' : 'A pagar';
       const id = `fin-${c.id}`;
 
       if (days < 0) {
         allNotifs.push({
           id,
-          type: "pagamento",
+          type: 'pagamento',
           msg: `${tipoLabel} vencido: ${c.cliente}`,
           detail: `${valor} · venceu há ${Math.abs(days)} dia(s)`,
           time: timeAgo(c.updated_at),
           read: currentReadKeys.has(id),
-          severity: "critical",
+          severity: 'critical',
         });
       } else if (days <= 3) {
         allNotifs.push({
           id,
-          type: "pagamento",
+          type: 'pagamento',
           msg: `${tipoLabel} vence em breve: ${c.cliente}`,
           detail: `${valor} · vence em ${days} dia(s)`,
           time: timeAgo(c.updated_at),
           read: currentReadKeys.has(id),
-          severity: "warning",
+          severity: 'warning',
         });
       }
     });
 
     // === PEDIDOS ATRASADOS E PRÓXIMOS DO VENCIMENTO ===
     (pedidosRes.data ?? [])
-      .filter((p) => p.status === "em_andamento" && p.previsao)
-      .forEach((p) => {
+      .filter(p => p.status === 'em_andamento' && p.previsao)
+      .forEach(p => {
         const days = daysUntil(p.previsao!);
         if (days < 0) {
           const id = `ped-atraso-${p.id}`;
           allNotifs.push({
             id,
-            type: "producao",
+            type: 'producao',
             msg: `Pedido #${p.pedido_num} atrasado`,
             detail: `${p.cliente} · ${Math.abs(days)} dia(s) de atraso`,
             time: timeAgo(p.updated_at),
             read: currentReadKeys.has(id),
-            severity: "critical",
+            severity: 'critical',
           });
         } else if (days <= 3) {
           const id = `ped-prazo-${p.id}`;
           allNotifs.push({
             id,
-            type: "producao",
+            type: 'producao',
             msg: `Pedido #${p.pedido_num} prazo em ${days}d`,
             detail: `${p.cliente} · entrega em ${days} dia(s)`,
             time: timeAgo(p.updated_at),
             read: currentReadKeys.has(id),
-            severity: "critical",
+            severity: 'critical',
           });
         } else if (days <= 7) {
           const id = `ped-prazo7-${p.id}`;
           allNotifs.push({
             id,
-            type: "producao",
+            type: 'producao',
             msg: `Pedido #${p.pedido_num} vence em ${days}d`,
             detail: `${p.cliente} · atenção ao prazo`,
             time: timeAgo(p.updated_at),
             read: currentReadKeys.has(id),
-            severity: "warning",
+            severity: 'warning',
           });
         } else if (days <= 15) {
           const id = `ped-prazo15-${p.id}`;
           allNotifs.push({
             id,
-            type: "producao",
+            type: 'producao',
             msg: `Pedido #${p.pedido_num} vence em ${days}d`,
             detail: `${p.cliente} · planeje a entrega`,
             time: timeAgo(p.updated_at),
             read: currentReadKeys.has(id),
-            severity: "info",
+            severity: 'info',
           });
         }
       });
@@ -195,59 +208,60 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     // === PRODUÇÃO RECENTE ===
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
     (pedidosRes.data ?? [])
-      .filter((p) => p.etapa && new Date(p.updated_at) >= new Date(weekAgo))
+      .filter(p => p.etapa && new Date(p.updated_at) >= new Date(weekAgo))
       .slice(0, 5)
-      .forEach((p) => {
+      .forEach(p => {
         const id = `prod-${p.id}`;
         allNotifs.push({
           id,
-          type: "producao",
+          type: 'producao',
           msg: `Pedido #${p.pedido_num} - ${p.cliente}`,
           detail: `Etapa: ${p.etapa}`,
           time: timeAgo(p.updated_at),
           read: currentReadKeys.has(id),
-          severity: "info",
+          severity: 'info',
         });
       });
 
     // === CRM FOLLOW-UPS ===
-    (crmRes.data ?? []).forEach((lead) => {
+    (crmRes.data ?? []).forEach(lead => {
       if (!lead.follow_up_date) return;
       const days = daysUntil(lead.follow_up_date);
-      const valor = Number(lead.valor) > 0
-        ? ` · R$ ${Number(lead.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
-        : "";
+      const valor =
+        Number(lead.valor) > 0
+          ? ` · R$ ${Number(lead.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+          : '';
       const id = `crm-${lead.id}`;
 
       if (days < 0) {
         allNotifs.push({
           id,
-          type: "crm",
+          type: 'crm',
           msg: `Follow-up atrasado: ${lead.nome}`,
           detail: `${Math.abs(days)} dia(s) de atraso${valor}`,
           time: timeAgo(lead.updated_at),
           read: currentReadKeys.has(id),
-          severity: "critical",
+          severity: 'critical',
         });
       } else if (days <= 1) {
         allNotifs.push({
           id,
-          type: "crm",
+          type: 'crm',
           msg: `Follow-up hoje: ${lead.nome}`,
           detail: `Acompanhamento pendente${valor}`,
           time: timeAgo(lead.updated_at),
           read: currentReadKeys.has(id),
-          severity: "warning",
+          severity: 'warning',
         });
       } else if (days <= 3) {
         allNotifs.push({
           id,
-          type: "crm",
+          type: 'crm',
           msg: `Follow-up em ${days} dias: ${lead.nome}`,
           detail: `Acompanhamento agendado${valor}`,
           time: timeAgo(lead.updated_at),
           read: currentReadKeys.has(id),
-          severity: "info",
+          severity: 'info',
         });
       }
     });
@@ -257,9 +271,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     allNotifs.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
     // Show toast + play sound for new critical notifications
-    const criticalCount = allNotifs.filter((n) => n.severity === "critical" && !n.read).length;
+    const criticalCount = allNotifs.filter(n => n.severity === 'critical' && !n.read).length;
     if (!initialLoadRef.current && criticalCount > prevCountRef.current) {
-      const newCritical = allNotifs.filter((n) => n.severity === "critical" && !n.read);
+      const newCritical = allNotifs.filter(n => n.severity === 'critical' && !n.read);
       const newest = newCritical[0];
       if (newest) {
         toast.error(newest.msg, { description: newest.detail });
@@ -278,7 +292,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     cleanupOldReads(); // Run cleanup on mount
     const interval = setInterval(fetchNotifications, 5 * 60 * 1000);
     const cleanupInterval = setInterval(cleanupOldReads, 24 * 60 * 60 * 1000); // Daily cleanup
-    return () => { clearInterval(interval); clearInterval(cleanupInterval); };
+    return () => {
+      clearInterval(interval);
+      clearInterval(cleanupInterval);
+    };
   }, [fetchNotifications, cleanupOldReads]);
 
   // Realtime disabled - using local API without realtime support
@@ -286,43 +303,50 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     // No realtime subscriptions in local API mode
   }, [user, fetchNotifications]);
 
-  const markAsRead = useCallback(async (id: string) => {
-    if (!user) return;
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-    setReadKeys((prev) => new Set(prev).add(id));
-    await supabase.from("notification_reads").upsert(
-      { user_id: user.id, notification_key: id },
-      { onConflict: "user_id,notification_key" }
-    );
-  }, [user]);
+  const markAsRead = useCallback(
+    async (id: string) => {
+      if (!user) return;
+      setNotifications(prev => prev.map(n => (n.id === id ? { ...n, read: true } : n)));
+      setReadKeys(prev => new Set(prev).add(id));
+      await supabase
+        .from('notification_reads')
+        .upsert(
+          { user_id: user.id, notification_key: id },
+          { onConflict: 'user_id,notification_key' }
+        );
+    },
+    [user]
+  );
 
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
-    const unread = notifications.filter((n) => !n.read);
+    const unread = notifications.filter(n => !n.read);
     if (unread.length === 0) return;
 
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     const newKeys = new Set(readKeys);
-    unread.forEach((n) => newKeys.add(n.id));
+    unread.forEach(n => newKeys.add(n.id));
     setReadKeys(newKeys);
 
-    const rows = unread.map((n) => ({ user_id: user.id, notification_key: n.id }));
-    await supabase.from("notification_reads").upsert(rows, { onConflict: "user_id,notification_key" });
+    const rows = unread.map(n => ({ user_id: user.id, notification_key: n.id }));
+    await supabase
+      .from('notification_reads')
+      .upsert(rows, { onConflict: 'user_id,notification_key' });
   }, [user, notifications, readKeys]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const badgeCounts = {
-    estoque: notifications.filter((n) => n.type === "estoque" && !n.read).length,
-    pagamento: notifications.filter((n) => n.type === "pagamento" && !n.read).length,
-    producao: notifications.filter((n) => n.type === "producao" && !n.read).length,
-    crm: notifications.filter((n) => n.type === "crm" && !n.read).length,
+    estoque: notifications.filter(n => n.type === 'estoque' && !n.read).length,
+    pagamento: notifications.filter(n => n.type === 'pagamento' && !n.read).length,
+    producao: notifications.filter(n => n.type === 'producao' && !n.read).length,
+    crm: notifications.filter(n => n.type === 'crm' && !n.read).length,
   };
 
   return (
-    <NotificationsContext.Provider value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts }}>
+    <NotificationsContext.Provider
+      value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead, badgeCounts }}
+    >
       {children}
     </NotificationsContext.Provider>
   );

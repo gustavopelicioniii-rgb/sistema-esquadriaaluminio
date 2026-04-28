@@ -1,27 +1,27 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
-  { value: "janela", label: "Janela" },
-  { value: "porta", label: "Porta" },
-  { value: "vitro", label: "Vitrô" },
-  { value: "veneziana", label: "Veneziana" },
-  { value: "maxim_ar", label: "Maxim-Ar" },
-  { value: "camarao", label: "Camarão" },
-  { value: "pivotante", label: "Pivotante" },
-  { value: "basculante", label: "Basculante" },
-  { value: "fachada", label: "Fachada" },
+  { value: 'janela', label: 'Janela' },
+  { value: 'porta', label: 'Porta' },
+  { value: 'vitro', label: 'Vitrô' },
+  { value: 'veneziana', label: 'Veneziana' },
+  { value: 'maxim_ar', label: 'Maxim-Ar' },
+  { value: 'camarao', label: 'Camarão' },
+  { value: 'pivotante', label: 'Pivotante' },
+  { value: 'basculante', label: 'Basculante' },
+  { value: 'fachada', label: 'Fachada' },
 ];
 
 const SUBCATEGORIES = [
-  { value: "correr", label: "Correr" },
-  { value: "giro", label: "Giro" },
-  { value: "maxim_ar", label: "Maxim-Ar" },
-  { value: "camarao", label: "Camarão" },
-  { value: "basculante", label: "Basculante" },
-  { value: "pivotante", label: "Pivotante" },
-  { value: "fixo", label: "Fixo" },
+  { value: 'correr', label: 'Correr' },
+  { value: 'giro', label: 'Giro' },
+  { value: 'maxim_ar', label: 'Maxim-Ar' },
+  { value: 'camarao', label: 'Camarão' },
+  { value: 'basculante', label: 'Basculante' },
+  { value: 'pivotante', label: 'Pivotante' },
+  { value: 'fixo', label: 'Fixo' },
 ];
 
 interface Props {
@@ -44,12 +44,30 @@ interface Props {
 }
 
 export function TypologyFilters({
-  filterCategory, filterSubcategory, filterFolhas, filterVeneziana, filterBandeira,
-  uniqueCategories, uniqueSubcategories, uniqueFolhas,
-  onFilterCategory, onFilterSubcategory, onFilterFolhas, onFilterVeneziana, onFilterBandeira,
-  onClearAll, totalCount, filteredCount,
+  filterCategory,
+  filterSubcategory,
+  filterFolhas,
+  filterVeneziana,
+  filterBandeira,
+  uniqueCategories,
+  uniqueSubcategories,
+  uniqueFolhas,
+  onFilterCategory,
+  onFilterSubcategory,
+  onFilterFolhas,
+  onFilterVeneziana,
+  onFilterBandeira,
+  onClearAll,
+  totalCount,
+  filteredCount,
 }: Props) {
-  const hasFilters = !!(filterCategory || filterSubcategory || filterFolhas || filterVeneziana !== null || filterBandeira !== null);
+  const hasFilters = !!(
+    filterCategory ||
+    filterSubcategory ||
+    filterFolhas ||
+    filterVeneziana !== null ||
+    filterBandeira !== null
+  );
 
   const getCategoryLabel = (cat: string) => CATEGORIES.find(c => c.value === cat)?.label || cat;
 
@@ -70,9 +88,16 @@ export function TypologyFilters({
             <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Tipologia</h4>
             <div className="space-y-0.5">
               {uniqueCategories.map(cat => (
-                <button key={cat} onClick={() => onFilterCategory(filterCategory === cat ? null : cat)}
-                  className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                    filterCategory === cat ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+                <button
+                  key={cat}
+                  onClick={() => onFilterCategory(filterCategory === cat ? null : cat)}
+                  className={cn(
+                    'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                    filterCategory === cat
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-foreground/70 hover:bg-muted'
+                  )}
+                >
                   {getCategoryLabel(cat)}
                 </button>
               ))}
@@ -82,12 +107,21 @@ export function TypologyFilters({
           <Separator />
 
           <div>
-            <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Sistema de Abertura</h4>
+            <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">
+              Sistema de Abertura
+            </h4>
             <div className="space-y-0.5">
               {uniqueSubcategories.filter(Boolean).map(sub => (
-                <button key={sub} onClick={() => onFilterSubcategory(filterSubcategory === sub ? null : sub)}
-                  className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                    filterSubcategory === sub ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+                <button
+                  key={sub}
+                  onClick={() => onFilterSubcategory(filterSubcategory === sub ? null : sub)}
+                  className={cn(
+                    'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                    filterSubcategory === sub
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-foreground/70 hover:bg-muted'
+                  )}
+                >
                   {SUBCATEGORIES.find(s => s.value === sub)?.label || sub}
                 </button>
               ))}
@@ -97,13 +131,22 @@ export function TypologyFilters({
           <Separator />
 
           <div>
-            <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Quantidade de Folhas</h4>
+            <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">
+              Quantidade de Folhas
+            </h4>
             <div className="space-y-0.5">
               {uniqueFolhas.map(n => (
-                <button key={n} onClick={() => onFilterFolhas(filterFolhas === n ? null : n)}
-                  className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                    filterFolhas === n ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
-                  {n} Folha{n !== 1 ? "s" : ""}
+                <button
+                  key={n}
+                  onClick={() => onFilterFolhas(filterFolhas === n ? null : n)}
+                  className={cn(
+                    'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                    filterFolhas === n
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-foreground/70 hover:bg-muted'
+                  )}
+                >
+                  {n} Folha{n !== 1 ? 's' : ''}
                 </button>
               ))}
             </div>
@@ -114,24 +157,48 @@ export function TypologyFilters({
           <div>
             <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Extras</h4>
             <div className="space-y-0.5">
-              <button onClick={() => onFilterVeneziana(filterVeneziana === true ? null : true)}
-                className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                  filterVeneziana === true ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+              <button
+                onClick={() => onFilterVeneziana(filterVeneziana === true ? null : true)}
+                className={cn(
+                  'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                  filterVeneziana === true
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-foreground/70 hover:bg-muted'
+                )}
+              >
                 Com Veneziana
               </button>
-              <button onClick={() => onFilterVeneziana(filterVeneziana === false ? null : false)}
-                className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                  filterVeneziana === false ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+              <button
+                onClick={() => onFilterVeneziana(filterVeneziana === false ? null : false)}
+                className={cn(
+                  'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                  filterVeneziana === false
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-foreground/70 hover:bg-muted'
+                )}
+              >
                 Sem Veneziana
               </button>
-              <button onClick={() => onFilterBandeira(filterBandeira === true ? null : true)}
-                className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                  filterBandeira === true ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+              <button
+                onClick={() => onFilterBandeira(filterBandeira === true ? null : true)}
+                className={cn(
+                  'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                  filterBandeira === true
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-foreground/70 hover:bg-muted'
+                )}
+              >
                 Com Bandeira
               </button>
-              <button onClick={() => onFilterBandeira(filterBandeira === false ? null : false)}
-                className={cn("block w-full text-left text-sm px-2 py-1 rounded-md transition-colors",
-                  filterBandeira === false ? "bg-primary/10 text-primary font-medium" : "text-foreground/70 hover:bg-muted")}>
+              <button
+                onClick={() => onFilterBandeira(filterBandeira === false ? null : false)}
+                className={cn(
+                  'block w-full text-left text-sm px-2 py-1 rounded-md transition-colors',
+                  filterBandeira === false
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-foreground/70 hover:bg-muted'
+                )}
+              >
                 Sem Bandeira
               </button>
             </div>

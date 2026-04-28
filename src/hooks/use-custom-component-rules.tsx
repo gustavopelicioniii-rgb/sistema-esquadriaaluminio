@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { TypologyComponent } from "@/types/calculation";
-import { getComponentsForTypology } from "@/data/catalog";
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { TypologyComponent } from '@/types/calculation';
+import { getComponentsForTypology } from '@/data/catalog';
 
 export interface CustomComponentRuleRow {
   id: string;
@@ -38,15 +38,18 @@ export function useCustomComponentRules(typologyId: string | null) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchRules = useCallback(async () => {
-    if (!typologyId) { setRules([]); return; }
+    if (!typologyId) {
+      setRules([]);
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
       const { data, error: err } = await supabase
-        .from("regras_componentes_customizadas")
-        .select("*")
-        .eq("typology_id", typologyId)
-        .order("sort_order", { ascending: true });
+        .from('regras_componentes_customizadas')
+        .select('*')
+        .eq('typology_id', typologyId)
+        .order('sort_order', { ascending: true });
       if (err) {
         // Error fetching component rules
         setError(err.message);
@@ -55,39 +58,50 @@ export function useCustomComponentRules(typologyId: string | null) {
       }
     } catch (e) {
       // Unexpected error
-      setError(e instanceof Error ? e.message : "Unknown error");
+      setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
   }, [typologyId]);
 
-  useEffect(() => { fetchRules(); }, [fetchRules]);
+  useEffect(() => {
+    fetchRules();
+  }, [fetchRules]);
 
-  const addRule = async (rule: Omit<CustomComponentRuleRow, "id" | "user_id">) => {
-    const { error: err } = await supabase.from("regras_componentes_customizadas").insert(rule as any);
+  const addRule = async (rule: Omit<CustomComponentRuleRow, 'id' | 'user_id'>) => {
+    const { error: err } = await supabase
+      .from('regras_componentes_customizadas')
+      .insert(rule as any);
     if (err) throw err;
     await fetchRules();
   };
 
   const updateRule = async (id: string, updates: Partial<CustomComponentRuleRow>) => {
-    const { error: err } = await supabase.from("regras_componentes_customizadas").update(updates as any).eq("id", id);
+    const { error: err } = await supabase
+      .from('regras_componentes_customizadas')
+      .update(updates as any)
+      .eq('id', id);
     if (err) throw err;
     await fetchRules();
   };
 
   const deleteRule = async (id: string) => {
-    const { error: err } = await supabase.from("regras_componentes_customizadas").delete().eq("id", id);
+    const { error: err } = await supabase
+      .from('regras_componentes_customizadas')
+      .delete()
+      .eq('id', id);
     if (err) throw err;
     await fetchRules();
   };
 
   const inheritFromBase = async (baseTypologyId: string) => {
     const catalogRules = getComponentsForTypology(baseTypologyId);
-    if (catalogRules.length === 0) throw new Error("Nenhuma regra de componente encontrada na tipologia base");
-    const inserts = catalogRules.map((r) => ({
+    if (catalogRules.length === 0)
+      throw new Error('Nenhuma regra de componente encontrada na tipologia base');
+    const inserts = catalogRules.map(r => ({
       typology_id: typologyId!,
       component_name: r.component_name,
-      component_code: r.component_code ?? "",
+      component_code: r.component_code ?? '',
       component_type: r.component_type,
       quantity_formula: r.quantity_formula,
       unit: r.unit,
@@ -96,7 +110,9 @@ export function useCustomComponentRules(typologyId: string | null) {
       notes: null,
       sort_order: r.sort_order ?? 0,
     }));
-    const { error: err } = await supabase.from("regras_componentes_customizadas").insert(inserts as any);
+    const { error: err } = await supabase
+      .from('regras_componentes_customizadas')
+      .insert(inserts as any);
     if (err) throw err;
     await fetchRules();
   };
@@ -117,14 +133,14 @@ export function useCustomComponentRules(typologyId: string | null) {
 export async function getEffectiveComponents(
   typologyId: string,
   isCustom: boolean,
-  baseTypologyId?: string,
+  baseTypologyId?: string
 ): Promise<TypologyComponent[]> {
   if (isCustom) {
     const { data } = await supabase
-      .from("regras_componentes_customizadas")
-      .select("*")
-      .eq("typology_id", typologyId)
-      .order("sort_order", { ascending: true });
+      .from('regras_componentes_customizadas')
+      .select('*')
+      .eq('typology_id', typologyId)
+      .order('sort_order', { ascending: true });
     if (data && data.length > 0) {
       return (data as unknown as CustomComponentRuleRow[]).map(toComponent);
     }

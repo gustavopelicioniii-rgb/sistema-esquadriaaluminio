@@ -1,11 +1,11 @@
-import { AreaChart, Area, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 interface SparkAreaChartProps {
   data: number[];
   color?: string;
 }
 
-export function SparkAreaChart({ data, color = "#3b82f6" }: SparkAreaChartProps) {
+export function SparkAreaChart({ data, color = '#3b82f6' }: SparkAreaChartProps) {
   const chartData = data.map((value, index) => ({ value, index }));
 
   return (

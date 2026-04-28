@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, Clock, Printer, Share2, Download } from "lucide-react";
-import { decodeProposalFromUrl, formatCurrency, type ProposalData } from "@/utils/proposal/onlineProposal";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Check, X, Clock, Printer, Share2, Download } from 'lucide-react';
+import {
+  decodeProposalFromUrl,
+  formatCurrency,
+  type ProposalData,
+} from '@/utils/proposal/onlineProposal';
 
 export default function PropostaOnline() {
   const { token } = useParams();
@@ -73,10 +77,10 @@ export default function PropostaOnline() {
 
   const isExpired = new Date(proposal.validUntil) < new Date();
   const statusColors = {
-    pending: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    expired: "bg-gray-100 text-gray-800",
+    pending: 'bg-yellow-100 text-yellow-800',
+    approved: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
+    expired: 'bg-gray-100 text-gray-800',
   };
 
   return (
@@ -84,9 +88,7 @@ export default function PropostaOnline() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-primary">
-            {proposal.companyName || "AluFlow"}
-          </h1>
+          <h1 className="text-2xl font-bold text-primary">{proposal.companyName || 'AluFlow'}</h1>
           <p className="text-muted-foreground">Proposta Comercial</p>
         </div>
 
@@ -95,17 +97,15 @@ export default function PropostaOnline() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
-                <Badge className={statusColors[isExpired ? "expired" : proposal.status]}>
-                  {isExpired ? "EXPIRADA" : proposal.status.toUpperCase()}
+                <Badge className={statusColors[isExpired ? 'expired' : proposal.status]}>
+                  {isExpired ? 'EXPIRADA' : proposal.status.toUpperCase()}
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Proposta #{proposal.id}
-                </span>
+                <span className="text-sm text-muted-foreground">Proposta #{proposal.id}</span>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleCopyLink}>
                   <Share2 className="h-4 w-4 mr-1" />
-                  {copied ? "Copiado!" : "Compartilhar"}
+                  {copied ? 'Copiado!' : 'Compartilhar'}
                 </Button>
                 <Button variant="outline" size="sm" onClick={handlePrint}>
                   <Printer className="h-4 w-4 mr-1" />
@@ -142,7 +142,7 @@ export default function PropostaOnline() {
               <div>
                 <p className="text-sm text-muted-foreground">Validade</p>
                 <p className="font-medium text-primary">
-                  {new Date(proposal.validUntil).toLocaleDateString("pt-BR")}
+                  {new Date(proposal.validUntil).toLocaleDateString('pt-BR')}
                 </p>
               </div>
             </div>
@@ -206,15 +206,13 @@ export default function PropostaOnline() {
               <CardTitle className="text-lg">Observações</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">
-                {proposal.notes}
-              </p>
+              <p className="text-sm text-muted-foreground whitespace-pre-line">{proposal.notes}</p>
             </CardContent>
           </Card>
         )}
 
         {/* Actions */}
-        {!isExpired && proposal.status === "pending" && (
+        {!isExpired && proposal.status === 'pending' && (
           <Card className="mb-6">
             <CardContent className="p-4">
               <p className="text-center text-sm text-muted-foreground mb-4">
@@ -239,7 +237,7 @@ export default function PropostaOnline() {
           <p>Proposta gerada por AluFlow - Sistema de Gestão para Esquadrias de Alumínio</p>
           <p className="mt-1">
             <Clock className="h-3 w-3 inline mr-1" />
-            Validade: {new Date(proposal.validUntil).toLocaleDateString("pt-BR")}
+            Validade: {new Date(proposal.validUntil).toLocaleDateString('pt-BR')}
           </p>
         </div>
       </div>

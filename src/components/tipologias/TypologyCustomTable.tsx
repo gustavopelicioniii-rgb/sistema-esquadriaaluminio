@@ -1,21 +1,28 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Layers, Plus } from "lucide-react";
-import { Edit2, Copy, Trash2, Scissors } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Layers, Plus } from 'lucide-react';
+import { Edit2, Copy, Trash2, Scissors } from 'lucide-react';
 
 const CATEGORIES = [
-  { value: "janela", label: "Janela" },
-  { value: "porta", label: "Porta" },
-  { value: "vitro", label: "Vitrô" },
-  { value: "veneziana", label: "Veneziana" },
-  { value: "maxim_ar", label: "Maxim-Ar" },
-  { value: "camarao", label: "Camarão" },
-  { value: "pivotante", label: "Pivotante" },
-  { value: "basculante", label: "Basculante" },
-  { value: "fachada", label: "Fachada" },
+  { value: 'janela', label: 'Janela' },
+  { value: 'porta', label: 'Porta' },
+  { value: 'vitro', label: 'Vitrô' },
+  { value: 'veneziana', label: 'Veneziana' },
+  { value: 'maxim_ar', label: 'Maxim-Ar' },
+  { value: 'camarao', label: 'Camarão' },
+  { value: 'pivotante', label: 'Pivotante' },
+  { value: 'basculante', label: 'Basculante' },
+  { value: 'fachada', label: 'Fachada' },
 ];
 
 interface CustomTypology {
@@ -48,7 +55,15 @@ interface Props {
 }
 
 export function TypologyCustomTable({
-  items, loading, getLineName, onEdit, onDuplicate, onDelete, onToggle, onRules, onNew,
+  items,
+  loading,
+  getLineName,
+  onEdit,
+  onDuplicate,
+  onDelete,
+  onToggle,
+  onRules,
+  onNew,
 }: Props) {
   const getCategoryLabel = (cat: string) => CATEGORIES.find(c => c.value === cat)?.label || cat;
 
@@ -92,10 +107,14 @@ export function TypologyCustomTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((t) => (
-              <TableRow key={t.id} className={!t.active ? "opacity-50" : ""}>
+            {items.map(t => (
+              <TableRow key={t.id} className={!t.active ? 'opacity-50' : ''}>
                 <TableCell className="font-medium text-sm">{t.name}</TableCell>
-                <TableCell><Badge variant="secondary" className="text-[10px]">{getLineName(t.product_line_id)}</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="secondary" className="text-[10px]">
+                    {getLineName(t.product_line_id)}
+                  </Badge>
+                </TableCell>
                 <TableCell className="text-sm">{getCategoryLabel(t.category)}</TableCell>
                 <TableCell className="hidden md:table-cell text-sm">{t.num_folhas}</TableCell>
                 <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
@@ -106,16 +125,37 @@ export function TypologyCustomTable({
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onRules(t)} title="Regras de Corte">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onRules(t)}
+                      title="Regras de Corte"
+                    >
                       <Scissors className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onDuplicate(t)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onDuplicate(t)}
+                    >
                       <Copy className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(t)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onEdit(t)}
+                    >
                       <Edit2 className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onDelete(t.id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      onClick={() => onDelete(t.id)}
+                    >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>

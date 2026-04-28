@@ -1,7 +1,14 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ProfileCrossSection } from "@/components/orcamento/ProfileCrossSection";
-import type { CalculationOutput } from "@/types/calculation";
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { ProfileCrossSection } from '@/components/orcamento/ProfileCrossSection';
+import type { CalculationOutput } from '@/types/calculation';
 
 interface Props {
   result: CalculationOutput;
@@ -10,11 +17,15 @@ interface Props {
 export function GlassComponentsCard({ result }: Props) {
   const glasses = result.glasses;
   const components = result.components;
-  const ferragens = components.filter(c => c.component_type === "ferragem" || c.component_type === "acessorio");
-  const materiais = components.filter(c => ["vedacao", "fixacao", "acabamento"].includes(c.component_type));
+  const ferragens = components.filter(
+    c => c.component_type === 'ferragem' || c.component_type === 'acessorio'
+  );
+  const materiais = components.filter(c =>
+    ['vedacao', 'fixacao', 'acabamento'].includes(c.component_type)
+  );
 
   const iconType = (compType: string) =>
-    compType === "vedacao" ? "vedacao" : compType === "fixacao" ? "parafuso" : "arremate";
+    compType === 'vedacao' ? 'vedacao' : compType === 'fixacao' ? 'parafuso' : 'arremate';
 
   if (glasses.length === 0 && components.length === 0) return null;
 
@@ -52,7 +63,9 @@ export function GlassComponentsCard({ result }: Props) {
                       <TableCell className="text-center font-mono">{g.width_mm}</TableCell>
                       <TableCell className="text-center font-mono">{g.height_mm}</TableCell>
                       <TableCell className="text-center font-semibold">{g.quantity}</TableCell>
-                      <TableCell className="text-right font-mono font-semibold text-primary">{g.area_m2.toFixed(2)} m²</TableCell>
+                      <TableCell className="text-right font-mono font-semibold text-primary">
+                        {g.area_m2.toFixed(2)} m²
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -77,13 +90,17 @@ export function GlassComponentsCard({ result }: Props) {
                       <div key={i} className="flex items-center gap-2.5 text-sm">
                         <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
                           <ProfileCrossSection
-                            profileType={comp.component_type === "acessorio" ? "acessorio" : "ferragem"}
-                            profileCode={comp.component_code || ""}
+                            profileType={
+                              comp.component_type === 'acessorio' ? 'acessorio' : 'ferragem'
+                            }
+                            profileCode={comp.component_code || ''}
                             size={22}
                           />
                         </div>
                         <span className="text-muted-foreground flex-1">{comp.component_name}</span>
-                        <span className="font-semibold">{comp.quantity} {comp.unit}</span>
+                        <span className="font-semibold">
+                          {comp.quantity} {comp.unit}
+                        </span>
                       </div>
                     ))
                   )}
@@ -100,12 +117,14 @@ export function GlassComponentsCard({ result }: Props) {
                         <div className="shrink-0 w-7 h-7 rounded bg-muted/50 flex items-center justify-center text-muted-foreground">
                           <ProfileCrossSection
                             profileType={iconType(comp.component_type)}
-                            profileCode={comp.component_code || ""}
+                            profileCode={comp.component_code || ''}
                             size={22}
                           />
                         </div>
                         <span className="text-muted-foreground flex-1">{comp.component_name}</span>
-                        <span className="font-semibold text-primary">{comp.quantity} {comp.unit}</span>
+                        <span className="font-semibold text-primary">
+                          {comp.quantity} {comp.unit}
+                        </span>
                       </div>
                     ))
                   )}

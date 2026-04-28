@@ -9,19 +9,19 @@ import type {
   ComponentResult,
   ProfileSummary,
   CalculationOutput,
-} from "@/types/calculation";
+} from '@/types/calculation';
 
 /** Limites padrão por categoria (mm) quando não definidos na tipologia */
 const DEFAULT_LIMITS: Record<string, { minW: number; maxW: number; minH: number; maxH: number }> = {
-  janela:     { minW: 400, maxW: 6000, minH: 300, maxH: 3000 },
-  porta:      { minW: 500, maxW: 6000, minH: 1800, maxH: 3500 },
-  vitro:      { minW: 300, maxW: 4000, minH: 300, maxH: 3000 },
-  veneziana:  { minW: 400, maxW: 4000, minH: 400, maxH: 3000 },
-  maxim_ar:   { minW: 300, maxW: 2500, minH: 300, maxH: 2000 },
-  camarao:    { minW: 800, maxW: 6000, minH: 400, maxH: 3000 },
-  pivotante:  { minW: 600, maxW: 2000, minH: 1800, maxH: 3500 },
+  janela: { minW: 400, maxW: 6000, minH: 300, maxH: 3000 },
+  porta: { minW: 500, maxW: 6000, minH: 1800, maxH: 3500 },
+  vitro: { minW: 300, maxW: 4000, minH: 300, maxH: 3000 },
+  veneziana: { minW: 400, maxW: 4000, minH: 400, maxH: 3000 },
+  maxim_ar: { minW: 300, maxW: 2500, minH: 300, maxH: 2000 },
+  camarao: { minW: 800, maxW: 6000, minH: 400, maxH: 3000 },
+  pivotante: { minW: 600, maxW: 2000, minH: 1800, maxH: 3500 },
   basculante: { minW: 300, maxW: 2500, minH: 200, maxH: 1500 },
-  fachada:    { minW: 500, maxW: 12000, minH: 500, maxH: 6000 },
+  fachada: { minW: 500, maxW: 12000, minH: 500, maxH: 6000 },
 };
 
 /**
@@ -30,7 +30,10 @@ const DEFAULT_LIMITS: Record<string, { minW: number; maxW: number; minH: number;
 export function validateDimensions(
   widthMm: number,
   heightMm: number,
-  typology: Pick<Typology, 'name' | 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'>
+  typology: Pick<
+    Typology,
+    'name' | 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'
+  >
 ): { valid: boolean; errors: string[] } {
   const defaults = DEFAULT_LIMITS[typology.category] ?? DEFAULT_LIMITS.janela;
   const minW = typology.min_width_mm ?? defaults.minW;
@@ -39,10 +42,14 @@ export function validateDimensions(
   const maxH = typology.max_height_mm ?? defaults.maxH;
 
   const errors: string[] = [];
-  if (widthMm < minW) errors.push(`Largura ${widthMm}mm abaixo do mínimo (${minW}mm) para ${typology.name}`);
-  if (widthMm > maxW) errors.push(`Largura ${widthMm}mm acima do máximo (${maxW}mm) para ${typology.name}`);
-  if (heightMm < minH) errors.push(`Altura ${heightMm}mm abaixo do mínimo (${minH}mm) para ${typology.name}`);
-  if (heightMm > maxH) errors.push(`Altura ${heightMm}mm acima do máximo (${maxH}mm) para ${typology.name}`);
+  if (widthMm < minW)
+    errors.push(`Largura ${widthMm}mm abaixo do mínimo (${minW}mm) para ${typology.name}`);
+  if (widthMm > maxW)
+    errors.push(`Largura ${widthMm}mm acima do máximo (${maxW}mm) para ${typology.name}`);
+  if (heightMm < minH)
+    errors.push(`Altura ${heightMm}mm abaixo do mínimo (${minH}mm) para ${typology.name}`);
+  if (heightMm > maxH)
+    errors.push(`Altura ${heightMm}mm acima do máximo (${maxH}mm) para ${typology.name}`);
 
   return { valid: errors.length === 0, errors };
 }
@@ -52,15 +59,24 @@ export function validateDimensions(
  */
 function resolveReference(ref: string, L: number, H: number): number {
   switch (ref) {
-    case 'L': return L;
-    case 'H': return H;
-    case 'L/2': return L / 2;
-    case 'L/3': return L / 3;
-    case 'L/4': return L / 4;
-    case 'L/6': return L / 6;
-    case 'H/2': return H / 2;
-    case 'H/3': return H / 3;
-    case 'FIXED': return 0;
+    case 'L':
+      return L;
+    case 'H':
+      return H;
+    case 'L/2':
+      return L / 2;
+    case 'L/3':
+      return L / 3;
+    case 'L/4':
+      return L / 4;
+    case 'L/6':
+      return L / 6;
+    case 'H/2':
+      return H / 2;
+    case 'H/3':
+      return H / 3;
+    case 'FIXED':
+      return 0;
     default:
       throw new Error(`Referência desconhecida: ${ref}`);
   }
@@ -89,7 +105,10 @@ export function calculateTypology(
   components: TypologyComponent[],
   typologyName: string,
   typologyNumFolhas: number,
-  typology?: Pick<Typology, 'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'>
+  typology?: Pick<
+    Typology,
+    'category' | 'min_width_mm' | 'max_width_mm' | 'min_height_mm' | 'max_height_mm'
+  >
 ): CalculationOutput {
   const { width_mm: L, height_mm: H, quantity } = input;
   const numFolhas = input.num_folhas ?? typologyNumFolhas;
@@ -110,7 +129,7 @@ export function calculateTypology(
       cutLength = rule.fixed_value_mm;
     } else {
       const refValue = resolveReference(rule.reference_dimension, L, H);
-      cutLength = (refValue * rule.coefficient) + rule.constant_mm;
+      cutLength = refValue * rule.coefficient + rule.constant_mm;
     }
 
     cutLength = Math.round(cutLength);

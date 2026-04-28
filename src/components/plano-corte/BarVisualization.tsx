@@ -1,9 +1,15 @@
-import type { OptimizationResult } from "@/types/calculation";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import type { OptimizationResult } from '@/types/calculation';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const COLORS = [
-  "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-sky-500",
-  "bg-cyan-500", "bg-emerald-500", "bg-amber-500", "bg-rose-500",
+  'bg-blue-500',
+  'bg-indigo-500',
+  'bg-violet-500',
+  'bg-sky-500',
+  'bg-cyan-500',
+  'bg-emerald-500',
+  'bg-amber-500',
+  'bg-rose-500',
 ];
 
 interface BarVisualizationProps {
@@ -21,16 +27,22 @@ export function BarVisualization({ results }: BarVisualizationProps) {
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-bold">{opt.profile_code}</h4>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span>{opt.total_bars} barra(s) de {opt.bar_length_mm}mm</span>
-                <span className="font-semibold text-primary">{opt.overall_utilization_percent}% aproveitamento</span>
+                <span>
+                  {opt.total_bars} barra(s) de {opt.bar_length_mm}mm
+                </span>
+                <span className="font-semibold text-primary">
+                  {opt.overall_utilization_percent}% aproveitamento
+                </span>
               </div>
             </div>
 
-            {opt.bars.map((bar) => (
+            {opt.bars.map(bar => (
               <div key={bar.bar_number} className="space-y-1">
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                   <span>Barra {bar.bar_number}</span>
-                  <span>Sobra: {bar.waste_mm}mm ({(100 - bar.utilization_percent).toFixed(1)}%)</span>
+                  <span>
+                    Sobra: {bar.waste_mm}mm ({(100 - bar.utilization_percent).toFixed(1)}%)
+                  </span>
                 </div>
                 <div className="relative h-8 rounded-md bg-muted/50 border border-border/50 overflow-hidden flex">
                   {bar.pieces.map((piece, pi) => {
@@ -40,9 +52,14 @@ export function BarVisualization({ results }: BarVisualizationProps) {
                         <TooltipTrigger asChild>
                           <div
                             className={`${COLORS[pi % COLORS.length]} h-full flex items-center justify-center text-white text-[10px] font-bold cursor-default border-r border-white/20 transition-opacity hover:opacity-80`}
-                            style={{ width: `${widthPct}%`, minWidth: widthPct > 2 ? undefined : '2px' }}
+                            style={{
+                              width: `${widthPct}%`,
+                              minWidth: widthPct > 2 ? undefined : '2px',
+                            }}
                           >
-                            {widthPct > 8 && <span className="truncate px-1">{piece.length_mm}</span>}
+                            {widthPct > 8 && (
+                              <span className="truncate px-1">{piece.length_mm}</span>
+                            )}
                           </div>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="text-xs">
@@ -60,7 +77,9 @@ export function BarVisualization({ results }: BarVisualizationProps) {
                           style={{ width: `${(bar.waste_mm / opt.bar_length_mm) * 100}%` }}
                         >
                           {(bar.waste_mm / opt.bar_length_mm) * 100 > 6 && (
-                            <span className="text-[10px] text-red-600 dark:text-red-400 font-medium">{bar.waste_mm}</span>
+                            <span className="text-[10px] text-red-600 dark:text-red-400 font-medium">
+                              {bar.waste_mm}
+                            </span>
                           )}
                         </div>
                       </TooltipTrigger>

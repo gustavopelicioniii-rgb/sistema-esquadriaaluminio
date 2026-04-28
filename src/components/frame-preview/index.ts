@@ -1,3 +1,3 @@
-export { default as FramePreview, aluminumColors, type AluminumColor } from "./FramePreview";
-export { default as ColorSelector } from "./ColorSelector";
-export { getColorById, getColorsForLine, colorsByProductLine } from "./colors";
+export { default as FramePreview, aluminumColors, type AluminumColor } from './FramePreview';
+export { default as ColorSelector } from './ColorSelector';
+export { getColorById, getColorsForLine, colorsByProductLine } from './colors';

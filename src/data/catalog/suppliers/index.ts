@@ -2,38 +2,65 @@
 // The actual implementation has been split into sub-directory modules
 
 // Types
-export type { SupplierProfile, CutRule, SupplierGlass, SupplierComponent } from "./types";
+export type { SupplierProfile, CutRule, SupplierGlass, SupplierComponent } from './types';
 
 // Profiles
-export { goldProfiles, supremaProfiles, aluprimeProfiles, decaProfiles, tamizziProfiles, aluvidProfiles, glasterProfiles, allSupplierProfiles } from "./profiles";
+export {
+  goldProfiles,
+  supremaProfiles,
+  aluprimeProfiles,
+  decaProfiles,
+  tamizziProfiles,
+  aluvidProfiles,
+  glasterProfiles,
+  allSupplierProfiles,
+} from './profiles';
 
 // Glasses
-export { supplierGlasses } from "./glasses";
+export { supplierGlasses } from './glasses';
 
 // Components
-export { supplierComponents } from "./components";
+export { supplierComponents } from './components';
 
 // Standard cut rules
-import type { CutRule } from "./types";
+import type { CutRule } from './types';
 export const standardCutRules: CutRule[] = [
   // Standard 90 degree cuts
-  { profile_id: "all", cut_type: "straight", allowance_mm: 0, blade_thickness_mm: 3, description: "Corte reto padrão" },
+  {
+    profile_id: 'all',
+    cut_type: 'straight',
+    allowance_mm: 0,
+    blade_thickness_mm: 3,
+    description: 'Corte reto padrão',
+  },
   // 45 degree cuts for frames
-  { profile_id: "all-main_frame", cut_type: "45deg", allowance_mm: 0, blade_thickness_mm: 3, description: "Corte 45° para canto" },
-  { profile_id: "all-main_frame_60", cut_type: "45deg", allowance_mm: 0, blade_thickness_mm: 3, description: "Corte 45° para canto" },
+  {
+    profile_id: 'all-main_frame',
+    cut_type: '45deg',
+    allowance_mm: 0,
+    blade_thickness_mm: 3,
+    description: 'Corte 45° para canto',
+  },
+  {
+    profile_id: 'all-main_frame_60',
+    cut_type: '45deg',
+    allowance_mm: 0,
+    blade_thickness_mm: 3,
+    description: 'Corte 45° para canto',
+  },
 ];
 
 // Helper functions
-import { allSupplierProfiles } from "./profiles";
-import { supplierGlasses } from "./glasses";
-import { supplierComponents } from "./components";
-import type { SupplierProfile, SupplierGlass, SupplierComponent } from "./types";
+import { allSupplierProfiles } from './profiles';
+import { supplierGlasses } from './glasses';
+import { supplierComponents } from './components';
+import type { SupplierProfile, SupplierGlass, SupplierComponent } from './types';
 
 export function getProfilesByLine(line: string): SupplierProfile[] {
   const lineLower = line.toLowerCase();
-  return allSupplierProfiles.filter(p =>
-    p.line.toLowerCase().includes(lineLower) ||
-    p.manufacturer.toLowerCase().includes(lineLower)
+  return allSupplierProfiles.filter(
+    p =>
+      p.line.toLowerCase().includes(lineLower) || p.manufacturer.toLowerCase().includes(lineLower)
   );
 }
 

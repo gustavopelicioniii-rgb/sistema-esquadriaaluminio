@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Download, X, Loader2 } from "lucide-react";
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Download, X, Loader2 } from 'lucide-react';
 
 interface PdfPreviewDialogProps {
   open: boolean;
@@ -12,7 +12,14 @@ interface PdfPreviewDialogProps {
   loading?: boolean;
 }
 
-export function PdfPreviewDialog({ open, onOpenChange, title, pdfBlobUrl, onDownload, loading }: PdfPreviewDialogProps) {
+export function PdfPreviewDialog({
+  open,
+  onOpenChange,
+  title,
+  pdfBlobUrl,
+  onDownload,
+  loading,
+}: PdfPreviewDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-[95vw] h-[90vh] flex flex-col p-0 gap-0">
@@ -31,11 +38,7 @@ export function PdfPreviewDialog({ open, onOpenChange, title, pdfBlobUrl, onDown
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : pdfBlobUrl ? (
-            <iframe
-              src={pdfBlobUrl}
-              className="w-full h-full border-0"
-              title={title}
-            />
+            <iframe src={pdfBlobUrl} className="w-full h-full border-0" title={title} />
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               Erro ao gerar pré-visualização

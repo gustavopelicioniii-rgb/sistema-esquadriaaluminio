@@ -1,9 +1,9 @@
-import { Bell, Eye } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import type { AppNotification } from "@/hooks/use-notifications";
-import { NotificacaoItem } from "./NotificacaoItem";
-import type { FilterType, FilterStatus } from "./notificacoes-config";
+import { Bell, Eye } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import type { AppNotification } from '@/hooks/use-notifications';
+import { NotificacaoItem } from './NotificacaoItem';
+import type { FilterType, FilterStatus } from './notificacoes-config';
 
 interface NotificacoesListProps {
   filtered: AppNotification[];
@@ -17,8 +17,14 @@ interface NotificacoesListProps {
 }
 
 export function NotificacoesList({
-  filtered, selected, filterType, filterStatus,
-  onToggleSelect, onSelectAll, onMarkSelectedRead, onClickNotification,
+  filtered,
+  selected,
+  filterType,
+  filterStatus,
+  onToggleSelect,
+  onSelectAll,
+  onMarkSelectedRead,
+  onClickNotification,
 }: NotificacoesListProps) {
   return (
     <div className="flex-1 space-y-3 min-w-0">
@@ -29,11 +35,16 @@ export function NotificacoesList({
             onCheckedChange={onSelectAll}
           />
           <span className="text-xs text-muted-foreground">
-            {selected.size > 0 ? `${selected.size} selecionada(s)` : "Selecionar todas"}
+            {selected.size > 0 ? `${selected.size} selecionada(s)` : 'Selecionar todas'}
           </span>
           {selected.size > 0 && (
             <div className="ml-auto flex items-center gap-1">
-              <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={onMarkSelectedRead}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs gap-1"
+                onClick={onMarkSelectedRead}
+              >
                 <Eye className="h-3 w-3" />
                 Marcar lidas
               </Button>
@@ -48,11 +59,13 @@ export function NotificacoesList({
             <Bell className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
             <p className="text-sm text-muted-foreground">Nenhuma notificação encontrada</p>
             <p className="text-xs text-muted-foreground/60 mt-1">
-              {filterType !== "todos" || filterStatus !== "todos" ? "Tente ajustar os filtros" : "Tudo em dia!"}
+              {filterType !== 'todos' || filterStatus !== 'todos'
+                ? 'Tente ajustar os filtros'
+                : 'Tudo em dia!'}
             </p>
           </div>
         ) : (
-          filtered.map((n) => (
+          filtered.map(n => (
             <NotificacaoItem
               key={n.id}
               notification={n}

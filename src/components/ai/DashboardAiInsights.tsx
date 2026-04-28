@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Sparkles, Loader2, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { aiOneShot } from "@/hooks/use-ai-chat";
-import ReactMarkdown from "react-markdown";
+import { useState } from 'react';
+import { Sparkles, Loader2, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { aiOneShot } from '@/hooks/use-ai-chat';
+import ReactMarkdown from 'react-markdown';
 
 interface Props {
   stats: {
@@ -29,15 +29,18 @@ export function DashboardAiInsights({ stats, receitaMensal, statusPedidos }: Pro
 - Total pedidos: ${stats.totalPedidos}
 - Receita total: R$ ${stats.receitaTotal.toFixed(2)}
 - Pedidos atrasados: ${stats.pedidosAtrasados}
-- Status pedidos: ${statusPedidos.map(s => `${s.status}: ${s.count}`).join(", ")}
-- Receita últimos meses: ${receitaMensal.slice(-3).map(r => `${r.mes}: R$ ${r.total.toFixed(2)}`).join(", ")}
+- Status pedidos: ${statusPedidos.map(s => `${s.status}: ${s.count}`).join(', ')}
+- Receita últimos meses: ${receitaMensal
+        .slice(-3)
+        .map(r => `${r.mes}: R$ ${r.total.toFixed(2)}`)
+        .join(', ')}
 
 Gere um resumo executivo curto (máx 150 palavras) com insights e recomendações.`;
 
-      const result = await aiOneShot("dashboard", prompt);
+      const result = await aiOneShot('dashboard', prompt);
       setInsight(result);
     } catch (e) {
-      setInsight(`❌ ${e instanceof Error ? e.message : "Erro ao gerar insights"}`);
+      setInsight(`❌ ${e instanceof Error ? e.message : 'Erro ao gerar insights'}`);
     } finally {
       setLoading(false);
     }

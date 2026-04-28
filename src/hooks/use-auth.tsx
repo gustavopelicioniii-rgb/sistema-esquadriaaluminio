@@ -1,10 +1,23 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 type User = { id: string; email?: string; nome?: string };
-type Session = { access_token: string; refresh_token?: string; expires_in?: number; expires_at?: number };
+type Session = {
+  access_token: string;
+  refresh_token?: string;
+  expires_in?: number;
+  expires_at?: number;
+};
 
-type AppRole = "admin" | "funcionario";
+type AppRole = 'admin' | 'funcionario';
 
 type AuthContextType = {
   user: User | null;
@@ -36,12 +49,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsRoleLoading(true);
     try {
       const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
-      if (error) { setRole(null); return; }
-      const roles = data?.map((item) => item.role) ?? [];
-      setRole(roles.includes("admin") ? "admin" : roles[0] ?? null);
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      if (error) {
+        setRole(null);
+        return;
+      }
+      const roles = data?.map(item => item.role) ?? [];
+      setRole(roles.includes('admin') ? 'admin' : (roles[0] ?? null));
     } finally {
       setIsRoleLoading(false);
     }
@@ -53,42 +69,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!isMounted) return;
       setSession(nextSession);
       setUser((nextSession as unknown as { user: User | null })?.user ?? null);
-      if (!(nextSession as unknown as { user: User | null })?.user) { setRole(null); setIsRoleLoading(false); return; }
+      if (!(nextSession as unknown as { user: User | null })?.user) {
+        setRole(null);
+        setIsRoleLoading(false);
+        return;
+      }
       void fetchRole((nextSession as unknown as { user: User | null }).user.id);
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!isMounted) return;
       setSession(nextSession);
       setUser((nextSession as unknown as { user: User | null })?.user ?? null);
-      if (initializedRef.current) void fetchRole((nextSession as unknown as { user: User | null }).user?.id ?? "");
+      if (initializedRef.current)
+        void fetchRole((nextSession as unknown as { user: User | null }).user?.id ?? '');
       initializedRef.current = true;
     });
 
     void supabase.auth.getSession().then(({ data }) => {
       if (!isMounted) return;
-      applySession(data?.session as unknown as Session ?? null);
+      applySession((data?.session as unknown as Session) ?? null);
       initializedRef.current = true;
       setIsLoading(false);
     });
 
-    return () => { isMounted = false; subscription.unsubscribe(); };
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [fetchRole]);
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    setUser(null); setSession(null); setRole(null);
+    setUser(null);
+    setSession(null);
+    setRole(null);
   }, []);
-
-  // BYPASS MODE - Return bypass values when BYPASS_MODE is true
-  const BYPASS_MODE = false;
-  if (BYPASS_MODE) {
-    return (
-      <AuthContext.Provider value={{ user: { id: 'bypass-user', email: 'bypass@test.com' } as User, session: null, role: 'admin' as AppRole, isLoading: false, isRoleLoading: false, signOut: async () => {} }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  }
 
   return (
     <AuthContext.Provider value={{ user, session, role, isLoading, isRoleLoading, signOut }}>

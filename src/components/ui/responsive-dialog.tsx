@@ -1,8 +1,8 @@
-import * as React from "react";
-import { useIsMobile } from "@/hooks/use-mobile-device";
-import { X } from "lucide-react";
+import * as React from 'react';
+import { useIsMobile } from '@/hooks/use-mobile-device';
+import { X } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Drawer,
   DrawerContent,
@@ -18,9 +18,9 @@ import {
   DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-} from "@/components/ui/drawer";
+} from '@/components/ui/drawer';
 
-export type ResponsiveDialogSize = "sm" | "md" | "lg";
+export type ResponsiveDialogSize = 'sm' | 'md' | 'lg';
 
 interface ResponsiveDialogProps {
   open?: boolean;
@@ -32,22 +32,22 @@ interface ResponsiveDialogProps {
 
 const sizeClasses: Record<ResponsiveDialogSize, { desktop: string; mobile: string }> = {
   sm: {
-    desktop: "max-w-md",
-    mobile: "max-h-[85vh]",
+    desktop: 'max-w-md',
+    mobile: 'max-h-[85vh]',
   },
   md: {
-    desktop: "max-w-2xl",
-    mobile: "max-h-[90vh]",
+    desktop: 'max-w-2xl',
+    mobile: 'max-h-[90vh]',
   },
   lg: {
-    desktop: "max-w-4xl",
-    mobile: "max-h-[95vh]",
+    desktop: 'max-w-4xl',
+    mobile: 'max-h-[95vh]',
   },
 };
 
 /**
  * ResponsiveDialog - Dialog on desktop, Drawer on mobile
- * 
+ *
  * Usage:
  * <ResponsiveDialog open={open} onOpenChange={setOpen} size="md">
  *   <DialogHeader>
@@ -62,7 +62,7 @@ export function ResponsiveDialog({
   open = false,
   onOpenChange,
   children,
-  size = "md",
+  size = 'md',
   className,
 }: ResponsiveDialogProps) {
   const isMobile = useIsMobile();
@@ -71,7 +71,7 @@ export function ResponsiveDialog({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className={cn(classes.mobile, "max-w-full", className)}>
+        <DrawerContent className={cn(classes.mobile, 'max-w-full', className)}>
           <div className="mx-auto mt-4 h-1.5 w-12 rounded-full bg-muted" />
           {children}
         </DrawerContent>
@@ -81,87 +81,85 @@ export function ResponsiveDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn(classes.desktop, className)}>
-        {children}
-      </DialogContent>
+      <DialogContent className={cn(classes.desktop, className)}>{children}</DialogContent>
     </Dialog>
   );
 }
 
 // Header component for mobile-friendly headers
-export function ResponsiveDialogHeader({ 
-  className, 
-  ...props 
+export function ResponsiveDialogHeader({
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   const isMobile = useIsMobile();
-  
+
   if (isMobile) {
     return <DrawerHeader className={className} {...props} />;
   }
-  
+
   return <DialogHeader className={className} {...props} />;
 }
 
 // Title component
-export function ResponsiveDialogTitle({ 
-  className, 
-  ...props 
+export function ResponsiveDialogTitle({
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   const isMobile = useIsMobile();
-  
+
   if (isMobile) {
     return <DrawerTitle className={className} {...props} />;
   }
-  
+
   return <DialogTitle className={className} {...props} />;
 }
 
 // Description component
-export function ResponsiveDialogDescription({ 
-  className, 
-  ...props 
+export function ResponsiveDialogDescription({
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   const isMobile = useIsMobile();
-  
+
   if (isMobile) {
     return <DrawerDescription className={className} {...props} />;
   }
-  
+
   return <DialogDescription className={className} {...props} />;
 }
 
 // Footer component
-export function ResponsiveDialogFooter({ 
-  className, 
-  ...props 
+export function ResponsiveDialogFooter({
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   const isMobile = useIsMobile();
-  
+
   if (isMobile) {
     return <DrawerFooter className={className} {...props} />;
   }
-  
+
   return <DialogFooter className={className} {...props} />;
 }
 
 // Close button component (useful for mobile)
-export function ResponsiveDialogClose({ 
-  className, 
+export function ResponsiveDialogClose({
+  className,
   onClick,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { onClick?: () => void }) {
   const isMobile = useIsMobile();
-  
+
   if (!isMobile) return null;
-  
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-all",
-        "hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-        "touch-manipulation",
+        'absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-all',
+        'hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+        'touch-manipulation',
         className
       )}
       {...props}

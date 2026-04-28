@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, type ReactNode } from "react";
+import { useRef, useState, useCallback, type ReactNode } from 'react';
 
 interface Frame3DWrapperProps {
   children: ReactNode;
@@ -6,21 +6,31 @@ interface Frame3DWrapperProps {
   disabled?: boolean;
 }
 
-export default function Frame3DWrapper({ children, className = "", disabled = false }: Frame3DWrapperProps) {
+export default function Frame3DWrapper({
+  children,
+  className = '',
+  disabled = false,
+}: Frame3DWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const maxRotation = 20;
-    const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * maxRotation;
-    const rotateX = -((e.clientY - centerY) / (rect.height / 2)) * maxRotation;
-    setRotation({ x: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), y: Math.max(-maxRotation, Math.min(maxRotation, rotateY)) });
-  }, [disabled]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (disabled || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxRotation = 20;
+      const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * maxRotation;
+      const rotateX = -((e.clientY - centerY) / (rect.height / 2)) * maxRotation;
+      setRotation({
+        x: Math.max(-maxRotation, Math.min(maxRotation, rotateX)),
+        y: Math.max(-maxRotation, Math.min(maxRotation, rotateY)),
+      });
+    },
+    [disabled]
+  );
 
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
@@ -28,10 +38,7 @@ export default function Frame3DWrapper({ children, className = "", disabled = fa
   }, []);
 
   return (
-    <div
-      className={`${className}`}
-      style={{ perspective: "800px" }}
-    >
+    <div className={`${className}`} style={{ perspective: '800px' }}>
       <div
         ref={containerRef}
         onMouseMove={handleMouseMove}
@@ -39,9 +46,9 @@ export default function Frame3DWrapper({ children, className = "", disabled = fa
         onMouseLeave={handleMouseLeave}
         style={{
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-          transition: isHovering ? "transform 0.1s ease-out" : "transform 0.5s ease-out",
-          transformStyle: "preserve-3d",
-          cursor: disabled ? "default" : "grab",
+          transition: isHovering ? 'transform 0.1s ease-out' : 'transform 0.5s ease-out',
+          transformStyle: 'preserve-3d',
+          cursor: disabled ? 'default' : 'grab',
         }}
       >
         {/* Subtle shadow that shifts with rotation */}
@@ -49,7 +56,7 @@ export default function Frame3DWrapper({ children, className = "", disabled = fa
           className="absolute inset-0 rounded-lg opacity-20 pointer-events-none"
           style={{
             background: `radial-gradient(ellipse at ${50 - rotation.y}% ${50 - rotation.x}%, transparent 30%, rgba(0,0,0,0.15) 100%)`,
-            transform: "translateZ(-2px)",
+            transform: 'translateZ(-2px)',
           }}
         />
         {children}

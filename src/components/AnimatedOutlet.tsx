@@ -1,5 +1,5 @@
-import { useLocation, useOutlet } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { useLocation, useOutlet } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export function AnimatedOutlet() {
   const location = useLocation();

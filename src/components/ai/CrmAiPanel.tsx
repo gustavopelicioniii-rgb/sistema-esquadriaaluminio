@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Sparkles, Loader2, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { aiOneShot } from "@/hooks/use-ai-chat";
-import ReactMarkdown from "react-markdown";
+import { useState } from 'react';
+import { Sparkles, Loader2, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { aiOneShot } from '@/hooks/use-ai-chat';
+import ReactMarkdown from 'react-markdown';
 
 interface Lead {
   nome: string;
@@ -25,9 +25,13 @@ export function CrmAiPanel({ leads }: Props) {
     if (leads.length === 0) return;
     setLoading(true);
     try {
-      const leadsData = leads.slice(0, 20).map(l =>
-        `- ${l.nome}: status=${l.status}, valor=R$${l.valor}, follow_up=${l.follow_up_date || "sem data"}, obs=${l.observacao || "nenhuma"}`
-      ).join("\n");
+      const leadsData = leads
+        .slice(0, 20)
+        .map(
+          l =>
+            `- ${l.nome}: status=${l.status}, valor=R$${l.valor}, follow_up=${l.follow_up_date || 'sem data'}, obs=${l.observacao || 'nenhuma'}`
+        )
+        .join('\n');
 
       const prompt = `Analise estes leads do CRM e forneça:
 1. Classificação por probabilidade de conversão (alta/média/baixa)
@@ -40,10 +44,10 @@ ${leadsData}
 
 Seja conciso (máx 200 palavras).`;
 
-      const result = await aiOneShot("crm", prompt);
+      const result = await aiOneShot('crm', prompt);
       setInsight(result);
     } catch (e) {
-      setInsight(`❌ ${e instanceof Error ? e.message : "Erro"}`);
+      setInsight(`❌ ${e instanceof Error ? e.message : 'Erro'}`);
     } finally {
       setLoading(false);
     }

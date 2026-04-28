@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 interface LineChartComponentProps {
   data: any[];
@@ -19,7 +19,7 @@ interface LineChartComponentProps {
   showArea?: boolean;
 }
 
-const defaultColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+const defaultColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export function LineChartComponent({
   data,
@@ -38,30 +38,25 @@ export function LineChartComponent({
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-          <XAxis
-            dataKey={xAxisKey}
-            tick={{ fontSize: 12 }}
-            tickLine={false}
-            axisLine={false}
-          />
+          <XAxis dataKey={xAxisKey} tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
           <YAxis
             tick={{ fontSize: 12 }}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(value) =>
+            tickFormatter={value =>
               value >= 1000000
                 ? `${(value / 1000000).toFixed(1)}M`
                 : value >= 1000
-                ? `${(value / 1000).toFixed(0)}k`
-                : value
+                  ? `${(value / 1000).toFixed(0)}k`
+                  : value
             }
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
-              fontSize: "12px",
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '8px',
+              fontSize: '12px',
             }}
           />
           {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}

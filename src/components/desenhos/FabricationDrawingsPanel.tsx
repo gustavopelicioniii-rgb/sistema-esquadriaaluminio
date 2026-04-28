@@ -1,22 +1,38 @@
-import { useState, useMemo } from "react";
-import DOMPurify from "dompurify";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { 
-  Download, FileImage, FileText, ZoomIn, ZoomOut, RotateCw, 
-  Printer, PenTool, Ruler, Scale, Package
-} from "lucide-react";
-import { 
-  generateDrawingPDFData, 
-  downloadDrawingSVG, 
+import { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Download,
+  FileImage,
+  FileText,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Printer,
+  PenTool,
+  Ruler,
+  Scale,
+  Package,
+} from 'lucide-react';
+import {
+  generateDrawingPDFData,
+  downloadDrawingSVG,
   type DrawingData,
-  type DrawingPiece 
-} from "@/utils/drawings/fabricationDrawings";
-import type { CalculationOutput } from "@/types/calculation";
-import { toast } from "sonner";
+  type DrawingPiece,
+} from '@/utils/drawings/fabricationDrawings';
+import type { CalculationOutput } from '@/types/calculation';
+import { toast } from 'sonner';
 
 interface FabricationDrawingsPanelProps {
   calculation: CalculationOutput | null;
@@ -25,15 +41,15 @@ interface FabricationDrawingsPanelProps {
   onClose?: () => void;
 }
 
-export function FabricationDrawingsPanel({ 
-  calculation, 
-  clientName, 
+export function FabricationDrawingsPanel({
+  calculation,
+  clientName,
   projectName,
-  onClose 
+  onClose,
 }: FabricationDrawingsPanelProps) {
-  const [activeTab, setActiveTab] = useState("vista");
+  const [activeTab, setActiveTab] = useState('vista');
   const [selectedPiece, setSelectedPiece] = useState<DrawingPiece | null>(null);
-  const [svgContent, setSvgContent] = useState<string>("");
+  const [svgContent, setSvgContent] = useState<string>('');
 
   const drawingData = useMemo<DrawingData | null>(() => {
     if (!calculation) return null;
@@ -43,13 +59,15 @@ export function FabricationDrawingsPanel({
   // Generate SVG when data changes
   useMemo(() => {
     if (drawingData) {
-      import("@/utils/drawings/fabricationDrawings").then(({ exportDrawingAsSVG }) => {
-        setSvgContent(exportDrawingAsSVG(drawingData, {
-          title: drawingData.typologyName,
-          projectName,
-          clientName,
-          showGrid: true,
-        }));
+      import('@/utils/drawings/fabricationDrawings').then(({ exportDrawingAsSVG }) => {
+        setSvgContent(
+          exportDrawingAsSVG(drawingData, {
+            title: drawingData.typologyName,
+            projectName,
+            clientName,
+            showGrid: true,
+          })
+        );
       });
     }
   }, [drawingData, projectName, clientName]);
@@ -63,15 +81,15 @@ export function FabricationDrawingsPanel({
         clientName,
         showGrid: true,
       });
-      toast.success("SVG baixado com sucesso!");
+      toast.success('SVG baixado com sucesso!');
     } catch {
-      toast.error("Erro ao baixar SVG");
+      toast.error('Erro ao baixar SVG');
     }
   };
 
   const handlePrint = () => {
     if (!svgContent) return;
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(`
         <html>
@@ -121,7 +139,9 @@ export function FabricationDrawingsPanel({
             <Ruler className="h-4 w-4 text-primary" />
             <div>
               <p className="text-xs text-muted-foreground">Dimensões</p>
-              <p className="font-semibold text-sm">{drawingData.width} x {drawingData.height}mm</p>
+              <p className="font-semibold text-sm">
+                {drawingData.width} x {drawingData.height}mm
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -174,10 +194,10 @@ export function FabricationDrawingsPanel({
             <CardContent className="p-4">
               <div className="flex justify-center bg-gray-50 rounded-lg p-4 overflow-auto">
                 {svgContent && (
-                  <div 
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(svgContent) }} 
+                  <div
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(svgContent) }}
                     className="max-w-full"
-                    style={{ maxHeight: "500px" }}
+                    style={{ maxHeight: '500px' }}
                   />
                 )}
               </div>
@@ -194,10 +214,10 @@ export function FabricationDrawingsPanel({
             <CardContent className="p-4">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {drawingData.pieces.map((piece, index) => (
-                  <Card 
+                  <Card
                     key={`${piece.code}-${index}`}
                     className={`cursor-pointer hover:ring-2 hover:ring-primary transition-all ${
-                      selectedPiece?.code === piece.code ? "ring-2 ring-primary" : ""
+                      selectedPiece?.code === piece.code ? 'ring-2 ring-primary' : ''
                     }`}
                     onClick={() => setSelectedPiece(piece)}
                   >
@@ -211,11 +231,11 @@ export function FabricationDrawingsPanel({
                       </div>
                       <div className="mt-2 space-y-1">
                         <p className="text-xs">
-                          <span className="text-muted-foreground">Medida:</span>{" "}
+                          <span className="text-muted-foreground">Medida:</span>{' '}
                           <span className="font-semibold">{piece.length}mm</span>
                         </p>
                         <p className="text-xs">
-                          <span className="text-muted-foreground">Perfil:</span>{" "}
+                          <span className="text-muted-foreground">Perfil:</span>{' '}
                           <span className="text-xs">{piece.profile}</span>
                         </p>
                       </div>
@@ -292,13 +312,13 @@ export function FabricationDrawingsPanel({
               {/* Summary */}
               <div className="mt-4 pt-4 border-t flex justify-between items-center">
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Total de peças:</span>{" "}
+                  <span className="text-muted-foreground">Total de peças:</span>{' '}
                   <span className="font-semibold">
                     {drawingData.pieces.reduce((sum, p) => sum + p.quantity, 0)}
                   </span>
                 </div>
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Peso total estimado:</span>{" "}
+                  <span className="text-muted-foreground">Peso total estimado:</span>{' '}
                   <span className="font-semibold">{drawingData.totalWeight.toFixed(2)} kg</span>
                 </div>
               </div>

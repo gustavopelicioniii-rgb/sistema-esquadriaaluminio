@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Sparkles, Loader2, RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { aiOneShot } from "@/hooks/use-ai-chat";
-import ReactMarkdown from "react-markdown";
+import { useState } from 'react';
+import { Sparkles, Loader2, RefreshCw, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { aiOneShot } from '@/hooks/use-ai-chat';
+import ReactMarkdown from 'react-markdown';
 
 interface CutRule {
   profile_code: string;
@@ -48,7 +48,14 @@ interface Props {
   componentRules: ComponentRule[];
 }
 
-export function RulesAiValidator({ typologyName, category, numFolhas, cutRules, glassRules, componentRules }: Props) {
+export function RulesAiValidator({
+  typologyName,
+  category,
+  numFolhas,
+  cutRules,
+  glassRules,
+  componentRules,
+}: Props) {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -58,17 +65,26 @@ export function RulesAiValidator({ typologyName, category, numFolhas, cutRules, 
     if (totalRules === 0) return;
     setLoading(true);
     try {
-      const cutData = cutRules.map(r =>
-        `  - Perfil: ${r.profile_code}, Peça: ${r.piece_name}, Função: ${r.piece_function}, Ref: ${r.reference_dimension}, Coef: ${r.coefficient}, Const: ${r.constant_mm}mm, Qtd: ${r.quantity_formula}, Ângulos: ${r.cut_angle_left}°/${r.cut_angle_right}°, Peso: ${r.weight_per_meter}kg/m`
-      ).join("\n");
+      const cutData = cutRules
+        .map(
+          r =>
+            `  - Perfil: ${r.profile_code}, Peça: ${r.piece_name}, Função: ${r.piece_function}, Ref: ${r.reference_dimension}, Coef: ${r.coefficient}, Const: ${r.constant_mm}mm, Qtd: ${r.quantity_formula}, Ângulos: ${r.cut_angle_left}°/${r.cut_angle_right}°, Peso: ${r.weight_per_meter}kg/m`
+        )
+        .join('\n');
 
-      const glassData = glassRules.map(r =>
-        `  - Vidro: ${r.glass_name}, Larg: ${r.width_reference} ${r.width_constant_mm > 0 ? "+" : ""}${r.width_constant_mm}mm, Alt: ${r.height_reference} ${r.height_constant_mm > 0 ? "+" : ""}${r.height_constant_mm}mm, Qtd: ${r.quantity}, Tipo: ${r.glass_type || "não definido"}, Espessura: ${r.min_thickness_mm ?? "?"}–${r.max_thickness_mm ?? "?"}mm`
-      ).join("\n");
+      const glassData = glassRules
+        .map(
+          r =>
+            `  - Vidro: ${r.glass_name}, Larg: ${r.width_reference} ${r.width_constant_mm > 0 ? '+' : ''}${r.width_constant_mm}mm, Alt: ${r.height_reference} ${r.height_constant_mm > 0 ? '+' : ''}${r.height_constant_mm}mm, Qtd: ${r.quantity}, Tipo: ${r.glass_type || 'não definido'}, Espessura: ${r.min_thickness_mm ?? '?'}–${r.max_thickness_mm ?? '?'}mm`
+        )
+        .join('\n');
 
-      const compData = componentRules.map(r =>
-        `  - ${r.component_name} (${r.component_type}): Qtd: ${r.quantity_formula}, Un: ${r.unit}, Ref: ${r.length_reference || "N/A"}, Const: ${r.length_constant_mm ?? 0}mm`
-      ).join("\n");
+      const compData = componentRules
+        .map(
+          r =>
+            `  - ${r.component_name} (${r.component_type}): Qtd: ${r.quantity_formula}, Un: ${r.unit}, Ref: ${r.length_reference || 'N/A'}, Const: ${r.length_constant_mm ?? 0}mm`
+        )
+        .join('\n');
 
       const prompt = `Você é um engenheiro especialista em esquadrias de alumínio. Analise as regras de corte, vidro e componentes desta tipologia e identifique ERROS, INCONSISTÊNCIAS e MELHORIAS.
 
@@ -77,13 +93,13 @@ Categoria: ${category}
 Número de folhas: ${numFolhas}
 
 REGRAS DE CORTE (${cutRules.length}):
-${cutData || "  Nenhuma"}
+${cutData || '  Nenhuma'}
 
 REGRAS DE VIDRO (${glassRules.length}):
-${glassData || "  Nenhuma"}
+${glassData || '  Nenhuma'}
 
 REGRAS DE COMPONENTES (${componentRules.length}):
-${compData || "  Nenhuma"}
+${compData || '  Nenhuma'}
 
 Verifique:
 1. **Erros críticos**: constantes com sinal trocado, coeficientes impossíveis, peças faltantes (marco, folha, etc.), ângulos incorretos
@@ -95,23 +111,29 @@ Verifique:
 Use emojis: ❌ para erros, ⚠️ para alertas, ✅ para itens corretos, 💡 para sugestões.
 Seja conciso (máx 250 palavras). Se tudo estiver correto, diga isso claramente.`;
 
-      const response = await aiOneShot("assistant", prompt);
+      const response = await aiOneShot('assistant', prompt);
       setResult(response);
     } catch (e) {
-      setResult(`❌ ${e instanceof Error ? e.message : "Erro ao validar"}`);
+      setResult(`❌ ${e instanceof Error ? e.message : 'Erro ao validar'}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const hasErrors = result && (result.includes("❌") || result.includes("⚠️"));
+  const hasErrors = result && (result.includes('❌') || result.includes('⚠️'));
 
   return (
-    <Card className={`border-2 ${result ? (hasErrors ? "border-destructive/30 bg-destructive/5" : "border-green-500/30 bg-green-500/5") : "border-primary/20 bg-gradient-to-br from-primary/5 to-transparent"}`}>
+    <Card
+      className={`border-2 ${result ? (hasErrors ? 'border-destructive/30 bg-destructive/5' : 'border-green-500/30 bg-green-500/5') : 'border-primary/20 bg-gradient-to-br from-primary/5 to-transparent'}`}
+    >
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           {result ? (
-            hasErrors ? <AlertTriangle className="h-4 w-4 text-destructive" /> : <CheckCircle2 className="h-4 w-4 text-green-600" />
+            hasErrors ? (
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+            )
           ) : (
             <Sparkles className="h-4 w-4 text-primary" />
           )}
@@ -128,7 +150,7 @@ Seja conciso (máx 250 palavras). Se tudo estiver correto, diga isso claramente.
             disabled={totalRules === 0}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            {totalRules === 0 ? "Adicione regras primeiro" : `Validar ${totalRules} regras com IA`}
+            {totalRules === 0 ? 'Adicione regras primeiro' : `Validar ${totalRules} regras com IA`}
           </Button>
         )}
 

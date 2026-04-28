@@ -1,19 +1,19 @@
-import { supabase } from "@/integrations/supabase/client";
-import { ProjetoVidro } from "./types";
+import { supabase } from '@/integrations/supabase/client';
+import { ProjetoVidro } from './types';
 
 export async function fetchProjetos(): Promise<ProjetoVidro[]> {
   const { data: projetos, error } = await supabase
-    .from("projetos_vidro")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .from('projetos_vidro')
+    .select('*')
+    .order('created_at', { ascending: false });
   if (error) throw error;
   if (!projetos || projetos.length === 0) return [];
 
   const projetoIds = projetos.map((p: any) => p.id);
   const { data: itens, error: itensError } = await supabase
-    .from("vidro_itens")
-    .select("*")
-    .in("projeto_id", projetoIds);
+    .from('vidro_itens')
+    .select('*')
+    .in('projeto_id', projetoIds);
   if (itensError) throw itensError;
 
   const itensByProjeto = new Map<string, any[]>();
@@ -31,7 +31,7 @@ export async function fetchProjetos(): Promise<ProjetoVidro[]> {
     cor: p.cor,
     precoM2: Number(p.preco_m2),
     areaMinimaM2: Number(p.area_minima_m2 ?? 0),
-    criadoEm: new Date(p.created_at).toLocaleDateString("pt-BR"),
+    criadoEm: new Date(p.created_at).toLocaleDateString('pt-BR'),
     archived: !!p.archived,
     itens: (itensByProjeto.get(p.id) || []).map((it: any) => ({
       id: it.id,
@@ -39,7 +39,7 @@ export async function fetchProjetos(): Promise<ProjetoVidro[]> {
       larguraMm: it.largura_mm,
       alturaMm: it.altura_mm,
       quantidade: it.quantidade,
-      observacao: it.observacao ?? "",
+      observacao: it.observacao ?? '',
     })),
   }));
 }

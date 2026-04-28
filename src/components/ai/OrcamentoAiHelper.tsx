@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { Sparkles, Loader2, MessageCircle, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { aiOneShot } from "@/hooks/use-ai-chat";
-import ReactMarkdown from "react-markdown";
+import { useState } from 'react';
+import { Sparkles, Loader2, MessageCircle, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { aiOneShot } from '@/hooks/use-ai-chat';
+import ReactMarkdown from 'react-markdown';
 
 export function OrcamentoAiHelper() {
   const [open, setOpen] = useState(false);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,10 +28,10 @@ Com base nessa descrição, sugira:
 
 Formate como uma lista clara e organizada.`;
 
-      const result = await aiOneShot("orcamento", prompt);
+      const result = await aiOneShot('orcamento', prompt);
       setSuggestion(result);
     } catch (e) {
-      setSuggestion(`❌ ${e instanceof Error ? e.message : "Erro"}`);
+      setSuggestion(`❌ ${e instanceof Error ? e.message : 'Erro'}`);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,15 @@ Formate como uma lista clara e organizada.`;
             <Sparkles className="h-4 w-4 text-primary" />
             Assistente de Orçamento
           </CardTitle>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setOpen(false); setSuggestion(null); }}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => {
+              setOpen(false);
+              setSuggestion(null);
+            }}
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -67,7 +75,7 @@ Formate como uma lista clara e organizada.`;
       <CardContent className="space-y-3">
         <Textarea
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={e => setDescription(e.target.value)}
           placeholder="Descreva o projeto... Ex: 'Apartamento com 3 quartos, preciso de janelas de correr para a sala (3m), banheiros com maxim-ar e porta de giro para os quartos'"
           className="min-h-[80px] text-sm resize-none"
         />
@@ -77,8 +85,12 @@ Formate como uma lista clara e organizada.`;
           onClick={generate}
           disabled={loading || !description.trim()}
         >
-          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MessageCircle className="h-3.5 w-3.5" />}
-          {loading ? "Gerando sugestão..." : "Gerar sugestão"}
+          {loading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <MessageCircle className="h-3.5 w-3.5" />
+          )}
+          {loading ? 'Gerando sugestão...' : 'Gerar sugestão'}
         </Button>
 
         {suggestion && (

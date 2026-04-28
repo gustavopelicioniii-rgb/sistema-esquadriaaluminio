@@ -1,7 +1,7 @@
-import { useCustomCutRules } from "@/hooks/use-custom-cut-rules";
-import { useCustomGlassRules } from "@/hooks/use-custom-glass-rules";
-import { useCustomComponentRules } from "@/hooks/use-custom-component-rules";
-import { RulesAiValidator } from "./RulesAiValidator";
+import { useCustomCutRules } from '@/hooks/use-custom-cut-rules';
+import { useCustomGlassRules } from '@/hooks/use-custom-glass-rules';
+import { useCustomComponentRules } from '@/hooks/use-custom-component-rules';
+import { RulesAiValidator } from './RulesAiValidator';
 
 interface Props {
   typology: {

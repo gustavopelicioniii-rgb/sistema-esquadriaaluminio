@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Plus, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Plus, X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -14,23 +20,23 @@ interface Props {
 }
 
 export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated }: Props) {
-  const [label, setLabel] = useState("");
-  const [items, setItems] = useState<string[]>([""]);
+  const [label, setLabel] = useState('');
+  const [items, setItems] = useState<string[]>(['']);
   const [saving, setSaving] = useState(false);
 
-  const addItem = () => setItems((prev) => [...prev, ""]);
-  const removeItem = (idx: number) => setItems((prev) => prev.filter((_, i) => i !== idx));
+  const addItem = () => setItems(prev => [...prev, '']);
+  const removeItem = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
   const updateItem = (idx: number, val: string) =>
-    setItems((prev) => prev.map((v, i) => (i === idx ? val : v)));
+    setItems(prev => prev.map((v, i) => (i === idx ? val : v)));
 
   const handleSave = async () => {
     if (!label.trim()) {
-      toast.error("Erro", { description: "Informe o nome da etapa." });
+      toast.error('Erro', { description: 'Informe o nome da etapa.' });
       return;
     }
-    const validItems = items.filter((i) => i.trim());
+    const validItems = items.filter(i => i.trim());
     if (validItems.length === 0) {
-      toast.error("Erro", { description: "Adicione pelo menos 1 item." });
+      toast.error('Erro', { description: 'Adicione pelo menos 1 item.' });
       return;
     }
 
@@ -38,13 +44,13 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
     const etapaKey = `custom_${Date.now()}`;
 
     const { data: etapaData, error: etapaErr } = await supabase
-      .from("pedido_custom_etapas")
+      .from('pedido_custom_etapas')
       .insert({ pedido_id: pedidoId, etapa_key: etapaKey, label: label.trim(), ordem: 99 } as any)
       .select()
       .single();
 
     if (etapaErr || !etapaData) {
-      toast.error("Erro", { description: etapaErr?.message || "Erro ao criar etapa." });
+      toast.error('Erro', { description: etapaErr?.message || 'Erro ao criar etapa.' });
       setSaving(false);
       return;
     }
@@ -57,19 +63,21 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
     }));
 
     const { error: itemsErr } = await supabase
-      .from("pedido_custom_items")
+      .from('pedido_custom_items')
       .insert(itemsToInsert as any);
 
     setSaving(false);
 
     if (itemsErr) {
-      toast.error("Erro", { description: itemsErr.message });
+      toast.error('Erro', { description: itemsErr.message });
       return;
     }
 
-    toast.success("Etapa criada", { description: `"${label}" adicionada com ${validItems.length} itens.` });
-    setLabel("");
-    setItems([""]);
+    toast.success('Etapa criada', {
+      description: `"${label}" adicionada com ${validItems.length} itens.`,
+    });
+    setLabel('');
+    setItems(['']);
     onOpenChange(false);
     onCreated();
   };
@@ -86,7 +94,7 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
             <Input
               placeholder="Ex: Pintura, Acabamento..."
               value={label}
-              onChange={(e) => setLabel(e.target.value)}
+              onChange={e => setLabel(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -97,7 +105,7 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
                   <Input
                     placeholder={`Item ${idx + 1}`}
                     value={item}
-                    onChange={(e) => updateItem(idx, e.target.value)}
+                    onChange={e => updateItem(idx, e.target.value)}
                   />
                   {items.length > 1 && (
                     <Button variant="ghost" size="icon" onClick={() => removeItem(idx)}>
@@ -114,9 +122,11 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Salvando..." : "Criar etapa"}
+            {saving ? 'Salvando...' : 'Criar etapa'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,38 +1,69 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/formatters";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/formatters';
 import {
-  User, CheckCircle2,
-  RefreshCcw, CreditCard, FileText, Printer,
-  Eye, Pencil, ListChecks, Share2,
-} from "lucide-react";
-import type { Pedido } from "@/pages/Producao";
-import { toast } from "sonner";
+  User,
+  CheckCircle2,
+  RefreshCcw,
+  CreditCard,
+  FileText,
+  Printer,
+  Eye,
+  Pencil,
+  ListChecks,
+  Share2,
+} from 'lucide-react';
+import type { Pedido } from '@/pages/Producao';
+import { toast } from 'sonner';
 
-type DialogType = "reagendar" | "pagamentos" | "contrato" | "impressoes" | "etapa" | "custos" | "editar" | "tarefas" | "compartilhar";
+type DialogType =
+  | 'reagendar'
+  | 'pagamentos'
+  | 'contrato'
+  | 'impressoes'
+  | 'etapa'
+  | 'custos'
+  | 'editar'
+  | 'tarefas'
+  | 'compartilhar';
 
 const actionItems: { key: DialogType; icon: React.ElementType; label: string }[] = [
-  { key: "reagendar", icon: RefreshCcw, label: "Alterar prazo" },
-  { key: "pagamentos", icon: CreditCard, label: "Pagamentos" },
-  { key: "custos", icon: Eye, label: "Ver custos" },
-  { key: "contrato", icon: FileText, label: "Contrato" },
-  { key: "impressoes", icon: Printer, label: "Impressões" },
-  { key: "editar", icon: Pencil, label: "Editar serviço" },
-  { key: "tarefas", icon: ListChecks, label: "Tarefas" },
-  { key: "compartilhar", icon: Share2, label: "Compartilhar" },
+  { key: 'reagendar', icon: RefreshCcw, label: 'Alterar prazo' },
+  { key: 'pagamentos', icon: CreditCard, label: 'Pagamentos' },
+  { key: 'custos', icon: Eye, label: 'Ver custos' },
+  { key: 'contrato', icon: FileText, label: 'Contrato' },
+  { key: 'impressoes', icon: Printer, label: 'Impressões' },
+  { key: 'editar', icon: Pencil, label: 'Editar serviço' },
+  { key: 'tarefas', icon: ListChecks, label: 'Tarefas' },
+  { key: 'compartilhar', icon: Share2, label: 'Compartilhar' },
 ];
 
 function getUrgencyBadge(op: Pedido) {
-  if (op.status === "concluido") {
-    return { label: "Concluído", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" };
+  if (op.status === 'concluido') {
+    return {
+      label: 'Concluído',
+      className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    };
   }
   const d = op.dias_restantes ?? 0;
-  if (d < 0) return { label: `Atrasado ${Math.abs(d)}d`, className: "bg-destructive/15 text-destructive" };
-  if (d <= 7) return { label: `${d}d restantes`, className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" };
-  if (d <= 15) return { label: `${d}d restantes`, className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" };
-  return { label: `${d}d restantes`, className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" };
+  if (d < 0)
+    return { label: `Atrasado ${Math.abs(d)}d`, className: 'bg-destructive/15 text-destructive' };
+  if (d <= 7)
+    return {
+      label: `${d}d restantes`,
+      className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    };
+  if (d <= 15)
+    return {
+      label: `${d}d restantes`,
+      className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+    };
+  return {
+    label: `${d}d restantes`,
+    className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  };
 }
 
 interface Props {
@@ -45,33 +76,43 @@ interface Props {
   isDragging?: boolean;
 }
 
-export default function PedidoCardCompact({ pedido: op, progress: progressProp, onOpenDetail, onOpenDialog, onConcluir, onCancelar, isDragging }: Props) {
+export default function PedidoCardCompact({
+  pedido: op,
+  progress: progressProp,
+  onOpenDetail,
+  onOpenDialog,
+  onConcluir,
+  onCancelar,
+  isDragging,
+}: Props) {
   const badge = getUrgencyBadge(op);
-  const progress = progressProp ?? (op.status === "concluido" ? 100 : 0);
+  const progress = progressProp ?? (op.status === 'concluido' ? 100 : 0);
 
   const handleAction = (key: DialogType) => {
-    if (key === "tarefas") {
+    if (key === 'tarefas') {
       onOpenDetail(op);
-    } else if (key === "compartilhar") {
-      const text = `Pedido ${op.pedido_num} - ${op.cliente} - ${op.etapa || ""}`;
+    } else if (key === 'compartilhar') {
+      const text = `Pedido ${op.pedido_num} - ${op.cliente} - ${op.etapa || ''}`;
       if (navigator.share) {
         navigator.share({ title: `Pedido ${op.pedido_num}`, text });
       } else {
         navigator.clipboard.writeText(text);
-        toast.success("Copiado!", { description: "Informações do pedido copiadas." });
+        toast.success('Copiado!', { description: 'Informações do pedido copiadas.' });
       }
-    } else if (key === "custos") {
-      onOpenDialog("pagamentos", op);
+    } else if (key === 'custos') {
+      onOpenDialog('pagamentos', op);
     } else {
       onOpenDialog(key, op);
     }
   };
 
   return (
-    <Card className={cn(
-      "shadow-sm border-border/50 transition-shadow",
-      isDragging && "shadow-lg ring-2 ring-primary/30"
-    )}>
+    <Card
+      className={cn(
+        'shadow-sm border-border/50 transition-shadow',
+        isDragging && 'shadow-lg ring-2 ring-primary/30'
+      )}
+    >
       <CardContent className="p-3 sm:p-4 space-y-2.5">
         {/* Header row */}
         <div className="flex items-center justify-between gap-2">
@@ -82,7 +123,12 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
             PEDIDO {op.pedido_num}
           </h3>
           <div className="shrink-0">
-            <span className={cn("rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap", badge.className)}>
+            <span
+              className={cn(
+                'rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold whitespace-nowrap',
+                badge.className
+              )}
+            >
               {badge.label}
             </span>
           </div>
@@ -103,11 +149,13 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
 
         {/* Value + Progress */}
         <div className="flex items-center justify-between gap-2">
-          <p className={cn(
-            "text-sm sm:text-base font-bold",
-            op.valor > 0 ? "text-emerald-600" : "text-muted-foreground"
-          )}>
-            {op.valor > 0 ? formatCurrency(op.valor) : "Sem valor"}
+          <p
+            className={cn(
+              'text-sm sm:text-base font-bold',
+              op.valor > 0 ? 'text-emerald-600' : 'text-muted-foreground'
+            )}
+          >
+            {op.valor > 0 ? formatCurrency(op.valor) : 'Sem valor'}
           </p>
           <div className="flex items-center gap-2 min-w-[100px]">
             <Progress value={progress} className="h-1.5 flex-1" />
@@ -134,10 +182,19 @@ export default function PedidoCardCompact({ pedido: op, progress: progressProp, 
 
         {/* Quick actions row */}
         <div className="flex gap-1.5 pt-0.5">
-          <Button variant="outline" size="sm" className="flex-1 text-[10px] sm:text-xs h-7" onClick={() => onCancelar(op)}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-[10px] sm:text-xs h-7"
+            onClick={() => onCancelar(op)}
+          >
             Cancelar
           </Button>
-          <Button size="sm" className="flex-1 text-[10px] sm:text-xs h-7" onClick={() => onConcluir(op)}>
+          <Button
+            size="sm"
+            className="flex-1 text-[10px] sm:text-xs h-7"
+            onClick={() => onConcluir(op)}
+          >
             <CheckCircle2 className="h-3 w-3 mr-1" />
             Concluir
           </Button>

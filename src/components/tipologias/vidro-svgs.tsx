@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-const GLASS = "#A7D3E8";
-const STROKE = "#7A7A7A";
+const GLASS = '#A7D3E8';
+const STROKE = '#7A7A7A';
 const SW = 1;
 const M = 6; // margin
 const S = 100 - M * 2; // usable size (88)
@@ -109,11 +109,15 @@ export const VidroGradeMultipla = () => {
   const lines: React.ReactElement[] = [];
   for (let c = 1; c < cols; c++) {
     const x = M + (S * c) / cols;
-    lines.push(<line key={`v${c}`} x1={x} y1={M} x2={x} y2={100 - M} stroke={STROKE} strokeWidth={SW} />);
+    lines.push(
+      <line key={`v${c}`} x1={x} y1={M} x2={x} y2={100 - M} stroke={STROKE} strokeWidth={SW} />
+    );
   }
   for (let r = 1; r < rows; r++) {
     const y = M + (S * r) / rows;
-    lines.push(<line key={`h${r}`} x1={M} y1={y} x2={100 - M} y2={y} stroke={STROKE} strokeWidth={SW} />);
+    lines.push(
+      <line key={`h${r}`} x1={M} y1={y} x2={100 - M} y2={y} stroke={STROKE} strokeWidth={SW} />
+    );
   }
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -129,7 +133,17 @@ export const VidroVeneziana = () => {
   const lines: React.ReactElement[] = [];
   for (let i = 1; i < count; i++) {
     const y = M + (S * i) / count;
-    lines.push(<line key={i} x1={M + 4} y1={y} x2={100 - M - 4} y2={y - 3} stroke={STROKE} strokeWidth={SW} />);
+    lines.push(
+      <line
+        key={i}
+        x1={M + 4}
+        y1={y}
+        x2={100 - M - 4}
+        y2={y - 3}
+        stroke={STROKE}
+        strokeWidth={SW}
+      />
+    );
   }
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -148,8 +162,24 @@ export const VidroPivotante = () => {
       <rect x={M} y={M} width={S} height={S} {...base} />
       <line x1={cx} y1={M} x2={cx} y2={100 - M} stroke={STROKE} strokeWidth={SW} />
       <circle cx={cx} cy={cy} r={3} fill={STROKE} />
-      <line x1={M} y1={cy} x2={cx - 6} y2={cy} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
-      <line x1={cx + 6} y1={cy} x2={100 - M} y2={cy} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+      <line
+        x1={M}
+        y1={cy}
+        x2={cx - 6}
+        y2={cy}
+        stroke={STROKE}
+        strokeWidth={SW}
+        strokeDasharray="3 2"
+      />
+      <line
+        x1={cx + 6}
+        y1={cy}
+        x2={100 - M}
+        y2={cy}
+        stroke={STROKE}
+        strokeWidth={SW}
+        strokeDasharray="3 2"
+      />
     </svg>
   );
 };
@@ -163,26 +193,49 @@ export const VidroMaximAr = () => {
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <rect x={M} y={M} width={S} height={S} {...base} />
-      <line x1={left} y1={top + S * 0.3} x2={right} y2={top + S * 0.3} stroke={STROKE} strokeWidth={SW} />
-      <line x1={left} y1={top} x2={50} y2={top + S * 0.28} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
-      <line x1={right} y1={top} x2={50} y2={top + S * 0.28} stroke={STROKE} strokeWidth={SW} strokeDasharray="3 2" />
+      <line
+        x1={left}
+        y1={top + S * 0.3}
+        x2={right}
+        y2={top + S * 0.3}
+        stroke={STROKE}
+        strokeWidth={SW}
+      />
+      <line
+        x1={left}
+        y1={top}
+        x2={50}
+        y2={top + S * 0.28}
+        stroke={STROKE}
+        strokeWidth={SW}
+        strokeDasharray="3 2"
+      />
+      <line
+        x1={right}
+        y1={top}
+        x2={50}
+        y2={top + S * 0.28}
+        stroke={STROKE}
+        strokeWidth={SW}
+        strokeDasharray="3 2"
+      />
     </svg>
   );
 };
 
 /** Catálogo completo */
 export const vidroTypologies = [
-  { id: "vidro_inteiro", label: "Vidro Inteiro", Icon: VidroInteiro },
-  { id: "vidro_1_div_vertical", label: "1 Divisão Vertical", Icon: Vidro1DivVertical },
-  { id: "vidro_2_div_verticais", label: "2 Divisões Verticais", Icon: Vidro2DivVerticais },
-  { id: "vidro_2_div_horizontais", label: "2 Divisões Horizontais", Icon: Vidro2DivHorizontais },
-  { id: "vidro_grade_4", label: "Grade 4 Partes", Icon: VidroGrade4 },
-  { id: "vidro_grade_6", label: "Grade 6 Partes", Icon: VidroGrade6 },
-  { id: "vidro_bandeira_superior", label: "Bandeira Superior", Icon: VidroBandeiraSuperior },
-  { id: "vidro_travessa_central", label: "Travessa Central", Icon: VidroTravessaCentral },
-  { id: "vidro_assimetrico", label: "Divisão Assimétrica 70/30", Icon: VidroAssimetrico },
-  { id: "vidro_grade_multipla", label: "Grade Múltipla", Icon: VidroGradeMultipla },
-  { id: "vidro_veneziana", label: "Veneziana", Icon: VidroVeneziana },
-  { id: "vidro_pivotante", label: "Pivotante", Icon: VidroPivotante },
-  { id: "vidro_maxim_ar", label: "Maxim-Ar", Icon: VidroMaximAr },
+  { id: 'vidro_inteiro', label: 'Vidro Inteiro', Icon: VidroInteiro },
+  { id: 'vidro_1_div_vertical', label: '1 Divisão Vertical', Icon: Vidro1DivVertical },
+  { id: 'vidro_2_div_verticais', label: '2 Divisões Verticais', Icon: Vidro2DivVerticais },
+  { id: 'vidro_2_div_horizontais', label: '2 Divisões Horizontais', Icon: Vidro2DivHorizontais },
+  { id: 'vidro_grade_4', label: 'Grade 4 Partes', Icon: VidroGrade4 },
+  { id: 'vidro_grade_6', label: 'Grade 6 Partes', Icon: VidroGrade6 },
+  { id: 'vidro_bandeira_superior', label: 'Bandeira Superior', Icon: VidroBandeiraSuperior },
+  { id: 'vidro_travessa_central', label: 'Travessa Central', Icon: VidroTravessaCentral },
+  { id: 'vidro_assimetrico', label: 'Divisão Assimétrica 70/30', Icon: VidroAssimetrico },
+  { id: 'vidro_grade_multipla', label: 'Grade Múltipla', Icon: VidroGradeMultipla },
+  { id: 'vidro_veneziana', label: 'Veneziana', Icon: VidroVeneziana },
+  { id: 'vidro_pivotante', label: 'Pivotante', Icon: VidroPivotante },
+  { id: 'vidro_maxim_ar', label: 'Maxim-Ar', Icon: VidroMaximAr },
 ] as const;

@@ -1,61 +1,82 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
-import { Bell, Search, User, Sun, Moon, Package, DollarSign, Wrench, CheckCheck, Loader2, Menu, X, Users } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile-device";
-import { useTheme } from "@/hooks/use-theme";
-import { useAuth } from "@/hooks/use-auth";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useNotifications, type AppNotification } from "@/hooks/use-notifications";
-import { useGlobalSearch } from "@/hooks/use-global-search";
-import { ScrollArea } from "@/components/ui/scroll-area";
+  Bell,
+  Search,
+  User,
+  Sun,
+  Moon,
+  Package,
+  DollarSign,
+  Wrench,
+  CheckCheck,
+  Loader2,
+  Menu,
+  X,
+  Users,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile-device';
+import { useTheme } from '@/hooks/use-theme';
+import { useAuth } from '@/hooks/use-auth';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useNotifications, type AppNotification } from '@/hooks/use-notifications';
+import { useGlobalSearch } from '@/hooks/use-global-search';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const routeTitles: Record<string, string> = {
-  "/": "Dashboard",
-  "/crm": "CRM",
-  "/clientes": "Clientes",
-  "/orcamentos": "Orçamentos",
-  "/orcamentos/novo": "Novo Orçamento",
-  "/producao": "Produção",
-  "/plano-corte": "Plano de Corte",
-  "/projeto-vidro": "Projeto Vidro",
-  "/relacao-materiais": "Relação de Materiais",
-  "/estoque": "Estoque",
-  "/financeiro": "Financeiro",
-  "/agenda": "Agenda",
-  "/produtos": "Produtos",
-  
-  "/relatorios": "Relatórios",
-  "/mapa": "Mapa",
-  "/nota-fiscal": "Nota Fiscal",
-  "/calculo-esquadrias": "Cálculo Esquadrias",
-  "/importar-csv": "Importar CSV",
-  "/administradores": "Administradores",
-  "/funcionarios": "Funcionários",
-  "/configuracoes": "Configurações",
-  "/notificacoes": "Notificações",
+  '/': 'Dashboard',
+  '/crm': 'CRM',
+  '/clientes': 'Clientes',
+  '/orcamentos': 'Orçamentos',
+  '/orcamentos/novo': 'Novo Orçamento',
+  '/producao': 'Produção',
+  '/plano-corte': 'Plano de Corte',
+  '/projeto-vidro': 'Projeto Vidro',
+  '/relacao-materiais': 'Relação de Materiais',
+  '/estoque': 'Estoque',
+  '/financeiro': 'Financeiro',
+  '/agenda': 'Agenda',
+  '/produtos': 'Produtos',
+
+  '/relatorios': 'Relatórios',
+  '/mapa': 'Mapa',
+  '/nota-fiscal': 'Nota Fiscal',
+  '/calculo-esquadrias': 'Cálculo Esquadrias',
+  '/importar-csv': 'Importar CSV',
+  '/administradores': 'Administradores',
+  '/funcionarios': 'Funcionários',
+  '/configuracoes': 'Configurações',
+  '/notificacoes': 'Notificações',
 };
 
-const typeConfig: Record<AppNotification["type"], { icon: typeof Package; color: string; route: string }> = {
-  estoque: { icon: Package, color: "text-warning", route: "/estoque" },
-  pagamento: { icon: DollarSign, color: "text-destructive", route: "/financeiro" },
-  producao: { icon: Wrench, color: "text-primary", route: "/producao" },
-  crm: { icon: Users, color: "text-accent-foreground", route: "/crm" },
+const typeConfig: Record<
+  AppNotification['type'],
+  { icon: typeof Package; color: string; route: string }
+> = {
+  estoque: { icon: Package, color: 'text-warning', route: '/estoque' },
+  pagamento: { icon: DollarSign, color: 'text-destructive', route: '/financeiro' },
+  producao: { icon: Wrench, color: 'text-primary', route: '/producao' },
+  crm: { icon: Users, color: 'text-accent-foreground', route: '/crm' },
 };
 
 const typeBadgeColors: Record<string, string> = {
-  Cliente: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  Orçamento: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  Pedido: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  Produto: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  Estoque: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+  Cliente: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  Orçamento: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  Pedido: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+  Produto: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  Estoque: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
 };
 
 export function Topbar() {
@@ -64,20 +85,20 @@ export function Topbar() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { results, loading: searchLoading } = useGlobalSearch(search);
   const isMobile = useIsMobile();
 
-  const pageTitle = routeTitles[location.pathname] || "";
-  const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
-  const roleLabel = role === "admin" ? "Admin" : "Funcionário";
+  const pageTitle = routeTitles[location.pathname] || '';
+  const initials = user?.email?.slice(0, 2).toUpperCase() || '??';
+  const roleLabel = role === 'admin' ? 'Admin' : 'Funcionário';
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/login");
+    navigate('/login');
   };
 
   const handleNotificationClick = (n: AppNotification) => {
@@ -104,29 +125,42 @@ export function Topbar() {
       {/* Desktop search */}
       <div className="relative flex-1 max-w-md hidden sm:block">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
+        {searchLoading && (
+          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />
+        )}
         <Input
           placeholder="Buscar clientes, orçamentos, pedidos..."
           className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
+          onChange={e => {
+            setSearch(e.target.value);
+            setSearchOpen(true);
+          }}
           onFocus={() => setSearchOpen(true)}
           onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
         />
         {searchOpen && search.trim().length >= 2 && (
           <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden max-h-80 overflow-y-auto">
             {results.length > 0 ? (
-              results.map((r) => (
+              results.map(r => (
                 <button
                   key={`${r.type}-${r.id}`}
                   className="w-full px-3 py-2.5 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
-                  onMouseDown={() => { navigate(r.url); setSearch(""); setSearchOpen(false); }}
+                  onMouseDown={() => {
+                    navigate(r.url);
+                    setSearch('');
+                    setSearchOpen(false);
+                  }}
                 >
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{r.label}</p>
-                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
+                    {r.detail && (
+                      <p className="text-xs text-muted-foreground truncate">{r.detail}</p>
+                    )}
                   </div>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
+                  <span
+                    className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || 'bg-muted text-muted-foreground'}`}
+                  >
                     {r.type}
                   </span>
                 </button>
@@ -143,13 +177,18 @@ export function Topbar() {
       <div className="ml-auto flex items-center gap-1">
         {/* Mobile search icon */}
         {isMobile && (
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setMobileSearchOpen(true)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            onClick={() => setMobileSearchOpen(true)}
+          >
             <Search className="h-4 w-4" />
           </Button>
         )}
 
         <Button variant="ghost" size="icon" onClick={toggle} className="h-9 w-9">
-          {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
         </Button>
 
         <Popover>
@@ -158,7 +197,7 @@ export function Topbar() {
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
-                  {unreadCount > 99 ? "99+" : unreadCount}
+                  {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </Button>
@@ -167,7 +206,12 @@ export function Topbar() {
             <div className="px-4 py-3 border-b flex items-center justify-between">
               <span className="font-semibold text-sm">Notificações</span>
               {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={markAllAsRead}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={markAllAsRead}
+                >
                   <CheckCheck className="h-3 w-3" /> Marcar todas lidas
                 </Button>
               )}
@@ -178,7 +222,7 @@ export function Topbar() {
                   Nenhuma notificação
                 </div>
               ) : (
-                notifications.map((n) => {
+                notifications.map(n => {
                   const config = typeConfig[n.type];
                   const Icon = config.icon;
                   return (
@@ -186,12 +230,18 @@ export function Topbar() {
                       key={n.id}
                       onClick={() => handleNotificationClick(n)}
                       className={`w-full text-left px-4 py-3 border-b last:border-0 flex gap-3 items-start hover:bg-accent/50 transition-colors ${
-                        n.read ? "opacity-50" : ""
+                        n.read ? 'opacity-50' : ''
                       }`}
                     >
-                      <div className={`mt-0.5 shrink-0 h-7 w-7 rounded-full flex items-center justify-center ${
-                        n.severity === "critical" ? "bg-destructive/10" : n.severity === "warning" ? "bg-warning/10" : "bg-muted"
-                      } ${config.color}`}>
+                      <div
+                        className={`mt-0.5 shrink-0 h-7 w-7 rounded-full flex items-center justify-center ${
+                          n.severity === 'critical'
+                            ? 'bg-destructive/10'
+                            : n.severity === 'warning'
+                              ? 'bg-warning/10'
+                              : 'bg-muted'
+                        } ${config.color}`}
+                      >
                         <Icon className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -215,7 +265,7 @@ export function Topbar() {
                   variant="ghost"
                   size="sm"
                   className="w-full text-xs text-primary"
-                  onClick={() => navigate("/notificacoes")}
+                  onClick={() => navigate('/notificacoes')}
                 >
                   Ver todas as notificações
                 </Button>
@@ -235,67 +285,94 @@ export function Topbar() {
           <DropdownMenuContent align="end" className="w-52">
             <div className="px-2 py-1.5">
               <p className="text-sm font-medium truncate">{user?.email}</p>
-              <Badge variant="secondary" className="text-[10px] mt-1">{roleLabel}</Badge>
+              <Badge variant="secondary" className="text-[10px] mt-1">
+                {roleLabel}
+              </Badge>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/configuracoes")}>
+            <DropdownMenuItem onClick={() => navigate('/configuracoes')}>
               <User className="mr-2 h-4 w-4" /> Configurações
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>Sair</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
+              Sair
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       {/* Mobile search overlay via portal to escape stacking context */}
-      {mobileSearchOpen && createPortal(
-        <div className="fixed inset-0 z-[100] bg-background flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              {searchLoading && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />}
-              <Input
-                autoFocus
-                placeholder="Buscar clientes, orçamentos, pedidos..."
-                className="pl-9 h-10 bg-muted/50 border-0 focus-visible:ring-1"
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setSearchOpen(true); }}
-              />
+      {mobileSearchOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] bg-background flex flex-col p-3 sm:hidden animate-in fade-in duration-200">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                {searchLoading && (
+                  <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground animate-spin" />
+                )}
+                <Input
+                  autoFocus
+                  placeholder="Buscar clientes, orçamentos, pedidos..."
+                  className="pl-9 h-10 bg-muted/50 border-0 focus-visible:ring-1"
+                  value={search}
+                  onChange={e => {
+                    setSearch(e.target.value);
+                    setSearchOpen(true);
+                  }}
+                />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                onClick={() => {
+                  setMobileSearchOpen(false);
+                  setSearch('');
+                  setSearchOpen(false);
+                }}
+              >
+                <X className="h-5 w-5" />
+              </Button>
             </div>
-            <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0" onClick={() => { setMobileSearchOpen(false); setSearch(""); setSearchOpen(false); }}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          <ScrollArea className="flex-1 mt-2">
-            {search.trim().length >= 2 && results.length > 0 ? (
-              results.map((r) => (
-                <button
-                  key={`${r.type}-${r.id}`}
-                  className="w-full px-3 py-3 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
-                  onClick={() => { navigate(r.url); setSearch(""); setMobileSearchOpen(false); }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{r.label}</p>
-                    {r.detail && <p className="text-xs text-muted-foreground truncate">{r.detail}</p>}
-                  </div>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || "bg-muted text-muted-foreground"}`}>
-                    {r.type}
-                  </span>
-                </button>
-              ))
-            ) : search.trim().length >= 2 && !searchLoading ? (
-              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
-                Nenhum resultado para "{search}"
-              </div>
-            ) : (
-              <div className="px-4 py-10 text-center text-sm text-muted-foreground">
-                Digite ao menos 2 caracteres para buscar
-              </div>
-            )}
-          </ScrollArea>
-        </div>,
-        document.body
-      )}
+            <ScrollArea className="flex-1 mt-2">
+              {search.trim().length >= 2 && results.length > 0 ? (
+                results.map(r => (
+                  <button
+                    key={`${r.type}-${r.id}`}
+                    className="w-full px-3 py-3 text-left text-sm hover:bg-accent flex items-center gap-3 border-b border-border/30 last:border-0"
+                    onClick={() => {
+                      navigate(r.url);
+                      setSearch('');
+                      setMobileSearchOpen(false);
+                    }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{r.label}</p>
+                      {r.detail && (
+                        <p className="text-xs text-muted-foreground truncate">{r.detail}</p>
+                      )}
+                    </div>
+                    <span
+                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${typeBadgeColors[r.type] || 'bg-muted text-muted-foreground'}`}
+                    >
+                      {r.type}
+                    </span>
+                  </button>
+                ))
+              ) : search.trim().length >= 2 && !searchLoading ? (
+                <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  Nenhum resultado para "{search}"
+                </div>
+              ) : (
+                <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  Digite ao menos 2 caracteres para buscar
+                </div>
+              )}
+            </ScrollArea>
+          </div>,
+          document.body
+        )}
     </header>
   );
 }

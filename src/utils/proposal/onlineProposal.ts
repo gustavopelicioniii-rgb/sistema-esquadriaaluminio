@@ -1,7 +1,7 @@
 // Online Proposal - Generate shareable links for clients
 // Client can view, approve/reject, and digitally sign proposals
 
-import type { CalculationOutput } from "@/types/calculation";
+import type { CalculationOutput } from '@/types/calculation';
 
 export interface ProposalItem {
   description: string;
@@ -26,7 +26,7 @@ export interface ProposalData {
   discount: number;
   total: number;
   notes?: string;
-  status: "pending" | "approved" | "rejected" | "expired";
+  status: 'pending' | 'approved' | 'rejected' | 'expired';
   // Metadata
   companyName?: string;
   companyLogo?: string;
@@ -43,8 +43,8 @@ export interface ProposalLink {
 
 // Generate unique token for proposal
 function generateToken(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let token = '';
   for (let i = 0; i < 32; i++) {
     token += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -76,7 +76,7 @@ export function createProposalFromCalculation(
     items.push({
       description: `Perfil ${cut.piece_name}`,
       quantity: cut.quantity,
-      unit: "pcs",
+      unit: 'pcs',
       unitPrice: cut.price_per_mm || 0,
       totalPrice: cut.total_price || cut.cut_length_mm * (cut.price_per_mm || 0) * cut.quantity,
     });
@@ -85,9 +85,9 @@ export function createProposalFromCalculation(
   // Add glass
   if (calculation.glass) {
     items.push({
-      description: `Vidro ${calculation.glass.glass_type || " temperado"} ${calculation.glass.thickness_mm}mm`,
+      description: `Vidro ${calculation.glass.glass_type || ' temperado'} ${calculation.glass.thickness_mm}mm`,
       quantity: calculation.glass.quantity || 1,
-      unit: "m²",
+      unit: 'm²',
       unitPrice: calculation.glass.price_per_m2 || 0,
       totalPrice: calculation.glass.total_price || 0,
     });
@@ -98,7 +98,7 @@ export function createProposalFromCalculation(
     items.push({
       description: comp.component_name,
       quantity: comp.quantity,
-      unit: comp.unit || "pcs",
+      unit: comp.unit || 'pcs',
       unitPrice: comp.unit_price || 0,
       totalPrice: comp.total_price || 0,
     });
@@ -120,7 +120,7 @@ export function createProposalFromCalculation(
     discount,
     total,
     notes,
-    status: "pending",
+    status: 'pending',
     companyName,
   };
 }
@@ -128,7 +128,7 @@ export function createProposalFromCalculation(
 // Generate shareable link
 export function generateProposalLink(proposal: ProposalData): ProposalLink {
   const token = generateToken();
-  
+
   // In a real app, this would save to database
   // For now, we'll use localStorage + URL params
   const baseUrl = window.location.origin;
@@ -162,7 +162,7 @@ export function decodeProposalFromUrl(encoded: string): ProposalData | null {
 export async function shareProposal(link: ProposalLink, proposal: ProposalData): Promise<boolean> {
   const shareData = {
     title: `Proposta ${proposal.id}`,
-    text: `Olá ${proposal.client.name}, segue nossa proposta comercial. Válida até ${new Date(link.expiresAt).toLocaleDateString("pt-BR")}.`,
+    text: `Olá ${proposal.client.name}, segue nossa proposta comercial. Válida até ${new Date(link.expiresAt).toLocaleDateString('pt-BR')}.`,
     url: link.url,
   };
 
@@ -187,9 +187,9 @@ export async function shareProposal(link: ProposalLink, proposal: ProposalData):
 
 // Format currency
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
   }).format(value);
 }
 
@@ -197,7 +197,7 @@ export function formatCurrency(value: number): string {
 export function generateProposalHTML(proposal: ProposalData): string {
   const itemsHTML = proposal.items
     .map(
-      (item) => `
+      item => `
     <tr>
       <td>${item.description}</td>
       <td style="text-align: center">${item.quantity}</td>
@@ -207,7 +207,7 @@ export function generateProposalHTML(proposal: ProposalData): string {
     </tr>
   `
     )
-    .join("");
+    .join('');
 
   return `
 <!DOCTYPE html>
@@ -237,7 +237,7 @@ export function generateProposalHTML(proposal: ProposalData): string {
 </head>
 <body>
   <div class="header">
-    <div class="company">${proposal.companyName || "AluFlow"}</div>
+    <div class="company">${proposal.companyName || 'AluFlow'}</div>
     <div class="title">Proposta Comercial - ${proposal.id}</div>
   </div>
 
@@ -245,14 +245,14 @@ export function generateProposalHTML(proposal: ProposalData): string {
     <div class="info-box">
       <h3>Dados do Cliente</h3>
       <p><strong>Nome:</strong> ${proposal.client.name}</p>
-      ${proposal.client.email ? `<p><strong>Email:</strong> ${proposal.client.email}</p>` : ""}
-      ${proposal.client.phone ? `<p><strong>Telefone:</strong> ${proposal.client.phone}</p>` : ""}
-      ${proposal.client.address ? `<p><strong>Endereço:</strong> ${proposal.client.address}</p>` : ""}
+      ${proposal.client.email ? `<p><strong>Email:</strong> ${proposal.client.email}</p>` : ''}
+      ${proposal.client.phone ? `<p><strong>Telefone:</strong> ${proposal.client.phone}</p>` : ''}
+      ${proposal.client.address ? `<p><strong>Endereço:</strong> ${proposal.client.address}</p>` : ''}
     </div>
     <div class="info-box">
       <h3>Dados da Proposta</h3>
-      <p><strong>Criação:</strong> ${new Date(proposal.createdAt).toLocaleDateString("pt-BR")}</p>
-      <p><strong>Validade:</strong> <span class="valid">${new Date(proposal.validUntil).toLocaleDateString("pt-BR")}</span></p>
+      <p><strong>Criação:</strong> ${new Date(proposal.createdAt).toLocaleDateString('pt-BR')}</p>
+      <p><strong>Validade:</strong> <span class="valid">${new Date(proposal.validUntil).toLocaleDateString('pt-BR')}</span></p>
       <p><strong>Status:</strong> <span class="status ${proposal.status}">${proposal.status.toUpperCase()}</span></p>
     </div>
   </div>
@@ -277,28 +277,36 @@ export function generateProposalHTML(proposal: ProposalData): string {
       <td>Subtotal:</td>
       <td style="text-align: right">${formatCurrency(proposal.subtotal)}</td>
     </tr>
-    ${proposal.discount > 0 ? `
+    ${
+      proposal.discount > 0
+        ? `
     <tr>
       <td>Desconto:</td>
       <td style="text-align: right; color: #059669;">-${formatCurrency(proposal.discount)}</td>
     </tr>
-    ` : ""}
+    `
+        : ''
+    }
     <tr class="total-row">
       <td>Total:</td>
       <td style="text-align: right; font-size: 18px;">${formatCurrency(proposal.total)}</td>
     </tr>
   </table>
 
-  ${proposal.notes ? `
+  ${
+    proposal.notes
+      ? `
   <div style="margin-top: 30px;">
     <h3>Observações</h3>
     <p>${proposal.notes}</p>
   </div>
-  ` : ""}
+  `
+      : ''
+  }
 
   <div class="footer">
     <p>Proposta gerada por AluFlow - Sistema de Gestão para Esquadrias de Alumínio</p>
-    <p>Este documento é válido até ${new Date(proposal.validUntil).toLocaleDateString("pt-BR")}</p>
+    <p>Este documento é válido até ${new Date(proposal.validUntil).toLocaleDateString('pt-BR')}</p>
   </div>
 </body>
 </html>

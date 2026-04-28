@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, FileDown, MessageCircle } from "lucide-react";
-import { formatCurrency } from "@/lib/formatters";
-import { tiposProduto, formasPagamento } from "@/data/orcamento-produtos";
-import { getColorById } from "@/components/frame-preview/colors";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Pencil, FileDown, MessageCircle } from 'lucide-react';
+import { formatCurrency } from '@/lib/formatters';
+import { tiposProduto, formasPagamento } from '@/data/orcamento-produtos';
+import { getColorById } from '@/components/frame-preview/colors';
 
 const ferragemColors = [
-  { id: "cromado", name: "Cromado", hex: "#C0C0C0" },
-  { id: "preto", name: "Preto", hex: "#333333" },
-  { id: "branco", name: "Branco", hex: "#F0F0F0" },
-  { id: "bronze", name: "Bronze", hex: "#8B6914" },
+  { id: 'cromado', name: 'Cromado', hex: '#C0C0C0' },
+  { id: 'preto', name: 'Preto', hex: '#333333' },
+  { id: 'branco', name: 'Branco', hex: '#F0F0F0' },
+  { id: 'bronze', name: 'Bronze', hex: '#8B6914' },
 ];
 
 export interface RevisaoItem {
@@ -79,14 +79,19 @@ export function RevisaoStep({
           {items.map((item, idx) => {
             const prod = tiposProduto.find(t => t.value === item.tipo);
             return (
-              <div key={item.id} className="flex items-start justify-between py-2 border-b last:border-0">
+              <div
+                key={item.id}
+                className="flex items-start justify-between py-2 border-b last:border-0"
+              >
                 <div>
-                  <p className="font-medium">{prod?.label || "Item"}</p>
+                  <p className="font-medium">{prod?.label || 'Item'}</p>
                   <p className="text-sm text-muted-foreground">
-                    {item.largura * 10}×{item.altura * 10}mm • Qtd: {item.quantidade} • {item.ambiente || "Sem ambiente"}
+                    {item.largura * 10}×{item.altura * 10}mm • Qtd: {item.quantidade} •{' '}
+                    {item.ambiente || 'Sem ambiente'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {item.vidroTipo} • {getColorById(item.colorId).name} • {ferragemColors.find(c => c.id === item.ferragemColorId)?.name}
+                    {item.vidroTipo} • {getColorById(item.colorId).name} •{' '}
+                    {ferragemColors.find(c => c.id === item.ferragemColorId)?.name}
                   </p>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEditItens}>
@@ -122,7 +127,9 @@ export function RevisaoStep({
           )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Pagamento</span>
-            <span>{formasPagamento.find(f => f.value === formaPagamento)?.label} ({parcelas}x)</span>
+            <span>
+              {formasPagamento.find(f => f.value === formaPagamento)?.label} ({parcelas}x)
+            </span>
           </div>
           {observacoes && (
             <div className="pt-2 border-t">
@@ -153,8 +160,11 @@ export function RevisaoStep({
         <Button onClick={onPDF} disabled={!cliente} className="gap-2">
           <FileDown className="h-4 w-4" /> PDF
         </Button>
-        <Button onClick={onWhatsApp} disabled={!cliente}
-          className="gap-2 text-green-600 border-green-600/30 hover:bg-green-600/10">
+        <Button
+          onClick={onWhatsApp}
+          disabled={!cliente}
+          className="gap-2 text-green-600 border-green-600/30 hover:bg-green-600/10"
+        >
           <MessageCircle className="h-4 w-4" /> WhatsApp
         </Button>
       </div>

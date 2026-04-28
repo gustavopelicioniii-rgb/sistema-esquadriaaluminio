@@ -23,7 +23,16 @@ export interface Profile {
   product_line_id: string;
   code: string;
   name: string;
-  profile_type: 'marco' | 'montante' | 'travessa' | 'trilho' | 'baguete' | 'contramarco' | 'arremate' | 'guia' | 'adaptador';
+  profile_type:
+    | 'marco'
+    | 'montante'
+    | 'travessa'
+    | 'trilho'
+    | 'baguete'
+    | 'contramarco'
+    | 'arremate'
+    | 'guia'
+    | 'adaptador';
   weight_per_meter: number;
   bar_length_mm: number;
   material: string;
@@ -35,8 +44,26 @@ export interface Typology {
   id: string;
   product_line_id: string;
   name: string;
-  category: 'janela' | 'porta' | 'vitro' | 'veneziana' | 'maxim_ar' | 'camarao' | 'pivotante' | 'basculante' | 'fachada';
-  subcategory?: 'correr' | 'giro' | 'maxim_ar' | 'camarao' | 'basculante' | 'pivotante' | 'fixo' | 'curtain_wall' | 'muro_cortina';
+  category:
+    | 'janela'
+    | 'porta'
+    | 'vitro'
+    | 'veneziana'
+    | 'maxim_ar'
+    | 'camarao'
+    | 'pivotante'
+    | 'basculante'
+    | 'fachada';
+  subcategory?:
+    | 'correr'
+    | 'giro'
+    | 'maxim_ar'
+    | 'camarao'
+    | 'basculante'
+    | 'pivotante'
+    | 'fixo'
+    | 'curtain_wall'
+    | 'muro_cortina';
   num_folhas: number;
   has_veneziana: boolean;
   has_bandeira: boolean;

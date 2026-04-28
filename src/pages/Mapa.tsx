@@ -1,31 +1,31 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, User, ExternalLink, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { usePageTitle } from "@/hooks/use-page-title";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Phone, User, ExternalLink, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { usePageTitle } from '@/hooks/use-page-title';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Mapa = () => {
-  usePageTitle("Mapa");
+  usePageTitle('Mapa');
 
   const { data: clientes = [], isLoading } = useQuery({
-    queryKey: ["clientes_mapa"],
+    queryKey: ['clientes_mapa'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("clientes")
-        .select("id, nome, endereco, telefone, cidade")
-        .order("nome");
+        .from('clientes')
+        .select('id, nome, endereco, telefone, cidade')
+        .order('nome');
       if (error) throw error;
       return data ?? [];
     },
   });
 
-  const locais = clientes.filter((c) => c.endereco?.trim());
+  const locais = clientes.filter(c => c.endereco?.trim());
 
   const openMaps = (endereco: string) => {
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`,
-      "_blank"
+      '_blank'
     );
   };
 
@@ -33,9 +33,7 @@ const Mapa = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Mapa</h1>
-        <p className="text-muted-foreground text-sm">
-          Localização de clientes e obras
-        </p>
+        <p className="text-muted-foreground text-sm">Localização de clientes e obras</p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -58,11 +56,9 @@ const Mapa = () => {
             </div>
           )}
           {!isLoading && locais.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              Nenhum cliente com endereço cadastrado.
-            </p>
+            <p className="text-sm text-muted-foreground">Nenhum cliente com endereço cadastrado.</p>
           )}
-          {locais.map((local) => (
+          {locais.map(local => (
             <Card
               key={local.id}
               className="shadow-sm border-border/50 hover:shadow-md transition-shadow"
@@ -85,7 +81,7 @@ const Mapa = () => {
                 <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
                   <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
                   {local.endereco}
-                  {local.cidade ? `, ${local.cidade}` : ""}
+                  {local.cidade ? `, ${local.cidade}` : ''}
                 </div>
                 {local.telefone && (
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

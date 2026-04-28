@@ -1,13 +1,7 @@
-import React from "react";
-import type { AluminumColor } from "./colorResolver";
-import { DEFAULT_ALUMINUM_COLOR } from "./colorResolver";
-import {
-  Glass,
-  ProfileFrame,
-  LeafFrame,
-  RailLines,
-  SlidingArrow,
-} from "./svgTemplates";
+import React from 'react';
+import type { AluminumColor } from './colorResolver';
+import { DEFAULT_ALUMINUM_COLOR } from './colorResolver';
+import { Glass, ProfileFrame, LeafFrame, RailLines, SlidingArrow } from './svgTemplates';
 
 interface SvgProps {
   width: number;
@@ -45,8 +39,20 @@ function SlidingWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 2 }: Sv
     <g>
       <ProfileFrame x={pad} y={pad} w={w} h={h} color={color} t={t} />
       {/* Rail indicators */}
-      <RailLines x={pad + t} y={pad + h - t + 2} w={w - 2 * t} numRails={Math.min(nf, 3)} color={color} />
-      <RailLines x={pad + t} y={pad + t - 4} w={w - 2 * t} numRails={Math.min(nf, 3)} color={color} />
+      <RailLines
+        x={pad + t}
+        y={pad + h - t + 2}
+        w={w - 2 * t}
+        numRails={Math.min(nf, 3)}
+        color={color}
+      />
+      <RailLines
+        x={pad + t}
+        y={pad + t - 4}
+        w={w - 2 * t}
+        numRails={Math.min(nf, 3)}
+        color={color}
+      />
       {/* Leaves */}
       {Array.from({ length: nf }).map((_, i) => {
         const fx = pad + t + folhaW * i;
@@ -55,7 +61,14 @@ function SlidingWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 2 }: Sv
           <g key={i}>
             <LeafFrame x={fx + 1} y={fy + 1} w={folhaW - 2} h={folhaH - 2} color={color} t={t} />
             {i < nf - 1 && (
-              <line x1={fx + folhaW} y1={fy} x2={fx + folhaW} y2={fy + folhaH} stroke={color.frameDark} strokeWidth="1" />
+              <line
+                x1={fx + folhaW}
+                y1={fy}
+                x2={fx + folhaW}
+                y2={fy + folhaH}
+                stroke={color.frameDark}
+                strokeWidth="1"
+              />
             )}
           </g>
         );
@@ -65,7 +78,16 @@ function SlidingWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 2 }: Sv
         const cx = pad + t + folhaW * i + folhaW / 2;
         const cy = pad + h / 2;
         const dir = i % 2 === 0 ? 1 : -1;
-        return <SlidingArrow key={i} cx={cx} cy={cy} size={arrowSize} direction={dir as 1 | -1} color={color} />;
+        return (
+          <SlidingArrow
+            key={i}
+            cx={cx}
+            cy={cy}
+            size={arrowSize}
+            direction={dir as 1 | -1}
+            color={color}
+          />
+        );
       })}
     </g>
   );
@@ -97,7 +119,14 @@ function FixedWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 1 }: SvgP
           <g key={i}>
             <LeafFrame x={fx} y={fy} w={folhaW} h={folhaH} color={color} t={t} />
             {col < cols - 1 && (
-              <line x1={fx + folhaW + 2} y1={fy} x2={fx + folhaW + 2} y2={fy + folhaH} stroke={color.frameDark} strokeWidth="0.8" />
+              <line
+                x1={fx + folhaW + 2}
+                y1={fy}
+                x2={fx + folhaW + 2}
+                y2={fy + folhaH}
+                stroke={color.frameDark}
+                strokeWidth="0.8"
+              />
             )}
           </g>
         );
@@ -126,7 +155,7 @@ function MaximArWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 1 }: Sv
       {/* Leaves projected outward */}
       {Array.from({ length: nf }).map((_, i) => {
         const offset = (i - (nf - 1) / 2) * gap * 0.5;
-        const fx = pad + t + (w - 2 * t - folhaW) * (0.15 + i * 0.7 / (nf - 1 || 1));
+        const fx = pad + t + (w - 2 * t - folhaW) * (0.15 + (i * 0.7) / (nf - 1 || 1));
         const fy = pad + t - offset;
         return (
           <g key={i} opacity="0.9">
@@ -142,22 +171,22 @@ function MaximArWindow({ svgWidth: sw, svgHeight: sh, color, numFolhas = 1 }: Sv
 // TYPOLOGY SVG DISPATCHER
 // ============================================================
 export function getTypologySvg(type: string, props: SvgProps): React.ReactElement {
-  const slidingTypes = ["2f", "3f", "4f", "6f", "deslizante"];
-  const fixedTypes = ["1f", "2fx", "3fx", "fixa", "maxim_ar"];
-  
+  const slidingTypes = ['2f', '3f', '4f', '6f', 'deslizante'];
+  const fixedTypes = ['1f', '2fx', '3fx', 'fixa', 'maxim_ar'];
+
   // Safety check: ensure color is never undefined
   const safeProps = {
     ...props,
     color: props.color || DEFAULT_ALUMINUM_COLOR,
   };
-  
+
   if (slidingTypes.includes(type)) {
     return <SlidingWindow {...safeProps} />;
   }
   if (fixedTypes.includes(type)) {
     return <FixedWindow {...safeProps} />;
   }
-  if (type === "projetante" || type === "maxim-ar") {
+  if (type === 'projetante' || type === 'maxim-ar') {
     return <MaximArWindow {...safeProps} />;
   }
   // Default to sliding 2F

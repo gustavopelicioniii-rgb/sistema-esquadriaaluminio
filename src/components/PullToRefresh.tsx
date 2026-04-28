@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback, type ReactNode } from "react";
-import { Loader2, ArrowDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile-device";
+import { useState, useRef, useCallback, type ReactNode } from 'react';
+import { Loader2, ArrowDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile-device';
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
@@ -19,22 +19,28 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
 
   const threshold = 80;
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (!isMobile || refreshing) return;
-    const el = containerRef.current;
-    if (el && el.scrollTop === 0) {
-      startY.current = e.touches[0].clientY;
-      setPulling(true);
-    }
-  }, [isMobile, refreshing]);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isMobile || refreshing) return;
+      const el = containerRef.current;
+      if (el && el.scrollTop === 0) {
+        startY.current = e.touches[0].clientY;
+        setPulling(true);
+      }
+    },
+    [isMobile, refreshing]
+  );
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!pulling || refreshing) return;
-    const delta = e.touches[0].clientY - startY.current;
-    if (delta > 0) {
-      setPullDistance(Math.min(delta * 0.5, 120));
-    }
-  }, [pulling, refreshing]);
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!pulling || refreshing) return;
+      const delta = e.touches[0].clientY - startY.current;
+      if (delta > 0) {
+        setPullDistance(Math.min(delta * 0.5, 120));
+      }
+    },
+    [pulling, refreshing]
+  );
 
   const handleTouchEnd = useCallback(async () => {
     if (!pulling) return;
@@ -62,7 +68,7 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
   return (
     <div
       ref={containerRef}
-      className={cn("relative", className)}
+      className={cn('relative', className)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -77,8 +83,8 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
         ) : (
           <ArrowDown
             className={cn(
-              "h-5 w-5 text-muted-foreground transition-transform duration-200",
-              progress >= 1 && "text-primary rotate-180"
+              'h-5 w-5 text-muted-foreground transition-transform duration-200',
+              progress >= 1 && 'text-primary rotate-180'
             )}
             style={{ transform: `rotate(${progress * 180}deg)` }}
           />

@@ -1,13 +1,31 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { supportedMachines, getMachineFormats, downloadCutFile, type CNCMachine } from "@/utils/cnc/cutFileExporter";
-import type { OptimizationResult } from "@/types/calculation";
-import { Download, Settings2, Scissors, Gauge, Ruler, RotateCcw } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
+  supportedMachines,
+  getMachineFormats,
+  downloadCutFile,
+  type CNCMachine,
+} from '@/utils/cnc/cutFileExporter';
+import type { OptimizationResult } from '@/types/calculation';
+import { Download, Settings2, Scissors, Gauge, Ruler, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface CNCExportDialogProps {
   open: boolean;
@@ -16,9 +34,14 @@ interface CNCExportDialogProps {
   defaultMachine?: string;
 }
 
-export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine = "generic-gcode" }: CNCExportDialogProps) {
+export function CNCExportDialog({
+  open,
+  onOpenChange,
+  barResults,
+  defaultMachine = 'generic-gcode',
+}: CNCExportDialogProps) {
   const [selectedMachine, setSelectedMachine] = useState(defaultMachine);
-  const [cncFormat, setCncFormat] = useState<"gcode" | "csv" | "xml" | "proprietary">("gcode");
+  const [cncFormat, setCncFormat] = useState<'gcode' | 'csv' | 'xml' | 'proprietary'>('gcode');
   const [feedRate, setFeedRate] = useState(1000);
   const [cutSpeed, setCutSpeed] = useState(3000);
   const [kerfWidth, setKerfWidth] = useState(3);
@@ -30,12 +53,12 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
 
   const handleExport = () => {
     if (!barResults || barResults.length === 0) {
-      toast.error("Nenhum dado de otimização disponível");
+      toast.error('Nenhum dado de otimização disponível');
       return;
     }
 
     if (availableFormats.length === 0) {
-      toast.error("Máquina não suporta exportação");
+      toast.error('Máquina não suporta exportação');
       return;
     }
 
@@ -50,7 +73,7 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
       toast.success(`Arquivo ${cncFormat.toUpperCase()} exportado com sucesso!`);
       onOpenChange(false);
     } catch (error) {
-      toast.error("Erro ao exportar arquivo CNC");
+      toast.error('Erro ao exportar arquivo CNC');
       console.error(error);
     } finally {
       setIsExporting(false);
@@ -66,10 +89,10 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
 
   const getFormatLabel = (format: string) => {
     const labels: Record<string, string> = {
-      gcode: "G-Code (.nc)",
-      csv: "CSV (.csv)",
-      xml: "XML (.xml)",
-      proprietary: "Proprietário (.txt)",
+      gcode: 'G-Code (.nc)',
+      csv: 'CSV (.csv)',
+      xml: 'XML (.xml)',
+      proprietary: 'Proprietário (.txt)',
     };
     return labels[format] || format;
   };
@@ -96,7 +119,7 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
                 <SelectValue placeholder="Selecione a máquina" />
               </SelectTrigger>
               <SelectContent>
-                {supportedMachines.map((m) => (
+                {supportedMachines.map(m => (
                   <SelectItem key={m.id} value={m.id}>
                     <div className="flex flex-col">
                       <span className="font-medium">{m.name}</span>
@@ -113,16 +136,16 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
           {/* Format Selection */}
           <div className="space-y-2">
             <Label>Formato</Label>
-            <Select 
-              value={cncFormat} 
-              onValueChange={(v) => setCncFormat(v as typeof cncFormat)}
+            <Select
+              value={cncFormat}
+              onValueChange={v => setCncFormat(v as typeof cncFormat)}
               disabled={availableFormats.length <= 1}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {availableFormats.map((f) => (
+                {availableFormats.map(f => (
                   <SelectItem key={f} value={f}>
                     {getFormatLabel(f)}
                   </SelectItem>
@@ -146,10 +169,12 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
                   <span className="text-muted-foreground">Modelo:</span> {machine.model}
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Barra máx:</span> {machine.max_bar_length_mm}mm
+                  <span className="text-muted-foreground">Barra máx:</span>{' '}
+                  {machine.max_bar_length_mm}mm
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Corte 45°:</span> {machine.supports_45_degrees ? "Sim" : "Não"}
+                  <span className="text-muted-foreground">Corte 45°:</span>{' '}
+                  {machine.supports_45_degrees ? 'Sim' : 'Não'}
                 </div>
               </div>
             </div>
@@ -169,7 +194,7 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
               max="3000"
               step="100"
               value={feedRate}
-              onChange={(e) => setFeedRate(Number(e.target.value))}
+              onChange={e => setFeedRate(Number(e.target.value))}
               className="w-full"
             />
           </div>
@@ -187,7 +212,7 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
               max="6000"
               step="100"
               value={cutSpeed}
-              onChange={(e) => setCutSpeed(Number(e.target.value))}
+              onChange={e => setCutSpeed(Number(e.target.value))}
               className="w-full"
             />
           </div>
@@ -205,7 +230,7 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
               max="5"
               step="0.5"
               value={kerfWidth}
-              onChange={(e) => setKerfWidth(Number(e.target.value))}
+              onChange={e => setKerfWidth(Number(e.target.value))}
               className="w-full"
             />
           </div>
@@ -228,9 +253,13 @@ export function CNCExportDialog({ open, onOpenChange, barResults, defaultMachine
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleExport} disabled={isExporting || !barResults?.length} className="gap-1">
+          <Button
+            onClick={handleExport}
+            disabled={isExporting || !barResults?.length}
+            className="gap-1"
+          >
             <Download className="h-4 w-4" />
-            {isExporting ? "Exportando..." : "Exportar"}
+            {isExporting ? 'Exportando...' : 'Exportar'}
           </Button>
         </DialogFooter>
       </DialogContent>

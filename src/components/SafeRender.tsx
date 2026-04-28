@@ -1,4 +1,4 @@
-import { Component, ReactNode } from "react";
+import { Component, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -18,7 +18,7 @@ export class SafeRender extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error) {
-    console.warn("SafeRender caught:", error.message);
+    console.warn('SafeRender caught:', error.message);
     this.props.onError?.(error);
   }
 

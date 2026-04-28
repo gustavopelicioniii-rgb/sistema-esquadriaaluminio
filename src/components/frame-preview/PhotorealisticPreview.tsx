@@ -1,6 +1,6 @@
 // This component is deprecated - use FramePreview directly for SVG rendering
 // Photorealistic images have been removed per user request
-import FramePreview from "./FramePreview";
+import FramePreview from './FramePreview';
 
 interface PhotorealisticPreviewProps {
   imagemUrl?: string;

@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-type FilterMode = "todos" | "nenhum" | "somente";
+type FilterMode = 'todos' | 'nenhum' | 'somente';
 
 interface FilterSectionProps {
   title: string;
@@ -15,11 +15,16 @@ interface FilterSectionProps {
   onSelectedChange: (selected: string[]) => void;
 }
 
-function FilterSection({ title, mode, onModeChange, options, selected, onSelectedChange }: FilterSectionProps) {
+function FilterSection({
+  title,
+  mode,
+  onModeChange,
+  options,
+  selected,
+  onSelectedChange,
+}: FilterSectionProps) {
   const toggleOption = (key: string) => {
-    onSelectedChange(
-      selected.includes(key) ? selected.filter(k => k !== key) : [...selected, key]
-    );
+    onSelectedChange(selected.includes(key) ? selected.filter(k => k !== key) : [...selected, key]);
   };
 
   return (
@@ -32,20 +37,26 @@ function FilterSection({ title, mode, onModeChange, options, selected, onSelecte
       <CardContent className="px-3 pb-3 space-y-3">
         <RadioGroup
           value={mode}
-          onValueChange={(v) => onModeChange(v as FilterMode)}
+          onValueChange={v => onModeChange(v as FilterMode)}
           className="flex flex-wrap gap-x-4 gap-y-1"
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="todos" id={`${title}-todos`} />
-            <Label htmlFor={`${title}-todos`} className="text-xs font-semibold cursor-pointer">TODOS</Label>
+            <Label htmlFor={`${title}-todos`} className="text-xs font-semibold cursor-pointer">
+              TODOS
+            </Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="nenhum" id={`${title}-nenhum`} />
-            <Label htmlFor={`${title}-nenhum`} className="text-xs font-semibold cursor-pointer">NENHUM</Label>
+            <Label htmlFor={`${title}-nenhum`} className="text-xs font-semibold cursor-pointer">
+              NENHUM
+            </Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="somente" id={`${title}-somente`} />
-            <Label htmlFor={`${title}-somente`} className="text-xs font-semibold cursor-pointer">SOMENTE</Label>
+            <Label htmlFor={`${title}-somente`} className="text-xs font-semibold cursor-pointer">
+              SOMENTE
+            </Label>
           </div>
         </RadioGroup>
 
@@ -55,8 +66,10 @@ function FilterSection({ title, mode, onModeChange, options, selected, onSelecte
               <div key={opt.key} className="flex items-center gap-2">
                 <Checkbox
                   id={`${title}-${opt.key}`}
-                  checked={mode === "todos" ? true : mode === "nenhum" ? false : selected.includes(opt.key)}
-                  disabled={mode !== "somente"}
+                  checked={
+                    mode === 'todos' ? true : mode === 'nenhum' ? false : selected.includes(opt.key)
+                  }
+                  disabled={mode !== 'somente'}
                   onCheckedChange={() => toggleOption(opt.key)}
                 />
                 <Label
@@ -115,29 +128,27 @@ export interface CalculoFiltersState {
 
 const defaultState: CalculoFiltersState = {
   perfisClasses: { contramarcos: true, arremates: false, caixilhos: false },
-  perfisFases: { mode: "todos", selected: [] },
-  componentes: { mode: "todos", selected: [] },
-  vidros: { mode: "todos", selected: [] },
-  telasChapas: { mode: "nenhum", selected: [] },
+  perfisFases: { mode: 'todos', selected: [] },
+  componentes: { mode: 'todos', selected: [] },
+  vidros: { mode: 'todos', selected: [] },
+  telasChapas: { mode: 'nenhum', selected: [] },
 };
 
 const fasesOptions = [
-  { key: "arremate", label: "Arremate" },
-  { key: "cm", label: "CM" },
-  { key: "esteira", label: "Esteira" },
-  { key: "fabr", label: "Fabr" },
+  { key: 'arremate', label: 'Arremate' },
+  { key: 'cm', label: 'CM' },
+  { key: 'esteira', label: 'Esteira' },
+  { key: 'fabr', label: 'Fabr' },
 ];
 
 const componentesOptions = [
-  { key: "arremate", label: "Arremate" },
-  { key: "cm", label: "CM" },
-  { key: "esteira", label: "Esteira" },
-  { key: "fabr", label: "Fabr" },
+  { key: 'arremate', label: 'Arremate' },
+  { key: 'cm', label: 'CM' },
+  { key: 'esteira', label: 'Esteira' },
+  { key: 'fabr', label: 'Fabr' },
 ];
 
-const vidrosOptions = [
-  { key: "vidros", label: "Vidros" },
-];
+const vidrosOptions = [{ key: 'vidros', label: 'Vidros' }];
 
 interface Props {
   value?: CalculoFiltersState;
@@ -153,7 +164,10 @@ export default function CalculoFilters({ value, onChange }: Props) {
   };
 
   const toggleClass = (key: keyof typeof state.perfisClasses) => {
-    update({ ...state, perfisClasses: { ...state.perfisClasses, [key]: !state.perfisClasses[key] } });
+    update({
+      ...state,
+      perfisClasses: { ...state.perfisClasses, [key]: !state.perfisClasses[key] },
+    });
   };
 
   return (
@@ -164,21 +178,35 @@ export default function CalculoFilters({ value, onChange }: Props) {
         {/* Perfis Classes */}
         <ClassesSection
           classes={[
-            { key: "contramarcos", label: "CONTRAMARCOS", checked: state.perfisClasses.contramarcos },
-            { key: "arremates", label: "ARREMATES (REMATES/ALIZARES)", checked: state.perfisClasses.arremates },
-            { key: "caixilhos", label: "CAIXILHOS (PERFIS EXCETO CONTRAMARCOS E ARREMATES)", checked: state.perfisClasses.caixilhos },
+            {
+              key: 'contramarcos',
+              label: 'CONTRAMARCOS',
+              checked: state.perfisClasses.contramarcos,
+            },
+            {
+              key: 'arremates',
+              label: 'ARREMATES (REMATES/ALIZARES)',
+              checked: state.perfisClasses.arremates,
+            },
+            {
+              key: 'caixilhos',
+              label: 'CAIXILHOS (PERFIS EXCETO CONTRAMARCOS E ARREMATES)',
+              checked: state.perfisClasses.caixilhos,
+            },
           ]}
-          onToggle={(key) => toggleClass(key as keyof typeof state.perfisClasses)}
+          onToggle={key => toggleClass(key as keyof typeof state.perfisClasses)}
         />
 
         {/* Perfis Fases */}
         <FilterSection
           title="Calcular Perfis (Fases)"
           mode={state.perfisFases.mode}
-          onModeChange={(mode) => update({ ...state, perfisFases: { ...state.perfisFases, mode } })}
+          onModeChange={mode => update({ ...state, perfisFases: { ...state.perfisFases, mode } })}
           options={fasesOptions}
           selected={state.perfisFases.selected}
-          onSelectedChange={(selected) => update({ ...state, perfisFases: { ...state.perfisFases, selected } })}
+          onSelectedChange={selected =>
+            update({ ...state, perfisFases: { ...state.perfisFases, selected } })
+          }
         />
       </div>
 
@@ -187,30 +215,34 @@ export default function CalculoFilters({ value, onChange }: Props) {
         <FilterSection
           title="Calcular Componentes"
           mode={state.componentes.mode}
-          onModeChange={(mode) => update({ ...state, componentes: { ...state.componentes, mode } })}
+          onModeChange={mode => update({ ...state, componentes: { ...state.componentes, mode } })}
           options={componentesOptions}
           selected={state.componentes.selected}
-          onSelectedChange={(selected) => update({ ...state, componentes: { ...state.componentes, selected } })}
+          onSelectedChange={selected =>
+            update({ ...state, componentes: { ...state.componentes, selected } })
+          }
         />
 
         {/* Vidros */}
         <FilterSection
           title="Calcular Vidros"
           mode={state.vidros.mode}
-          onModeChange={(mode) => update({ ...state, vidros: { ...state.vidros, mode } })}
+          onModeChange={mode => update({ ...state, vidros: { ...state.vidros, mode } })}
           options={vidrosOptions}
           selected={state.vidros.selected}
-          onSelectedChange={(selected) => update({ ...state, vidros: { ...state.vidros, selected } })}
+          onSelectedChange={selected => update({ ...state, vidros: { ...state.vidros, selected } })}
         />
 
         {/* Telas/Chapas */}
         <FilterSection
           title="Calcular Telas Chapas"
           mode={state.telasChapas.mode}
-          onModeChange={(mode) => update({ ...state, telasChapas: { ...state.telasChapas, mode } })}
+          onModeChange={mode => update({ ...state, telasChapas: { ...state.telasChapas, mode } })}
           options={[]}
           selected={state.telasChapas.selected}
-          onSelectedChange={(selected) => update({ ...state, telasChapas: { ...state.telasChapas, selected } })}
+          onSelectedChange={selected =>
+            update({ ...state, telasChapas: { ...state.telasChapas, selected } })
+          }
         />
       </div>
     </div>

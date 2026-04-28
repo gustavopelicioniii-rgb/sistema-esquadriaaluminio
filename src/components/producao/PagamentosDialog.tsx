@@ -1,15 +1,26 @@
-import { useState, useEffect, useCallback } from "react";
-import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogFooter } from "@/components/ui/responsive-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
-import { supabase } from "@/integrations/supabase/client";
-import { formatCurrency } from "@/lib/formatters";
-import { Check, Plus, Trash2 } from "lucide-react";
-import type { Pedido } from "@/pages/Producao";
-import { toast } from "sonner";
+import { useState, useEffect, useCallback } from 'react';
+import {
+  ResponsiveDialog,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogFooter,
+} from '@/components/ui/responsive-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { supabase } from '@/integrations/supabase/client';
+import { formatCurrency } from '@/lib/formatters';
+import { Check, Plus, Trash2 } from 'lucide-react';
+import type { Pedido } from '@/pages/Producao';
+import { toast } from 'sonner';
 
 interface Pagamento {
   id: string;
@@ -26,17 +37,17 @@ interface Props {
 
 export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) {
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
-  const [valor, setValor] = useState("");
-  const [data, setData] = useState("");
-  const [forma, setForma] = useState("pix");
+  const [valor, setValor] = useState('');
+  const [data, setData] = useState('');
+  const [forma, setForma] = useState('pix');
   const [loading, setLoading] = useState(false);
 
   const fetchPagamentos = useCallback(async () => {
     const { data: rows } = await supabase
-      .from("pagamentos")
-      .select("id, valor, data, forma")
-      .eq("pedido_id", pedido.id)
-      .order("data", { ascending: true });
+      .from('pagamentos')
+      .select('id, valor, data, forma')
+      .eq('pedido_id', pedido.id)
+      .order('data', { ascending: true });
     setPagamentos((rows as Pagamento[]) || []);
   }, [pedido.id]);
 
@@ -51,11 +62,11 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
   const handleAdd = async () => {
     const v = parseFloat(valor);
     if (!v || v <= 0 || !data) {
-      toast.error("Erro", { description: "Preencha valor e data." });
+      toast.error('Erro', { description: 'Preencha valor e data.' });
       return;
     }
     setLoading(true);
-    const { error } = await supabase.from("pagamentos").insert({
+    const { error } = await supabase.from('pagamentos').insert({
       pedido_id: pedido.id,
       valor: v,
       data,
@@ -63,18 +74,18 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
     } as any);
     setLoading(false);
     if (error) {
-      toast.error("Erro", { description: error.message });
+      toast.error('Erro', { description: error.message });
       return;
     }
-    setValor("");
-    setData("");
-    toast.success("Pagamento registrado", { description: `${formatCurrency(v)} via ${forma}` });
+    setValor('');
+    setData('');
+    toast.success('Pagamento registrado', { description: `${formatCurrency(v)} via ${forma}` });
     fetchPagamentos();
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from("pagamentos").delete().eq("id", id);
-    toast.success("Pagamento removido");
+    await supabase.from('pagamentos').delete().eq('id', id);
+    toast.success('Pagamento removido');
     fetchPagamentos();
   };
 
@@ -95,7 +106,9 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
           </div>
           <div className="rounded-lg bg-destructive/10 p-3">
             <p className="text-xs text-muted-foreground">Restante</p>
-            <p className="font-bold text-sm text-destructive">{formatCurrency(Math.max(0, restante))}</p>
+            <p className="font-bold text-sm text-destructive">
+              {formatCurrency(Math.max(0, restante))}
+            </p>
           </div>
         </div>
 
@@ -109,12 +122,21 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
 
         {pagamentos.length > 0 && (
           <div className="space-y-1 max-h-32 overflow-y-auto">
-            {pagamentos.map((p) => (
-              <div key={p.id} className="flex items-center justify-between text-xs p-2 bg-muted/30 rounded">
-                <span className="flex items-center gap-1"><Check className="h-3 w-3 text-primary" />{p.data}</span>
+            {pagamentos.map(p => (
+              <div
+                key={p.id}
+                className="flex items-center justify-between text-xs p-2 bg-muted/30 rounded"
+              >
+                <span className="flex items-center gap-1">
+                  <Check className="h-3 w-3 text-primary" />
+                  {p.data}
+                </span>
                 <span className="capitalize">{p.forma}</span>
                 <span className="font-medium">{formatCurrency(Number(p.valor))}</span>
-                <button onClick={() => handleDelete(p.id)} className="text-destructive hover:text-destructive/80">
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  className="text-destructive hover:text-destructive/80"
+                >
                   <Trash2 className="h-3 w-3" />
                 </button>
               </div>
@@ -127,16 +149,23 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">Valor (R$)</Label>
-              <Input type="number" placeholder="0,00" value={valor} onChange={(e) => setValor(e.target.value)} />
+              <Input
+                type="number"
+                placeholder="0,00"
+                value={valor}
+                onChange={e => setValor(e.target.value)}
+              />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Data</Label>
-              <Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+              <Input type="date" value={data} onChange={e => setData(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Forma</Label>
               <Select value={forma} onValueChange={setForma}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pix">PIX</SelectItem>
                   <SelectItem value="dinheiro">Dinheiro</SelectItem>
@@ -153,7 +182,9 @@ export default function PagamentosDialog({ open, onOpenChange, pedido }: Props) 
         </div>
       </div>
       <ResponsiveDialogFooter>
-        <Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+          Fechar
+        </Button>
       </ResponsiveDialogFooter>
     </ResponsiveDialog>
   );

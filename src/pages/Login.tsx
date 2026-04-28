@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, LogIn, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LogIn, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -26,13 +26,13 @@ export default function Login() {
       });
 
       if (error) {
-        toast.error("Erro ao entrar", { description: error.message });
+        toast.error('Erro ao entrar', { description: error.message });
       } else {
-        toast.success("Bem-vindo de volta!");
-        navigate("/");
+        toast.success('Bem-vindo de volta!');
+        navigate('/');
       }
     } catch {
-      toast.error("Erro inesperado");
+      toast.error('Erro inesperado');
     } finally {
       setLoading(false);
     }
@@ -59,11 +59,17 @@ export default function Login() {
         {/* Hero text */}
         <div className="relative z-10 space-y-6">
           <h1 className="text-4xl xl:text-5xl font-bold leading-tight">
-            Gestão inteligente para{" "}
+            Gestão inteligente para{' '}
             <span className="text-primary relative">
               esquadrias
               <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                <path d="M2 10C50 2 150 2 198 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary/50" />
+                <path
+                  d="M2 10C50 2 150 2 198 10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  className="text-primary/50"
+                />
               </svg>
             </span>
           </h1>
@@ -127,31 +133,38 @@ export default function Login() {
               {/* Form */}
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">E-mail</Label>
+                  <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+                    E-mail
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="seu@email.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                     required
                     className="h-11 bg-muted/30 border-border/50 focus:bg-background transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">Senha</Label>
-                    <Link to="/esqueci-senha" className="text-xs text-primary/80 hover:text-primary hover:underline transition-colors">
+                    <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+                      Senha
+                    </Label>
+                    <Link
+                      to="/esqueci-senha"
+                      className="text-xs text-primary/80 hover:text-primary hover:underline transition-colors"
+                    >
                       Esqueceu a senha?
                     </Link>
                   </div>
                   <div className="relative">
                     <Input
                       id="password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={e => setPassword(e.target.value)}
                       required
                       className="h-11 bg-muted/30 border-border/50 focus:bg-background transition-colors pr-10"
                     />
@@ -184,7 +197,7 @@ export default function Login() {
               </form>
 
               <p className="text-center text-sm text-muted-foreground mt-6">
-                Não tem conta?{" "}
+                Não tem conta?{' '}
                 <Link to="/cadastro" className="text-primary font-semibold hover:underline">
                   Cadastre-se grátis
                 </Link>
@@ -194,10 +207,14 @@ export default function Login() {
 
           {/* Footer */}
           <p className="text-center text-xs text-muted-foreground">
-            Ao continuar, você concorda com nossos{" "}
-            <a href="#" className="text-primary/80 hover:text-primary hover:underline">Termos de Uso</a>
-            {" "}e{" "}
-            <a href="#" className="text-primary/80 hover:text-primary hover:underline">Política de Privacidade</a>
+            Ao continuar, você concorda com nossos{' '}
+            <a href="#" className="text-primary/80 hover:text-primary hover:underline">
+              Termos de Uso
+            </a>{' '}
+            e{' '}
+            <a href="#" className="text-primary/80 hover:text-primary hover:underline">
+              Política de Privacidade
+            </a>
           </p>
         </div>
       </div>

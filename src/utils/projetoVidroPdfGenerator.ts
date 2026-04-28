@@ -1,5 +1,5 @@
-import { jsPDF } from "jspdf";
-import { formatCurrency } from "@/lib/formatters";
+import { jsPDF } from 'jspdf';
+import { formatCurrency } from '@/lib/formatters';
 
 interface VidroItem {
   id: string;
@@ -32,7 +32,7 @@ function calcAreaEfetiva(largMm: number, altMm: number, areaMinimaM2: number): n
 }
 
 export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = 210;
   const M = 15;
   const CW = W - M * 2;
@@ -47,25 +47,25 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
 
   // Header bar
   pdf.setFillColor(59, 130, 246);
-  pdf.rect(0, 0, W, 28, "F");
+  pdf.rect(0, 0, W, 28, 'F');
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(18);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Projeto de Vidro", M, 12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Projeto de Vidro', M, 12);
   pdf.setFontSize(10);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`, M, 20);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, M, 20);
   y = 38;
 
   // Project info
   pdf.setTextColor(30, 30, 30);
   pdf.setFontSize(14);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont('helvetica', 'bold');
   pdf.text(projeto.titulo, M, y);
   y += 8;
 
   pdf.setFontSize(10);
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont('helvetica', 'normal');
   pdf.setTextColor(100, 100, 100);
   let specs = `Tipo: ${projeto.tipo}  |  Espessura: ${projeto.espessura}  |  Cor: ${projeto.cor}  |  Criado: ${projeto.criadoEm}`;
   if (areaMin > 0) specs += `  |  Área mín: ${areaMin} m²`;
@@ -76,23 +76,23 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
   const cardW = CW / 3;
   const cardH = 18;
   const cards = [
-    { label: "Preco/m2", value: formatCurrency(projeto.precoM2) },
-    { label: "Area Total", value: `${areaTotal.toFixed(2)} m2` },
-    { label: "Valor Total", value: formatCurrency(valorTotal) },
+    { label: 'Preco/m2', value: formatCurrency(projeto.precoM2) },
+    { label: 'Area Total', value: `${areaTotal.toFixed(2)} m2` },
+    { label: 'Valor Total', value: formatCurrency(valorTotal) },
   ];
 
   cards.forEach((card, i) => {
     const x = M + i * cardW;
     pdf.setFillColor(245, 247, 250);
-    pdf.roundedRect(x + 1, y, cardW - 2, cardH, 2, 2, "F");
+    pdf.roundedRect(x + 1, y, cardW - 2, cardH, 2, 2, 'F');
     pdf.setFontSize(8);
     pdf.setTextColor(120, 120, 120);
     pdf.text(card.label, x + 4, y + 6);
     pdf.setFontSize(12);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(30, 30, 30);
     pdf.text(card.value, x + 4, y + 14);
-    pdf.setFont("helvetica", "normal");
+    pdf.setFont('helvetica', 'normal');
   });
 
   y += cardH + 10;
@@ -100,29 +100,29 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
   // Table header
   if (projeto.itens.length > 0) {
     pdf.setFillColor(59, 130, 246);
-    pdf.rect(M, y, CW, 8, "F");
+    pdf.rect(M, y, CW, 8, 'F');
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(8);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont('helvetica', 'bold');
 
     const cols = [
-      { label: "DESCRICAO", x: M + 2, w: 52 },
-      { label: "LARG (mm)", x: M + 56, w: 22 },
-      { label: "ALT (mm)", x: M + 80, w: 22 },
-      { label: "QTD", x: M + 104, w: 12 },
-      { label: "AREA (m2)", x: M + 118, w: 22 },
-      { label: "VALOR", x: M + 142, w: 20 },
-      { label: "OBS", x: M + 164, w: 16 },
+      { label: 'DESCRICAO', x: M + 2, w: 52 },
+      { label: 'LARG (mm)', x: M + 56, w: 22 },
+      { label: 'ALT (mm)', x: M + 80, w: 22 },
+      { label: 'QTD', x: M + 104, w: 12 },
+      { label: 'AREA (m2)', x: M + 118, w: 22 },
+      { label: 'VALOR', x: M + 142, w: 20 },
+      { label: 'OBS', x: M + 164, w: 16 },
     ];
 
-    cols.forEach((col) => {
+    cols.forEach(col => {
       pdf.text(col.label, col.x, y + 5.5);
     });
 
     y += 8;
 
     // Table rows
-    pdf.setFont("helvetica", "normal");
+    pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(9);
 
     projeto.itens.forEach((item, idx) => {
@@ -140,7 +140,7 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
 
       if (idx % 2 === 0) {
         pdf.setFillColor(249, 250, 251);
-        pdf.rect(M, y, CW, rowH, "F");
+        pdf.rect(M, y, CW, rowH, 'F');
       }
 
       pdf.setTextColor(50, 50, 50);
@@ -179,14 +179,14 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
     let footerText = `${projeto.itens.length} vidro(s)  •  ${areaTotal.toFixed(2)} m2 total`;
     if (areaMin > 0) footerText += `  •  * = área mínima aplicada (${areaMin} m²)`;
     pdf.text(footerText, M, y + 3);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(59, 130, 246);
     pdf.setFontSize(11);
-    pdf.text(formatCurrency(valorTotal), M + CW - 2, y + 3, { align: "right" });
+    pdf.text(formatCurrency(valorTotal), M + CW - 2, y + 3, { align: 'right' });
   } else {
     pdf.setTextColor(150, 150, 150);
     pdf.setFontSize(10);
-    pdf.text("Nenhum vidro adicionado ao projeto.", M, y + 5);
+    pdf.text('Nenhum vidro adicionado ao projeto.', M, y + 5);
   }
 
   // Footer
@@ -195,8 +195,8 @@ export function exportProjetoVidroPDF(projeto: ProjetoVidro) {
   pdf.line(M, pageH - 12, M + CW, pageH - 12);
   pdf.setFontSize(7);
   pdf.setTextColor(160, 160, 160);
-  pdf.text("AlumPRO - Sistema de Esquadrias", M, pageH - 7);
-  pdf.text(`Pagina 1`, M + CW, pageH - 7, { align: "right" });
+  pdf.text('AlumPRO - Sistema de Esquadrias', M, pageH - 7);
+  pdf.text(`Pagina 1`, M + CW, pageH - 7, { align: 'right' });
 
-  pdf.save(`projeto-vidro-${projeto.titulo.replace(/\s+/g, "-").toLowerCase()}.pdf`);
+  pdf.save(`projeto-vidro-${projeto.titulo.replace(/\s+/g, '-').toLowerCase()}.pdf`);
 }

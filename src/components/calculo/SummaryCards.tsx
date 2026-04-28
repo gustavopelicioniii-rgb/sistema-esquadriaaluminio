@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Layers, Weight, Grid3X3, Package } from "lucide-react";
-import type { CalculationOutput } from "@/types/calculation";
+import { Card, CardContent } from '@/components/ui/card';
+import { Layers, Weight, Grid3X3, Package } from 'lucide-react';
+import type { CalculationOutput } from '@/types/calculation';
 
 interface Props {
   result: CalculationOutput;

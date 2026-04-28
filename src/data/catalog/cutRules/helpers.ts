@@ -1,4 +1,4 @@
-import type { CutRule, Profile } from "@/types/calculation";
+import type { CutRule, Profile } from '@/types/calculation';
 
 // Helper to build a cut rule with profile data auto-filled
 export function createCutRule(
@@ -8,7 +8,7 @@ export function createCutRule(
   lineId: string,
   pieceName: string,
   pieceFunc: string,
-  ref: CutRule["reference_dimension"],
+  ref: CutRule['reference_dimension'],
   constant: number,
   angleL: number,
   angleR: number,
@@ -22,7 +22,7 @@ export function createCutRule(
   return {
     id,
     typology_id: typologyId,
-    profile_id: profile?.id ?? "",
+    profile_id: profile?.id ?? '',
     piece_name: pieceName,
     piece_function: pieceFunc,
     reference_dimension: ref,

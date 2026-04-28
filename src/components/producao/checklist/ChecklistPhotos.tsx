@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
-import { Camera, X, Loader2, ImageIcon } from "lucide-react";
-import { toast } from "sonner";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Camera, X, Loader2, ImageIcon } from 'lucide-react';
+import { toast } from 'sonner';
 interface Foto {
   id: string;
   foto_url: string; // storage path
@@ -26,14 +26,14 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
 
   const resolveSignedUrls = useCallback(async (items: Foto[]): Promise<Foto[]> => {
     const results = await Promise.all(
-      items.map(async (foto) => {
-        if (foto.foto_url.startsWith("http")) {
+      items.map(async foto => {
+        if (foto.foto_url.startsWith('http')) {
           return { ...foto, signedUrl: foto.foto_url };
         }
         const { data } = await supabase.storage
-          .from("checklist-fotos")
+          .from('checklist-fotos')
           .createSignedUrl(foto.foto_url, 60 * 60);
-        return { ...foto, signedUrl: data?.signedUrl || "" };
+        return { ...foto, signedUrl: data?.signedUrl || '' };
       })
     );
     return results;
@@ -41,11 +41,11 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
 
   const fetchFotos = useCallback(async () => {
     const { data } = await supabase
-      .from("pedido_checklist_fotos")
-      .select("*")
-      .eq("pedido_id", pedidoId)
-      .eq("etapa", etapaId)
-      .order("created_at", { ascending: false });
+      .from('pedido_checklist_fotos')
+      .select('*')
+      .eq('pedido_id', pedidoId)
+      .eq('etapa', etapaId)
+      .order('created_at', { ascending: false });
     const raw = (data as unknown as Foto[]) || [];
     const resolved = await resolveSignedUrls(raw);
     setFotos(resolved);
@@ -62,19 +62,19 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
     setUploading(true);
 
     for (const file of Array.from(files)) {
-      const ext = file.name.split(".").pop();
+      const ext = file.name.split('.').pop();
       const path = `${user?.id}/${pedidoId}/${etapaId}/${Date.now()}.${ext}`;
 
       const { error: uploadErr } = await supabase.storage
-        .from("checklist-fotos")
+        .from('checklist-fotos')
         .upload(path, file);
 
       if (uploadErr) {
-        toast.error("Erro no upload", { description: uploadErr.message });
+        toast.error('Erro no upload', { description: uploadErr.message });
         continue;
       }
 
-      await supabase.from("pedido_checklist_fotos").insert({
+      await supabase.from('pedido_checklist_fotos').insert({
         pedido_id: pedidoId,
         etapa: etapaId,
         foto_url: path,
@@ -85,22 +85,22 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
     setUploading(false);
     setExpanded(true);
     fetchFotos();
-    if (inputRef.current) inputRef.current.value = "";
+    if (inputRef.current) inputRef.current.value = '';
   };
 
   const handleDelete = async (foto: Foto) => {
     // Use stored path directly for private bucket
-    const storagePath = foto.foto_url.startsWith("http")
-      ? foto.foto_url.split("/checklist-fotos/")[1]
-        ? decodeURIComponent(foto.foto_url.split("/checklist-fotos/")[1])
+    const storagePath = foto.foto_url.startsWith('http')
+      ? foto.foto_url.split('/checklist-fotos/')[1]
+        ? decodeURIComponent(foto.foto_url.split('/checklist-fotos/')[1])
         : null
       : foto.foto_url;
 
     if (storagePath) {
-      await supabase.storage.from("checklist-fotos").remove([storagePath]);
+      await supabase.storage.from('checklist-fotos').remove([storagePath]);
     }
-    await supabase.from("pedido_checklist_fotos").delete().eq("id", foto.id);
-    setFotos((prev) => prev.filter((f) => f.id !== foto.id));
+    await supabase.from('pedido_checklist_fotos').delete().eq('id', foto.id);
+    setFotos(prev => prev.filter(f => f.id !== foto.id));
   };
 
   return (
@@ -129,19 +129,26 @@ export default function ChecklistPhotos({ pedidoId, etapaId }: Props) {
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
           >
-            {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
-            {uploading ? "Enviando..." : "Adicionar foto"}
+            {uploading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Camera className="h-3.5 w-3.5" />
+            )}
+            {uploading ? 'Enviando...' : 'Adicionar foto'}
           </Button>
         </div>
       </div>
 
       {expanded && fotos.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {fotos.map((foto) => (
-            <div key={foto.id} className="relative group rounded-lg overflow-hidden border bg-muted aspect-square">
+          {fotos.map(foto => (
+            <div
+              key={foto.id}
+              className="relative group rounded-lg overflow-hidden border bg-muted aspect-square"
+            >
               <img
-                src={foto.signedUrl || ""}
-                alt={foto.nome_arquivo || "Foto"}
+                src={foto.signedUrl || ''}
+                alt={foto.nome_arquivo || 'Foto'}
                 className="w-full h-full object-cover"
               />
               <button

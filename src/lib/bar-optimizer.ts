@@ -1,4 +1,4 @@
-import type { CutPiece, Bar, BarPiece, OptimizationResult } from "@/types/calculation";
+import type { CutPiece, Bar, BarPiece, OptimizationResult } from '@/types/calculation';
 
 /**
  * Otimizador de barras usando FFD (First Fit Decreasing)
@@ -20,9 +20,7 @@ export function optimizeBars(
 
     let placed = false;
     for (const bar of bars) {
-      const usedLength = bar.pieces.reduce(
-        (sum, p) => sum + p.length_mm + bladeWidth, 0
-      );
+      const usedLength = bar.pieces.reduce((sum, p) => sum + p.length_mm + bladeWidth, 0);
       const available = barLength - usedLength;
 
       if (piece.length_mm <= available) {
@@ -40,12 +38,14 @@ export function optimizeBars(
     if (!placed) {
       bars.push({
         bar_number: bars.length + 1,
-        pieces: [{
-          cut_piece_id: piece.id,
-          position_mm: 0,
-          length_mm: piece.length_mm,
-          label: piece.label,
-        }],
+        pieces: [
+          {
+            cut_piece_id: piece.id,
+            position_mm: 0,
+            length_mm: piece.length_mm,
+            label: piece.label,
+          },
+        ],
         waste_mm: 0,
         utilization_percent: 0,
       });
@@ -54,9 +54,7 @@ export function optimizeBars(
 
   let totalWaste = 0;
   for (const bar of bars) {
-    const used = bar.pieces.reduce(
-      (sum, p) => sum + p.length_mm + bladeWidth, 0
-    ) - bladeWidth;
+    const used = bar.pieces.reduce((sum, p) => sum + p.length_mm + bladeWidth, 0) - bladeWidth;
     bar.waste_mm = barLength - used;
     bar.utilization_percent = Math.round((used / barLength) * 10000) / 100;
     totalWaste += bar.waste_mm;
@@ -70,7 +68,8 @@ export function optimizeBars(
     total_waste_mm: totalWaste,
     overall_utilization_percent:
       bars.length > 0
-        ? Math.round(((bars.length * barLength - totalWaste) / (bars.length * barLength)) * 10000) / 100
+        ? Math.round(((bars.length * barLength - totalWaste) / (bars.length * barLength)) * 10000) /
+          100
         : 0,
   };
 }

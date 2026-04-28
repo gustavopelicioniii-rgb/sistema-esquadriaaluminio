@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { usePageTitle } from "@/hooks/use-page-title";
-import { Mail, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { usePageTitle } from '@/hooks/use-page-title';
+import { Mail, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 
 const EsqueciSenha = () => {
-  usePageTitle("Esqueci a Senha");
-  const [email, setEmail] = useState("");
+  usePageTitle('Esqueci a Senha');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -23,7 +23,7 @@ const EsqueciSenha = () => {
     });
     setLoading(false);
     if (error) {
-      toast.error("Erro", { description: error.message });
+      toast.error('Erro', { description: error.message });
     } else {
       setSent(true);
     }
@@ -41,8 +41,8 @@ const EsqueciSenha = () => {
           <CardTitle className="text-2xl">Recuperar Senha</CardTitle>
           <CardDescription>
             {sent
-              ? "E-mail enviado! Verifique sua caixa de entrada."
-              : "Digite seu e-mail para receber o link de redefinição"}
+              ? 'E-mail enviado! Verifique sua caixa de entrada.'
+              : 'Digite seu e-mail para receber o link de redefinição'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,15 +62,24 @@ const EsqueciSenha = () => {
               <form onSubmit={handleReset} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">E-mail</Label>
-                  <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                  />
                 </div>
                 <Button type="submit" className="w-full gap-2" disabled={loading}>
                   <Mail className="h-4 w-4" />
-                  {loading ? "Enviando..." : "Enviar link de recuperação"}
+                  {loading ? 'Enviando...' : 'Enviar link de recuperação'}
                 </Button>
               </form>
               <p className="text-center text-sm text-muted-foreground mt-4">
-                <Link to="/login" className="text-primary font-medium hover:underline">Voltar ao login</Link>
+                <Link to="/login" className="text-primary font-medium hover:underline">
+                  Voltar ao login
+                </Link>
               </p>
             </>
           )}

@@ -1,11 +1,17 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/formatters";
-import { Printer, FileText, Receipt, ClipboardList } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { generateProfessionalBudgetPDF } from "@/utils/budgetPdfGenerator";
-import type { Pedido } from "@/pages/Producao";
-import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { formatCurrency } from '@/lib/formatters';
+import { Printer, FileText, Receipt, ClipboardList } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { generateProfessionalBudgetPDF } from '@/utils/budgetPdfGenerator';
+import type { Pedido } from '@/pages/Producao';
+import { toast } from 'sonner';
 
 interface Props {
   open: boolean;
@@ -14,17 +20,32 @@ interface Props {
 }
 
 const impressoes = [
-  { id: "os", label: "Ordem de Serviço", desc: "Documento com detalhes do pedido para produção", icon: ClipboardList },
-  { id: "orcamento", label: "Orçamento", desc: "Documento para o cliente com valores", icon: FileText },
-  { id: "recibo", label: "Recibo", desc: "Comprovante de pagamento", icon: Receipt },
-  { id: "etiquetas", label: "Etiquetas", desc: "Etiquetas de identificação das peças", icon: Printer },
+  {
+    id: 'os',
+    label: 'Ordem de Serviço',
+    desc: 'Documento com detalhes do pedido para produção',
+    icon: ClipboardList,
+  },
+  {
+    id: 'orcamento',
+    label: 'Orçamento',
+    desc: 'Documento para o cliente com valores',
+    icon: FileText,
+  },
+  { id: 'recibo', label: 'Recibo', desc: 'Comprovante de pagamento', icon: Receipt },
+  {
+    id: 'etiquetas',
+    label: 'Etiquetas',
+    desc: 'Etiquetas de identificação das peças',
+    icon: Printer,
+  },
 ];
 
 function buildOrdemServicoHTML(pedido: Pedido): string {
   const now = new Date();
-  const dataFormatada = now.toLocaleDateString("pt-BR");
-  const horaFormatada = now.toLocaleTimeString("pt-BR");
-  const cidade = pedido.endereco || "";
+  const dataFormatada = now.toLocaleDateString('pt-BR');
+  const horaFormatada = now.toLocaleTimeString('pt-BR');
+  const cidade = pedido.endereco || '';
 
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
 <title>Ordem de Serviço - Pedido ${pedido.pedido_num}</title>
@@ -106,12 +127,12 @@ body{font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#222;font-size:13px
     <div class="section-body">
       <div class="info-grid">
         <div class="info-row"><span class="lbl">Nome:</span><span class="val" style="font-weight:700">${pedido.cliente}</span></div>
-        <div class="info-row"><span class="lbl">Telefone:</span><span class="val">${pedido.telefone || "—"}</span></div>
-        <div class="info-row full"><span class="lbl">Endereço:</span><span class="val">${pedido.endereco || "—"}</span></div>
-        <div class="info-row"><span class="lbl">Vendedor:</span><span class="val">${pedido.vendedor || "—"}</span></div>
-        <div class="info-row"><span class="lbl">Previsão:</span><span class="val">${pedido.previsao || "N/A"}</span></div>
+        <div class="info-row"><span class="lbl">Telefone:</span><span class="val">${pedido.telefone || '—'}</span></div>
+        <div class="info-row full"><span class="lbl">Endereço:</span><span class="val">${pedido.endereco || '—'}</span></div>
+        <div class="info-row"><span class="lbl">Vendedor:</span><span class="val">${pedido.vendedor || '—'}</span></div>
+        <div class="info-row"><span class="lbl">Previsão:</span><span class="val">${pedido.previsao || 'N/A'}</span></div>
         <div class="info-row"><span class="lbl">Status:</span><span class="val"><span class="status-badge ${getStatusClass(pedido.status)}">${pedido.status}</span></span></div>
-        ${pedido.etapa ? `<div class="info-row"><span class="lbl">Etapa:</span><span class="val">${pedido.etapa}</span></div>` : ""}
+        ${pedido.etapa ? `<div class="info-row"><span class="lbl">Etapa:</span><span class="val">${pedido.etapa}</span></div>` : ''}
       </div>
     </div>
   </div>
@@ -123,11 +144,15 @@ body{font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#222;font-size:13px
   </div>
 
   <!-- OBSERVAÇÕES -->
-  ${pedido.anotacao ? `
+  ${
+    pedido.anotacao
+      ? `
   <div class="section">
     <div class="section-title">Observações</div>
     <div class="obs-box">${pedido.anotacao}</div>
-  </div>` : ""}
+  </div>`
+      : ''
+  }
 
   <!-- ASSINATURAS -->
   <div class="signatures">
@@ -141,7 +166,7 @@ body{font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#222;font-size:13px
     </div>
   </div>
 
-  ${cidade ? `<p style="text-align:right;font-size:12px;color:#475569;margin-top:16px">${cidade}, ${dataFormatada}</p>` : ""}
+  ${cidade ? `<p style="text-align:right;font-size:12px;color:#475569;margin-top:16px">${cidade}, ${dataFormatada}</p>` : ''}
 
   <!-- FOOTER -->
   <div class="footer">
@@ -155,52 +180,54 @@ body{font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#222;font-size:13px
 
 function getStatusClass(status: string): string {
   const s = status.toLowerCase();
-  if (s.includes("aprovado")) return "status-aprovado";
-  if (s.includes("produ")) return "status-producao";
-  if (s.includes("entregue") || s.includes("conclu")) return "status-entregue";
-  return "status-default";
+  if (s.includes('aprovado')) return 'status-aprovado';
+  if (s.includes('produ')) return 'status-producao';
+  if (s.includes('entregue') || s.includes('conclu')) return 'status-entregue';
+  return 'status-default';
 }
 
 function buildGenericHTML(tipo: string, pedido: Pedido): string {
   return `<html><head><title>${tipo} - Pedido ${pedido.pedido_num}</title>
 <style>body{font-family:'Segoe UI',Arial,sans-serif;padding:40px;color:#333}h1{font-size:20px;border-bottom:2px solid #2563EB;padding-bottom:8px}.info{margin:20px 0}.info p{margin:4px 0;font-size:14px}.label{font-weight:bold;display:inline-block;width:140px}.valor{font-size:24px;font-weight:bold;color:#1e40af;margin:20px 0}.footer{margin-top:40px;border-top:1px solid #ddd;padding-top:16px;font-size:12px;color:#999}</style></head>
 <body><h1>${tipo.toUpperCase()} – PEDIDO Nº ${pedido.pedido_num}</h1>
-<div class="info"><p><span class="label">Cliente:</span> ${pedido.cliente}</p><p><span class="label">Endereço:</span> ${pedido.endereco || "—"}</p><p><span class="label">Telefone:</span> ${pedido.telefone || "—"}</p><p><span class="label">Vendedor:</span> ${pedido.vendedor || "—"}</p><p><span class="label">Previsão:</span> ${pedido.previsao || "N/A"}</p>${pedido.etapa ? `<p><span class="label">Etapa:</span> ${pedido.etapa}</p>` : ""}</div>
+<div class="info"><p><span class="label">Cliente:</span> ${pedido.cliente}</p><p><span class="label">Endereço:</span> ${pedido.endereco || '—'}</p><p><span class="label">Telefone:</span> ${pedido.telefone || '—'}</p><p><span class="label">Vendedor:</span> ${pedido.vendedor || '—'}</p><p><span class="label">Previsão:</span> ${pedido.previsao || 'N/A'}</p>${pedido.etapa ? `<p><span class="label">Etapa:</span> ${pedido.etapa}</p>` : ''}</div>
 <div class="valor">Valor: ${formatCurrency(pedido.valor)}</div>
-<div class="footer">Gerado em ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString("pt-BR")}</div>
+<div class="footer">Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
 <script>window.print();</script></body></html>`;
 }
 
 export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) {
   const handleImprimir = async (tipo: string, id: string) => {
-    if (id === "orcamento") {
+    if (id === 'orcamento') {
       try {
         const { data: orcamentos } = await supabase
-          .from("orcamentos")
-          .select("*")
-          .eq("cliente", pedido.cliente)
-          .order("created_at", { ascending: false })
+          .from('orcamentos')
+          .select('*')
+          .eq('cliente', pedido.cliente)
+          .order('created_at', { ascending: false })
           .limit(1);
 
         const orc = orcamentos?.[0];
         if (!orc) {
-          toast.error("Nenhum orçamento encontrado", { description: `Não há orçamento cadastrado para o cliente "${pedido.cliente}".` });
+          toast.error('Nenhum orçamento encontrado', {
+            description: `Não há orçamento cadastrado para o cliente "${pedido.cliente}".`,
+          });
           return;
         }
 
-        const itens = Array.isArray(orc.itens) ? orc.itens as any[] : [];
+        const itens = Array.isArray(orc.itens) ? (orc.itens as any[]) : [];
         const itensMultiplos = itens.map((item: any, idx: number) => ({
           produto: item.produto || item.descricao || `Item ${idx + 1}`,
-          tipo: item.tipo || "",
-          linha: item.linha || "",
-          tratamento: item.tratamento || item.cor || "",
+          tipo: item.tipo || '',
+          linha: item.linha || '',
+          tratamento: item.tratamento || item.cor || '',
           larguraCm: item.larguraCm || item.largura || 0,
           alturaCm: item.alturaCm || item.altura || 0,
           quantidade: item.quantidade || 1,
           valorUnitario: item.valorUnitario || item.valor_unitario || 0,
           valorTotal: item.valorTotal || item.valor_total || 0,
-          localizacao: item.localizacao || item.ambiente || "",
-          descricaoCompleta: item.descricaoCompleta || item.descricao || "",
+          localizacao: item.localizacao || item.ambiente || '',
+          descricaoCompleta: item.descricaoCompleta || item.descricao || '',
         }));
 
         await generateProfessionalBudgetPDF({
@@ -214,47 +241,62 @@ export default function ImpressoesDialog({ open, onOpenChange, pedido }: Props) 
           custoTotal: orc.valor,
           margem: 0,
           valorFinal: orc.valor,
-          vendedor: pedido.vendedor || "",
+          vendedor: pedido.vendedor || '',
           itensMultiplos: itensMultiplos.length > 0 ? itensMultiplos : undefined,
         });
 
-        toast.success("PDF gerado", { description: `Orçamento ${orc.numero} do cliente ${orc.cliente}` });
+        toast.success('PDF gerado', {
+          description: `Orçamento ${orc.numero} do cliente ${orc.cliente}`,
+        });
       } catch (err) {
-        toast.error("Erro", { description: "Falha ao gerar o PDF do orçamento." });
+        toast.error('Erro', { description: 'Falha ao gerar o PDF do orçamento.' });
       }
       return;
     }
 
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      toast.error("Erro", { description: "Popup bloqueado. Permita popups para imprimir." });
+      toast.error('Erro', { description: 'Popup bloqueado. Permita popups para imprimir.' });
       return;
     }
 
-    const content = id === "os"
-      ? buildOrdemServicoHTML(pedido)
-      : buildGenericHTML(tipo, pedido);
+    const content = id === 'os' ? buildOrdemServicoHTML(pedido) : buildGenericHTML(tipo, pedido);
 
     printWindow.document.write(content);
     printWindow.document.close();
-    toast.success("Impressão enviada", { description: `${tipo} do pedido ${pedido.pedido_num}` });
+    toast.success('Impressão enviada', { description: `${tipo} do pedido ${pedido.pedido_num}` });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Printer className="h-4 w-4" /> Impressões – Pedido {pedido.pedido_num}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Printer className="h-4 w-4" /> Impressões – Pedido {pedido.pedido_num}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-2 py-2">
           {impressoes.map(({ id, label, desc, icon: Icon }) => (
-            <button key={id} className="w-full flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors text-left" onClick={() => handleImprimir(label, id)}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10"><Icon className="h-4 w-4 text-primary" /></div>
-              <div><p className="text-sm font-medium">{label}</p><p className="text-xs text-muted-foreground">{desc}</p></div>
+            <button
+              key={id}
+              className="w-full flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors text-left"
+              onClick={() => handleImprimir(label, id)}
+            >
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Icon className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">{label}</p>
+                <p className="text-xs text-muted-foreground">{desc}</p>
+              </div>
             </button>
           ))}
         </div>
-        <DialogFooter><Button variant="outline" onClick={() => onOpenChange(false)}>Fechar</Button></DialogFooter>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Fechar
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

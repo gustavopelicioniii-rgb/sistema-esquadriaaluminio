@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { CutRule } from "@/types/calculation";
-import { getCutRulesForTypology } from "@/data/catalog";
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { CutRule } from '@/types/calculation';
+import { getCutRulesForTypology } from '@/data/catalog';
 
 export interface CustomCutRuleRow {
   id: string;
@@ -26,10 +26,10 @@ function toCutRule(row: CustomCutRuleRow): CutRule {
   return {
     id: row.id,
     typology_id: row.typology_id,
-    profile_id: "",
+    profile_id: '',
     piece_name: row.piece_name,
     piece_function: row.piece_function,
-    reference_dimension: row.reference_dimension as CutRule["reference_dimension"],
+    reference_dimension: row.reference_dimension as CutRule['reference_dimension'],
     coefficient: Number(row.coefficient),
     constant_mm: Number(row.constant_mm),
     fixed_value_mm: row.fixed_value_mm != null ? Number(row.fixed_value_mm) : null,
@@ -48,15 +48,18 @@ export function useCustomCutRules(typologyId: string | null) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchRules = useCallback(async () => {
-    if (!typologyId) { setRules([]); return; }
+    if (!typologyId) {
+      setRules([]);
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
       const { data, error: err } = await supabase
-        .from("regras_corte_customizadas")
-        .select("*")
-        .eq("typology_id", typologyId)
-        .order("sort_order", { ascending: true });
+        .from('regras_corte_customizadas')
+        .select('*')
+        .eq('typology_id', typologyId)
+        .order('sort_order', { ascending: true });
       if (err) {
         // Error fetching cut rules
         setError(err.message);
@@ -65,38 +68,43 @@ export function useCustomCutRules(typologyId: string | null) {
       }
     } catch (e) {
       // Unexpected error
-      setError(e instanceof Error ? e.message : "Unknown error");
+      setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
   }, [typologyId]);
 
-  useEffect(() => { fetchRules(); }, [fetchRules]);
+  useEffect(() => {
+    fetchRules();
+  }, [fetchRules]);
 
-  const addRule = async (rule: Omit<CustomCutRuleRow, "id" | "user_id">) => {
-    const { error: err } = await supabase.from("regras_corte_customizadas").insert(rule as any);
+  const addRule = async (rule: Omit<CustomCutRuleRow, 'id' | 'user_id'>) => {
+    const { error: err } = await supabase.from('regras_corte_customizadas').insert(rule as any);
     if (err) throw err;
     await fetchRules();
   };
 
   const updateRule = async (id: string, updates: Partial<CustomCutRuleRow>) => {
-    const { error: err } = await supabase.from("regras_corte_customizadas").update(updates as any).eq("id", id);
+    const { error: err } = await supabase
+      .from('regras_corte_customizadas')
+      .update(updates as any)
+      .eq('id', id);
     if (err) throw err;
     await fetchRules();
   };
 
   const deleteRule = async (id: string) => {
-    const { error: err } = await supabase.from("regras_corte_customizadas").delete().eq("id", id);
+    const { error: err } = await supabase.from('regras_corte_customizadas').delete().eq('id', id);
     if (err) throw err;
     await fetchRules();
   };
 
   const inheritFromBase = async (baseTypologyId: string) => {
     const catalogRules = getCutRulesForTypology(baseTypologyId);
-    if (catalogRules.length === 0) throw new Error("Nenhuma regra encontrada na tipologia base");
-    const inserts = catalogRules.map((r) => ({
+    if (catalogRules.length === 0) throw new Error('Nenhuma regra encontrada na tipologia base');
+    const inserts = catalogRules.map(r => ({
       typology_id: typologyId!,
-      profile_code: r.profile_code ?? "",
+      profile_code: r.profile_code ?? '',
       piece_name: r.piece_name,
       piece_function: r.piece_function,
       reference_dimension: r.reference_dimension,
@@ -110,7 +118,7 @@ export function useCustomCutRules(typologyId: string | null) {
       weight_per_meter: r.weight_per_meter ?? 0,
       notes: r.notes ?? null,
     }));
-    const { error: err } = await supabase.from("regras_corte_customizadas").insert(inserts as any);
+    const { error: err } = await supabase.from('regras_corte_customizadas').insert(inserts as any);
     if (err) throw err;
     await fetchRules();
   };
@@ -131,14 +139,14 @@ export function useCustomCutRules(typologyId: string | null) {
 export async function getEffectiveCutRules(
   typologyId: string,
   isCustom: boolean,
-  baseTypologyId?: string,
+  baseTypologyId?: string
 ): Promise<CutRule[]> {
   if (isCustom) {
     const { data } = await supabase
-      .from("regras_corte_customizadas")
-      .select("*")
-      .eq("typology_id", typologyId)
-      .order("sort_order", { ascending: true });
+      .from('regras_corte_customizadas')
+      .select('*')
+      .eq('typology_id', typologyId)
+      .order('sort_order', { ascending: true });
     if (data && data.length > 0) {
       return (data as unknown as CustomCutRuleRow[]).map(toCutRule);
     }

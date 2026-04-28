@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface ClienteStepProps {
   cliente: string;
@@ -18,7 +18,7 @@ export function ClienteStep({ cliente, onClienteChange }: ClienteStepProps) {
         <Input
           placeholder="Nome completo ou empresa"
           value={cliente}
-          onChange={(e) => onClienteChange(e.target.value)}
+          onChange={e => onClienteChange(e.target.value)}
           autoFocus
         />
       </div>

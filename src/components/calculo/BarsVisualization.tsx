@@ -1,11 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import type { OptimizationResult } from "@/types/calculation";
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import type { OptimizationResult } from '@/types/calculation';
 
 const PIECE_COLORS = [
-  "bg-primary/80", "bg-primary/60", "bg-primary/40",
-  "bg-blue-500/70", "bg-blue-400/60", "bg-indigo-500/60",
+  'bg-primary/80',
+  'bg-primary/60',
+  'bg-primary/40',
+  'bg-blue-500/70',
+  'bg-blue-400/60',
+  'bg-indigo-500/60',
 ];
 
 interface Props {
@@ -19,24 +23,29 @@ export function BarsVisualization({ barResults }: Props) {
 
   return (
     <div className="space-y-6">
-      {barResults.map((opt) => (
+      {barResults.map(opt => (
         <div key={opt.profile_code} className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-sm flex items-center gap-2">
-              <Badge variant="outline" className="font-mono">{opt.profile_code}</Badge>
+              <Badge variant="outline" className="font-mono">
+                {opt.profile_code}
+              </Badge>
               {opt.total_bars} barra(s) de {opt.bar_length_mm}mm
             </h4>
             <span className="text-xs text-muted-foreground">
-              Aproveitamento: <span className="font-semibold text-primary">{opt.overall_utilization_percent}%</span>
+              Aproveitamento:{' '}
+              <span className="font-semibold text-primary">{opt.overall_utilization_percent}%</span>
             </span>
           </div>
           <div className="space-y-2">
-            {opt.bars.map((bar) => (
+            {opt.bars.map(bar => (
               <div key={bar.bar_number} className="space-y-1">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span>Barra {bar.bar_number}</span>
                   <span>•</span>
-                  <span>Sobra: {bar.waste_mm}mm ({(100 - bar.utilization_percent).toFixed(1)}%)</span>
+                  <span>
+                    Sobra: {bar.waste_mm}mm ({(100 - bar.utilization_percent).toFixed(1)}%)
+                  </span>
                 </div>
                 <div className="flex h-8 rounded-md overflow-hidden border border-border bg-muted/30">
                   {bar.pieces.map((piece, pi) => {
@@ -46,8 +55,8 @@ export function BarsVisualization({ barResults }: Props) {
                         key={pi}
                         className={cn(
                           PIECE_COLORS[pi % PIECE_COLORS.length],
-                          "flex items-center justify-center text-[10px] font-medium text-primary-foreground",
-                          "border-r border-background/50 truncate px-1"
+                          'flex items-center justify-center text-[10px] font-medium text-primary-foreground',
+                          'border-r border-background/50 truncate px-1'
                         )}
                         style={{ width: `${widthPercent}%` }}
                         title={piece.label}

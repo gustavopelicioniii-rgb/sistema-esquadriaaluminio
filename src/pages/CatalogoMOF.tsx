@@ -1,16 +1,21 @@
-import { usePageTitle } from "@/hooks/use-page-title";
-import { CatalogBrowser } from "@/components/mof/CatalogBrowser";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Package, Palette, Filter, Download, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { toast } from "sonner";
-import { allSupplierProfiles, supplierGlasses, supplierComponents, getAllManufacturers } from "@/data/catalog/suppliers";
+import { usePageTitle } from '@/hooks/use-page-title';
+import { CatalogBrowser } from '@/components/mof/CatalogBrowser';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Package, Palette, Filter, Download, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import {
+  allSupplierProfiles,
+  supplierGlasses,
+  supplierComponents,
+  getAllManufacturers,
+} from '@/data/catalog/suppliers';
 
 export default function CatalogoMOF() {
-  usePageTitle("Catálogo MOF");
+  usePageTitle('Catálogo MOF');
   const [selectedProfile, setSelectedProfile] = useState<any>(null);
   const manufacturers = getAllManufacturers();
 
@@ -28,17 +33,17 @@ export default function CatalogoMOF() {
       },
     };
 
-    const blob = new Blob([JSON.stringify(catalog, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(catalog, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = `mof-catalog-${new Date().toISOString().split("T")[0]}.json`;
+    link.download = `mof-catalog-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast.success("Catálogo exportado com sucesso!");
+    toast.success('Catálogo exportado com sucesso!');
   };
 
   return (
@@ -120,7 +125,7 @@ export default function CatalogoMOF() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {manufacturers.map((m) => (
+            {manufacturers.map(m => (
               <Badge key={m} variant="outline" className="px-3 py-1">
                 {m}
               </Badge>
@@ -133,7 +138,7 @@ export default function CatalogoMOF() {
       <Card>
         <CardContent className="pt-6">
           <CatalogBrowser
-            onSelectProfile={(profile) => {
+            onSelectProfile={profile => {
               setSelectedProfile(profile);
               toast.success(`Perfil selecionado: ${profile.name}`);
             }}
