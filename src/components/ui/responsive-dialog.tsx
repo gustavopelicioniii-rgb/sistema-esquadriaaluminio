@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  type DialogSize,
 } from '@/components/ui/dialog';
 import {
   Drawer,
@@ -20,7 +21,7 @@ import {
   DrawerFooter,
 } from '@/components/ui/drawer';
 
-export type ResponsiveDialogSize = 'sm' | 'md' | 'lg';
+export type ResponsiveDialogSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface ResponsiveDialogProps {
   open?: boolean;
@@ -30,17 +31,21 @@ interface ResponsiveDialogProps {
   className?: string;
 }
 
-const sizeClasses: Record<ResponsiveDialogSize, { desktop: string; mobile: string }> = {
+const sizeClasses: Record<ResponsiveDialogSize, { desktop: DialogSize; mobile: string }> = {
   sm: {
-    desktop: 'max-w-md',
+    desktop: 'sm',
     mobile: 'max-h-[85vh]',
   },
   md: {
-    desktop: 'max-w-2xl',
+    desktop: 'lg',
     mobile: 'max-h-[90vh]',
   },
   lg: {
-    desktop: 'max-w-4xl',
+    desktop: 'xl',
+    mobile: 'max-h-[95vh]',
+  },
+  xl: {
+    desktop: 'full',
     mobile: 'max-h-[95vh]',
   },
 };
@@ -72,7 +77,6 @@ export function ResponsiveDialog({
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className={cn(classes.mobile, 'max-w-full', className)}>
-          <div className="mx-auto mt-4 h-1.5 w-12 rounded-full bg-muted" />
           {children}
         </DrawerContent>
       </Drawer>
@@ -81,7 +85,7 @@ export function ResponsiveDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn(classes.desktop, className)}>{children}</DialogContent>
+      <DialogContent size={classes.desktop} className={className}>{children}</DialogContent>
     </Dialog>
   );
 }

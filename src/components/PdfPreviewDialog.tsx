@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Download, X, Loader2 } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 
 interface PdfPreviewDialogProps {
   open: boolean;
@@ -24,7 +23,10 @@ export function PdfPreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-[95vw] h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-4 py-3 border-b flex-row items-center justify-between space-y-0">
-          <DialogTitle className="text-sm font-semibold">{title}</DialogTitle>
+          <div>
+            <DialogTitle className="text-sm font-semibold">{title}</DialogTitle>
+            <DialogDescription className="text-xs">Prévia do documento PDF gerado</DialogDescription>
+          </div>
           <div className="flex items-center gap-2">
             <Button size="sm" className="gap-1.5" onClick={onDownload} disabled={!pdfBlobUrl}>
               <Download className="h-4 w-4" />

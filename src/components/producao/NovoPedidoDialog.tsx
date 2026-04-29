@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription, ResponsiveDialogFooter } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -70,7 +64,6 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
       setOrcamentos(oRes.data ?? []);
       setLoading(false);
     });
-    // reset form
     setClienteId('');
     setOrcamentoId('nenhum');
     setVendedor('');
@@ -81,13 +74,11 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
 
   const selectedCliente = clientes.find(c => c.id === clienteId);
 
-  // When orcamento is selected, auto-fill valor
   useEffect(() => {
     if (orcamentoId && orcamentoId !== 'nenhum') {
       const orc = orcamentos.find(o => o.id === orcamentoId);
       if (orc) {
         setValor(String(orc.valor));
-        // Also auto-select the client matching the orcamento
         const matchingCliente = clientes.find(c => c.nome === orc.cliente);
         if (matchingCliente) setClienteId(matchingCliente.id);
       }
@@ -131,107 +122,102 @@ export default function NovoPedidoDialog({ open, onClose, nextNum }: NovoPedidoD
   };
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Novo Pedido #{nextNum}</DialogTitle>
-        </DialogHeader>
+    <ResponsiveDialog open={open} onOpenChange={v => !v && onClose()} size="lg">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle>Novo Pedido #{nextNum}</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription>
+          Preencha os dados para criar um novo pedido de produção.
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
 
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      {loading ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Cliente *</Label>
+            <Select value={clienteId} onValueChange={setClienteId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o cliente" />
+              </SelectTrigger>
+              <SelectContent>
+                {clientes.map(c => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Cliente */}
-            <div className="space-y-1.5">
-              <Label>Cliente *</Label>
-              <Select value={clienteId} onValueChange={setClienteId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o cliente" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clientes.map(c => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            {/* Orçamento vinculado */}
-            <div className="space-y-1.5">
-              <Label>Orçamento vinculado</Label>
-              <Select value={orcamentoId} onValueChange={setOrcamentoId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Nenhum" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="nenhum">Nenhum</SelectItem>
-                  {orcamentos.map(o => (
-                    <SelectItem key={o.id} value={o.id}>
-                      #{o.numero} — {o.cliente} — R${' '}
-                      {o.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-1.5">
+            <Label>Orçamento vinculado</Label>
+            <Select value={orcamentoId} onValueChange={setOrcamentoId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Nenhum" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nenhum">Nenhum</SelectItem>
+                {orcamentos.map(o => (
+                  <SelectItem key={o.id} value={o.id}>
+                    #{o.numero} — {o.cliente} — R${' '}
+                    {o.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {/* Valor */}
-              <div className="space-y-1.5">
-                <Label>Valor (R$) *</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={valor}
-                  onChange={e => setValor(e.target.value)}
-                  placeholder="0,00"
-                />
-              </div>
-              {/* Previsão */}
-              <div className="space-y-1.5">
-                <Label>Previsão de entrega</Label>
-                <Input type="date" value={previsao} onChange={e => setPrevisao(e.target.value)} />
-              </div>
-            </div>
-
-            {/* Vendedor */}
+          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>Vendedor</Label>
+              <Label>Valor (R$) *</Label>
               <Input
-                value={vendedor}
-                onChange={e => setVendedor(e.target.value)}
-                placeholder="Nome do vendedor"
+                type="number"
+                min="0"
+                step="0.01"
+                value={valor}
+                onChange={e => setValor(e.target.value)}
+                placeholder="0,00"
               />
             </div>
-
-            {/* Anotação */}
             <div className="space-y-1.5">
-              <Label>Observações</Label>
-              <Textarea
-                value={anotacao}
-                onChange={e => setAnotacao(e.target.value)}
-                placeholder="Anotações sobre o pedido..."
-                rows={2}
-              />
+              <Label>Previsão de entrega</Label>
+              <Input type="date" value={previsao} onChange={e => setPrevisao(e.target.value)} />
             </div>
           </div>
-        )}
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} disabled={saving || loading}>
-            {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Criar Pedido
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <div className="space-y-1.5">
+            <Label>Vendedor</Label>
+            <Input
+              value={vendedor}
+              onChange={e => setVendedor(e.target.value)}
+              placeholder="Nome do vendedor"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Observações</Label>
+            <Textarea
+              value={anotacao}
+              onChange={e => setAnotacao(e.target.value)}
+              placeholder="Anotações sobre o pedido..."
+              rows={2}
+            />
+          </div>
+        </div>
+      )}
+
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSave} disabled={saving || loading}>
+          {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {saving ? 'Criando...' : 'Criar Pedido'}
+        </Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }

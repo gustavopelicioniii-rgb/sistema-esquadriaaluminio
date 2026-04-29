@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -302,6 +303,9 @@ export function ComponentRulesManager({ typology }: Props) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{editId ? 'Editar Componente' : 'Adicionar Componente'}</DialogTitle>
+            <DialogDescription>
+              {editId ? 'Atualize os dados do componente.' : 'Preencha os dados do novo componente.'}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-3">

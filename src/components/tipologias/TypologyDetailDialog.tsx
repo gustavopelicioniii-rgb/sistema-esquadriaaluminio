@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription } from '@/components/ui/responsive-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,7 +11,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FramePreview } from '@/components/frame-preview';
 import PhotorealisticPreview from '@/components/frame-preview/PhotorealisticPreview';
 import {
   getCutRulesForTypology,
@@ -63,31 +62,32 @@ export function TypologyDetailDialog({ typology, open, onOpenChange }: Props) {
   const line = productLines.find(l => l.id === typology.product_line_id);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-0">
-          <DialogTitle className="text-lg">{typology.name}</DialogTitle>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground font-mono uppercase">{typology.id}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() =>
-                generateTypologyDetailPdf({
-                  typology,
-                  lineName: line?.name,
-                  cutRules,
-                  glassRules,
-                  components,
-                })
-              }
-            >
-              <FileDown className="h-4 w-4" />
-              Exportar PDF
-            </Button>
-          </div>
-        </DialogHeader>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="xl">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle className="text-lg">{typology.name}</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription className="text-xs font-mono uppercase">
+          {typology.id}
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
+      <div className="flex items-center justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5"
+          onClick={() =>
+            generateTypologyDetailPdf({
+              typology,
+              lineName: line?.name,
+              cutRules,
+              glassRules,
+              components,
+            })
+          }
+        >
+          <FileDown className="h-4 w-4" />
+          Exportar PDF
+        </Button>
+      </div>
 
         <ScrollArea className="h-[calc(90vh-100px)]">
           <div className="px-6 pb-6 space-y-5">
@@ -311,7 +311,6 @@ export function TypologyDetailDialog({ typology, open, onOpenChange }: Props) {
             </Tabs>
           </div>
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+    </ResponsiveDialog>
   );
 }

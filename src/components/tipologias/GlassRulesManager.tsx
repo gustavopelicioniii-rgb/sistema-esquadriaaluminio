@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -301,6 +302,9 @@ export function GlassRulesManager({ typology }: Props) {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editId ? 'Editar Regra de Vidro' : 'Nova Regra de Vidro'}</DialogTitle>
+            <DialogDescription>
+              {editId ? 'Atualize os dados da regra de vidro.' : 'Preencha os dados da nova regra de vidro.'}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">

@@ -203,14 +203,34 @@ const Tipologias = () => {
       customs.filter(t => {
         const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase());
         const matchLine = filterLine === 'all' || t.product_line_id === filterLine;
-        return matchSearch && matchLine;
+        const matchCategory = !filterCategory || t.category === filterCategory;
+        const matchSubcategory = !filterSubcategory || t.subcategory === filterSubcategory;
+        const matchFolhas = !filterFolhas || t.num_folhas === filterFolhas;
+        const matchVeneziana = filterVeneziana === null || t.has_veneziana === filterVeneziana;
+        const matchBandeira = filterBandeira === null || t.has_bandeira === filterBandeira;
+        return (
+          matchSearch &&
+          matchLine &&
+          matchCategory &&
+          matchSubcategory &&
+          matchFolhas &&
+          matchVeneziana &&
+          matchBandeira
+        );
       }),
-    [customs, search, filterLine]
+    [customs, search, filterLine, filterCategory, filterSubcategory, filterFolhas, filterVeneziana, filterBandeira]
   );
 
   const handleSave = async () => {
     if (!form.name.trim()) {
       toast.error('Nome obrigatório');
+      return;
+    }
+    if (
+      (form.min_width_mm !== null && form.max_width_mm !== null && form.min_width_mm >= form.max_width_mm) ||
+      (form.min_height_mm !== null && form.max_height_mm !== null && form.min_height_mm >= form.max_height_mm)
+    ) {
+      toast.error('Dimensões inválidas', { description: 'O valor mínimo deve ser menor que o máximo.' });
       return;
     }
     const payload = {
@@ -315,7 +335,7 @@ const Tipologias = () => {
       toast.error('Erro', { description: error.message });
       return;
     }
-    toast.error('Tipologia removida');
+    toast.success('Tipologia removida');
     fetchCustoms();
   };
 

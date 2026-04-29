@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -313,6 +314,9 @@ export function CutRulesManager({ typology }: Props) {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editId ? 'Editar Regra de Corte' : 'Nova Regra de Corte'}</DialogTitle>
+            <DialogDescription>
+              {editId ? 'Atualize os dados da regra de corte.' : 'Preencha os dados da nova regra de corte.'}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-4">

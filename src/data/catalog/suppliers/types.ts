@@ -27,6 +27,9 @@ export interface SupplierProfile {
   height_mm?: number;
   inertia_x?: number;
   inertia_y?: number;
+  // Media
+  image_url?: string;
+  datasheet_url?: string;
 }
 
 export interface CutRule {
@@ -46,6 +49,9 @@ export interface SupplierGlass {
   color: string;
   price_m2: number;
   available: boolean;
+  // Media
+  image_url?: string;
+  datasheet_url?: string;
 }
 
 export interface SupplierComponent {
@@ -67,4 +73,7 @@ export interface SupplierComponent {
   unit: string;
   price: number;
   available: boolean;
+  // Media
+  image_url?: string;
+  datasheet_url?: string;
 }

@@ -1,15 +1,9 @@
 import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription, ResponsiveDialogFooter } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, X } from 'lucide-react';
+import { Loader2, Plus, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 interface Props {
@@ -83,53 +77,55 @@ export default function AddEtapaDialog({ open, onOpenChange, pedidoId, onCreated
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nova Etapa Personalizada</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-2">
-            <Label>Nome da etapa</Label>
-            <Input
-              placeholder="Ex: Pintura, Acabamento..."
-              value={label}
-              onChange={e => setLabel(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Itens do checklist</Label>
-            <div className="space-y-2">
-              {items.map((item, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <Input
-                    placeholder={`Item ${idx + 1}`}
-                    value={item}
-                    onChange={e => updateItem(idx, e.target.value)}
-                  />
-                  {items.length > 1 && (
-                    <Button variant="ghost" size="icon" onClick={() => removeItem(idx)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={addItem}>
-              <Plus className="h-3.5 w-3.5" />
-              Adicionar item
-            </Button>
-          </div>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="md">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle>Nova Etapa Personalizada</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription>
+          Crie uma nova etapa de checklist personalizada para este pedido.
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
+      <div className="space-y-4 py-2">
+        <div className="space-y-2">
+          <Label>Nome da etapa</Label>
+          <Input
+            placeholder="Ex: Pintura, Acabamento..."
+            value={label}
+            onChange={e => setLabel(e.target.value)}
+          />
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
+        <div className="space-y-2">
+          <Label>Itens do checklist</Label>
+          <div className="space-y-2">
+            {items.map((item, idx) => (
+              <div key={idx} className="flex gap-2">
+                <Input
+                  placeholder={`Item ${idx + 1}`}
+                  value={item}
+                  onChange={e => updateItem(idx, e.target.value)}
+                />
+                {items.length > 1 && (
+                  <Button variant="ghost" size="icon" onClick={() => removeItem(idx)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={addItem}>
+            <Plus className="h-3.5 w-3.5" />
+            Adicionar item
           </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? 'Salvando...' : 'Criar etapa'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSave} disabled={saving}>
+          {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {saving ? 'Salvando...' : 'Criar etapa'}
+        </Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }

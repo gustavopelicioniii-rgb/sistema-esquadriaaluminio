@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/formatters';
 import { calculateTypology } from '@/lib/calculation-engine';
@@ -10,7 +10,6 @@ import {
   getTypologyById,
   profiles,
 } from '@/data/catalog';
-import { cn } from '@/lib/utils';
 import { ProfileCrossSection } from './ProfileCrossSection';
 import type { CalculationOutput } from '@/types/calculation';
 
@@ -77,11 +76,13 @@ export default function MaterialDetailDialog({
   const totalGlassPrice = calcResult.total_glass_area_m2 * precoVidroM2;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Detalhes do Material</DialogTitle>
-        </DialogHeader>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="lg">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle className="text-lg">Detalhes do Material</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription>
+          Visualize os materiais necessários para esta tipologia.
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
 
         {/* Metros Quadrados */}
         {calcResult.glasses.length > 0 && (
@@ -175,7 +176,6 @@ export default function MaterialDetailDialog({
           </Button>
           <Button className="bg-primary">Alterar valores</Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialog>
   );
 }

@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription, ResponsiveDialogFooter } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import type { Pedido } from '@/pages/Producao';
@@ -48,7 +43,6 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
     const etapa = etapas.find(e => e.id === selected);
     setSaving(true);
 
-    // Update pedido
     const { error: updateErr } = await supabase
       .from('pedidos')
       .update({
@@ -58,7 +52,6 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
       } as any)
       .eq('id', pedido.id);
 
-    // Save history
     await supabase.from('pedido_etapas').insert({
       pedido_id: pedido.id,
       etapa: etapa?.label,
@@ -80,55 +73,57 @@ export default function AlterarEtapaDialog({ open, onOpenChange, pedido }: Props
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Alterar Etapa – Pedido {pedido.pedido_num}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          {pedido.etapa && (
-            <p className="text-sm text-muted-foreground">
-              Etapa atual: <span className="font-medium text-foreground">{pedido.etapa}</span>
-            </p>
-          )}
-          <div className="space-y-2">
-            <Label>Nova etapa</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {etapas.map(e => (
-                <button
-                  key={e.id}
-                  onClick={() => setSelected(e.id)}
-                  className={cn(
-                    'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors text-left',
-                    selected === e.id
-                      ? 'border-primary bg-primary/5 font-medium'
-                      : 'hover:bg-muted/50'
-                  )}
-                >
-                  <span className={cn('h-2.5 w-2.5 rounded-full shrink-0', e.color)} />
-                  {e.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Observação (opcional)</Label>
-            <Textarea
-              placeholder="Ex: Peças conferidas, aguardando transporte..."
-              value={obs}
-              onChange={e => setObs(e.target.value)}
-            />
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="md">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle>Alterar Etapa – Pedido {pedido.pedido_num}</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription>
+          Selecione a nova etapa para o pedido.
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
+      <div className="space-y-4 py-2">
+        {pedido.etapa && (
+          <p className="text-sm text-muted-foreground">
+            Etapa atual: <span className="font-medium text-foreground">{pedido.etapa}</span>
+          </p>
+        )}
+        <div className="space-y-2">
+          <Label>Nova etapa</Label>
+          <div className="grid grid-cols-2 gap-2">
+            {etapas.map(e => (
+              <button
+                key={e.id}
+                onClick={() => setSelected(e.id)}
+                className={cn(
+                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors text-left',
+                  selected === e.id
+                    ? 'border-primary bg-primary/5 font-medium'
+                    : 'hover:bg-muted/50'
+                )}
+              >
+                <span className={cn('h-2.5 w-2.5 rounded-full shrink-0', e.color)} />
+                {e.label}
+              </button>
+            ))}
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSalvar} disabled={saving}>
-            {saving ? 'Salvando...' : 'Salvar etapa'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="space-y-2">
+          <Label>Observação (opcional)</Label>
+          <Textarea
+            placeholder="Ex: Peças conferidas, aguardando transporte..."
+            value={obs}
+            onChange={e => setObs(e.target.value)}
+          />
+        </div>
+      </div>
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSalvar} disabled={saving}>
+          {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {saving ? 'Salvando...' : 'Salvar etapa'}
+        </Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }

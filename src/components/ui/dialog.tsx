@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -19,7 +20,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
@@ -27,22 +28,47 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
+const dialogSizes = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-2xl',
+  xl: 'max-w-4xl',
+  full: 'max-w-7xl',
+} as const;
+
+const dialogVariants = cva(
+  'fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] w-[95%] sm:w-[90%] max-h-[90vh] sm:max-h-[85vh] overflow-y-auto duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out bg-card border border-border/60 shadow-xl rounded-2xl',
+  {
+    variants: {
+      size: {
+        sm: 'max-w-sm',
+        md: 'max-w-md',
+        lg: 'max-w-2xl',
+        xl: 'max-w-4xl',
+        full: 'max-w-7xl',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+    },
+  }
+);
+
+interface DialogContentProps
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    VariantProps<typeof dialogVariants> {}
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  DialogContentProps
+>(({ className, children, size = 'md', ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn(
-        'fixed left-[50%] top-[50%] z-[9999] translate-x-[-50%] translate-y-[-50%]',
-        'w-[95%] sm:w-[90%] max-w-lg',
-        'max-h-[90vh] sm:max-h-[85vh] overflow-y-auto',
-        'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out',
-        'bg-card border border-border/60 shadow-xl rounded-2xl',
-        className
-      )}
+      className={cn(dialogVariants({ size }), className)}
       {...props}
     >
       {children}

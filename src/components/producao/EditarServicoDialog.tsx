@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveDialog, ResponsiveDialogHeader, ResponsiveDialogTitle, ResponsiveDialogDescription, ResponsiveDialogFooter } from '@/components/ui/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Pedido } from '@/pages/Producao';
 import { toast } from 'sonner';
@@ -67,82 +68,84 @@ export default function EditarServicoDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Editar Pedido {pedido.pedido_num}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 pt-2">
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} size="md">
+      <ResponsiveDialogHeader>
+        <ResponsiveDialogTitle>Editar Pedido {pedido.pedido_num}</ResponsiveDialogTitle>
+        <ResponsiveDialogDescription>
+          Atualize as informações do pedido de {pedido.cliente}.
+        </ResponsiveDialogDescription>
+      </ResponsiveDialogHeader>
+      <div className="space-y-4 py-2">
+        <div className="space-y-2">
+          <Label htmlFor="edit-cliente">Cliente</Label>
+          <Input id="edit-cliente" value={cliente} onChange={e => setCliente(e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-endereco">Endereço</Label>
+          <Input
+            id="edit-endereco"
+            value={endereco}
+            onChange={e => setEndereco(e.target.value)}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label htmlFor="edit-cliente">Cliente</Label>
-            <Input id="edit-cliente" value={cliente} onChange={e => setCliente(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="edit-endereco">Endereço</Label>
+            <Label htmlFor="edit-telefone">Telefone</Label>
             <Input
-              id="edit-endereco"
-              value={endereco}
-              onChange={e => setEndereco(e.target.value)}
+              id="edit-telefone"
+              value={telefone}
+              onChange={e => setTelefone(e.target.value)}
             />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="edit-telefone">Telefone</Label>
-              <Input
-                id="edit-telefone"
-                value={telefone}
-                onChange={e => setTelefone(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-vendedor">Vendedor</Label>
-              <Input
-                id="edit-vendedor"
-                value={vendedor}
-                onChange={e => setVendedor(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="edit-valor">Valor (R$)</Label>
-              <Input
-                id="edit-valor"
-                type="number"
-                step="0.01"
-                value={valor}
-                onChange={e => setValor(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-previsao">Previsão</Label>
-              <Input
-                id="edit-previsao"
-                type="date"
-                value={previsao}
-                onChange={e => setPrevisao(e.target.value)}
-              />
-            </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-anotacao">Anotações</Label>
-            <Textarea
-              id="edit-anotacao"
-              rows={3}
-              value={anotacao}
-              onChange={e => setAnotacao(e.target.value)}
+            <Label htmlFor="edit-vendedor">Vendedor</Label>
+            <Input
+              id="edit-vendedor"
+              value={vendedor}
+              onChange={e => setVendedor(e.target.value)}
             />
-          </div>
-          <div className="flex gap-3 pt-2">
-            <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button className="flex-1" onClick={handleSave} disabled={saving || !cliente.trim()}>
-              {saving ? 'Salvando...' : 'Salvar'}
-            </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="edit-valor">Valor (R$)</Label>
+            <Input
+              id="edit-valor"
+              type="number"
+              step="0.01"
+              value={valor}
+              onChange={e => setValor(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-previsao">Previsão</Label>
+            <Input
+              id="edit-previsao"
+              type="date"
+              value={previsao}
+              onChange={e => setPrevisao(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-anotacao">Anotações</Label>
+          <Textarea
+            id="edit-anotacao"
+            rows={3}
+            value={anotacao}
+            onChange={e => setAnotacao(e.target.value)}
+          />
+        </div>
+      </div>
+      <ResponsiveDialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSave} disabled={saving || !cliente.trim()}>
+          {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {saving ? 'Salvando...' : 'Salvar'}
+        </Button>
+      </ResponsiveDialogFooter>
+    </ResponsiveDialog>
   );
 }
